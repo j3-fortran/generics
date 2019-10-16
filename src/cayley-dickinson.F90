@@ -40,7 +40,8 @@ module R_type_requirements
   type C
     class(R_conjugable), allocatable :: Re, Im
   contains
-    procedure :: add, multiply
+    procedure :: add, multiply, conjg
+    generic :: operator(.conjg.)=>conjg
   end type
 
 contains
@@ -66,6 +67,14 @@ contains
     type(C) :: negative
     negative%Re = -rhs%Re
     negative%Im = -rhs%Im
+  end function
+
+  module function conjg(rhs) result(conjg_rhs)
+    class(C), intent(in) :: rhs
+    type(C) :: conjg_rhs
+    conjg_rhs%Re = .conjg.(rhs%Re)
+   !conjg_rhs%Im = .conjg.(rhs%Re+rhs%Re) ! fails
+    conjg_rhs%Im = -rhs%Im
   end function
 
 end module
