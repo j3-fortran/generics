@@ -1,16 +1,25 @@
 module R_type_requirements
   implicit none
 
-#define requirements abstract
+!!$#define requirements abstract
+#define requirement   type, abstract
+!!$  type, requirements :: R !! requirements for the generic type
 
-  type, requirements :: R !! requirements for the generic type
+  requirement :: R
   contains
     procedure(binary_op_interface), deferred :: add, multiply
     procedure(unary_op_interface), deferred :: negate
+    procedure(unary_op_interface), deferred :: conjg
     generic :: operator(+)=>add
     generic :: operator(*)=>multiply
     generic :: operator(-)=>negate
-  end type
+    generic :: .conjg. => conjg
+ end type
+
+!!$ integer function conjg(i)
+!!$   integer, intent(in) :: i
+!!$   conjg = i
+!!$ end function conjg
 
   type, extends(R), requirements :: R_conjugable
   contains
@@ -38,10 +47,11 @@ module R_type_requirements
   end interface
 
   type C
-    class(R_conjugable), allocatable :: Re, Im
+!!$    class(R_conjugable), allocatable :: Re, Im
+    class(R), allocatable :: Re, Im
   contains
-    procedure :: conjg
-    generic :: operator(.conjg.)=>conjg
+!!$    procedure :: conjg
+!!$    generic :: operator(.conjg.)=>conjg
   end type
 
 contains
