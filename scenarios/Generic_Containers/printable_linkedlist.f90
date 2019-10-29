@@ -33,14 +33,15 @@ template printable_linked_lists
     ! The signature of the print routine
     !
     abstract interface
-        subroutine print_data_def( lun, item )
+        subroutine print_data_def( lun, indx, item )
             integer, intent(in)       :: lun
+            integer, intent(in)       :: indx
             type(printable_data_type) :: item
         end subroutine print_data_def
     end interface
 
     !
-    ! The new type we define, with the extra functionality
+    ! The new type we define, with the extra functionality,
     ! is simply an extension to the one from the template
     !
     type, extends(linked_list_def) :: printable_list_def
@@ -50,10 +51,10 @@ template printable_linked_lists
     end type printable_list_def
 contains
 subroutine print_list( list, lun )
-    class(linked_list_def), intent(in), target :: list
-    integer, intent(in)                        :: lun
+    class(printable_list_def), intent(in), target :: list
+    integer, intent(in)                           :: lun
 
-    type(linked_list_def), pointer             :: item
+    type(printable_list_def), pointer             :: item
     integer                                    :: i
 
     i = 1

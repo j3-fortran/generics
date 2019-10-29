@@ -8,6 +8,11 @@
 template linked_lists
     implicit none
 
+    !
+    ! Question: how does this affect templates that
+    !           use this particular template?
+    !           Are such attributes to be "inherited"?
+    !
     private
     public :: linked_list_def
 

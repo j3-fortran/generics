@@ -42,7 +42,7 @@ template dictionary
     use_template linked_lists
 
     !
-    ! Define the requirements for the tow (!) generic types
+    ! Define the requirements for the two (!) generic types
     ! We reuse everything from the template (including
     ! the routines, so that "data_type" in the template
     ! is replaced by "key_value_type")
@@ -62,7 +62,17 @@ template dictionary
     ! The items in the linked list should now hold both
     ! the key and the value
     !
-    type, replaces(data_type) :: key_value_type
+    ! Note:
+    ! This is an actual definition of the generic data type
+    ! to be held in the container, but it is constructed
+    ! from generic types. I have introduced the keyword
+    ! "implements" to help the compiler distinguish.
+    !
+    ! Question: is that really necessary?
+    !
+    type, implements(data_type) :: key_value_type
+        type(key_type)         :: key
+        type(value_type)       :: value
     contains
         procedure :: equal => equal_key
     end type key_value_type
@@ -70,7 +80,7 @@ template dictionary
     type, extends(linked_list_def) :: dictionary_type
         type(key_value_type)   :: key_value
     contains
-        procedure :: add => add_key_value
+        procedure :: add => add_key_value      !! Still t obe added!
         procedure :: get => get_value
         procedure :: has_key => has_item_key
     end type dictionary_type
@@ -87,6 +97,7 @@ end function equal_key
 ! The compiler should probably be smart enough to see
 ! that no allocatable/pointer attribute is required,
 ! even if the data type "key_type" is defined that way.
+!
 logical function has_item_key( dictionary, key )
     class(dictionary_type), intent(in), target :: dictionary
     type(key_type), intent(in)                 :: key
@@ -147,9 +158,9 @@ program test_dictionary
 
     type(my_dictionary_type) :: my_dictionary
 
-    call my_dictionary( add, [1,2], coordinate_type(1.0,2.0,3.0) )
-    call my_dictionary( add, [2,3], coordinate_type(2.0,3.0,4.0) )
-    call my_dictionary( add, [3,4,5], coordinate_type(3.0,4.0,5.0) )
+    call my_dictionary%add( [1,2], coordinate_type(1.0,2.0,3.0) )
+    call my_dictionary%add( [2,3], coordinate_type(2.0,3.0,4.0) )
+    call my_dictionary%add( [3,4,5], coordinate_type(3.0,4.0,5.0) )
 
     write(*,*) 'Key: [1,2] - available? ', my_dictionary%has_key([1,2])
     if ( my_dictionary%has_key([1,2]) ) then
