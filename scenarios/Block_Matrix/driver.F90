@@ -6,18 +6,17 @@ module ConcreteBlockMatrix_mod
   public :: ConcreteA, ConcreteB, ConcreteC, ConcreteT
 
   type, extends(BlockA) :: ConcreteA
-     real, allocatable :: matrix(:,:)
+     real :: element
    contains
      procedure :: matrix_multiply
   end type ConcreteA
 
   type, extends(BlockB) :: ConcreteB
-     real, allocatable :: matrix(:,:)
+     real :: element
   end type ConcreteB
 
   type, extends(BlockC) :: ConcreteC
-     integer :: ni, nj
-     real, allocatable :: matrix(:,:)
+     real :: element
    contains
      procedure :: plus
      procedure :: zero
@@ -25,7 +24,7 @@ module ConcreteBlockMatrix_mod
   end type ConcreteC
 
   type, extends(BlockT) :: ConcreteT
-     real, allocatable :: matrix(:,:)
+     real :: element
   end type ConcreteT
 
 
@@ -42,7 +41,7 @@ contains
 
        select type (b)
        type is (ConcreteB)
-          t%matrix = matmul(a%matrix, b%matrix)
+          t%element = a%element * b%element
        class default
           error stop 'operation not supported for given subclass of BlockB'
        end select
@@ -57,21 +56,15 @@ contains
     class(ConcreteC), intent(in) :: c1
     class(BlockT), intent(in) :: t
 
-    integer :: ni, nj
-
-    ni = c1%ni
-    nj = c1%nj
-
     allocate(ConcreteC :: c2)
 
     select type (c2)
     type is (ConcreteC)
-       allocate(c2%matrix(ni,nj))
        select type (c1)
        type is (ConcreteC)
           select type (t)
           class is (ConcreteT)
-             c2%matrix = c1%matrix + t%matrix
+             c2%element = c1%element + t%element
           class default
              error stop 'operation not supported for given subclass of BlockT'
           end select
@@ -89,12 +82,8 @@ contains
 
     select type (z)
     type is (ConcreteC)
-       z%ni = c%ni
-       z%nj = c%nj
-       allocate(z%matrix(z%ni, z%nj))
-       z%matrix = 0
+       z%element = 0
     end select
-
     
   end function zero
 
@@ -105,7 +94,7 @@ contains
 
     select type (c_in)
     class is (ConcreteC)
-       c_out%matrix = c_in%matrix
+       c_out%element = c_in%element
     class default
        error stop 'operation not supported for given subclass of BlockC'
     end select
@@ -123,7 +112,6 @@ program driver
   implicit none
 
   integer :: n_blocks_i, n_blocks_j, n_blocks_k
-  integer, parameter :: ni = 1, nj = 1, nk = 2
   
   type(ConcreteA), allocatable :: t_a(:,:)
   type(ConcreteB), allocatable :: t_b(:,:)
@@ -144,25 +132,15 @@ program driver
 
   do k = 1, n_blocks_k
      do i = 1, n_blocks_i
-        allocate(t_a(i,k)%matrix(ni,nk))
-        t_a(i,k)%matrix = 1
+        t_a(i,k)%element = 1
      end do
   end do
 
   do j = 1, n_blocks_j
      do k = 1, n_blocks_k
-        allocate(t_b(k,j)%matrix(nk,nj))
-        t_b(k,j)%matrix = 1
+        t_b(k,j)%element = 1
      end do
   end do
-  
-  do j = 1, n_blocks_j
-     do i = 1, n_blocks_i
-        t_c(i,j)%ni = 1
-        t_c(i,j)%nj = 1
-     end do
-  end do
-  
   
   a = BlockMatrix(t_a, t_b, t_c, t_t)
   b = BlockMatrix(t_a, t_b, t_c, t_t)
@@ -171,13 +149,13 @@ program driver
   c = a .matmul. b
 
   ! Because seed values are all "1.", we expect result values to be
-  ! n_blocks_k * nk
+  ! n_blocks_k
 
   do j = 1, size(t_c, 2)
      do i = 1, size(t_c, 1)
         select type (q => c%c(i,j))
         type is (ConcreteC)
-           print*, i, j, all(q%matrix == n_blocks_k*nk)
+           print*, i, j, q%element == n_blocks_k
         end select
      end do
   end do
