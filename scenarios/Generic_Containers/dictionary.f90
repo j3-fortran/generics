@@ -80,7 +80,7 @@ template dictionary
     type, extends(linked_list_def) :: dictionary_type
         type(key_value_type)   :: key_value
     contains
-        procedure :: add => add_key_value      !! Still t obe added!
+        procedure :: add => add_key_value      !! Still to be added!
         procedure :: get => get_value
         procedure :: has_key => has_item_key
     end type dictionary_type
