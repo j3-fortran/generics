@@ -11,7 +11,7 @@ program driver
 
   call simple_case(BlockStructure(3,2,4))
   call nested_case(BlockStructure(3,2,4), BlockStructure(2,3,7))
-!!$  call diabolical_case()
+  call diabolical_case()
 
 contains
 
@@ -307,6 +307,7 @@ contains
           n2_t(i,j)%matrix = BlockMatrix(n_a,n_b,n_c,n_t)
        end do
     end do
+    print*,__FILE__,__LINE__
 
 
     
@@ -319,7 +320,8 @@ contains
 
     ! Because seed values are all "1.", we expect result values to be
     ! (nk * nb_k)
-    
+
+    print*,__FILE__,__LINE__, nb2_j, nb_j, nb_i
     do j = 1, nb2_j
        do i = 1, nb2_i
           select type (q => c%c(i,j))
@@ -328,9 +330,10 @@ contains
                 do ii = 1, nb_i
                    select type (qq => q%matrix%c(ii,jj))
                    type is (NestedC)
+                      print*,__FILE__,__LINE__, ii,jj,i,j
                       do jjj = 1, nj
                          do iii = 1, ni
-                            select type (qqq => q%matrix%c(ii,jj))
+                            select type (qqq => qq%matrix%c(iii,jjj))
                             type is (SimpleC)
                                print*, i, j, ii, jj, qqq%element == nk*nb_k*nb2_k
                             end select

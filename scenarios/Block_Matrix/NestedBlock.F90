@@ -111,15 +111,20 @@ contains
     class(BlockC), intent(in) :: c2
 
     integer :: i, j
+    integer :: ni, nj
+
+    ni = size(c1%matrix%c, 1)
+    nj = size(c1%matrix%c, 2)
 
     allocate(NestedC :: c3)
-
+    
     select type (c3)
     type is (NestedC)
+       allocate(c3%matrix%c(ni,nj), mold=c1%matrix%c(1,1))
        select type (c2)
        type is (NestedC)
-          do j = 1, size(c1%matrix%c,2)
-             do i = 1, size(c1%matrix%c,1)
+          do j = 1, nj
+             do i = 1, ni
                 c3%matrix%c(i,j) = c1%matrix%c(i,j) + c2%matrix%c(i,j)
              end do
           end do
