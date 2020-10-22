@@ -92,7 +92,7 @@ See also the proposal's comparison with C++ and Rust:
 
 **Question**: What is the difference between Go templates with constraints /
 interfaces (this proposal) and the existing
-[Go interfaces](https://golangbot.com/interfaces-part-1/)?
+Go interfaces ([1](https://golangdocs.com/interfaces-in-golang) and [2](https://golangbot.com/interfaces-part-1/))?
 
 **Answer**: It seems that Go interfaces are resolved at runtime, while Go
 templates are strictly resolved at compile time. That might be the only main
