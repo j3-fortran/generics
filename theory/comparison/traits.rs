@@ -2,13 +2,13 @@
 // rustc traits.rs
 
 trait Stringer {
-    fn string(&self) -> String;
+    fn string(&self) -> &'static str;
 }
 
 fn stringify<T : Stringer>(s: Vec<T>) -> String {
     let mut ret = String::new();
     for x in s.iter() {
-        ret.push_str(&x.string());
+        ret.push_str(x.string());
     }
     ret
 }
@@ -16,8 +16,8 @@ fn stringify<T : Stringer>(s: Vec<T>) -> String {
 struct MyT();
 
 impl Stringer for MyT {
-    fn string(&self) -> String {
-        "X".to_string()
+    fn string(&self) -> &'static str {
+        "X"
     }
 }
 
