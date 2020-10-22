@@ -220,3 +220,114 @@ In other words, the concepts light will check user's code that the `MyT` type
 satisfies the `Stringer` concept. But they will not check the library code, that
 the `Stringify` function is written correctly and only uses methods declared by
 the `Stringer` concept.
+
+# Rust
+
+Rust implements
+[generics](https://doc.rust-lang.org/rust-by-example/generics.html)
+using type parameters and restricts them using traits,
+which are essentially *strong concepts*.
+The `Stringify` example in Rust looks like:
+
+    trait Stringer {
+        fn string(&self) -> &'static str;
+    }
+
+    fn stringify<T : Stringer>(s: Vec<T>) -> String {
+        let mut ret = String::new();
+        for x in s.iter() {
+            ret.push_str(x.string());
+        }
+        ret
+    }
+
+and it can be used like this:
+
+    struct MyT {
+    }
+
+    impl Stringer for MyT {
+        fn string(&self) -> &'static str {
+            "X"
+        }
+    }
+
+    fn main() {
+        let v = vec![MyT{}, MyT{}, MyT{}];
+        println!("{}", stringify(v));
+    }
+
+See the [traits.rs](./traits.rs) file for a complete program
+that compiles and runs.
+
+If we remove the `string` method implementation from MyT, we get the following
+compiler error:
+
+    error[E0277]: the trait bound `MyT: Stringer` is not satisfied
+      --> traits.rs:21:30
+       |
+    8  | fn stringify<T : Stringer>(s: Vec<T>) -> String {
+       |    ---------     -------- required by this bound in `stringify`
+    ...
+    21 |     println!("{}", stringify(v));
+       |                              ^ the trait `Stringer` is not implemented for `MyT`
+
+    error: aborting due to previous error
+
+    For more information about this error, try `rustc --explain E0277`.
+
+This error happens at the call site, saying the user type does not satisfy the
+trait. The error is semantically equivalent to the C++ concepts error above,
+just worded in a more user friendly way.
+
+If we change the `stringify` function to call a method `string2()`
+instead of `string()`, we get the following error:
+
+    error[E0599]: no method named `string2` found for type `&T` in the current scope
+      --> traits.rs:11:24
+       |
+    11 |         ret.push_str(x.string2());
+       |                        ^^^^^^^ help: there is a method with a similar name: `string`
+
+    error: aborting due to previous error
+
+    For more information about this error, try `rustc --explain E0599`.
+
+Unlike in C++, the function `stringify()` does not compile, because we are using
+a method that is not defined for the type `T`.
+
+For this reason we can say that Rust implements *strong concepts*.
+
+Similar to Go, if we define the `stringify` function using an unrestricted
+template `T`:
+
+    fn stringify<T>(s: Vec<T>) -> String {
+        let mut ret = String::new();
+        for x in s.iter() {
+            ret.push_str(x.string());
+        }
+        ret
+    }
+
+we get the following compiler error while compiling this function:
+
+    error[E0599]: no method named `string` found for type `&T` in the current scope
+      --> traits.rs:11:24
+       |
+    11 |         ret.push_str(x.string());
+       |                        ^^^^^^ method not found in `&T`
+       |
+       = help: items from traits can only be used if the type parameter is bounded by the trait
+    help: the following trait defines an item `string`, perhaps you need to restrict type parameter `T` with it:
+       |
+    8  | fn stringify<T: Stringer>(s: Vec<T>) -> String {
+       |              ^^^^^^^^^^^
+
+    error: aborting due to previous error
+
+    For more information about this error, try `rustc --explain E0599`.
+
+The Rust compiler even noticed that we have a Trait that would work and it
+suggests how to modify the code to make it compile.
+
+Unlike in C++, where this compiles and we get an error at instantiation time.
