@@ -13,7 +13,8 @@ fn stringify<T : Stringer>(s: Vec<T>) -> String {
     ret
 }
 
-struct MyT();
+struct MyT {
+}
 
 impl Stringer for MyT {
     fn string(&self) -> &'static str {
@@ -22,6 +23,6 @@ impl Stringer for MyT {
 }
 
 fn main() {
-    let v = vec![MyT(), MyT(), MyT()];
+    let v = vec![MyT{}, MyT{}, MyT{}];
     println!("{}", stringify(v));
 }
