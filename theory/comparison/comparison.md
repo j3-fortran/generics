@@ -97,3 +97,126 @@ Go interfaces ([1](https://golangdocs.com/interfaces-in-golang) and [2](https://
 **Answer**: It seems that Go interfaces are resolved at runtime, while Go
 templates are strictly resolved at compile time. That might be the only main
 difference.
+
+# C++
+
+## Traditional Templates
+
+The `Stringify` example in C++ would look like:
+
+    template <typename T>
+    std::string Stringify(const std::vector<T> &s) {
+        std::string ret;
+        for (auto &v : s) {
+            ret.append(v.String());
+        }
+        return ret;
+    }
+
+And this compiles. Here is how it could be used in the main program:
+
+    class MyT
+    {
+    public:
+        std::string String() const {
+            return "X";
+        }
+    };
+
+    int main() {
+        std::vector<MyT> v(3);
+        std::cout << Stringify(v) << std::endl;
+        return 0;
+    }
+
+See the [traditional.cpp](./traditional.cpp) file for a complete program that
+compiles and runs.
+
+There are *no concepts*. As a result, if you remove the `String()` method from
+`MyT`, you get the following error message with g++ 10:
+
+    a.cpp: In instantiation of ‘std::string Stringify(const std::vector<T>&) [with T = MyT; std::string = std::__cxx11::basic_string<char>]’:
+    a.cpp:20:29:   required from here
+    a.cpp:9:22: error: ‘const class MyT’ has no member named ‘String’
+        9 |         ret.append(v.String());
+          |                    ~~^~~~~~
+
+This error gets a lot more complicated and nested in practice if the
+`Stringify` function calls other templates functions and the error is in the
+inner most one.
+
+But even in this simple example, the error that is reported is in the
+`Stringify` function, which compiled fine on its own, but failed at
+instantiation time. This is the main feature of *no concepts*.
+
+## C++20 Concepts Light
+
+C++20 has [light
+concepts](https://en.cppreference.com/w/cpp/language/constraints). The
+above `Stringify` example with C++ concepts would look like:
+
+    template<typename T>
+    concept Stringer = requires(const T &t) {
+        { t.String() } -> std::same_as<std::string>;
+    };
+
+    template <Stringer T>
+    std::string Stringify(const std::vector<T> &s) {
+        std::string ret;
+        for (auto &v : s) {
+            ret.append(v.String());
+        }
+        return ret;
+    }
+
+And it would be used exactly as before.
+See the [concepts-light.cpp](./concepts-light.cpp) file for a complete program
+that compiles and runs.
+
+If you remove the `String()` method from `MyT`, you get an error:
+
+    concepts-light.cpp: In function ‘int main()’:
+    concepts-light.cpp:30:29: error: use of function ‘std::string Stringify(const std::vector<T>&) [with T = MyT; std::string = std::__cxx11::basic_string<char>]’ with unsatisfied constraints
+       30 |     std::cout << Stringify(v) << std::endl;
+          |                             ^
+    concepts-light.cpp:15:13: note: declared here
+       15 | std::string Stringify(const std::vector<T> &s) {
+          |             ^~~~~~~~~
+    concepts-light.cpp:15:13: note: constraints not satisfied
+    concepts-light.cpp: In instantiation of ‘std::string Stringify(const std::vector<T>&) [with T = MyT; std::string = std::__cxx11::basic_string<char>]’:
+    concepts-light.cpp:30:29:   required from here
+    concepts-light.cpp:10:9:   required for the satisfaction of ‘Stringer<T>’ [with T = MyT]
+    concepts-light.cpp:10:20:   in requirements with ‘const T& t’ [with T = MyT]
+    concepts-light.cpp:11:15: note: the required expression ‘t.String()’ is invalid
+       11 |     { t.String() } -> std::same_as<std::string>;
+          |       ~~~~~~~~^~
+    cc1plus: note: set ‘-fconcepts-diagnostics-depth=’ to at least 2 for more detail
+
+Compared to the "traditional templates", this error now happens at the call
+site, saying that the user type `MyT` is not satisfying the concept `Stringer`,
+because it does not have the `.String()` method.
+
+If however we change the `Stringify` function to call a method `String2()`
+instead of `String()`, the function still compiles fine, but we get an error at
+instantiation time:
+
+    concepts-light.cpp: In instantiation of ‘std::string Stringify(const std::vector<T>&) [with T = MyT; std::string = std::__cxx11::basic_string<char>]’:
+    concepts-light.cpp:33:29:   required from here
+    concepts-light.cpp:18:22: error: ‘const class MyT’ has no member named ‘String2’; did you mean ‘String’?
+       18 |         ret.append(v.String2());
+          |                    ~~^~~~~~~
+          |                    String
+
+And if we remove the `main()` function, we do not get any error at all and the
+`Stringify` function happily compiles.
+
+It is for this reason we are calling this *concepts light*. If they were strong
+concepts such as in the Go language, the error would happen while compiling the
+function `Stringify` and it would say the Concept `Stringer` does not have a
+`.String2` method, and it would not say anything about `MyT`, as that would be
+irrelevant.
+
+In other words, the concepts light will check user's code that the `MyT` type
+satisfies the `Stringer` concept. But they will not check the library code, that
+the `Stringify` function is written correctly and only uses methods declared by
+the `Stringer` concept.
