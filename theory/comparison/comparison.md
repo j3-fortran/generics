@@ -8,17 +8,19 @@ https://go.googlesource.com/proposal/+/refs/heads/master/design/go2draft-type-pa
 An example of a template `T` of a type / constraint `any` (constraint is the
 same as concept in C++):
 
-    // Note: the type `any` is already defined implicitly
-    type any interface {
-    }
+```go
+// Note: the type `any` is already defined implicitly
+type any interface {
+}
 
-    // Print prints the elements of a slice.
-    // It should be possible to call this with any slice value.
-    func Print[T any](s []T) { // Just an example, not the suggested syntax.
-        for _, v := range s {
-            fmt.Println(v)
-        }
+// Print prints the elements of a slice.
+// It should be possible to call this with any slice value.
+func Print[T any](s []T) { // Just an example, not the suggested syntax.
+    for _, v := range s {
+        fmt.Println(v)
     }
+}
+```
 
 A template of type `any` must work with any user type, and so only a few
 [basic
@@ -29,33 +31,39 @@ operations](https://go.googlesource.com/proposal/+/refs/heads/master/design/go2d
 As an example, this function will not compile because type `any` does not have a
 `.String()` method:
 
-    // This function is INVALID.
-    func Stringify[T any](s []T) (ret []string) {
-        for _, v := range s {
-            ret = append(ret, v.String()) // INVALID
-        }
-        return ret
+```go
+// This function is INVALID.
+func Stringify[T any](s []T) (ret []string) {
+    for _, v := range s {
+        ret = append(ret, v.String()) // INVALID
     }
+    return ret
+}
+```
 
 To fix that, we have to define a new constraint:
 
-    // Stringer is a type constraint that requires the type argument to have
-    // a String method and permits the generic function to call String.
-    // The String method should return a string representation of the value.
-    type Stringer interface {
-        String() string
-    }
+```go
+// Stringer is a type constraint that requires the type argument to have
+// a String method and permits the generic function to call String.
+// The String method should return a string representation of the value.
+type Stringer interface {
+    String() string
+}
+```
 
 and use it in the `Stringify` function:
 
-    // Stringify calls the String method on each element of s,
-    // and returns the results.
-    func Stringify[T Stringer](s []T) (ret []string) {
-        for _, v := range s {
-            ret = append(ret, v.String())
-        }
-        return ret
+```go
+// Stringify calls the String method on each element of s,
+// and returns the results.
+func Stringify[T Stringer](s []T) (ret []string) {
+    for _, v := range s {
+        ret = append(ret, v.String())
     }
+    return ret
+}
+```
 
 This approach is what C++ calls *strong concepts*.
 
@@ -104,30 +112,34 @@ difference.
 
 The `Stringify` example in C++ would look like:
 
-    template <typename T>
-    std::string Stringify(const std::vector<T> &s) {
-        std::string ret;
-        for (auto &v : s) {
-            ret.append(v.String());
-        }
-        return ret;
+```c++
+template <typename T>
+std::string Stringify(const std::vector<T> &s) {
+    std::string ret;
+    for (auto &v : s) {
+        ret.append(v.String());
     }
+    return ret;
+}
+```
 
 And this compiles. Here is how it could be used in the main program:
 
-    class MyT
-    {
-    public:
-        std::string String() const {
-            return "X";
-        }
-    };
-
-    int main() {
-        std::vector<MyT> v(3);
-        std::cout << Stringify(v) << std::endl;
-        return 0;
+```c++
+class MyT
+{
+public:
+    std::string String() const {
+        return "X";
     }
+};
+
+int main() {
+    std::vector<MyT> v(3);
+    std::cout << Stringify(v) << std::endl;
+    return 0;
+}
+```
 
 See the [traditional.cpp](./traditional.cpp) file for a complete program that
 compiles and runs.
@@ -155,19 +167,21 @@ C++20 has [light
 concepts](https://en.cppreference.com/w/cpp/language/constraints). The
 above `Stringify` example with C++ concepts would look like:
 
-    template<typename T>
-    concept Stringer = requires(const T &t) {
-        { t.String() } -> std::same_as<std::string>;
-    };
+```c++
+template<typename T>
+concept Stringer = requires(const T &t) {
+    { t.String() } -> std::same_as<std::string>;
+};
 
-    template <Stringer T>
-    std::string Stringify(const std::vector<T> &s) {
-        std::string ret;
-        for (auto &v : s) {
-            ret.append(v.String());
-        }
-        return ret;
+template <Stringer T>
+std::string Stringify(const std::vector<T> &s) {
+    std::string ret;
+    for (auto &v : s) {
+        ret.append(v.String());
     }
+    return ret;
+}
+```
 
 And it would be used exactly as before.
 See the [concepts-light.cpp](./concepts-light.cpp) file for a complete program
@@ -229,33 +243,37 @@ using type parameters and restricts them using traits,
 which are essentially *strong concepts*.
 The `Stringify` example in Rust looks like:
 
-    trait Stringer {
-        fn string(&self) -> &'static str;
-    }
+```rust
+trait Stringer {
+    fn string(&self) -> &'static str;
+}
 
-    fn stringify<T : Stringer>(s: Vec<T>) -> String {
-        let mut ret = String::new();
-        for x in s.iter() {
-            ret.push_str(x.string());
-        }
-        ret
+fn stringify<T : Stringer>(s: Vec<T>) -> String {
+    let mut ret = String::new();
+    for x in s.iter() {
+        ret.push_str(x.string());
     }
+    ret
+}
+```
 
 and it can be used like this:
 
-    struct MyT {
-    }
+```rust
+struct MyT {
+}
 
-    impl Stringer for MyT {
-        fn string(&self) -> &'static str {
-            "X"
-        }
+impl Stringer for MyT {
+    fn string(&self) -> &'static str {
+        "X"
     }
+}
 
-    fn main() {
-        let v = vec![MyT{}, MyT{}, MyT{}];
-        println!("{}", stringify(v));
-    }
+fn main() {
+    let v = vec![MyT{}, MyT{}, MyT{}];
+    println!("{}", stringify(v));
+}
+```
 
 See the [traits.rs](./traits.rs) file for a complete program
 that compiles and runs.
@@ -301,13 +319,15 @@ For this reason we can say that Rust implements *strong concepts*.
 Similar to Go, if we define the `stringify` function using an unrestricted
 template `T`:
 
-    fn stringify<T>(s: Vec<T>) -> String {
-        let mut ret = String::new();
-        for x in s.iter() {
-            ret.push_str(x.string());
-        }
-        ret
+```rust
+fn stringify<T>(s: Vec<T>) -> String {
+    let mut ret = String::new();
+    for x in s.iter() {
+        ret.push_str(x.string());
     }
+    ret
+}
+```
 
 we get the following compiler error while compiling this function:
 
