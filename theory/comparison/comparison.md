@@ -81,3 +81,19 @@ that have the following property:
   compiler must examine the function itself at every call site to ensure
   everything works, which causes long / unfriendly error messages and long
   compile times.
+
+See also the proposal's comparison with C++ and Rust:
+
+* [Comparison with
+  C++](https://go.googlesource.com/proposal/+/refs/heads/master/design/go2draft-type-parameters.md#comparison-with-c)
+* [Comparison with
+  Rust](https://go.googlesource.com/proposal/+/refs/heads/master/design/go2draft-type-parameters.md#comparison-with-rust)
+
+
+**Question**: What is the difference between Go templates with constraints /
+interfaces (this proposal) and the existing
+[Go interfaces](https://golangbot.com/interfaces-part-1/)?
+
+**Answer**: It seems that Go interfaces are resolved at runtime, while Go
+templates are strictly resolved at compile time. That might be the only main
+difference.
