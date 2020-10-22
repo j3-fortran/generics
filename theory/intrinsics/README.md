@@ -31,3 +31,28 @@ and complex types all support the intended operation.
 
 There are many issues here, and this document will likely grow considerably.
 
+
+Variants:
+
+- V1: Brute force - each intrinsic type/kind is a separate generic type
+
+- V2: Leverage F2003 parameterized types.  This reduces the number of
+      derived types that are needed, but unfortunately does nothing to
+      reduce the number of type-bound functions that must be
+      explicitly written.  This example mostly just shows that F2003
+      type parameters are very unlike template parameters in precisely
+      this respect.  If the kind-type parameters for dummy arguments
+      could be assumed, this would change dramatically.  (See V3)
+
+- V3: If F202y were to relax the constraint that kind-type parameters
+      for dummy arguments cannot be assumed, things could get
+      considerably simpler.  V3 demonstrates this.  The number of
+      type-bound functions that must be written goes down from 72 in
+      V2, to just 9 in V3.  And the ratio improves further for
+      compilers that provide additional kinds for these types.
+
+      
+
+
+
+      

@@ -4,17 +4,22 @@ module GenericIntrinsics_mod
    private
 
 
-   ! With slight simplification, the F2018 standard defines 4 "numeric"
-   ! intrisics that must be supported by standard conforming processors.
-   ! Thes are INTEGER, REAL, DOUBLE PRECISION, and COMPLEX.   The standard
-   ! also requires at least one long integer:
-   ! "The processor shall provide at least one representation method
-   !   with a decimal exponent range greater than or equal to 18."
-   ! This may or not be the same as the default INTEGER.  Here we
-   ! assume that it is a different kind that can be accessed by INT64,
-   ! from ISO_FORTRAN_ENV.
-   ! (This is the case with all existing compilers that support F2008.)
-
+   ! With slight simplification, the F2018 standard defines 6
+   ! "numeric" intrisics type+kind that must be supported by standard
+   ! conforming processors.
+   ! INTEGER
+   ! REAL
+   ! DOUBLE PRECISION
+   ! COMPLEX
+   ! COMPLEX(kind(1.d0))
+   ! 
+   ! The standard also requires at least one long integer: "The
+   ! processor shall provide at least one representation method with a
+   ! decimal exponent range greater than or equal to 18."  This may or
+   ! not be the same as the default INTEGER.  Here we assume that it
+   ! is a different kind that can be accessed by INT64, from
+   ! ISO_FORTRAN_ENV.  (This is the case with all existing compilers
+   ! that support F2008.)
 
    ! Ordered according to promotion rules:  binary operations
    ! result in the type which is later in the list.
