@@ -351,3 +351,136 @@ The Rust compiler even noticed that we have a Trait that would work and it
 suggests how to modify the code to make it compile.
 
 Unlike in C++, where this compiles and we get an error at instantiation time.
+
+# Haskell
+
+Haskell implements
+[generics](https://wiki.haskell.org/Generics)
+using [type classes](https://www.haskell.org/tutorial/classes.html)
+and restricts them using [constraints](https://en.wikibooks.org/wiki/Haskell/Classes_and_types),
+which are essentially *strong concepts*.
+The `Stringify` example in Haskell looks like:
+
+```haskell
+class Stringer t where
+  string :: t -> String
+
+stringify :: String t => [t] -> String
+stringify (only:[]) = string only
+stringify (first:rest) = (string first) ++ (stringify rest)
+```
+
+and it can be used like this:
+
+```haskell
+data MyT = MyT
+
+instance String MyT where
+  string :: MyT -> String
+  string _ = "X"
+
+main :: IO ()
+main = do
+  let v = [MyT, MyT, MyT]
+  putStrLn (stringify v)
+```
+
+See the [type_classes.hs](./type_classes.hs) file for a complete program
+that compiles and runs
+
+If we remove the instance declaration we get the following
+compiler error:
+
+```
+[1 of 1] Compiling Main             ( type_clases.hs, type_clases.o )
+
+type_clases.hs:16:13: error:
+    • No instance for (Stringer MyT) arising from a use of ‘stringify’
+    • In the first argument of ‘putStrLn’, namely ‘(stringify v)’
+      In a stmt of a 'do' block: putStrLn (stringify v)
+      In the expression:
+        do let v = ...
+           putStrLn (stringify v)
+   |
+16 |   putStrLn (stringify v)
+   |             ^^^^^^^^^^^
+```
+
+This error happens at the call site, saying the user type does not satisfy the
+constraint (i.e. does not have an instance for the type class `Stringer`). If
+we remove only the definition of the `string` function for the `Stringer MyT`
+instance, we get the following compiler warning and subsequent run-time error.
+
+```
+[1 of 1] Compiling Main             ( type_clases.hs, type_clases.o )
+
+type_clases.hs:10:10: warning: [-Wmissing-methods]
+    • No explicit implementation for
+        ‘string’
+    • In the instance declaration for ‘Stringer MyT’
+   |
+10 | instance Stringer MyT where
+   |          ^^^^^^^^^^^^
+Linking type_clases ...
+
+$ ./type_clases                                                                                                                                                                                 (add_haskell_to_examples)
+type_clases: type_clases.hs:10:10-21: No instance nor default method for class operation string
+```
+
+If we change the stringify function call the `string2` function instead of
+`string`, we get the following error:
+
+```
+[1 of 1] Compiling Main             ( type_clases.hs, type_clases.o )
+
+type_clases.hs:5:24: error:
+    • Variable not in scope: string2 :: t -> String
+    • Perhaps you meant ‘string’ (line 2)
+  |
+5 | stringify (only:[]) = string2 only
+  |                       ^^^^^^^
+
+type_clases.hs:6:27: error:
+    • Variable not in scope: string2 :: t -> [Char]
+    • Perhaps you meant ‘string’ (line 2)
+  |
+6 | stringify (first:rest) = (string2 first) ++ (stringify rest)
+  |                           ^^^^^^^
+```
+
+Unlike in C++, the function `stringify` does not compile, because we are using
+a method that is not defined for the type class `Stringer`.
+
+For this reason we can say that Haskell implements *strong concepts*.
+
+Similar to Go and Rust, if we define the `stringify` function using an unrestricted
+type parameter `t`:
+
+```haskell
+stringify :: [t] -> String
+stringify (only:[]) = string only
+stringify (first:rest) = (string first) ++ (stringify rest)
+```
+
+we get the following compiler error while compiling this function:
+
+```
+[1 of 1] Compiling Main             ( type_clases.hs, type_clases.o )
+
+type_clases.hs:5:23: error:
+    • No instance for (Stringer t) arising from a use of ‘string’
+      Possible fix:
+        add (Stringer t) to the context of
+          the type signature for:
+            stringify :: forall t. [t] -> String
+    • In the expression: string only
+      In an equation for ‘stringify’: stringify (only : []) = string only
+  |
+5 | stringify (only:[]) = string only
+  |                       ^^^^^^^^^^^
+```
+
+The Haskell compiler even noticed that the use of `string` implies the need for
+the type class `Stringer` and suggests adding it to the type signature.
+
+Unlike in C++, where this compiles and we get an error at instantiation time.
