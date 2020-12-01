@@ -9,7 +9,7 @@
 %% Arguments: label, vote
 \newcommand{\newusecase}[2]{
 \refstepcounter{usecase}\label{uc:#1}
-\subsection{Use case \ref{uc:#1}: #1 (#2)}}
+\subsubsection{Use case \ref{uc:#1}: #1 (#2)}}
 
 \newcommand{\newrequirement}[2]{
 \refstepcounter{requirement}\label{req:#1}
@@ -28,23 +28,104 @@ References: 18-110r1
 \subsection{Organization of document}
 
 \section{Use cases}
+
+\subsection{Generic Algorithms}
+
+A common justification for providing generics/templates for Fortran is
+that they would enable the development of a library of algorithms that
+would simplify the development of code.
+Typiically an algorithm can be implemented as a single procedure,
+such as a subroutine. As generics they could be implemented as one
+procedure per generic module, multiple procedures per generic
+module, or as a generic subroutine.
+Their usage would be simplified if the generics allowed template
+parameters to be applied to a procedure invocation as opposed to at
+the type definition or module declaration level.  (ref. M. Haveraaen)
+It appears that, for the algorithmic use cases below, the template
+parameters can be inferred from the arguments to the procedure,
+further simplifying their usage.
+
 \newusecase{Swap}{0-0-0}
 
-\subsubsection{Variants}
-\begin{enumerate}
-\item Swap pointers
-\item Swap allocatables (via {\rm MOVE\_ALLOC})
-\end{enumerate}
+A common task in code is to swap the values or targets of two
+variables. The swap can involve different forms of variables:
+\begin{itemize}
+\item Swap non-polymorphic (TYPE) scalars,
+\item Swap polymorphic (CLASS) scalars,
+\item Swap scalars with LEN parameters,
+\item Swap pointers,
+\item Swap allocatables (via {\rm MOVE\_ALLOC}), and
+\item Swap arrays of the same shape.
+\end{itemize}
+Ideally the generics facility could provide means to allow a single template to work for all these variants.   The variants may require an additional parameter to indicate the arguments's attributes.
 
-Ideally the generics facility could provide means to allow a single template to work for the primary case as well as these variants.   The variants may require an additional parameter to indicate the arguments's attributes.
+The generic swap procedure has the following requirements:
+\begin{itemize}
+\item the ability to have a general type as a generic parameter;
 
+\item the ability to associate an assignment operation with a type
+  parameter, either implicitly as a property of all types, implicitly
+  as a property of the type definition, or as an explicit parameter to
+  the generic with a defined interface;
 
-\newusecase{Extending intrinsic algorithms}
-A somewhat common pattern is to encounter to reproduce the algorithm of an intrinsic procedure in the context of a custom derived type.    {\rm FINDLOC} is perhaps the most frequently cited example.    Here, the user wishes to find the first entry in an array that equals a given value.    The algorithm itself is the same for any type that supports tests for equality $==$.
+\item the ability to specialize depending on whether 
+  \begin{itemize}
+    \item an instantiation type parameter is polymorphic or not;
+    \item an instantiation type has a LEN parameter or not;
+    \item the arguments are pointers;;
+    \item the arguments are allocatables; or
+    \item the  arguments are arrays..
+  \end{itemize}
+
+\end{itemize}
+While not strictly required, a generic swaping algorithm would benefit
+from:
+\begin{itemize}
+\item the ability to define and instantiate a single generic procedure;
+
+\item the ability to use type inference in instantiating a single generic
+  procedure; and
+
+\item instantiation in the same specification part that defines the data
+  type.
+\end{itemize}
+
+\newusecase{Extending intrinsic algorithms}{0-0-0}
+A somewhat common pattern is to desire to reproduce the algorithm of an intrinsic procedure in the context of a custom derived type.    {\rm FINDLOC} is perhaps the most frequently cited example.    Here, the user wishes to find the first entry in an array that equals a given value.    The algorithm itself is the same for any type that supports tests for equality $==$.
+
+The generic {\rm FINDLOC} procedure has the following requirements:
+\begin{itemize}
+\item the ability to have a general type as a generic parameter;
+
+\item the ability to associate an equalit operation with a type
+  parameter, either implicitly
+  as a property of the type definition, or as an explicit parameter to
+  the generic with a defined interface;
+
+\item the  ability to specialize for different ranks of arrays.
+
+\end{itemize}
+While not strictly required, a generic {\rm FINDLOC} algorithm would benefit
+from:
+\begin{itemize}
+\item the ability to define and instantiate a single generic procedure;
+
+\item the ability to use type inference in instantiating a single generic
+  procedure; and
+
+\item instantiation in the same specification part that defines the data
+  type.
+\end{itemize}
 
 \newusecase{Sorting}{0-0-0}
 
-While the need to sort a list of items is somewhat rarer in typical Fortran applications than in wider software communities, it nonetheless arises often enough to be a problem.    A given sorting algorithm can generally be applied to any type that provides a compare (<) operation.   With current Fortran capabilities, the algorithm must be re-implemented for each type - with some possible simplification through the use of include files.
+While the need to sort a list of items is somewhat rarer in typical
+Fortran applications than in wider software communities, it
+nonetheless arises often enough to be a problem.    A given sorting
+algorithm can generally be applied to any type that provides a
+comparison (``$<$'' or ``$>$'') operation.   With current Fortran
+capabilities, the algorithm must be re-implemented for each type -
+with some possible simplification through the use of include files.
 
 This use case also demonstrates the value of allowing template parameters to be applied to a procedure invocation as opposed to at the type definition or module declaration level.  (ref. M. Haveraaen) 
 
