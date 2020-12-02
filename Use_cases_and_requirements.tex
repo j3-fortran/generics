@@ -97,7 +97,7 @@ The generic {\rm FINDLOC} procedure has the following requirements:
 \begin{itemize}
 \item the ability to have a general type as a generic parameter;
 
-\item the ability to associate an equalit operation with a type
+\item the ability to associate an equality operation with a type
   parameter, either implicitly
   as a property of the type definition, or as an explicit parameter to
   the generic with a defined interface;
@@ -121,21 +121,43 @@ from:
 
 While the need to sort a list of items is somewhat rarer in typical
 Fortran applications than in wider software communities, it
-nonetheless arises often enough to be a problem.    A given sorting
+nonetheless arises often enough to be a problem.   It is typically
+applied to a rank one array.  A given sorting
 algorithm can generally be applied to any type that provides a
-comparison (``$<$'' or ``$>$'') operation.   With current Fortran
+comparison (`$<$' or `$>$') operation.   With current Fortran
 capabilities, the algorithm must be re-implemented for each type -
 with some possible simplification through the use of include files.
 
-This use case also demonstrates the value of allowing template parameters to be applied to a procedure invocation as opposed to at the type definition or module declaration level.  (ref. M. Haveraaen) 
+
+The generic sorting procedure has the following requirements:
+\begin{itemize}
+\item the ability to have a general type as a generic parameter;
+
+\item the ability to associate an assignment operation with a type
+  parameter, either implicitly as a property of all  types, or
+  as a property of the type definition, or as an explicit parameter to
+  the generic with a defined interface; and
+
+\item the ability to associate a comparison operation with a type
+  parameter, either implicitly
+  as a property of the type definition, or as an explicit parameter to
+  the generic with a defined interface.
+
+\end{itemize}
+While not strictly required, a generic sorting algorithm would benefit
+from:
+\begin{itemize}
+\item the ability to define and instantiate a single generic procedure;
+
+\item the ability to use type inference in instantiating a single generic
+  procedure; and
+
+\item instantiation in the same specification part that defines the data
+  type.
+\end{itemize}
 
 
-
-
-
-\newusecase{Containers}{0-0-0}
-
-\subsubsection{Containers overview}
+\subsection{Generic Containers}
 
  As scientific models become more complex, an increasing fraction of
    the lines of code are infrastructure as-opposed to direct
@@ -158,17 +180,179 @@ Fortran provides just one category of software container - Array.   Array contai
 \end{lstlisting}
 
 
- Other commonly used container categories include Set, Vector (or   List), Map (or Associative Array, Dictionary), Stack, Queue, etc.   Unlike Array containers, these others generally are more dynamic -   growing as necessary when new elements are added to the container.   Here I briefly describe some of the most commonly categories of   containers.
+ Other commonly used container categories include List, Vector, Map (or Associative Array, Dictionary), Set, Stack, Queue, etc.   Unlike Array containers, these others generally are more dynamic -   growing as necessary when new elements are added to the container.   Here I briefly describe some of the most commonly categories of   containers.
 
+\newusecase{List}{0-0-0} 
+Lists are sequentially accessed containers. They are
+particularly useful when the data needs to be modified, as they are
+O(1) complexity in prepending, appending, inserting, and deleting an
+element. They come in several forms of which the most prominent are
+singly linked lists (providing inexpensive sequential access in one
+direction), doubly linked lists (providing slightly more expensive
+sequential access in two directions); and flattened lists (basically
+lists of rank one arrays).
 
-\paragraph{Vector} (Also called List) Vectors are somewhat similar to 1-D Arrays in that the provide efficient random accesss.  But whereas the size of an Array is fixed at the time of its construction, a Vector can grow as elements are added.  (For those unfamiliar with containers, there is no magic here.  Internally arrays are reallocated with copies but in a manner that adding elements is of O(1)      complexity on average.)
+All the types of lists have similar requirements:
+\begin{itemize}
+\item a generic construct with scope equivalent to that of a module
+  encompassing types and associated procedure definitions;
 
-\paragraph{Set} Set containers provide efficient (O(log n)) mechanisms for searching and inserting distinct elements that can be ordered according to some criterion.  Typical implementations use a balanced binary tree data structure to store the elements.
+\item the ability to have a type as a parameter;
 
-\paragraph{Map} (Also called associative array) Maps are similar to Sets, except that the interfaces emphasize that the contained elements are key-value pairs.  Typically the keys are either integers or strings, but can generally be any      data type that can be ordered.  A simple example would be a Map whose keys are the names of students in a classroom, and the values are their grades.  A more relevant example would be a Map that provides efficient access to a sparse array where the keys are the indices for the non-zero array elements.
+\item the ability to associate an assignment operation with a type, either
+  implicitly as a property of all types, implicitly as a property of
+  the type definition, or as an explicit parameter to the generic
+  with a defined interface;
 
-\paragraph{Iterators}  Iterators provide a simple/consistent mechanism to efficiently loop through all of the elements in a container.  For   containers such as Vector and Array, these are relatively simple, but for containers such as Set and Map that are implemented with binary trees, the iterator abstraction is extremely beneficial to the user of the container.  Iterators simultaneously hide complexity and encourage safe coding styles.  In pseudo-code iterator
-   usage is typically something like:
+\item the ability to iterate over the active elements of the structure;
+
+\item instantiation of a generic module with a derived type with the same
+  parameters should define the same type, or the same instantiation
+  should be capable of defining different entities in different
+  contexts; and
+
+\item instantiation of a module with a derived type with different
+  parameters should define different types; 
+\end{itemize}
+While not required, a generic list would benefit from the
+following capabilities:
+\begin{itemize}
+
+\item the ability to specialize depending on whether an instantiation
+  type parameter has a LEN parameter or whether it is to be treated as
+  polymorphic; 
+
+\item the ability to modify elements of the structure while iterating over 
+  it; 
+
+\item instantiation in the same specification part that defines the types
+  of the data;
+
+\item a language defined iteration construct that can go in two
+  directions;
+
+\item a language defined iteration construct that allows modification of
+  the structure; and
+
+\item a way of defining a type so that objects of that type can be indexed
+  to access elements of that type.
+
+\end{itemize}
+
+\newusecase{Vector}{0-0-0}
+Vectors are somewhat similar to 1-D Arrays in that
+they provide efficient random access.  But whereas the size of an
+Array is fixed at the time of its construction, a Vector can grow as
+elements are appended.  (For those unfamiliar with containers, there
+is no magic here.  Internally arrays are reallocated with copies, but
+by, say, doubling the size when reallocating, appending elements is of
+O(1)      complexity on average.) The requirements for this generic
+container are very similar to those for Lists.
+
+\newusecase{Set}{0-0-0}
+Set containers provide efficient mechanisms for
+searching and inserting distinct elements.  One implementation
+(ordered sets) uses a balanced binary search tree data structure to
+store the elements (keys) providing O(log(n)) cost for searching and
+inserting distinct elements. This structure requires the availability
+of an ordering operation on the key type. Another implementation
+(unordered sets) uses a hash table
+to store the elements providing O(1) cost for searching and inserting
+distinct elements.  This structure requires the availability of hash
+and equality operations on the key type.
+
+A generic Set has the following requirements:
+\begin{itemize}
+\item a generic construct with scope equivalent to that of a module
+  encompassing types and associated procedure definitions;
+
+\item the ability to have a type as a parameter;
+
+\item the ability to associate an assignment operation with a type
+  parameter, either implicitly as a property of all types, implicitly
+  as a property of the type definition, or as an explicit parameter to
+  the generic with a defined interface;
+
+\item the ability to iterate over the active elements of the structure;
+
+\item instantiation of a generic module with a derived type with different
+  parameters should define different types; and
+
+\item instantiation of a generic module with a derived type with the same
+  parameters should define the same type, or the same instantiation
+  should be capable of defining different entities in different
+  contexts; and
+
+\item the ability to specialize the code based on the rank of the data of 
+  interest, the presence or absence of the pointer attribute, and the
+  presence or absence of a LEN parameter; 
+
+\end{itemize}
+In addition, the ordered Set has the following requirement:
+\begin{itemize}
+
+\item the ability to associate an ordering operation with a type
+  parameter, either implicitly as part of the type definition or as an
+  explicit parameter to the generic with a defined interface;
+\end{itemize}
+while the unordered Set has the following requirements:
+\begin{itemize}
+\item the ability to associate an equality operation with a type
+  parameter, either implicitly as part of the type definition or as an
+  explicit parameter to the generic with a defined interface; and
+
+\item the ability to associate an arbitrary procedure with a type
+  parameter, either implicitly as part of the type definition or as an
+  explicit parameter to the generic with a defined interface.
+\end{itemize}
+While not required a generic Set would benefit from the following
+capabilities:
+\begin{itemize}
+
+\item instantiation in the same specification part that defines the types
+  of the key and data;
+
+\item a language defined iteration construct; and
+
+\item the ability to specialize the code based on the rank of the entities
+  with a given instantiation type parameter;
+\end{itemize}
+While not required a generic Set might benefit from the following
+capabilities:
+\begin{itemize}
+\item the ability to define an interface that is independent as to whether 
+  the procedure arguments are polymorphic and whether the procedure is
+  type bound; 
+
+\item the ability to specialize the code based on the presence or absence
+  of the pointer attribute associated with a given instantiation type
+  parameter;
+
+\item the ability to specialize the code based on the presence or absence
+  of a LEN or KIND parameter associated with a given instantiation
+  type parameter; and
+
+\item the ability to instantiate with scalar parameters of type logical,
+  integer, or real.
+\end{itemize}
+
+\newusecase{Map}{0-0-0} 
+Maps (also called associative arrays or dictionaries) are similar to
+Sets, except that the contained elements
+are key-value pairs.  Typically the keys are either integers or
+strings, but can be any data type that can be ordered (an ordered Map)
+or hashed (an unordered Map).  A simple example would be a Map whose
+keys are the names of students in a classroom, and the values are
+their grades.  A more relevant example would be a Map that provides
+efficient access to a sparse array where the keys are the indices for
+the non-zero array elements.
+
+The requirements for generic Maps are similar to those for generic
+sets except that with the addition of the value attribute they
+require the ability to have multiple types as parameters.
+
+\newusecase{Iterators}{0-0-0}
+Iterators provide a simple/consistent mechanism to efficiently loop through all of the elements in a container.  For   containers such as Vector and Array, these are relatively simple, but for containers such as Set and Map that are implemented with binary trees, the iterator abstraction is extremely beneficial to the user of the container.  Iterators simultaneously hide complexity and encourage safe coding styles.  In pseudo-code iterator usage is typically something like:
 
 \begin{lstlisting}
    < declare container > C
