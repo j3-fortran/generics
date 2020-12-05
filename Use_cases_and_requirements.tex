@@ -34,16 +34,84 @@ References: 18-110r1
 A common justification for providing generics/templates for Fortran is
 that they would enable the development of a library of algorithms that
 would simplify the development of code.
-Typiically an algorithm can be implemented as a single procedure,
-such as a subroutine. As generics they could be implemented as one
+Typically an algorithm can be implemented as a single procedure.
+As generics, they could be implemented as one
 procedure per generic module, multiple procedures per generic
-module, or as a generic subroutine.
+module, or as individual generic procedures.
 Their usage would be simplified if the generics allowed template
 parameters to be applied to a procedure invocation as opposed to at
 the type definition or module declaration level.  (ref. M. Haveraaen)
 It appears that, for the algorithmic use cases below, the template
 parameters can be inferred from the arguments to the procedure,
-further simplifying their usage.
+further simplifying their usage. As a result, while  not a requirement
+for a generic algorithm, almost all generic algorithms would benefit
+from   the  capabilities:
+\begin{itemize}
+\item the ability to define and instantiate a single generic procedure;
+
+\item the ability to use type inference in instantiating a single
+  generic procedure; and
+
+\item instantiation in the same specification part that defines the
+  data type.
+\end{itemize}
+
+The number of algorithms of potential interest is large.
+For example, the C++ 20 Library defines about 200
+algorithms in fourteen categories:
+\begin{itemize}
+\item Non-modifying sequence operations,
+\item Modifying sequence operations,
+\item Partitioning operations,
+\item Sorting operations,
+\item Binary search operations (on sorted ranges),
+\item Other operations on sorted ranges,
+\item Set operations (on sorted ranges),
+\item Heap operations,
+\item Minimum/maximum operations,
+\item Comparison operations,
+\item Permutation operations,
+\item Numeric operations,
+\item Operations on uninitialized memory, and
+\item the C library.
+\end{itemize}
+Not all of these are of interest to a Fortran ``template'' library, i.e.,
+``Heap operations'' and ``Operations on uninitialized  memory'' appear
+to be of little interest to the Fortran community, and the ``C library''
+consists of two non-templated algorithms. Further, many of the
+algorithms are near duplicates of one another, differing only in
+which form of iterator is used: the old style iterator or the newer
+ranges. Still it appears that
+well over 50 algorithms are of likely interest. To illustrate the
+capabilities of generic algorithms we have tried to select one
+representative algorithm from each of the eleven categories of
+interest. 
+
+\newusecase{Extending intrinsic algorithms}{0-0-0}
+A somewhat common pattern is to desire to reproduce the algorithm of
+an intrinsic procedure in the context of a custom derived type.
+{\rm FINDLOC} is perhaps the most frequently cited example.  Here, the
+user wishes to find the first entry in an array that equals a given
+value.  The algorithm itself is the same for any type that 
+supports tests for equality $==$, and can be generalized to any
+container that supports iterators.
+
+The generic {\rm FINDLOC} procedure has the following requirements:
+\begin{itemize}
+\item the ability to have a general type as a generic parameter
+  either as an explicit parameter or as implicit in the iterators;
+
+\item the ability to associate an equality operation with a generic
+  type parameter, either implicitly
+  as a property of the type definition, or as an explicit parameter to
+  the generic with a defined interface;
+
+\item the ability to specialize for different ranks of arrays; and
+
+\item the ability to take one or more iterators as instantiation
+  parameters.
+
+\end{itemize}
 
 \newusecase{Swap}{0-0-0}
 
@@ -54,10 +122,11 @@ variables. The swap can involve different forms of variables:
 \item Swap polymorphic (CLASS) scalars,
 \item Swap scalars with LEN parameters,
 \item Swap pointers,
-\item Swap allocatables (via {\rm MOVE\_ALLOC}), and
-\item Swap arrays of the same shape.
+\item Swap allocatables (via {\rm MOVE\_ALLOC}),
+\item Swap arrays of the same shape, and
+\item Swap ranges of elements of two containers.
 \end{itemize}
-Ideally the generics facility could provide means to allow a single template to work for all these variants.   The variants may require an additional parameter to indicate the arguments's attributes.
+Ideally the generics facility could provide means to allow a single template to work for all these variants.   The variants may require additional parameters to indicate the arguments's attributes.
 
 The generic swap procedure has the following requirements:
 \begin{itemize}
@@ -66,55 +135,45 @@ The generic swap procedure has the following requirements:
 \item the ability to associate an assignment operation with a type
   parameter, either implicitly as a property of all types, implicitly
   as a property of the type definition, or as an explicit parameter to
-  the generic with a defined interface;
+  the generic with a defined interface; and
 
-\item the ability to specialize depending on whether 
+\item the ability to specialize depending on whether
   \begin{itemize}
     \item an instantiation type parameter is polymorphic or not;
     \item an instantiation type has a LEN parameter or not;
-    \item the arguments are pointers;;
+    \item the arguments are pointers;
     \item the arguments are allocatables; or
-    \item the  arguments are arrays..
+    \item the  arguments are arrays.
   \end{itemize}
 
 \end{itemize}
-While not strictly required, a generic swaping algorithm would benefit
-from:
+
+\newusecase{Partition}{0-0-0}
+It is sometimes useful to divide a collection of items into two sets
+selected according to the results of a logical predicate.  Such a
+division is termed a partition. The partition procedure need to be
+able to iterate through the collection, apply the predicate, sort the
+results into two parts, and return a marker for the start of the
+second   portion of the partition.
+
+A generic partition procedure has the following requirements:
 \begin{itemize}
-\item the ability to define and instantiate a single generic procedure;
+\item the ability to have a general type as a generic parameter
+  either as an explicit parameter or as implicit in the  iterators;
 
-\item the ability to use type inference in instantiating a single generic
-  procedure; and
-
-\item instantiation in the same specification part that defines the data
-  type.
-\end{itemize}
-
-\newusecase{Extending intrinsic algorithms}{0-0-0}
-A somewhat common pattern is to desire to reproduce the algorithm of an intrinsic procedure in the context of a custom derived type.    {\rm FINDLOC} is perhaps the most frequently cited example.    Here, the user wishes to find the first entry in an array that equals a given value.    The algorithm itself is the same for any type that supports tests for equality $==$.
-
-The generic {\rm FINDLOC} procedure has the following requirements:
-\begin{itemize}
-\item the ability to have a general type as a generic parameter;
-
-\item the ability to associate an equality operation with a type
-  parameter, either implicitly
+\item the ability to associate an assignment operation with a type
+  parameter, either implicitly as a property of all types, or
   as a property of the type definition, or as an explicit parameter to
   the generic with a defined interface;
 
-\item the  ability to specialize for different ranks of arrays.
+\item the ability to associate a unary logical predicate with a
+  generic type parameter, either implicitly
+  as a property of the type definition, or as an explicit parameter to
+  the generic with a defined interface; and
 
-\end{itemize}
-While not strictly required, a generic {\rm FINDLOC} algorithm would benefit
-from:
-\begin{itemize}
-\item the ability to define and instantiate a single generic procedure;
+\item the ability to take one or more iterators as instantiation
+  parameters.
 
-\item the ability to use type inference in instantiating a single generic
-  procedure; and
-
-\item instantiation in the same specification part that defines the data
-  type.
 \end{itemize}
 
 \newusecase{Sorting}{0-0-0}
@@ -122,39 +181,233 @@ from:
 While the need to sort a list of items is somewhat rarer in typical
 Fortran applications than in wider software communities, it
 nonetheless arises often enough to be a problem.   It is typically
-applied to a rank one array.  A given sorting
+applied to a rank one array, but can be generalized to any container
+with appropriate iterators, e.g. Lists and Vectors.  A given sorting
 algorithm can generally be applied to any type that provides a
 comparison (`$<$' or `$>$') operation.   With current Fortran
 capabilities, the algorithm must be re-implemented for each type -
 with some possible simplification through the use of include files.
 
-
-The generic sorting procedure has the following requirements:
+A generic sorting procedure has the following requirements:
 \begin{itemize}
-\item the ability to have a general type as a generic parameter;
+\item the ability to have a general type as a generic parameter
+  either as an explicit parameter or as implicit in the iterators;
 
 \item the ability to associate an assignment operation with a type
-  parameter, either implicitly as a property of all  types, or
+  parameter, either implicitly as a property of all types, or
+  as a property of the type definition, or as an explicit parameter to
+  the generic with a defined interface;
+
+\item the ability to associate a comparison operation with a generic
+  type parameter, either implicitly
   as a property of the type definition, or as an explicit parameter to
   the generic with a defined interface; and
 
-\item the ability to associate a comparison operation with a type
-  parameter, either implicitly
-  as a property of the type definition, or as an explicit parameter to
-  the generic with a defined interface.
+\item the ability to take one or more iterators as instantiation
+  parameters.
 
 \end{itemize}
-While not strictly required, a generic sorting algorithm would benefit
-from:
+
+\newusecase{Searching}{0-0-0}
+
+Searching is the  complement of sorting. One typically sorts an array
+so that it can be searched for specific elements. A binary search
+algorithm allows the searching of a sorted array with O(ln(n)) cost.
+For the search to be efficient, it must use the same comparison
+operation used in the sorting,  With current Fortran
+capabilities, the algorithm must be re-implemented for each type -
+with some possible simplification through the use of include
+files. The requirements for the generic search are essentially the
+same as for the corresponding sort algorithm.
+
+\newusecase{Merging}{0-0-0}
+It is sometimes useful to merge two sorted collections into one
+sorted collection. The {\rm MERGE} procedure must take two
+collections sorted using the same comparison operation, iterate
+through both of them in the same direction comparing current elements
+using the same comparison, and enter them into a third collection
+according to the results of the comparison.
+
+A generic {\rm  MERGE} procedure has the following
+requirements:
 \begin{itemize}
-\item the ability to define and instantiate a single generic procedure;
+\item the ability to have a general type as a generic parameter
+  either as an explicit parameter or as implicit in the iterators;
 
-\item the ability to use type inference in instantiating a single generic
-  procedure; and
+\item the ability to associate an assignment operation with a type
+  parameter, either implicitly as a property of all types, or
+  as a property of the type definition, or as an explicit parameter to
+  the generic with a defined interface;
 
-\item instantiation in the same specification part that defines the data
-  type.
+\item the ability to associate a comparison operation with a generic
+  type parameter, either implicitly
+  as a property of the type definition, or as an explicit parameter to
+  the generic with a defined interface; and
+
+\item the ability to take two iterators as instantiation
+  parameters.
+
 \end{itemize}
+
+\newusecase{Set  intersection}{0-0-0}
+A sorted container has properties similar to a set, and can easily be
+converted to a set by removing adjacent duplicate values.  As a result
+it is useful to define set operations, such as {\rm SET\_INTERSECTION},
+for pairs of sorted containers.  In {\rm SET\_INTERSECTION}, the two
+collections are scanned in sequence and for each value with m
+copies in the first set and n copies in the second $MIN(M,N)$ copies
+are copied to the container holding the intersection.
+
+A generic {\rm SET\_INTERSECTION} procedure has the following
+requirements:
+\begin{itemize}
+\item the ability to have a general type as a generic parameter
+  either as an explicit parameter or as implicit in the iterators;
+
+\item the ability to associate an assignment operation with a type
+  parameter, either implicitly as a property of all types, or
+  as a property of the type definition, or as an explicit parameter to
+  the generic with a defined interface;
+
+\item the ability to associate a comparison operation with a generic
+  type parameter, either implicitly
+  as a property of the type definition, or as an explicit parameter to
+  the generic with a defined interface; and
+
+\item the ability to take two iterators as instantiation
+  parameters.
+
+\end{itemize}
+
+\newusecase{Max element}{0-0-0}
+It  is often useful to know the maximum or minimum elements of a
+collection. The function {\rm MAX\_ELEMENT} would return the maximum
+element of a collection according to a comparison operation assumed to
+be a less than operation, ``$<$'', perhaps supplemented by an equality
+operation ``$==$'' to deal with {\rm NaN}s.  In {\rm MAX\_ELEMENT},
+the elements of a collection are scanned in sequence, using an
+iterator, replacing the current maximum element with the new one if
+the new one compares false when the first argument in a comparison
+with the current maximum, and true when  the second.
+
+A generic {\rm MAX\_ELEMENT} procedure has the following
+requirements:
+\begin{itemize}
+\item the ability to have a general type as a generic parameter
+  either as an explicit parameter or as implicit in the iterator;
+
+\item the ability to associate an assignment operation with a type
+  parameter, either implicitly as a property of all types, or
+  as a property of the type definition, or as an explicit parameter to
+  the generic with a defined interface;
+
+\item the ability to associate a comparison operation with a
+  generic type parameter, either implicitly
+  as a property of the type definition, or as an explicit parameter to
+  the generic with a defined interface; and
+
+\item the ability to take an iterator as an instantiation
+  parameter.
+
+\end{itemize}
+
+\newusecase{Lexicographical Comparison}{0-0-0}
+It is sometimes useful to perform a lexicographical comparison of two
+collections using a binary logical predicate. The comparison  should
+return -1 if the first collection is less than the second, 1 if the
+first collection is greater, and 0 if they are equal. The collections
+should be compared element by  element, with the first mismatching
+element determining which is collection is less or greater than the
+other, otherwise the shorter range is less than the other, otherwise
+if the collections are the same length and the elements are
+equivalent, the collections are considered equal.
+
+A generic {\rm LEXICOGRAPHICAL\_COMPARISON} procedure has the
+following requirements:
+\begin{itemize}
+\item the ability to have a general type as a generic parameter
+  either as an explicit parameter or as implicit in the iterators;
+
+\item the ability to associate an assignment operation with a type
+  parameter, either implicitly as a property of all types, or
+  as a property of the type definition, or as an explicit parameter to
+  the generic with a defined interface;
+
+\item the ability to associate a comparison operation with a
+  generic type parameter, either implicitly
+  as a property of the type definition, or as an explicit parameter to
+  the generic with a defined interface; and
+
+\item the ability to take two iterators as instantiation
+  parameters.
+
+\end{itemize}
+
+\newusecase{Permutation}{0-0-0}
+It is sometimes useful to perform a permutation of a collection or
+verify that one collection is considered a permutation of the other
+under a binary logical predicate.  As an example we will consider the
+inquiry function {\rm IS\_PERMUTATION} that returns true if the first
+collection is considered a permutation of the second. To do this it
+first iterates over each collection generating a sorted collection and
+then compares each sorted collection element by element to see if the
+sorted collections are identical.
+
+A generic {\rm IS\_PERMUTATION} procedure has the
+following requirements:
+\begin{itemize}
+\item the ability to have a general type as a generic parameter
+  either as an explicit parameter or as implicit in the iterators;
+
+\item the ability to associate an assignment operation with a type
+  parameter, either implicitly as a property of all types, or
+  as a property of the type definition, or as an explicit parameter to
+  the generic with a defined interface;
+
+\item the ability to associate a comparison operation with a
+  generic type parameter, either implicitly
+  as a property of the type definition, or as an explicit parameter to
+  the generic with a defined interface; and
+
+\item the ability to take two iterators as instantiation
+  parameters.
+
+\end{itemize}
+
+\newusecase{Inner Product}{0-0-0}
+It is sometimes useful to perform numerical operations on one or two
+collections. The operations can take several forms, e.g., inner
+product, accumulate, adjacent difference,  etc. We will use the {\rm
+  INNER\_PRODUCT}  as an example.  The {\rm INNER\_PRODUCT} iterates
+over two collections simultaneously, takes the ``product'' of
+corresponding elements and sums the resulting products.
+
+A generic {\rm INNER\_PRODUCT} procedure has the
+following requirements:
+\begin{itemize}
+\item the ability to have a general type as a generic parameter
+  either as an explicit parameter or as implicit in the iterators;
+
+\item the ability to associate an assignment operation with a type
+  parameter, either implicitly as a property of all types, or
+  as a property of the type definition, or as an explicit parameter to
+  the generic with a defined interface;
+
+\item the ability to associate a ``product'' operation with a
+  generic type parameter, either implicitly
+  as a property of the type definition, or as an explicit parameter to
+  the generic with a defined interface; and
+
+\item the ability to associate a ``summation'' operation with a
+  generic type parameter, either implicitly
+  as a property of the type definition, or as an explicit parameter to
+  the generic with a defined interface; and
+
+\item the ability to take two iterators as instantiation
+  parameters and synchronize them.
+
+\end{itemize}
+
 
 
 \subsection{Generic Containers}
@@ -340,16 +593,58 @@ capabilities:
 Maps (also called associative arrays or dictionaries) are similar to
 Sets, except that the contained elements
 are key-value pairs.  Typically the keys are either integers or
-strings, but can be any data type that can be ordered (an ordered Map)
-or hashed (an unordered Map).  A simple example would be a Map whose
-keys are the names of students in a classroom, and the values are
-their grades.  A more relevant example would be a Map that provides
-efficient access to a sparse array where the keys are the indices for
-the non-zero array elements.
+strings, but can be any data type that can be either ordered (an
+ordered Map) or hashed (an unordered Map).  A simple example would be
+a Map whose keys are the names of students in a classroom, and the
+values are their grades.  A more relevant example would be a Map that
+provides efficient access to a sparse array where the keys are the
+indices for the non-zero array elements.
 
 The requirements for generic Maps are similar to those for generic
-sets except that with the addition of the value attribute they
+sets except that, with the addition of the value attribute, they
 require the ability to have multiple types as parameters.
+
+\newusecase{Bitset}{0-0-0}
+The bitset, also known as the bit string, bit map, bit vector, or bit
+array, optimizes memory storage by densely packing binary 
+information. As it also reduces memory traffic it has the potential of
+improving run time performance. As a result both C++ and Java define
+bitsets in their standard libraries. However much of this
+functionality would be met by the BITS data type proposed for Fortran
+202X.
+
+A generic bitset has one instantiation parameter, the number of bits
+in a specific set. This number is treated as a run time invariant and
+is fixed at compilation time. This number is mapped onto an array of
+integers such that the array is the minimum size necessary to
+represent that number of bits.  For these bits the bitset type defines
+a number of "unary" operations that involve only one bitset, and
+"binary" operations that involve two bitsets. The binary operations
+only "make sense" if the two bitsets have the same number of bits. By
+treating different numbers of bits as representing different types
+this constraint is enforced by the type system. The fact that
+parameterized derived types treat "LEN" parameters as runtime resolved
+makes them impractical to enforce this type safety.
+
+A generic bitset has the following requirements:
+\begin{itemize}
+\item a generic construct with scope equivalent to that of a module
+  encompassing types and associated procedure definitions;
+
+\item the ability to instantiate with a scalar parameter of type integer;
+
+\item instantiation of a generic module with a derived type with different
+  parameter values should define different types; 
+
+\item instantiation of a generic module with a derived type with the same
+  parameters should define the same type, or the same instantiation
+  should be capable of defining different entities in different
+  contexts; and
+
+\item the ability to specialize the code based on the value of an integer
+  parameter.
+\end{itemize}
+
 
 \newusecase{Iterators}{0-0-0}
 Iterators provide a simple/consistent mechanism to efficiently loop through all of the elements in a container.  For   containers such as Vector and Array, these are relatively simple, but for containers such as Set and Map that are implemented with binary trees, the iterator abstraction is extremely beneficial to the user of the container.  Iterators simultaneously hide complexity and encourage safe coding styles.  In pseudo-code iterator usage is typically something like:
@@ -368,7 +663,7 @@ Iterators provide a simple/consistent mechanism to efficiently loop through all 
 \end{lstlisting}    
 
 
-Contrete use cases:
+Concrete use cases:
 ----------
 
 Atmospheric tracers metadata in the NASA GISS climate model.  Each species (CO2, CH4, NO3, ...) in the atmosphere is associated with a variety of metadata.  These include the molar mass, the radioactive decay rate, diffusivity, a category label (dust, aerosol, etc.),   and so on.  There are O(30) such fields in the model currently.   Most are required to have a value for all tracers, but some fields   are only added for tracers where they are relevant.  The types of   these metadata are LOGICAL, INTEGER, REAL, and all but one are   scalars.  The natural representation of this is a Map container
@@ -378,12 +673,12 @@ Collection of tracers in NASA GISS climate model.  Different   configurations of
    tracer is again a Map container where the keys are the tracer names   and the values are a derived type containing all tracer data.  For   historical/conservative reasons only the metadata dictionaries are   actually managed this way.  Other data are in dynamically allocated
    Arrays (Array containers) whose size can be computed after all of   the metadata has been processed.
 
-Regridding registry in NASA GEOS5 model.  This model must represent   data on varying grids that discretize the Earth's atmosphere.  To   transfer data between grids, largish interpolation tables are
+Regriding registry in NASA GEOS5 model.  This model must represent   data on varying grids that discretize the Earth's atmosphere.  To   transfer data between grids, largish interpolation tables are
    generated and stored.  Because of the expense of computing them,   they are cached at the time they are first computed.  The mechanism   used to manage this is again a Map where the keys are a pair of
-   specifiers associated with the two grids that determine the   regridding.
+   specifiers associated with the two grids that determine the   regriding.
 
 
-A new I/O client-servere layer in NASA GEOS5 model.   
+A new I/O client-server layer in NASA GEOS5 model.   
 
 \begin{enumerate}
 \item Each server process manages I/O requests from a varying      number of application processes.  This is managed as a Vector of      clients that grows as needed.
@@ -407,10 +702,10 @@ A new I/O client-servere layer in NASA GEOS5 model.
 
 Infrastructure layers for complex Fortran applications often
 implicitly/unknowingly implement crude versions of containers like
-vectors and associative arrays.  The Vector pattern arises naturally
+Vectors and Maps.  The Vector pattern arises naturally
 when the total number of instances of some collection cannot be
 determined via a simple formula or when elements are added
-sporadically through different drivers.  Intead the size is
+sporadically through different drivers.  Instead the size is
 "discovered" through some iterative process.  A common implementation
 in the simplest case is a two-pass algorithm.  The passes are nearly
 identical except that the first pass just accumulates the number of
@@ -441,7 +736,22 @@ implementation that is applicable to all cases.  E.g., one may wish to
 have Vectors of integers, reals, logicals, and/or various derived
 types, leading to many almost identical implementations and all the
 associated dangers of long-term maintenance.  With Maps, the problem
-just grows combinatorially as one considers variant types of keys.
+just grows combinatorially as one considers variant types of keys and
+values.
+
+An obstacle to the development of generic containers in Fortran is the
+lack of regularity in its type system. The usage of types is
+complicated by variants in the syntax due to the distinctions made
+between polymorphic (CLASS)  and non-polymorphic (TYPE) entities,
+entities with and without a LEN parameter, and with and without a KIND
+parameter. Fortran is also unusual in that it makes array and pointer
+attributes independent of type rather than part of the type, and that
+size, rank, and shape can be declared or assumed. Unless Fortran's
+type system is changed to allow a more general syntax, either the
+developer of the container will have to use a large number of
+specializations, or he will limit the allowed syntax and the user
+will have to use workarounds for those limitations, e.g., wrapper
+types for polymorphic types for types with a LEN parameter.
 
 Another obstacle, albeit less severe, is the inability to overload
 suitable operators for container accessors.  With Fortran arrays,
@@ -479,7 +789,7 @@ one could hope for number of reasons:
    container and must redeclare for themselves.  One easily ends up
    with many all-but-identical modules for say IntegerVector.
 
-3. Iterators are handled via Fortrans DO WHILE construct.  Users then
+3. Iterators are handled via Fortran's DO WHILE construct.  Users then
    put a call to iter%next() at the end of the loop.  This works well
    in simple cases, but is dangerous in the presence of CYCLE because
    the user must remember to invoke iter%next() there as well.  Other
@@ -492,8 +802,8 @@ one could hope for number of reasons:
 4. As mentioned above, the supported accessors are clunky.  The
    inability to use syntax analogous to that of the tuples of indices
    for arrays is unfortunate.  It is a minor annoyance for references
-   on the RHS of an asssignment, but much more so for references that
-   would otherwise be on the LHS.  E.g., if we hava a containe for a
+   on the RHS of an assignment, but much more so for references that
+   would otherwise be on the LHS.  E.g., if we have a container for a
    sparse array and want to modify an element:
 
       CALL sparse%set([i,j], x)  ! supported but inelegant
@@ -502,7 +812,7 @@ one could hope for number of reasons:
 
       sparse(i,j) = x  ! not implementable in Fortran 2018
 
-5. Containers of pointers are problematic.  Fortran lacks a robusts
+5. Containers of pointers are problematic.  Fortran lacks a robust
    mechanism to order pointers via some COMPARE method.  This prevents
    any standard-conforming implementation of a Set of pointers or a
    Map that has keys that are pointers.  Note that usual trick wrapping the
@@ -515,13 +825,13 @@ the following would be of some value even without the others:
 
 1) Generic programming to facilitate user-implementation of
    containers that could be used with arbitrary types.  (Ideally,
-   community supported packages would then emerge ala C++ STL).
+   community supported packages would then emerge a la C++ STL).
 
 2) Widen the class of overloaded "punctuation" to allow some form of
    paren/bracket notation for specifying container elements on both
    LHS and RGS of assignments.
 
-3) Make specific types containers first class language entities, ala
+3) Make specific types containers first class language entities, a la
    existing arrays.
 
 4) Provide an intrinsic COMPARE that arbitrarily (but consistently)
@@ -529,7 +839,7 @@ the following would be of some value even without the others:
    variety of Map and Vector containers that arise.  In many cases,
    the entities in the container are polymorphic.  I.e. the container
    allows entities that are any type that extends some base type.
-   (And in at least one case the contaire entities are of unlimited
+   (And in at least one case the container entities are of unlimited
    polymorphic type.)  Here are some specific containers in the
    package that are easier to explain:
 
@@ -544,13 +854,6 @@ the following would be of some value even without the others:
 T. Clune
 \newusecase{Adaptive mesh refinement}{0-0-0}
 ???
-
-\newusecase{Bitsets}{0-0-0}
-W. Clodius
-\newusecase{red-black trees} {0-0-0}
-W. Clodius
-
-Should this go under containers
 
 \newusecase{...}{}
 
