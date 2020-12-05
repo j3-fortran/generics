@@ -184,7 +184,8 @@ nonetheless arises often enough to be a problem.   It is typically
 applied to a rank one array, but can be generalized to any container
 with appropriate iterators, e.g. Lists and Vectors.  A given sorting
 algorithm can generally be applied to any type that provides a
-comparison (`$<$' or `$>$') operation.   With current Fortran
+comparison (`$<$' or `$>$') operation, or equivalent binary logical
+predicate.   With current Fortran
 capabilities, the algorithm must be re-implemented for each type -
 with some possible simplification through the use of include files.
 
@@ -228,7 +229,7 @@ through both of them in the same direction comparing current elements
 using the same comparison, and enter them into a third collection
 according to the results of the comparison.
 
-A generic {\rm  MERGE} procedure has the following
+A generic {\rm MERGE} procedure has the following
 requirements:
 \begin{itemize}
 \item the ability to have a general type as a generic parameter
@@ -249,13 +250,13 @@ requirements:
 
 \end{itemize}
 
-\newusecase{Set  intersection}{0-0-0}
+\newusecase{Set intersection}{0-0-0}
 A sorted container has properties similar to a set, and can easily be
 converted to a set by removing adjacent duplicate values.  As a result
 it is useful to define set operations, such as {\rm SET\_INTERSECTION},
 for pairs of sorted containers.  In {\rm SET\_INTERSECTION}, the two
 collections are scanned in sequence and for each value with m
-copies in the first set and n copies in the second $MIN(M,N)$ copies
+copies in the first set and n copies in the second {\tt MIN(M,N)} copies
 are copied to the container holding the intersection.
 
 A generic {\rm SET\_INTERSECTION} procedure has the following
@@ -475,20 +476,20 @@ following capabilities:
   type parameter has a LEN parameter or whether it is to be treated as
   polymorphic; 
 
-\item the ability to modify elements of the structure while iterating over 
-  it; 
+\item the ability to modify elements of the structure while iterating
+  over it; 
 
-\item instantiation in the same specification part that defines the types
-  of the data;
+\item instantiation in the same specification part that defines the
+  types of the data;
 
 \item a language defined iteration construct that can go in two
   directions;
 
-\item a language defined iteration construct that allows modification of
-  the structure; and
+\item a language defined iteration construct that allows modification
+  of the structure; and
 
-\item a way of defining a type so that objects of that type can be indexed
-  to access elements of that type.
+\item a way of defining a type so that objects of that type can be
+  indexed to access elements of that type.
 
 \end{itemize}
 
@@ -499,7 +500,7 @@ Array is fixed at the time of its construction, a Vector can grow as
 elements are appended.  (For those unfamiliar with containers, there
 is no magic here.  Internally arrays are reallocated with copies, but
 by, say, doubling the size when reallocating, appending elements is of
-O(1)      complexity on average.) The requirements for this generic
+O(1) complexity on average.) The requirements for this generic
 container are very similar to those for Lists.
 
 \newusecase{Set}{0-0-0}
