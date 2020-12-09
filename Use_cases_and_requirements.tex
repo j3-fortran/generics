@@ -22,9 +22,37 @@
 \begin{document}
 
 \maketitle
-References: 18-110r1
+References: WG5/N2147, J3/18-110r1
 
 \section{Introduction}
+
+In WG5/N2147, ``Fortran 202X Feature Survey Results – Final'', by Steve
+Lionel, the proposed F202X feature that had the most interest and the
+most comments was ``Generic Programming or Templates''. This feature
+had a score of 6.21, compared to the next highest score of 5.04 for
+``Automatic Allocation on READ into ALLOCATABLE character or
+array''. It also had almost four pages of comments, while no other
+feature had as much as a full page of comments.
+In spite of the obvious demand for this feature, its complexity made
+it inappropriate to include in Fortran 202X. Instead it was planned
+that preliminary work on this feature would be fitted into the
+schedule of work on Fortran 202X in the hope that this would allow the
+completion of the work during the development of Fortran 202Y.
+
+This paper explores use cases for generics in order to identify
+requirements for a Fortran generic facility. The identification of
+requirements is expected to allow detailed work on generics. The use
+cases divide into two broad categories: generic algorithms and generic
+containers. Generic algorithms are typically single procedures with a
+focus on one task. Generic containers are the equivalent of a
+derived type with accompanying procedures. In many cases, the generic
+algorithm is intended to iterate over the elements of a container, in
+which case it is a great convenience for the generic container to define
+a syntactically consistent means of iterating over the container and
+extracting individual elements. Such a construct is termed an
+iterator. The discussions of generic algorithms and containers will
+often mention iterators.
+
 \subsection{Organization of document}
 
 \section{Use cases}
