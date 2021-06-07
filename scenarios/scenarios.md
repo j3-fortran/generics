@@ -17,4 +17,4 @@ mark undesire/obsolete/irrelevant items with strikethrough.*
 3. Cayley-Dickson
 4. Block Matrices
 5. Generic Containers
-
+6. Generic Error Return
