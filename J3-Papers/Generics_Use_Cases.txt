@@ -565,7 +565,7 @@ like:
    end loop
 
 It is desirable that the generics facility provides features which
-will allow container implementation to provide companion iterator
+will allow container implementations to provide companion iterator
 implementations that provide clear and simple interfaces for container
 users.
 
