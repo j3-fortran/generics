@@ -22,7 +22,7 @@ feature would be fitted into the schedule of work on Fortran 202X in
 the hope that this would allow the completion of the work during the
 development of Fortran 202Y.
 
-Any syntax suggestions in this paper are notional, and only for the
+Any syntax suggestions in this paper are notional, and only for
 illustrative purposes.
 
 This paper uses the term 'template' to refer to a generic entity that
@@ -755,6 +755,5 @@ CONCEPTS-2: Should template developers be able to verify that their
 
 CONCEPTS-3: Should it be possible to encapsulate template requirements
             for reuse in multiple contexts? (YES,NO,UNDECIDED,ABSTAIN)
-
 
 
