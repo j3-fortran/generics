@@ -726,8 +726,8 @@ The developer tests the template with types that just happen to
 support that undocumented operation, but some end user is not so
 fortunate.
 
-At the same time, it is recognized that there is value to having
-enforcement of verification protections might be inconvenient during
+At the same time, while it is recognized that there is value to having
+enforcement of verification, these protections might be inconvenient during
 prototyping and/or introduction of additional scaffolding code.
 
 2.3.3 Composition
