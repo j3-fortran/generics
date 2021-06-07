@@ -97,8 +97,8 @@ equivalent to:
 
    END SUBROUTINE SWAP
 
-A few variations on SWAP functionality are worth considering. These
-are primary intended as proxies for analogous issues that naturally
+A few variations of SWAP functionality are worth considering. These
+are primarily intended as proxies for analogous issues that naturally
 arise in a wide set of use cases that attempt to be as general as
 possible.  In particular these variants emphasize the important
 wrinkle that Fortran "type" does not include kind, rank, and other
