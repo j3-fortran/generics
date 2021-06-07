@@ -749,7 +749,7 @@ CONCEPTS-1: Should template developers be able to clearly and
             types used in the template?  (YES,NO,UNDECIDED,ABSTAIN)
 
 CONCEPTS-2: Should template developers be able to verify that their
-            templates do not use any detect unspecified implied
+            templates do not use any unspecified implied
             requirements on the types used in the templates?
             (YES,NO,UNDECIDED,ABSTAIN)
 
