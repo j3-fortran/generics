@@ -506,9 +506,9 @@ insertion.
 
 2.2.3 Associative array (aka Map or Dictionary)
 
-Map containers store elements that are formed by a combinations of
-(unique( keys and values, and thus generally involved 2 distinct
-types.  To some degree, these containers can be regarded of as a
+Map containers store elements that are formed by a combination of
+unique keys and values, and thus generally involve 2 distinct
+types.  To some degree, these containers can be regarded as a
 generalization of Arrays where the index can be something other than
 an integer, with strings being a common choice for keys.  Items stored
 as a value in a map can be referenced via the key.  E.g.,
