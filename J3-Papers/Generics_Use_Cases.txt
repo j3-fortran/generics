@@ -32,7 +32,7 @@ to generic programming, (e.g., intelligent macros), the guidance from
 J3 in the formation of the generics subgroup was to pursue something
 that is at least roughly along the lines of the template approach in
 other languages.  We also note that previous work on Parameterized
-Modules easily fits within this intentionally vague definitions of
+Modules easily fits within the intentionally vague definition of
 templates in this context.
 
 NOTE 1: This paper is intended to be a living document.  As we develop
@@ -755,5 +755,4 @@ CONCEPTS-2: Should template developers be able to verify that their
 
 CONCEPTS-3: Should it be possible to encapsulate template requirements
             for reuse in multiple contexts? (YES,NO,UNDECIDED,ABSTAIN)
-
 
