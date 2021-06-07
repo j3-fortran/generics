@@ -114,7 +114,7 @@ RANK construct.  It is desirable to provide simple means that enable
 developers to declare templates that are rank agnostic.  E.g., one
 approach could be to allow integer template parameters that allow the
 rank to be specified explicitly and then more easily combined with
-rank already-planned rank-agnostic features.
+already-planned rank-agnostic features.
 
 
 Variant 2: Parameterized types
