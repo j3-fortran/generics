@@ -40,7 +40,7 @@ the F202Y generics features, these use cases will be used for
 traceability in the subsequent requirements paper.  If additional use
 cases are encountered, or existing ones require modifications, new
 versions of this use case paper will be submitted for vote.  And if
-any use previously approved use cases are subsequently shown to be
+any previously approved use cases are subsequently shown to be
 unworkable or too difficult, the paper will be modified to reflect
 this.  Straw votes will be captured and preserved in subsequent
 revisions to indicate the degree of support for specific elements.
@@ -755,4 +755,3 @@ CONCEPTS-2: Should template developers be able to verify that their
 
 CONCEPTS-3: Should it be possible to encapsulate template requirements
             for reuse in multiple contexts? (YES,NO,UNDECIDED,ABSTAIN)
-
