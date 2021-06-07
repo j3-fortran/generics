@@ -63,13 +63,9 @@ community or the committee.
 
 The identified categories of use cases are:
 
-    * Trivial (2.1)
-    * Generalizations of intrinsic-like procedures (2.2)
-    * Generic Containers (2.3)
-    * Sorting and Searching (2.4)
-    * Mathematical algorithms (2.5)
-    * Usability, verification, and composition (2.6)
-
+    * Geniric Algorithms (2.1)
+    * Generic Containers (2.2)
+    * Usability, verification, and composition (2.3)
 
 
 2.1 [ALG] Generic algorithms
