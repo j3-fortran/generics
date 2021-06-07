@@ -151,6 +151,9 @@ implies the need for some mechanism to disambiguate ambiguous cases.
 
 Straw votes:
 
+Note that all straw votes in this paper are worded such that "YES" is
+the answer that reflects the consensus of generics subgroup.
+
 ALG-1: Should the generics facility enable developers to define a
        scalar SWAP template that will apply to any type that supports
        copy assigment?  (YES, NO, UNDECIDED, ABSTAIN)
