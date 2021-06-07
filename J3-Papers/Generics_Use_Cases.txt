@@ -1,6 +1,9 @@
-Authors:  T. Clune, W. Clodius, ...
-References: WG5/N2147, J3/18-110r1  (need list of previous use case papers)
+To: J3                                                     J3/##-###
+From: T. Clune and generics subgroup
+Subject: 
+Date: 2021-June-07
 
+References: N2147, 18-110r1
 
 
 1. Introduction
