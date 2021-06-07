@@ -22,21 +22,18 @@ feature would be fitted into the schedule of work on Fortran 202X in
 the hope that this would allow the completion of the work during the
 development of Fortran 202Y.
 
-Although use case papers should generally avoid new terminology and
-syntax to avoid prematurely restricting the solution space, we have
-found it useful to provide suggestive terminology in some passages to
-ensure that readers have a clearer conception of what is being
-discussed.
+Any syntax suggestions in this paper are notional, and only for the
+illustrative purposes.
 
 This paper uses the term 'template' to refer to a generic entity that
-can be 'instantiated' into concrete implementations to by providing a
-sets of 'template parameters'.  While there are other possible
-approaches to generic programming, (e.g., intelligent macros), the
-guidance from J3 in the formation of the generics subgroup was to
-pursue something that is at least roughly along the lines of the
-template approach in other languages such as C++.  We also note that
-previous work on Parameterized Modules easily fits within this
-intentionally vague definitions of templates in this context.
+can be 'instantiated' into concrete implementations using sets of
+input 'template parameters'. While there are other possible approaches
+to generic programming, (e.g., intelligent macros), the guidance from
+J3 in the formation of the generics subgroup was to pursue something
+that is at least roughly along the lines of the template approach in
+other languages.  We also note that previous work on Parameterized
+Modules easily fits within this intentionally vague definitions of
+templates in this context.
 
 NOTE 1: This paper is intended to be a living document.  As we develop
 the F202Y generics features, these use cases will be used for
@@ -75,8 +72,10 @@ The identified categories of use cases are:
 
 
 
-2.2 [TRIVIAL] Trivial use cases
--------------------------------
+2.1 [ALG] Generic algorithms
+----------------------------
+
+2.1.1 Simple use case - SWAP
 
 Perhaps the most common use case of all is the desire to provide a
 generic template for swapping the values of two entities.  The
@@ -102,28 +101,12 @@ equivalent to:
 
    END SUBROUTINE SWAP
 
-
-Note: With the recent introduction of BLOCK (F2008) and TYPEOF
-(F202X), one can now technically implement an FPP macro with this
-functionality:
-
-   #define SWAP(a,b)       \
-      BLOCK                \
-         TYPEOF(a) :: tmp  \
-         tmp = a           \
-         a = b             \
-         b = a             \
-      END BLOCK
-
-
-
-2.2.1 Variants:
-
-The variants here are primary intended as proxies for analogous issues
-that naturally arise in a wide set of use cases that attempt to be as
-general as possible.  In particular these variants emphasize the
-important wrinkle that Fortran "type" does not include kind, rank, and
-other attributes.
+A few variations on SWAP functionality are worth considering. These
+are primary intended as proxies for analogous issues that naturally
+arise in a wide set of use cases that attempt to be as general as
+possible.  In particular these variants emphasize the important
+wrinkle that Fortran "type" does not include kind, rank, and other
+attributes.
 
 Variant 1: Arbitrary rank
 
@@ -166,27 +149,27 @@ duplication of logic across such variants.  At the very least this
 implies the need for some mechanism to disambiguate ambiguous cases.
 
 
-2.2.3 Straw votes:
+Straw votes:
 
-TRIVIAL: Should the generics facility enable developers to define a
-         scalar SWAP template that will apply to any type that supports copy
-         assigment?  (YES, NO, UNDECIDED, ABSTAIN)
+ALG-1: Should the generics facility enable developers to define a
+       scalar SWAP template that will apply to any type that supports
+       copy assigment?  (YES, NO, UNDECIDED, ABSTAIN)
 
-TRIVIAL-1: Should the generics facility enable developers to easily
-           define a SWAP template that will work with arbitrary ranks?
-           (YES, NO, UNDECIDED, ABSTAIN)
+ALG-2: Should the generics facility enable developers to easily define
+       a SWAP template that will work with arbitrary ranks?  (YES, NO,
+       UNDECIDED, ABSTAIN)
 
-TRIVIAL-2: Should the generics facility enable developers to write a
-           single SWAP template that can work with arbitrary
-           parameterized types?  (YES, NO, UNDECIDED, ABSTAIN)
+ALG-3: Should the generics facility enable developers to write a
+       single SWAP template that can work with arbitrary parameterized
+       types?  (YES, NO, UNDECIDED, ABSTAIN)
 
-TRIVIAL-3: Should the generics facility enable developers to write a
-           single SWAP template that can work with optional attributes?
-           (YES, NO, UNDECIDED, ABSTAIN)
+ALG-4: Should the generics facility enable developers to write a
+       single SWAP template that can work with optional attributes?
+       (YES, NO, UNDECIDED, ABSTAIN)
 
 
-2.3 [FINDLOC] Generic analogs of instrinsic-like procedures
------------------------------------------------------------
+2.1.2 Generic analogs of instrinsic-like procedures
+---------------------------------------------------
 
 A common category of use cases for generics is the desire to apply the
 algorithms used in Fortran intrinsic procedures to user-defined types.
@@ -214,304 +197,18 @@ themselvs are merely the tip of the proverbial iceberg of relevant use
 cases, but serve as examples that are readily familiar to all.
 
 
-2.3.1 Variants:
+Straw vote:
 
-None.
+ALG-5: Should the generics facility enable developers to define
+       templates that extend Fortran intrinsics (FINDLOC, MINLOC, etc)
+       to work with user defined types which support any operations
+       required for a given algorithm? (YES,NO,UNDECIDED,ABSTAIN)
 
-2.3.2 Straw votes:
 
-FINDLOC-1: Should the generics facility enable developers to define
-           templates that extend Fortran intrinsics (FINDLOC, MINLOC,
-           etc) to work with user defined types which support any
-	   operations required for a given algorithm? (YES,NO,UNDECIDED,ABSTAIN)
+2.1.3 Sorting and Searching
+---------------------------
 
-
-
-2.4 [CONTAINERS] Generic Containers
------------------------------------
-
-As scientific models become more complex, an increasing fraction of
-the lines of code are infrastructure as-opposed to direct numerical
-calculation. Examples of such infrastructure include software layers
-that couple independently developed subsystems, frameworks for
-managing distributed parallelism, advanced I/O (e.g.,
-checkpoint/restart via NetCDF), etc. Generally these infrastructure
-layers evolve as an attempt to avoid code duplication as multiple
-parts of the system require similar functionality.
-
-Software "containers" are abstractions that enable aggregating groups
-of related entities for convenient and efficient access of hte
-contained items.  Many distinct varieties of software containers have
-been developed and used.  By providing canonical and reliable means to
-perform common operations, containers can greatly simplify
-implementation of higher level algorithms.  design and implementation
-of complex algorithms.
-
-A closely related construct is that of a container 'iterator', which
-provides a high-level mechanism to traverse all items within a given
-container.  Such functionality becomes exceptionally important for
-cantainers which use non-trivial internal storage such as binary trees.
-
-Fortran arrays are one specific, and extremeley important variety of
-software container.  Array containers are designed to optimize random
-access to a _fixed_ collection of elements, and generally require all
-contained elements to be of the same dynamic type. Fortran provides
-excellent mechanisms for declaring and constructing arrays of any type
-(intrinsic and user-defined) as well as for accessing, storing, and
-modifying array members (elements) with succinct, tailored syntax:
-tuples of indices within parens:
-
-   a(i,j) = x
-   x = a(i,j)
-   a(i,j) = a(i,j)**2
-
-But arrays are merely one common variety of container, albeit
-exceptionally important for matrices and data represented on logically
-rectangular domains.  Other commonly used container categories include
-List, Vector, Associative Array (aka Map or Dictionary), Set, Stack,
-Queue, etc.  Unlike Array containers, these others ar generally more
-dynamic - growing in size as necessary when new elements are added to the
-container. Here we briefly describe some of the most common varieties
-of containers.
-
-We also note that one approach to supporting the use cases in this
-section would be to more directly add specific container varieties as
-1st order features of Fortran.  However, the wide range of container
-varieties compounded with the even wider range of potential internal
-representations and algorithms suggests instead that language should
-instead provide developers the means to define high-quality container
-implementations.  (We envision that an effort analogous to container
-templates in STL would readily emerge in the Fortran developer
-community.)
-
-
-2.4.1 Vector containers
-
-In many ways, Vector containers are quite similar to one-dimensional
-arrays.  Both provide for efficient random access of contained
-elements via a contiguous block of memory, but Vector containers also
-provide methods to insert and delete items at the 'back' of the
-container.  If the reserved block of memory is insufficient for a
-given insertion, a new larger block is automatically allocated and
-existing data is transferred to the new storage.  (Block size is
-typically doubled in such cases leading to O(n) asymptotic complexity
-for inserting n items.)  Removal of items at other locations is
-supported, but the operation is inefficient.
-
-The need for vectors is often encountered when the number of items
-that match some criterion is not known in advance.  Lacking such
-functionality, Fortran codes often implement these scenarios with 2
-sweeps with nearly identical logic.  The first sweeep merely counts
-the number of matches and then allocates an array.  The second sweep
-then populates the array.  Use of containers makes such algorithms
-much simpler to understand in many respects.
-
-* As with arrays, vector require no operations on the contained type
-  except assignment.
-
-
-2.4.2 Set containers
-
-Set containers are intended to store a sorted set of _unique_ objects
-and provides logarithmic complexity for searching, removal and
-insertion.
-
-* Set containers do not support random access, and therefore
-  require some form of iterator for traversing contained items.
-
-* Set containers require that supported types provide an ordering
-  operation.
-
-
-2.4.3 Associative array (aka Map or Dictionary)
-
-Map containers store elements that are formed by a combinations of
-(unique( keys and values, and thus generally involved 2 distinct
-types.  To some degree, these containers can be regarded of as a
-generalization of Arrays where the index can be something other than
-an integer, with strings being a common choice for keys.  Items stored
-as a value in a map can be referenced via the key.  E.g.,
-
-    temperature = state('temperature') ! "state" maps strings to reals
-    ages('Bob') = 19                   ! "ages" maps strings to integers
-
-
-Maps are particularly relevant for coupling complex physical models.
-The use of standardized names for physical quantities allows for
-unambigous exchange of data between subsystems.  This is generally
-safer and more legible than using 'magic' indices or functions that
-look up indices. (The latter can be thought of as a crude
-implementation of a map.)
-
-
-* Map containers require no operation on the value type except
-  assignment.
-
-* Some Map containers require that the key type provides an ordering
-  operation, while others require that there is a hash function.
-
-
-2.4.4 Miscellaneous containers
-
-The specific containers mentioned above are among the most common, but
-it is worth mentioning some other somewhat common varieties:
-
-* Bitset
-* List (singly linked, doubly linked)
-
-
-2.4.5 Iterators
-
-Iterators provide a simple/consistent mechanism to efficiently loop
-through all of the elements in a container, or in some cases subsets
-of a container. For containers such as Vector and Array, these are
-relatively simple, but for containers such as Set and Map that are
-implemented with binary trees or hash buckets, the iterator
-abstraction is of exceptional value to the user of the
-container. Iterators simultaneously hide complexity and encourage safe
-coding styles. In pseudo-code iterator usage is typically something
-like:
-
-   < declare container > C
-   < declare container iterator > I
-   < declare element > e
-
-   I = begin(C)
-   loop while I is not end(C)
-      e = get(I)
-      < do something with e >
-     next(I)
-   end loop
-
-It is desirable that the generics facility provides features which
-will allow container implementation to provide companion iterator
-implementations that provide clear and simple interfaces for container
-users.
-
-
-2.4.6 Accessors
-
-One important obstacle to implementing convenient containers with
-existing Fortran syntax, is the inability to overload suitabe syntax
-for accessing individual container elements.  This is in stark
-contrast with Fortran arrays which provide exceptionally elegant
-accessors (index list enclosed in parens) to access array elements, and can
-even be used on the left hand side of an assigment:
-
-   x = a(i,j,k) + a(i+1,j,k)
-   b(i,j,k) = y
-
-Ideally, Fortran should provide some means to enable analogous
-functionality for those containers that are indexable (e.g., Vector
-and Map).
-
-
-2.4.7 Variants
-
-Some of the concerns mentioned in the discussion of SWAP in an earlier
-section, are of significant importance for creating containers that
-can be used in common contexts.
-
-Variant 1: Containing types with type parameters
-
-Ideally, a well-written Vector container template should be able to
-work with almost any type, as the algorithms involved make almost no
-assumptions about the types involved.  However, kind and length type
-parameters introduce difficulties in how structure components, local
-variables, dummy variables, and function return values are declared in
-a generic context.  The concern here is much greater than in the case
-of SWAP owing to the much larger cost of developing variant container
-templates to support such cases.
-
-This problem is particularly evident when one considers
-deferred-length strings - a common type for which support is desired.
-Consider the following declarations for an intent in dummy argument,
-a structure and a function return value for a simple type T:
-
-    TYPE(T), INTENT(in) :: arg  ! dummy
-
-    TYPE :: CONTAINER
-       TYPE(T), ALLOCATABLE :: elements(:) ! component
-    END TYPE CONTAINER
-
-    TYPE(T), POINTER :: value ! function return
-
-The analogous declarations in the case of a deferred length string
-dummy argument (due to the length parameter) would be:
-
-    TYPE(T(LEN=*)), INTENT(in) :: arg
-
-    TYPE :: WRAPPER
-       TYPE(T), ALLOCATABLE :: string(:)
-    END TYPE WRAPPER
-    TYPE :: CONTAINER
-       TYPE(WRAPPER), ALLOCATABLE :: elements(:) ! component
-    END TYPE CONTAINER
-
-    TYPE(T(len=:)), POINTER :: value ! function return
-
-Without strong support from the language, users of containers are
-likely to be forced to create wrapper types which will significantly
-impair the usability of containers.  Each container interaction would
-involve at least one additional step to wrap or unwrap the desired
-object.
-
-
-Variant 2: Arbitrary rank contained objects
-
-The concerns here are similar to those of SWAP.   In the case of containers,
-such use cases are probably somewhat less common than the type parameters, but
-by no means rare.
-
-Variant 3: Type attributes
-
-A very common use case for containers is to store pointers rather than
-actual objects.  As above, a potential solution is to use wrapper
-types, but that would significantly impede the usability of the
-container.
-
-Variant 4:  Alternative comparison operation
-
-Containers such as Set and Map that use comparison operations to order
-the contained objects are often used with the same type but different
-comparison criteria.  A common use case of this is for a dictionary
-whose keys are strings to treat those keys as case-insensitive.
-
-
-
-2.4.8 Straw votes
-
-
-CONTAINERS-1: Should Fortran's generics facilities support the ability
-              to develop templates for generic containers of arbitrary
-	      type T? (YES,NO,UNDECIDED,ABSTAIN)
-
-CONTAINERS-2: Should Fortran's generics facilities enable developers to
-              create convenient iterators?  (YES,NO,UNDECIDED,ABSTAIN)
-	      
-CONTAINERS-3: Should Fortran's generics facilities allow developers to
-              define easy-to-use accessors both for obtaining objects
-              and for assiging values to objects? (YES,NO,UNDECIDED,ABSTAIN)
-
-CONTAINERS-4: Should Fortran's generics facilities provide
-              functionality that would allow a well-written container
-              to work easily with types that have kind and/or length
-              type parameters?  (YES,NO,UNDECIDED,ABSTAIN)
-
-CONTAINERS-5: Should Fortran's generics facilities provide
-              functionality that allows a well-written container to
-              handle pointers? (YES,NO,UNDECIDED,ABSTAIN)
-
-CONTAINERS-6: Should Fortran's generics facilities enable users of
-              relevant containers to indepndently specify a comparison
-              operation at instantiation?  (YES,NO,UNDECIDED,ABSTAIN)
-
-
-
-2.5 [SORT] Sorting and Searching
---------------------------------
-
-2.5.1 Sorting
+Sorting
 
 While the need to sort a list of items is somewhat rarer in typical
 Fortran applications than in wider software communities, it
@@ -551,7 +248,7 @@ the comparison operator could be passed as a dummy argument to the
 sorting procedure itself rather than as a template parameter.
 
 
-2.5.2 Searching
+Searching
 
 Searching is the complement of sorting. One typically sorts an array
 so that it can be searched for specific elements. A binary search
@@ -563,7 +260,7 @@ simplification through the use of include files. The requirements for
 the generic search are essentially the same as for the corresponding
 sort algorithm.
 
-2.5.3 Merging
+Merging
 
 It is sometimes useful to merge two sorted collections into one sorted
 collection. The MERGE procedure must take two collections sorted using
@@ -588,24 +285,26 @@ A generic MERGE procedure has the following requirements:
 
 * and the ability to take two iterators as instantiation parameters.
 
-2.5.4 Straw votes:
+Straw votes:
 
-SORT-1: Should Fortran generics facilities enable developers to
-        implement a sorting template that works with any type
-        satisfying the criteria listed above?
-        (YES,NO,UNDECIDED,ABSTAIN)
+ALG-6: Should Fortran generics facilities enable developers to
+       implement a sorting template that works with any type
+       satisfying the criteria listed above?
+       (YES,NO,UNDECIDED,ABSTAIN)
 
-SORT-2: Should Fortran generics facilities enable developers to
-        implement a searching template that works with any type satisfying the
-        criteria listed above?  (YES,NO,UNDECIDED,ABSTAIN)
+ALG-7: Should Fortran generics facilities enable developers to
+       implement a searching template that works with any type satisfying the
+       criteria listed above?  (YES,NO,UNDECIDED,ABSTAIN)
 
-SORT-3: Should Fortran generics facilities enable developers to
-        implement a merge template that works with any type satisfying the
-        criteria listed above?  (YES,NO,UNDECIDED,ABSTAIN)
+ALG-8: Should Fortran generics facilities enable developers to
+       implement a merge template that works with any type satisfying the
+       criteria listed above?  (YES,NO,UNDECIDED,ABSTAIN)
 
 
-2.6 [LINALG] Generic numerical algorithms
------------------------------------------
+
+
+2.1.4 Complex numerical algorithms
+----------------------------------
 
 Many complex numerical algorithms are written for specific intrinsic
 types and kinds, but are actually applicable to a broader set of
@@ -614,7 +313,7 @@ that of containers and intrinsic-like procedures, but templates could
 still provide powerful, efficient tools within those more specialized
 domains.  
 
-2.6.1 Block matrix algebra
+Example: Block matrix algebra
 
 Mathematical descriptions of algorithms are often expressed in terms
 of block matrices (https://en.wikipedia.org/wiki/Block_matrix).  While
@@ -696,25 +395,302 @@ over to optimized libraries (e.g., LAPACK) for types that correspond
 to single and double precision reals and complex
 
 
-2.6.2 Sparse matrices
+Straw votes:
+
+ALG-9: Should the Fortran generics facility provide sufficient
+       generality to define numerical algorithms such as the
+       generalized linear algebra described above?
+       (YES,NO,UNDECIDED,ABSTAIN)
+
+
+ALG-10: Should the Fortran generics facility provide the means to
+        specialize templates for particular types?  E.g., to default
+        to use of optimized libraries for instrinsic reals?
+        (YES,NO,UNDECIDED,ABSTAIN)
+
+
+2.2 [CONTAINERS] Generic Containers
+-----------------------------------
+
+As scientific models become more complex, an increasing fraction of
+the lines of code are infrastructure as-opposed to direct numerical
+calculation. Examples of such infrastructure include software layers
+that couple independently developed subsystems, frameworks for
+managing distributed parallelism, advanced I/O (e.g.,
+checkpoint/restart via NetCDF), etc. Generally these infrastructure
+layers evolve as an attempt to avoid code duplication as multiple
+parts of the system require similar functionality.
+
+Software "containers" are abstractions that enable aggregating groups
+of related entities for convenient and efficient access of hte
+contained items.  Many distinct varieties of software containers have
+been developed and used.  By providing canonical and reliable means to
+perform common operations, containers can greatly simplify
+implementation of higher level algorithms.  design and implementation
+of complex algorithms.
+
+A closely related construct is that of a container 'iterator', which
+provides a high-level mechanism to traverse all items within a given
+container.  Such functionality becomes exceptionally important for
+cantainers which use non-trivial internal storage such as binary trees.
+
+Fortran arrays are one specific, and extremeley important variety of
+software container.  Array containers are designed to optimize random
+access to a _fixed_ collection of elements, and generally require all
+contained elements to be of the same dynamic type. Fortran provides
+excellent mechanisms for declaring and constructing arrays of any type
+(intrinsic and user-defined) as well as for accessing, storing, and
+modifying array members (elements) with succinct, tailored syntax:
+tuples of indices within parens:
+
+   a(i,j) = x
+   x = a(i,j)
+   a(i,j) = a(i,j)**2
+
+But arrays are merely one common variety of container, albeit
+exceptionally important for matrices and data represented on logically
+rectangular domains.  Other commonly used container categories include
+List, Vector, Associative Array (aka Map or Dictionary), Set, Stack,
+Queue, etc.  Unlike Array containers, these others ar generally more
+dynamic - growing in size as necessary when new elements are added to the
+container. Here we briefly describe some of the most common varieties
+of containers.
+
+We also note that one approach to supporting the use cases in this
+section would be to more directly add specific container varieties as
+1st order features of Fortran.  However, the wide range of container
+varieties compounded with the even wider range of potential internal
+representations and algorithms suggests instead that language should
+instead provide developers the means to define high-quality container
+implementations.  (We envision that an effort analogous to container
+templates in STL would readily emerge in the Fortran developer
+community.)
+
+
+2.2.1 Vector containers
+
+In many ways, Vector containers are quite similar to one-dimensional
+arrays.  Both provide for efficient random access of contained
+elements via a contiguous block of memory, but Vector containers also
+provide methods to insert and delete items at the 'back' of the
+container.  If the reserved block of memory is insufficient for a
+given insertion, a new larger block is automatically allocated and
+existing data is transferred to the new storage.  (Block size is
+typically doubled in such cases leading to O(n) asymptotic complexity
+for inserting n items.)  Removal of items at other locations is
+supported, but the operation is inefficient.
+
+The need for vectors is often encountered when the number of items
+that match some criterion is not known in advance.  Lacking such
+functionality, Fortran codes often implement these scenarios with 2
+sweeps with nearly identical logic.  The first sweeep merely counts
+the number of matches and then allocates an array.  The second sweep
+then populates the array.  Use of containers makes such algorithms
+much simpler to understand in many respects.
+
+* As with arrays, vector require no operations on the contained type
+  except assignment.
+
+
+2.2.2 Set containers
+
+Set containers are intended to store a sorted set of _unique_ objects
+and provides logarithmic complexity for searching, removal and
+insertion.
+
+* Set containers do not support random access, and therefore
+  require some form of iterator for traversing contained items.
+
+* Set containers require that supported types provide an ordering
+  operation.
+
+
+2.2.3 Associative array (aka Map or Dictionary)
+
+Map containers store elements that are formed by a combinations of
+(unique( keys and values, and thus generally involved 2 distinct
+types.  To some degree, these containers can be regarded of as a
+generalization of Arrays where the index can be something other than
+an integer, with strings being a common choice for keys.  Items stored
+as a value in a map can be referenced via the key.  E.g.,
+
+    temperature = state('temperature') ! "state" maps strings to reals
+    ages('Bob') = 19                   ! "ages" maps strings to integers
+
+
+Maps are particularly relevant for coupling complex physical models.
+The use of standardized names for physical quantities allows for
+unambigous exchange of data between subsystems.  This is generally
+safer and more legible than using 'magic' indices or functions that
+look up indices. (The latter can be thought of as a crude
+implementation of a map.)
+
+
+* Map containers require no operation on the value type except
+  assignment.
+
+* Some Map containers require that the key type provides an ordering
+  operation, while others require that there is a hash function.
+
+
+2.2.4 Miscellaneous containers
+
+The specific containers mentioned above are among the most common, but
+it is worth mentioning some other somewhat common varieties:
+
+* Bitset
+* List (singly linked, doubly linked)
+
+
+2.2.5 Iterators
+
+Iterators provide a simple/consistent mechanism to efficiently loop
+through all of the elements in a container, or in some cases subsets
+of a container. For containers such as Vector and Array, these are
+relatively simple, but for containers such as Set and Map that are
+implemented with binary trees or hash buckets, the iterator
+abstraction is of exceptional value to the user of the
+container. Iterators simultaneously hide complexity and encourage safe
+coding styles. In pseudo-code iterator usage is typically something
+like:
+
+   < declare container > C
+   < declare container iterator > I
+   < declare element > e
+
+   I = begin(C)
+   loop while I is not end(C)
+      e = get(I)
+      < do something with e >
+     next(I)
+   end loop
+
+It is desirable that the generics facility provides features which
+will allow container implementation to provide companion iterator
+implementations that provide clear and simple interfaces for container
+users.
+
+
+2.2.6 Accessors
+
+One important obstacle to implementing convenient containers with
+existing Fortran syntax, is the inability to overload suitabe syntax
+for accessing individual container elements.  This is in stark
+contrast with Fortran arrays which provide exceptionally elegant
+accessors (index list enclosed in parens) to access array elements, and can
+even be used on the left hand side of an assigment:
+
+   x = a(i,j,k) + a(i+1,j,k)
+   b(i,j,k) = y
+
+Ideally, Fortran should provide some means to enable analogous
+functionality for those containers that are indexable (e.g., Vector
+and Map).
 
 
 
-2.6.? Straw votes
+Variants:
 
-LINALG-1: Should the Fortran generics facility provide sufficient
-          generality to define numerical algorithms such as the
-          generalized linear algebra described above?
-          (YES,NO,UNDECIDED,ABSTAIN)
+Some of the concerns mentioned in the discussion of SWAP in an earlier
+section, are of significant importance for creating containers that
+can be used in common contexts.
+
+Variant 1: Containing types with type parameters
+
+Ideally, a well-written Vector container template should be able to
+work with almost any type, as the algorithms involved make almost no
+assumptions about the types involved.  However, kind and length type
+parameters introduce difficulties in how structure components, local
+variables, dummy variables, and function return values are declared in
+a generic context.  The concern here is much greater than in the case
+of SWAP owing to the much larger cost of developing variant container
+templates to support such cases.
+
+This problem is particularly evident when one considers
+deferred-length strings - a common type for which support is desired.
+Consider the following declarations for an intent in dummy argument,
+a structure and a function return value for a simple type T:
+
+    TYPE(T), INTENT(in) :: arg  ! dummy
+
+    TYPE :: CONTAINER
+       TYPE(T), ALLOCATABLE :: elements(:) ! component
+    END TYPE CONTAINER
+
+    TYPE(T), POINTER :: value ! function return
+
+The analogous declarations in the case of a deferred length string
+dummy argument (due to the length parameter) would be:
+
+    TYPE(T(LEN=*)), INTENT(in) :: arg
+
+    TYPE :: WRAPPER
+       TYPE(T), ALLOCATABLE :: string(:)
+    END TYPE WRAPPER
+    TYPE :: CONTAINER
+       TYPE(WRAPPER), ALLOCATABLE :: elements(:) ! component
+    END TYPE CONTAINER
+
+    TYPE(T(len=:)), POINTER :: value ! function return
+
+Without strong support from the language, users of containers are
+likely to be forced to create wrapper types which will significantly
+impair the usability of containers.  Each container interaction would
+involve at least one additional step to wrap or unwrap the desired
+object.
 
 
-LINALG-2: Should the Fortran generics facility provide the means to
-          specialize templates for particular types?  E.g., to default
-          to use of optimized libraries for instrinsic reals?
-	  (YES,NO,UNDECIDED,ABSTAIN)
+Variant 2: Arbitrary rank contained objects
+
+The concerns here are similar to those of SWAP.   In the case of containers,
+such use cases are probably somewhat less common than the type parameters, but
+by no means rare.
+
+Variant 3: Type attributes
+
+A very common use case for containers is to store pointers rather than
+actual objects.  As above, a potential solution is to use wrapper
+types, but that would significantly impede the usability of the
+container.
+
+Variant 4:  Alternative comparison operation
+
+Containers such as Set and Map that use comparison operations to order
+the contained objects are often used with the same type but different
+comparison criteria.  A common use case of this is for a dictionary
+whose keys are strings to treat those keys as case-insensitive.
 
 
-2.6 [Concepts] Usability, verification, and composition
+
+Straw votes:
+
+CONTAINERS-1: Should Fortran's generics facilities support the ability
+              to develop templates for generic containers of arbitrary
+	      type T? (YES,NO,UNDECIDED,ABSTAIN)
+
+CONTAINERS-2: Should Fortran's generics facilities enable developers to
+              create convenient iterators?  (YES,NO,UNDECIDED,ABSTAIN)
+	      
+CONTAINERS-3: Should Fortran's generics facilities allow developers to
+              define easy-to-use accessors both for obtaining objects
+              and for assiging values to objects? (YES,NO,UNDECIDED,ABSTAIN)
+
+CONTAINERS-4: Should Fortran's generics facilities provide
+              functionality that would allow a well-written container
+              to work easily with types that have kind and/or length
+              type parameters?  (YES,NO,UNDECIDED,ABSTAIN)
+
+CONTAINERS-5: Should Fortran's generics facilities provide
+              functionality that allows a well-written container to
+              handle pointers? (YES,NO,UNDECIDED,ABSTAIN)
+
+CONTAINERS-6: Should Fortran's generics facilities enable users of
+              relevant containers to indepndently specify a comparison
+              operation at instantiation?  (YES,NO,UNDECIDED,ABSTAIN)
+
+
+
+2.3 [CONCEPTS] Usability, verification, and composition
 -------------------------------------------------------
 
 The use cases discussed in this section are of a rather different
@@ -729,7 +705,7 @@ concrete example can be found in the block matrix multiplication use
 case described in the previous section.
 
 
-2.6.1 Usability
+2.3.1 Usability
 
 Developers of such a template desire to have a clear, concise, and
 canonical way to articulate requirements on the template type
@@ -740,7 +716,7 @@ resort to trial-and-error.  Further, if their types do not quite work,
 they are at the mercy of the quality of compiler error messages to
 infer whether any deficiencies in their types might be remedied.
 
-2.6.2 Verification
+2.3.2 Verification
 
 Developers of complex templates may not only desire to communicate
 their template requirements to potential users, but also verify that
@@ -755,7 +731,7 @@ At the same time, it is recognized that there is value to having
 enforcement of verification protections might be inconvenient during
 prototyping and/or introduction of additional scaffolding code.
 
-2.6.3 Composition
+2.3.3 Composition
 
 Consider a template that in turn uses one or more nontrivial templates
 internally.  The requirements on such a template are a superset of the
@@ -769,16 +745,16 @@ here, but trying to express as a use case.)
 
 Straw votes:
 
-Concepts-1: Should template developers be able to clearly and
+CONCEPTS-1: Should template developers be able to clearly and
             concisely communicate the implied requirements on the
             types used in the template?  (YES,NO,UNDECIDED,ABSTAIN)
 
-Concepts-2: Should template developers be able to verify that their
+CONCEPTS-2: Should template developers be able to verify that their
             templates do not use any detect unspecified implied
             requirements on the types used in the templates?
             (YES,NO,UNDECIDED,ABSTAIN)
 
-Concepts-3: Should it be possible to encapsulate template requirements
+CONCEPTS-3: Should it be possible to encapsulate template requirements
             for reuse in multiple contexts? (YES,NO,UNDECIDED,ABSTAIN)
 
 
