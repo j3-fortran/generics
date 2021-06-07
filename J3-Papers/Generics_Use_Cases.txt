@@ -487,7 +487,7 @@ the number of matches and then allocates an array.  The second sweep
 then populates the array.  Use of containers makes such algorithms
 much simpler to understand in many respects.
 
-* As with arrays, vector require no operations on the contained type
+* As with arrays, vectors require no operations on the contained type
   except assignment.
 
 
