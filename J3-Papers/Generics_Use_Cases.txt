@@ -79,7 +79,7 @@ nontrivial aspect of this operation is the need to declare an
 auxiliary variable to hold one of the values during processing.
 
 The Fortran generics facility should provide the means to declare a
-SWAP template that is applicable for any type that supports copy
+SWAP template that is applicable for any type that supports
 assignment.
 
 Notionally, the instantiation of the template for a type T should be
@@ -91,7 +91,7 @@ equivalent to:
 
       TYPE(T) :: tmp
 
-      tmp = a ! note the use of copy assignment operator '='
+      tmp = a
       a = b
       b = tmp
 
@@ -100,7 +100,7 @@ equivalent to:
 A few variations of SWAP functionality are worth considering. These
 are primarily intended as proxies for analogous issues that naturally
 arise in a wide set of use cases that attempt to be as general as
-possible.  In particular these variants emphasize the important
+possible.  In particular, these variants emphasize the important
 wrinkle that Fortran "type" does not include kind, rank, and other
 attributes.
 
@@ -152,7 +152,7 @@ the answer that reflects the consensus of generics subgroup.
 
 ALG-1: Should the generics facility enable developers to define a
        scalar SWAP template that will apply to any type that supports
-       copy assigment?  (YES, NO, UNDECIDED, ABSTAIN)
+       assigment?  (YES, NO, UNDECIDED, ABSTAIN)
 
 ALG-2: Should the generics facility enable developers to easily define
        a SWAP template that will work with arbitrary ranks?  (YES, NO,
@@ -192,7 +192,7 @@ simply relax the requirements on some intrinsics.  While this might
 itself be desirable, our intent here is to introduce appropriately
 powerful capabilites to allow Fortran developers to define new
 templates with comparable functionality.  Intrinsic procedures
-themselvs are merely the tip of the proverbial iceberg of relevant use
+themselves are merely the tip of the proverbial iceberg of relevant use
 cases, but serve as examples that are readily familiar to all.
 
 
@@ -338,49 +338,38 @@ reals.  The (unoptimized) multiplication algorithm can be written as
     REAL :: B(n,p)
     REAL :: C(m,p)
 
-    DO i = 1, m
-       DO j = 1, p
-          C(i,j) = 0
-          DO k = 1, n
-             C(i,j) = C(i,j) + A(i,k)*B(k,j)
-	  END DO
-       END DO
+    DO CONCURRENT (i=1:m, j=1:p)
+       C(i,j) = SUM(A(i,:)*B(:,j))
     END DO
 
 
 This algorithm can be generalized to types TA, TB, TC that satisfy
-certain properties:
+certain properties.
 
-SUBROUTINE GENERIC_MATMUL(A,B,C)
-    INTEGER :: i, j, k
-    INTEGER :: m, n, p
-    TYPE(TA), INTENT(IN) :: A(m,n)
-    TYPE(TB), INTENT(IN) :: B(n,p)
-    TYPE(TC), INTENT(IN) :: C(m,p)
+   SUBROUTINE GENERIC_MATMUL(A,B,C)
+      INTEGER :: i, j, k
+      INTEGER :: m, n, p
+      TYPE(TA), INTENT(IN) :: A(m,n)
+      TYPE(TB), INTENT(IN) :: B(n,p)
+      TYPE(TC), INTENT(IN) :: C(m,p)
     
 
-    DO i = 1, m
-       DO j = 1, p
-          C = C%zero()
-          DO k = 1, n
-             C(i,j) = C(i,j) + A(i,k)*B(k,j))
-	  END DO
-       END DO
-    END DO
+      DO CONCURRENT (i=1:m, j=1:p)
+         C(i,j) = SUM(A(i,:)*TB(:,j))
+      END DO
 
-END SUBROTINE GENERIC_MATMUL
+   END SUBROTINE GENERIC_MATMUL
 
 The required properties on types TA, TB, and TC are:
-
-    * Type TC must support an operation that returns a generalized "0"
 
     * Type TA must support (matrix) multiplication by type TB
       returning an intermediate type V
 
-    * Type TC must support addition by type V returning intermediate
-      type U
+    * There must be an procedure SUM() that takes returns an
+      intemediate type U given a 1d array of type V.  Presumably
+      implemented as a separate template.
 
-    * Type TC must support assignment to an intermediate type U
+    * Type TC must support assignment to the intermediate type U.
 
 Note 1: These intermediate types may be the same as any of TA, TB, and
 TC, but the algorithm here is intended to maximize generality.
@@ -458,7 +447,7 @@ of containers.
 
 We also note that one approach to supporting the use cases in this
 section would be to more directly add specific container varieties as
-1st order features of Fortran.  However, the wide range of container
+1st-order features of Fortran.  However, the wide range of container
 varieties compounded with the even wider range of potential internal
 representations and algorithms suggests instead that language should
 instead provide developers the means to define high-quality container
@@ -660,7 +649,12 @@ the contained objects are often used with the same type but different
 comparison criteria.  A common use case of this is for a dictionary
 whose keys are strings to treat those keys as case-insensitive.
 
+Variant 5: Heterogeneous containers
 
+It is often desirable to have a container that can contain objects
+that are of any type that extends some base type, and in the extreme
+case, objects that are CLASS(*).  The inconvenience of wrapper types
+in this variant is similar to the ALLOCATABLE case above.
 
 Straw votes:
 
@@ -689,6 +683,9 @@ CONTAINERS-6: Should Fortran's generics facilities enable users of
               relevant containers to indepndently specify a comparison
               operation at instantiation?  (YES,NO,UNDECIDED,ABSTAIN)
 
+CONTAINERS-7: Should Fortran's generics facilities enable developers
+              to define covenient-to-use heterogeneous containers?
+	      (YES,NO,UNDECIDED,ABSTAIN)
 
 
 2.3 [CONCEPTS] Usability, verification, and composition
@@ -729,8 +726,8 @@ support that undocumented operation, but some end user is not so
 fortunate.
 
 At the same time, while it is recognized that there is value to having
-enforcement of verification, these protections might be inconvenient during
-prototyping and/or introduction of additional scaffolding code.
+enforcement of verification, these protections might be inconvenient
+during prototyping and/or introduction of additional scaffolding code.
 
 2.3.3 Composition
 
@@ -756,5 +753,5 @@ CONCEPTS-2: Should template developers be able to verify that their
             (YES,NO,UNDECIDED,ABSTAIN)
 
 CONCEPTS-3: Should it be possible to encapsulate template requirements
-            for reuse in multiple contexts? (YES,NO,UNDECIDED,ABSTAIN)
+            for reuse in a composable manner? (YES,NO,UNDECIDED,ABSTAIN)
 
