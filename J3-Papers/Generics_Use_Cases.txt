@@ -1,5 +1,5 @@
 To: J3                                                     J3/21-144
-From: T. Clune and generics subgroup
+From: T. Clune, generics subgroup
 Subject: Generics Use Cases
 Date: 2021-June-07
 
