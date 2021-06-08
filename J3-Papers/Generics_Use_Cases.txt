@@ -1,6 +1,6 @@
-To: J3                                                     J3/##-###
+To: J3                                                     J3/21-144
 From: T. Clune and generics subgroup
-Subject: 
+Subject: Generics Use Cases
 Date: 2021-June-07
 
 References: N2147, 18-110r1
@@ -292,12 +292,13 @@ ALG-6: Should Fortran generics facilities enable developers to
        (YES,NO,UNDECIDED,ABSTAIN)
 
 ALG-7: Should Fortran generics facilities enable developers to
-       implement a searching template that works with any type satisfying the
-       criteria listed above?  (YES,NO,UNDECIDED,ABSTAIN)
+       implement a searching template that works with any type
+       satisfying the criteria listed above?
+       (YES,NO,UNDECIDED,ABSTAIN)
 
 ALG-8: Should Fortran generics facilities enable developers to
-       implement a merge template that works with any type satisfying the
-       criteria listed above?  (YES,NO,UNDECIDED,ABSTAIN)
+       implement a merge template that works with any type satisfying
+       the criteria listed above?  (YES,NO,UNDECIDED,ABSTAIN)
 
 
 
@@ -641,9 +642,9 @@ object.
 
 Variant 2: Arbitrary rank contained objects
 
-The concerns here are similar to those of SWAP.   In the case of containers,
-such use cases are probably somewhat less common than the type parameters, but
-by no means rare.
+The concerns here are similar to those of SWAP.  In the case of
+containers, such use cases are probably somewhat less common than the
+type parameters, but by no means rare.
 
 Variant 3: Type attributes
 
@@ -672,7 +673,8 @@ CONTAINERS-2: Should Fortran's generics facilities enable developers to
 	      
 CONTAINERS-3: Should Fortran's generics facilities allow developers to
               define easy-to-use accessors both for obtaining objects
-              and for assiging values to objects? (YES,NO,UNDECIDED,ABSTAIN)
+              and for assiging values to objects?
+              (YES,NO,UNDECIDED,ABSTAIN)
 
 CONTAINERS-4: Should Fortran's generics facilities provide
               functionality that would allow a well-written container
@@ -755,3 +757,5 @@ CONCEPTS-2: Should template developers be able to verify that their
 
 CONCEPTS-3: Should it be possible to encapsulate template requirements
             for reuse in multiple contexts? (YES,NO,UNDECIDED,ABSTAIN)
+
+
