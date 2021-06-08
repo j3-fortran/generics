@@ -213,7 +213,7 @@ While the need to sort a list of items is somewhat rarer in typical
 Fortran applications than in wider software communities, it
 nonetheless arises often enough to be a problem. It is typically
 applied to a rank one array, but sorting algoritms can usually be
-generalized to other categorise of containers with appropriate
+generalized to other categories of containers with appropriate
 iterators, e.g. Lists and Vectors. A given sorting algorithm can
 generally be applied to any type that provides a comparison (< or >)
 operation, or equivalent binary logical predicate. With current
@@ -757,5 +757,4 @@ CONCEPTS-2: Should template developers be able to verify that their
 
 CONCEPTS-3: Should it be possible to encapsulate template requirements
             for reuse in multiple contexts? (YES,NO,UNDECIDED,ABSTAIN)
-
 
