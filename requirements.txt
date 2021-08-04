@@ -1,0 +1,7 @@
+
+* The generics facility should provide a mechanism that enables
+  encapsulation of type, kind, and rank as a single template
+  parameter.
+
+  Note: Needs citation to use cases.
+  
