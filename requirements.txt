@@ -1,0 +1,6 @@
+
+* Certain language constraints should be relaxed within conditional
+  branches that are not selected by actual template parameters for
+  constant conditional constructs.
+  
+
