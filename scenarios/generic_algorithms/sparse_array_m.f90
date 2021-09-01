@@ -1,6 +1,6 @@
-module sparse_array_m
+module sparse_array_m(T,U)
 
-    concept :: copyable
+    concept :: copyable(T)
       assignment: T = T
     end concept
 
@@ -15,7 +15,7 @@ module sparse_array_m
     end type
 contains
     subroutine insert_at<T>(self, index, element)
-        requirements(T) :: copyable
+        requirements(T) :: copyable(T)
         class(sparse_array_t<T>), intent(inout) :: self
         integer, intent(in) :: index
         type(T), intent(in) :: element
@@ -52,7 +52,7 @@ contains
             type(T), intent(in) :: x
             type(U) :: y
 
-            y = transformation(y)
+            y = transformation(x)
         end function
     end function
 
