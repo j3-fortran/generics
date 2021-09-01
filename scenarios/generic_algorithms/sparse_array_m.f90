@@ -1,4 +1,4 @@
-module sparse_array_m(T,U)
+module sparse_array_m(T)
 
     concept :: copyable(T)
       assignment: T = T
