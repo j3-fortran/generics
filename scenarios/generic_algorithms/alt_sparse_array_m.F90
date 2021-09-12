@@ -168,7 +168,7 @@ program example_usage
 
     use sparse_arary_map_m(integer, varying_string), only: map
     use sparse_arary_filter_m(varying_string), only: filter
-    use sparse_arary_reduce_m(varying_string, ...), only: reduce
+    use sparse_arary_reduce_m(varying_string, varying_string), only: reduce
 
     implicit none
 
