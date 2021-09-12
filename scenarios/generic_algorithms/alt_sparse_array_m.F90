@@ -166,7 +166,7 @@ program example_usage
     use sparse_array_m(integer), only: int_sparse_array => sparse_array_t
     use sparse_array_m(varying_string), only: string_sparse_array => sparse_array_t
 
-    use sparse_arary_map_m(integer, varying_string: map
+    use sparse_arary_map_m(integer, varying_string), only: map
     use sparse_arary_filter_m(varying_string), only: filter
     use sparse_arary_reduce_m(varying_string, ...), only: reduce
 
