@@ -13,7 +13,7 @@ module Array_m
       
       interface assignment(=)
          module procedure assign_from_raw
-         module_procedure assign_to_raw
+         module procedure assign_to_raw
       end interface assignment(=)
 
    contains
