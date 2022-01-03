@@ -1,0 +1,139 @@
+To: J3                                                     J3/##-###
+From: Tom Clune & generics subgroup
+Subject: Generics formal requirements 
+Date: 2022-January-02
+
+Reference: 21-187, 21-144r4
+
+1. Introduction
+===============
+
+At meeting 224, generics subgroup introduced a use cases paper that
+was sufficient to drive solutions that would accommodate a broader set
+of use cases that were endorsed by subgroup.
+
+Here we present the formal requirements that have been derived from
+these use cases.
+
+
+2. Formal requirements
+======================
+
+Progress on developing a draft requirements paper has been much slower
+than was anticipated at the last meeting.  The following is a very
+rough list of formal requirements that have general support by
+subgroup:
+
+  A. Named templates shall be provided.
+
+     Notionally templates will be much like modules --
+     containing specification and implementation sections.  But these will
+     be distinct from modules.   A suggestive example is as follows
+
+        TEMPLATE TMPL(U)
+           TYPE :: U
+           END TYPE
+        CONTAINS
+           SUBROUTINE S(U)
+              TYPE(U), INTENT(INOUT) :: U
+              U = U * U
+           END SUBROUTINE S
+        END TEMPLATE TMPL
+
+     Rationale 1: Having a separate construct will allow templates to
+                  be defined _and_ instantiated within the same scope.
+
+     Rationale 2: This approach sidesteps thorny issues with
+                  submodules would be instroduced with a parameterized
+                  module approach.
+
+  B. Named restrictions shall be provided.
+
+     Notionally, a "restriction" is a construct which specifies
+     operations that must be supported for legal instantiations of a
+     template.  E.g., we may require that types T and U can be added
+     to produce objects of type V.  A very hand-wavy syntax could be
+     something like:
+
+        RESTRICTION :: ADDABLE(T,U,V)
+           T + U => V
+        END RESTRICTION
+
+     
+  C. A template shall have one or more template parameters.
+
+  D. Each template parameter shall be one of the following:
+     - type spec
+     - constant expression
+     - generic procedure
+     - generic operator
+
+     Notionally template parameters are declared in the specification
+     section of the template
+
+  E. A template shall be instantiated by specifying an actual value
+     for each dummy template parameter of a template.
+
+     Notional syntax:
+
+         INSTANTIATE TMPL(INTEGER)
+	 ...
+	 INTEGER :: I
+	 I = 3
+	 CALL S(I)
+
+  F. Multiple instantiations of a given template with identical actual
+     template parameters define the same entities.
+
+     Note that this is somewhat contrary to the existing situation
+     where two otherwise identical derived types define distinct
+     types.
+
+  G. A named restriction shall have a set of one or more restriction
+     parameters.
+
+  K. A restriction parameter shall be one of
+     - type spec
+     - generic procedure
+     - generic operator
+     - constant expression?
+
+  J. A named restrictions shall have a set of relations.
+
+  M. A template may impose a (possibly empty) set of "requirements".
+
+     A suggestive example with 2 restrictions
+
+        TEMPLATE :: TMPL2(U, V)
+
+           RESTRICTION :: ADDABLE(U, OPERATOR(+))
+              TYPE :: U
+              END TYPE :: U
+              U + U => U
+           END RESTRICTION
+
+           REQUIRES ADDABLE(U, OPERATOR(+))
+           REQUIRES ADDABLE(V, OPERATOR(*))
+        ...
+        END TEMPLATE TMPL2
+
+
+     Rationale: Restrictions are intended to be reusable in multiple
+     contexts.  We expect that restrictions will often be defined
+     external to templates.
+                
+  N. A template instantiation must satisfy all imposed requirements
+
+
+
+3. Commentary
+=============
+
+A. Subgroup has decided to disallow type-bound operators/procedures as
+   template parameters at this time.  This does not lead to any loss
+   of functionality, as users can readily wrap such entities as non
+   type-bound operators/procedures if necessary.
+
+
+===END===
+
