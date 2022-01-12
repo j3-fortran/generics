@@ -15,7 +15,6 @@ of use cases that were endorsed by subgroup.
 Here we present the formal requirements that have been derived from
 these use cases.
 
-
 2. Formal requirements
 ======================
 
@@ -23,6 +22,7 @@ Progress on developing a draft requirements paper has been much slower
 than was anticipated at the last meeting.  The following is a very
 rough list of formal requirements that have general support by
 subgroup:
+
 
   A. Named templates shall be provided.
 
@@ -34,17 +34,21 @@ subgroup:
            TYPE :: U
            END TYPE
         CONTAINS
-           SUBROUTINE S(U)
-              TYPE(U), INTENT(INOUT) :: U
-              U = U * U
-           END SUBROUTINE S
+           PURE FUNCTION GET_ITH(arr, i) result(ith)
+              TYPE(U) :: ith
+              TYPE(U), INTENT(IN) :: arr(:)
+              INTEGER, INTENT(IN) :: i
+
+              ith = arr(i)
+           END FUNCTION
+
         END TEMPLATE TMPL
 
      Rationale 1: Having a separate construct will allow templates to
                   be defined _and_ instantiated within the same scope.
 
      Rationale 2: This approach sidesteps thorny issues with
-                  submodules would be instroduced with a parameterized
+                  submodules would be introduced with a parameterized
                   module approach.
 
   B. Named restrictions shall be provided.
@@ -55,32 +59,73 @@ subgroup:
      to produce objects of type V.  A very hand-wavy syntax could be
      something like:
 
-        RESTRICTION :: ADDABLE(T,U,V)
+        RESTRICTION :: BINARYOP(+,T,U,V)
+           TYPE T; END TYPE
+           TYPE U; END TYPE
+           TYPE V; END TYPE
            T + U => V
         END RESTRICTION
 
-     
-  C. A template shall have one or more template parameters.
 
-  D. Each template parameter shall be one of the following:
-     - type spec
-     - constant expression
-     - generic procedure
-     - generic operator
+  C. A template shall have zero or more dummy template parameters.
 
-     Notionally template parameters are declared in the specification
-     section of the template
+     Note: A zero parameter template would be very similar to a
+           plain module.  But the additional scoping might make
+           this useful?
 
-  E. A template shall be instantiated by specifying an actual value
-     for each dummy template parameter of a template.
+  D. A template dummy parameter must be one of the following:
+     - type name
+     - value
+     - procedure
+     - operator
+
+     A suggestive example involving all categories of dummy template
+     parameters:
+
+        TEMPLATE TMPL2(T,C,sub,+)
+            TYPE :: T
+            END TYPE
+            INTEGER :: C
+            INTERFACE
+               SUBROUTINE sub(x)
+                   TYPE(T), INTENT(INOUT) :: x
+               END SUBROTUINE sub
+            END INTERFACE
+        END TEMPLATE
+
+     Note: Operators may not require explicit declaration as both
+           intrinsic and user-defined operators are self-evident by
+           their syntax.
+
+  E. A template shall be instantiated by specifying an actual parameter
+     for each dummy template parameter.
+
+     E1. A type-spec must be provided for a type name dummy template parameter.
+     E2. A const-expr must be provided for a value dummy template parameter.
+     E3. A procedure or a generic-spec must be provided for a
+         procedure dummy template parameter
+     E4. An operator must be provided for an operator dummy template parameter.
 
      Notional syntax:
 
-         INSTANTIATE TMPL(INTEGER)
-	 ...
-	 INTEGER :: I
-	 I = 3
-	 CALL S(I)
+         INSTANTIATE TMPL(INTEGER(KIND=INT32))
+         ...
+         INTEGER(KIND=INT32) :: I, ARRAY(10)
+         ...
+         I = GET_ITH(ARRAY, 3)
+
+
+     Note 1: A generic-spec may be passed as a dummy argument, because resolution can be
+             done during instantiation.
+     Note 2: A generic operator may be passed as a dummy argument, because resolution cane
+             be done during instantiation.
+
+     Rationale: Client code often does not have access to specific
+                names for procedures and operators.  And the ability
+                to use generic entities is too important too disallow
+                in this context.  In particular intrinsic operators
+                are extremely important.
+
 
   F. Multiple instantiations of a given template with identical actual
      template parameters define the same entities.
@@ -89,42 +134,65 @@ subgroup:
      where two otherwise identical derived types define distinct
      types.
 
-  G. A named restriction shall have a set of one or more restriction
+  G. A named restriction shall have a set of zero or more dummy restriction
      parameters.
 
-  K. A restriction parameter shall be one of
-     - type spec
-     - generic procedure
-     - generic operator
-     - constant expression?
+     NOTE: The zero-argument case here is not useful.  Possibly this
+     should become "one or more".
 
-  J. A named restrictions shall have a set of relations.
 
-  M. A template may impose a (possibly empty) set of "requirements".
+  H. An dummy restriction parameter shall be one of the same categories
+     as for dummy template parameters. (type, value, procedure, operator)
 
-     A suggestive example with 2 restrictions
+     Note: "value" probably does not make sense in this context.  But
+           possibly does no harm?
+
+  I. A named restrictions shall specify a set of "relations".
+
+  J. A restriction relation specifies one of the following:
+     - an operator and the types of its operands and result
+     - a procedure and the types of its arguments; in the case of
+       a function it must also specify the type of the result
+
+
+  K. A template may impose zero or more "requires".
+
+     A suggestive example with 2 REQUIRES
+
+        RESTRICTION :: MAGMA(U, OPERATOR(+))
+           TYPE :: U
+           END TYPE :: U
+           U + U => U
+        END RESTRICTION
 
         TEMPLATE :: TMPL2(U, V)
 
-           RESTRICTION :: ADDABLE(U, OPERATOR(+))
-              TYPE :: U
-              END TYPE :: U
-              U + U => U
-           END RESTRICTION
-
-           REQUIRES ADDABLE(U, OPERATOR(+))
-           REQUIRES ADDABLE(V, OPERATOR(*))
+           REQUIRES MAGMA(U, OPERATOR(+))
+           REQUIRES MAGMA(V, OPERATOR(*))
         ...
         END TEMPLATE TMPL2
 
-
      Rationale: Restrictions are intended to be reusable in multiple
-     contexts.  We expect that restrictions will often be defined
-     external to templates.
+                contexts.  We expect that restrictions will often be
+                defined external to templates.  N1. A template body
+                can only use required dummy parameters according to
+                their "relations"
+
+
+  L. A template may not use any procedures or operators except those
+     that have been specified in a REQUIRES statement.
+
+     Rationale: This is the notion of a "strong concept" which allows
+                template developers to ensure that a template does not
+                have any implicit requirements that might not be
+                detected for some unanticipated template parameters.
                 
   N. A template instantiation must satisfy all imposed requirements
 
-
+     Note: This is the notion of a "weak concept" which requires that
+           invalid dummy template parameters be diagnosed as such
+	   rather than being diagnosed is syntax or linkage errors in
+	   the expanded code.
 
 3. Commentary
 =============
@@ -134,6 +202,26 @@ A. Subgroup has decided to disallow type-bound operators/procedures as
    of functionality, as users can readily wrap such entities as non
    type-bound operators/procedures if necessary.
 
+4. Unresolved technical issues
+==============================
+
+   UTI1: Can operator relations in a restriction specify rank?  E.g.,
+
+            INTERFACE OPERATOR(+)
+               FUNCTION plus(x, y) result(z)
+                  TYPE(T), INTENT(IN) :: x, y(3)
+                  TYPE(T) :: Z(3)
+               END FUNCTION
+            END INTERFACE
+
+         How would we express this in a relation?
+
+
+   UTI2: Do procedure relations in a restriction need to specify
+         argument INTENT?  Our suggestive syntax does not support
+         this.
+
 
 ===END===
+
 
