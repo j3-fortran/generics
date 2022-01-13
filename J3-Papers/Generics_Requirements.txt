@@ -174,9 +174,7 @@ subgroup:
 
      Rationale: Restrictions are intended to be reusable in multiple
                 contexts.  We expect that restrictions will often be
-                defined external to templates.  N1. A template body
-                can only use required dummy parameters according to
-                their "relations"
+                defined external to templates.
 
 
   L. A template may not use any procedures or operators except those
