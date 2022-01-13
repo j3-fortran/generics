@@ -117,7 +117,7 @@ subgroup:
 
      Note 1: A generic-spec may be passed as a dummy argument, because resolution can be
              done during instantiation.
-     Note 2: A generic operator may be passed as a dummy argument, because resolution cane
+     Note 2: A generic operator may be passed as a dummy argument, because resolution can
              be done during instantiation.
 
      Rationale: Client code often does not have access to specific
