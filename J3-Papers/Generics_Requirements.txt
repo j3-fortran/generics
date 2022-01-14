@@ -203,7 +203,7 @@ A. Subgroup has decided to disallow type-bound operators/procedures as
 4. Unresolved technical issues
 ==============================
 
-   UTI1: Can operator relations in a restriction specify rank?  E.g.,
+   UTI-1: Can operator relations in a restriction specify rank?  E.g.,
 
             INTERFACE OPERATOR(+)
                FUNCTION plus(x, y) result(z)
@@ -215,9 +215,10 @@ A. Subgroup has decided to disallow type-bound operators/procedures as
          How would we express this in a relation?
 
 
-   UTI2: Do procedure relations in a restriction need to specify
+   UTI-2: Do procedure relations in a restriction need to specify
          argument INTENT?  Our suggestive syntax does not support
-         this.
+         this.  INTENT could be implicit for operators, as it must
+	 be INTENT(IN) for these.
 
 
 ===END===
