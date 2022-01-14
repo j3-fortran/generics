@@ -48,7 +48,7 @@ subgroup:
                   be defined _and_ instantiated within the same scope.
 
      Rationale 2: This approach sidesteps thorny issues with
-                  submodules would be introduced with a parameterized
+                  submodules that would be introduced with a parameterized
                   module approach.
 
   B. Named restrictions shall be provided.
