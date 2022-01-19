@@ -67,11 +67,17 @@ subgroup:
         END RESTRICTION
 
 
-  C. A template shall have zero or more dummy template parameters.
+  C1. A template shall have zero or more dummy template parameters.
 
      Note: A zero parameter template would be very similar to a
            plain module.  But the additional scoping might make
            this useful?
+
+  C2. A template can define any of the following entities:
+      - derived type
+      - variable
+      - procedure
+      - interface
 
   D. A template dummy parameter must be one of the following:
      - type name
@@ -96,6 +102,7 @@ subgroup:
      Note: Operators may not require explicit declaration as both
            intrinsic and user-defined operators are self-evident by
            their syntax.
+
 
   E. A template shall be instantiated by specifying an actual parameter
      for each dummy template parameter.
