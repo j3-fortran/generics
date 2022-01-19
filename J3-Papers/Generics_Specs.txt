@@ -1,0 +1,62 @@
+To: J3                                                     J3/##-###
+From: Tom Clune & generics subgroup
+Subject: Generics formal specs 
+Date: 2022-January-019
+
+Reference: 21-187, 21-144r4
+
+1. Introduction
+===============
+
+
+2. Formal specs
+===============
+
+A. TEMPLATE is a named construct.
+
+B1. TEMPLATE definition has the following elements:
+   - comma separated list of dummy template parameters
+   - specification section (possibly empty)
+   - optional procedure section begining with a CONTAINS statement
+
+   Suggestive syntax:
+
+   TEMPLATE T(a,b) 
+   ! specification section
+   CONTAINS
+   ! procedure definitions
+   END TEMPLATE T
+
+B2. The permitted order of statements in a template is the same as that for
+    other program units.
+
+B3. The dummy parameters for a TEMPLATE must be defined prior to any
+    references, and must be after any USE, IMPORT, and IMPLICIT NONE
+    statements.
+
+C. A TEMPLATE can be defined in the specification section of:
+   - main program
+   - module
+   - another template
+   - procedure
+   - inner procedure
+
+   Q1: submodule?
+   Q2: Can you have a "bare" template?  I think not.
+   
+D. A TEMPLATE can be referenced by host association or use association
+
+   Q: Does this cover the case of a template instantiated in same
+      scope as definition?
+
+
+E1. There shall be a new, nonexecutable specification construct:
+    INSTANTIATE for instantiating templates.
+
+E2. The INSTANTIATE statement can be used in any of:
+    - main program
+    - module
+    - another template
+    - procedure
+    - inner procedure
+
