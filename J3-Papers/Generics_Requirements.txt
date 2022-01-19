@@ -170,6 +170,20 @@ subgroup:
            REQUIRES MAGMA(U, OPERATOR(+))
            REQUIRES MAGMA(V, OPERATOR(*))
         ...
+
+        CONTAINS
+
+           SUBROUTINE DO_SOMETHING(x, y)
+	      TYPE(U) :: x
+	      TYPE(V) :: y
+
+              x = x + x*x ! legal
+	      y = y + y*y ! legal
+
+              x = x + y ! illegal - no supporting requirement
+	      x = 2*x   ! illegal integer multiply not in requirements
+	   END SUBROUTINE DO_SOMETHING
+
         END TEMPLATE TMPL2
 
      Rationale: Restrictions are intended to be reusable in multiple
