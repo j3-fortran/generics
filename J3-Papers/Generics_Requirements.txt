@@ -18,11 +18,6 @@ these use cases.
 2. Formal requirements
 ======================
 
-Progress on developing a draft requirements paper has been much slower
-than was anticipated at the last meeting.  The following is a very
-rough list of formal requirements that have general support by
-subgroup:
-
 
   A. Named templates shall be provided.
 
