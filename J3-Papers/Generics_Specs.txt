@@ -12,51 +12,196 @@ Reference: 21-187, 21-144r4
 2. Formal specs
 ===============
 
-A. TEMPLATE is a named construct.
+A. TEMPLATE is a named scoping unit.
 
-B1. TEMPLATE definition has the following elements:
-   - comma separated list of dummy template parameters
+B1. A TEMPLATE definition has the following elements:
+   - TEMPLATE name
+   - list of dummy template parameters
    - specification section (possibly empty)
    - optional procedure section begining with a CONTAINS statement
 
+
+   Aside:  I.e., this looks very much like a module.
+   
    Suggestive syntax:
 
-   TEMPLATE T(a,b) 
-   ! specification section
-   CONTAINS
-   ! procedure definitions
-   END TEMPLATE T
+      TEMPLATE T([param1[, param2[, ...]]])
+      ! specification section
+      CONTAINS
+      ! procedure definitions
+      END TEMPLATE T
 
-B2. The permitted order of statements in a template is the same as that for
-    other program units.
+B2. The permitted order of statements in a TEMPLATE is the same as that for
+    modules.
 
-B3. The dummy parameters for a TEMPLATE must be defined prior to any
-    references, and must be after any USE, IMPORT, and IMPLICIT NONE
-    statements.
+    Note: Depends on the answer for UTI-1.
+
+B3. A dummy template parameter definition must appear before reference
+    to that parameter and must appear after any USE, IMPORT, and
+    IMPLICIT NONE statements in the TEMPLATE.
 
 C. A TEMPLATE can be defined in the specification section of:
-   - main program
-   - module
-   - another template
-   - procedure
-   - inner procedure
+   - PROGRAM
+   - MODULE
+   - SUBMODULE
+   - procedure (including internal subprogram)
+   - BLOCK construct
+   - another TEMPLATE (UTI)
 
-   Q1: submodule?
-   Q2: Can you have a "bare" template?  I think not.
+   Aside:  Basically any place that a TYPE can be defined.
    
-D. A TEMPLATE can be referenced by host association or use association
+D. A TEMPLATE may only be referenced by host association or use
+   association.
 
-   Q: Does this cover the case of a template instantiated in same
-      scope as definition?
+E1. There shall be a nonexecutable specification construct INSTANTIATE
+    for instantiating templates by providing the means by which a
+    scoping unit defines named data objects, nonintrinsic types,
+    procedures, abstract interfaces, generic identifiers, and namelist
+    groups provided by a TEMPLATE.
 
+E2. An INSTANTIATE statement must provide the name of an accessible
+    TEMPLATE and a list of actual template parameters corresponding to
+    the dummy template parameters of the specified TEMPLATE.
 
-E1. There shall be a new, nonexecutable specification construct:
-    INSTANTIATE for instantiating templates.
+    Suggestive syntax:
 
-E2. The INSTANTIATE statement can be used in any of:
-    - main program
-    - module
-    - another template
+        TEMPLATE MY_TMPL(U, V, S)
+           ...
+        END TEMPLATE MY_TMPL
+        ...
+        INSTANTIATE  MY_TMPL(MY_U, MY_V, MY_SUBR)
+        
+E3. The INSTANTIATE statement can only appear in the specification
+    section in any of:
+
+    - PROGRAM
+    - MODULE
+    - SUBMODULE
+    - another TEMPLATE
     - procedure
-    - inner procedure
+    - BLOCK construct
+
+    Aside:  I.e., any place one could declare a variable.
+
+E5. The INSTANTIATE statement must provide ONLY and rename
+    capabilities analogous to those of the USE statement to enable
+    disambiguation.
+
+    Suggestive syntax:
+
+       USE my_module, only:  T ! T is a template
+       ...
+       ! The following statement provides access to any
+       ! entities defined inside template T
+       INSTANTIATE :: T(param1, param2), ONLY: S_1 => S
+
+
+F1. A REQUIREMENT is a ?????? (scoping unit?) that establishes a set
+   of relations among its parameters.
+
+F2. A REQUIREMENT definition has the following elements:
+    - REQUIREMENT name
+    - nonempty list of dummy TEMPLATE parameters
+    - specification section that consists of
+      * declaration of dummy TEMPLATE parameters
+      * interface blocks that define relations among the dummy
+        parameters
+
+   Aside: This looks a bit like a TEMPLATE in terms of its parameters,
+          but is much narrower in terms of what is allowed in the
+          contents.
+   
+   Suggestive syntax:
+
+      REQUIREMENT C(T, U, FUNC)
+         TYPE :: T
+         END TYPE
+         TYPE :: U
+         END TYPE U
+         INTERFACE
+            <relation-1>
+            <relation-2>
+         END INTERFACE
+         
+      END REQUIREMENT C
+
+F3. Declarations of a REQUIREMENT dummy parameter must precede any reference to that parameter.
+
+G. A REQUIREMENT can be defined in the specification section of:
+   - PROGRAM
+   - MODULE
+   - SUBMODULE
+   - TEMPLATE
+   - procedure (including internal subprogram)
+   - BLOCK construct
+
+   UTI:  Do we want to allow definition inside a TEMPLATE?  If we allow TEMPLATES to be nested, then yes.
+
+H. A REQUIREMENT can only be referenced by host association or use association.
+
+I1. Each relation establishes the interface of a single SUBROUTINE, FUNCTION,
+    or OPERATOR REQUIREMENT dummy parameter.
+
+I2. Relations cannot overload.
+
+    I.e., if you want a generic interface with 2 separate procedures, use 2 dummy REQUIREMENT parameters.
+
+J1. There shall be a nonexecutable specification construct REQUIRES
+    which is used to enforce a REQUIREMENT during the instantiation of
+    a TEMPLATE.
+
+J2. A REQUIRES statement must provide the name of an accessible
+    REQUIREMENT and a list of actual REQUIREMENT parameters
+    corresponding to the dummy REQUIREMENT parameters.
+
+    Suggestive syntax:
+
+       REQUIREMENT MAGMA(T, +)
+          ...
+       END REQUIREMENT MAGMA
+
+       TEMPLATE MY_TMPL2(U, V, +, *)
+          ...
+          REQUIRES MAGMA(U, +)
+          REQUIRES MAGMA(V, *)
+          ...
+       END TEMPLATE
+
+
+K. A TEMPLATE may only be instantiated if all of its REQUIRES hold for
+   the given set of TEMPLATE dummy parameters.  This is referred to as
+   "weak" constraints.
+
+L. A TEMPLATE may only execute a procedure or operator if the relevant
+   interface is defined in either a  TEMPLATE interface or one of
+   its REQUIRES.  This is referred to as "strong" constraints.
+
+   Q: Do we want to disallow specifying an interface in the TEMPLATE itself and
+      _only_ use REQUIRES/REQUIREMENT?
+
+
+3. Unresolved Technical Issues
+==============================
+
+UTI-1: Does TEMPLATE have PUBLIC/PRIVATE?
+
+       Initial discussion in subgroup suggests yes.  There is not a strong
+       reason for having PRIVATE, but it certainly would be convenient.
+
+
+UTI-2: Can TEMPLATE be nested?  I.e., can a TEMPLATE define another
+       TEMPLATE inside?  (Note, this is not about allowing a TEMPLATE
+       to be used as a template parameter.)
+
+       Pro: This would keep TEMPLATE more similar to MODULE
+
+       Con: This would complicate instantiation _unless_ such inner
+            TEMPLATES are not allowed to be exported.
+
+
+UTI-3: Is there a problem with BIND(C) in TEMPLATE procedures.
+
+       Seems like they should be allowed, but it will generally
+       restrict a TEMPLATE to a single instantiation.
+
 
