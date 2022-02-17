@@ -33,7 +33,7 @@ B1. A TEMPLATE definition has the following elements:
 B2. The permitted order of statements in a TEMPLATE is the same as
     that for modules.
 
-B3. A TEMPLATE dummy parameter definition must appear before any
+B3. A TEMPLATE dummy parameter declaration must appear before any
     reference to that parameter and must appear after any USE, IMPORT,
     and IMPLICIT NONE statements in the TEMPLATE.
 
@@ -70,8 +70,8 @@ E2. An INSTANTIATE statement must provide the name of an accessible
         ...
         ! Host association ...
         INSTANTIATE  MY_TMPL(MY_U, MY_V, MY_SUBR)
-        
-E3. The INSTANTIATE statement can appear only in the specification
+
+E4. The INSTANTIATE statement can appear only in the specification
     section in any of:
     - PROGRAM
     - MODULE
@@ -82,7 +82,7 @@ E3. The INSTANTIATE statement can appear only in the specification
 
     Aside:  I.e., any place one could declare a variable.
 
-E4. The INSTANTIATE feature must allow functionality analogous to the
+E5. The INSTANTIATE feature must allow functionality analogous to the
     ONLY and rename clauses of module USE statements to enable
     disambiguation of provided entities.
 
@@ -113,8 +113,6 @@ F4. A RESTRICTION definition has the following elements:
          ability to assemble complex RESTRICTIONS and reduces
          duplication.
 
-    See UTI-10.
-
     Aside: This looks a bit like a TEMPLATE in terms of its parameters,
            but is much narrower in terms of what is allowed in the
            contents.
@@ -135,8 +133,6 @@ F4. A RESTRICTION definition has the following elements:
 F5. Declarations of a RESTRICTION dummy parameter must precede any
     reference to that parameter.
 
-    UTI-## - not if we use REQUIRES to declare procedures!
-    
 G. A RESTRICTION can be defined in the specification section of:
    - PROGRAM
    - MODULE
@@ -158,15 +154,91 @@ H. A RESTRICTION can only be referenced by host association or use
          REQUIRES R(...) ! host association
       END TEMPLATE
 
-I1. Each relation in a RESTRICTION establishes the interface of a
-    single SUBROUTINE, FUNCTION, or OPERATOR corresponding to a
-    RESTRICTION dummy parameter.
+I. Each relation in a RESTRICTION establishes the interface of a
+   single SUBROUTINE, FUNCTION, or OPERATOR corresponding to a
+   RESTRICTION dummy parameter.
 
-    NOTE: Further generalization is possible and possibly desirable,
-          but the above satisfies the currently use cases driving this
-          design.
+   NOTE: Further generalization is possible and possibly desirable,
+         but the above satisfies the currently use cases driving this
+         design.
 
-I2. The interface established by relations must be unique.
+J1. There shall be a nonexecutable specification construct REQUIRES
+    which is used to enforce a RESTRICTION during the instantiation of
+    a TEMPLATE as well as to limit permitted operations used within
+    the template.
+
+    See UTI-8
+
+J2. A REQUIRES statement must provide the name of an accessible named
+    RESTRICTION and a list of RESTRICTION actual parameters
+    corresponding to the RESTRICTION dummy parameters.
+
+    Suggestive syntax:
+
+       RESTRICTION MAGMA(T, binaryop)
+          TYPE :: T; END TYPE
+          INTERFACE
+             PURE FUNCTION binaryop(x, y) RESULT(z)
+                TYPE(T) :: z
+                TYPE(T), INTENT(IN) :: x, y
+             END FUNCTION
+          END INTERFACE
+       END RESTRICTION MAGMA
+
+       TEMPLATE MY_TMPL2(U, V, plus, times)
+          ...
+          REQUIRES MAGMA(U, plus)  ! U = plus(u,u)
+          REQUIRES MAGMA(V, times) ! V = times(v,v)
+          ...
+       END TEMPLATE
+
+J3. A REQUIRES statement may be placed only in the specification
+    section of a TEMPLATE.
+
+    See UTI-8
+
+L. A TEMPLATE may be instantiated only if all of the relations
+   established by the REQUIRES statements hold for the TEMPLATE actual
+   parameters.  This is referred to as "weak" constraints/concepts.
+
+M1. A TEMPLATE may only reference a dummy parameter that is a
+    SUBROUTINE, FUNCTION, or OPERATOR if the relevant interface is
+    defined in a REQUIRES statement within the TEMPLATE.
+
+    This is referred to as "strong" constraints/concepts.
+
+    AN example with suggestive syntax:
+    
+       MODULE M1
+          ...
+          public :: T1, F
+
+          TEMPLATE T1(T, G)
+          END TEMPLATE
+       END MODULE M1
+
+       ...
+       TEMPLATE T2(...)
+          USE M1, ONLY :: F, T1
+       END TEMPLATE
+
+
+   Straw vote: May a TEMPLATE definition use intrinsic assignment for
+               TEMPLATE dummy parameters without a corresponding
+               RESTRICTION?  YES-NO-undecided
+
+      PRO:  This is a common situation and virtually all Fortran types
+            satisfy this property.  Adding the appropriate RESTRICTION
+            will be a bit tedious and may confuse some developers.
+
+      CONS: This creates a small hole in the intent of "strong"
+            constraints.   
+
+M2. A TEMPLATE dummy parameter that is a SUBROUTINE, FUNCTION or
+    OPERATOR must appear in exactly one REQUIRES statement.
+
+M3. A RESTRICTION dummy parameter that is a SUBROUTINE, FUNCTION or
+    OPERATOR must be given a single interface.
 
     E.g., the following pseudocode is illegal because F is
     given 2 different interfaces.
@@ -184,101 +256,53 @@ I2. The interface established by relations must be unique.
           END INTERFACE
        END RESTRICTION
 
-J1. There shall be a nonexecutable specification construct REQUIRES
-    which is used to enforce a RESTRICTION during the instantiation of
-    a TEMPLATE.
 
-    See UTI-8
+M4. No variable of a type corresponding to a TEMPLATE dummy parameter
+    may be used as an actual argument to a SUBROUTINE, FUNCTION, or
+    OPERATOR unless that SUBROUTINE, FUNCTION, or OPERATOR unless the
+    corresponding dummy argument is declared with the same TEMPLATE
+    dummy parameter type.
 
-J2. A REQUIRES statement must provide the name of an accessible named
-    RESTRICTION and a list of actual RESTRICTION parameters
-    corresponding to the RESTRICTION dummy parameters.
+M5. A TEMPLATE dummy parameter which is a type name is
+    indistinguishable from any other type in a procedure
+    characteristic for the purposes of generic interface definition.
 
-    Suggestive syntax:
+    For example the following is illegal:
 
-       RESTRICTION MAGMA(T, binaryop)
-          TYPE :: T
-          END TYPE
-
-          INTERFACE
-             PURE FUNCTION binaryop(x, y) RESULT(z)
-                TYPE(T) :: z
-                TYPE(T), INTENT(IN) :: x, y
-             END FUNCTION
+       TEMPLATE TMPL(T, U)
+          PUBLIC :: BAR       
+          INTERFACE BAR
+             MODULE SUBROUTINE BAR_T(x)
+                TYPE(T) :: x
+             END SUBROUTINE
+             MODULE SUBROUTINE BAR_i(x) ! ambiguous - what if T is integer
+                TYPE(integer) :: x
+             END SUBROUTINE
+             MODULE SUBROUTINE BAR_U(x) ! ambiguous - what if T is same as U
+                TYPE(U) :: x
+             END SUBROUTINE
           END INTERFACE
-       END RESTRICTION MAGMA
-
-       TEMPLATE MY_TMPL2(U, V, plus, times)
-          ...
-          REQUIRES MAGMA(U, plus)
-          REQUIRES MAGMA(V, times)
-          ...
        END TEMPLATE
 
-J3. A REQUIRES statement may be placed only in the specification
-    section of:
-    - TEMPLATE
+M6. A TEMPLATE dummy parameter which is a type name may not be
+    extended within the template.
 
-    See UTI-8
+    E.g., 
 
-L. A TEMPLATE may only be instantiated if all of the relations
-   established by the REQUIRES statements hold for the TEMPLATE actual
-   parameters.  This is referred to as "weak" constraints/concepts.
-
-M. A TEMPLATE may only reference a procedure or operator if the
-   relevant interface is defined in one of:
-      - a REQUIRES statement
-      - an interface
-      - a procedure defined in the CONTAINS section of the TEMPLATE.
-
-
-   This is referred to as "strong" constraints/concepts.
-
-   See UTI-7
-
-   MODULE M1
-      ...
-      public :: T1, F
-
-      TEMPLATE T1(T, G)
+      TEMPLATE TMPL(T)
+         TYPE :: T; END T
+         TYPE, EXTENDS(T) :: CHILD ! Illegal
+         END TYPE
       END TEMPLATE
-   END MODULE M1
 
-
-   ...
-   TEMPLATE T2(...)
-      USE M1, ONLY :: F, T1
-   END TEMPLATE
 
 3. Unresolved technical issues
 ==============================
-
-UTI-6: Do TEMPLATE dummy type paraameters always have an implied
-       ASSIGNMENT operator or does a TEMPLATE have to make that
-       explicit.
-
-RESRICTION ASSIGNABLE(T)
-   ...
-END RESTRICTION
-
-INTRINSIC MODULE
-
-TOM: Convert this to a note someplace appropriate.
-
-
-UTI-7: Can TEMPLATE dummy parameters be declared implicitly via
-       REQUIRES statements?
-
-       Subgroup discussion led to many variants of just how we want to
-       implement strong/weak restrictions.  Difficult to capture here.
 
 UTI-8: Where can a REQUIRES statement go?  Something analogous might
        be useful in terms of expressing programmers intent in
        satisfying a REQUIREMENT in non TEMPLATE contexts.   Possibly with a
        different syntax term for clarity.
-
-UTI-10: Should there be a way to restrict values of parameter TEMPLATE
-        and RESTRICTION dummy arguments e.g., rank N must be <= 3?
 
 ===END===
 
