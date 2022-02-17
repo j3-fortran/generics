@@ -3,7 +3,7 @@ From: Tom Clune & generics subgroup
 Subject: Generics formal specs 
 Date: 2022-January-019
 
-Reference: 21-187, 21-144r4
+Reference: 22-120, 21-144r4
 
 1. Introduction
 ===============
@@ -16,12 +16,11 @@ A. TEMPLATE is a named scoping unit.
 
 B1. A TEMPLATE definition has the following elements:
    - TEMPLATE name
-   - list of dummy template parameters
+   - list of TEMPLATE dummy parameters
    - specification section (possibly empty)
    - optional procedure section begining with a CONTAINS statement
 
-
-   Aside:  I.e., this looks very much like a module.
+   Aside: I.e., this looks very much like a module in most respects.
    
    Suggestive syntax:
 
@@ -31,14 +30,12 @@ B1. A TEMPLATE definition has the following elements:
       ! procedure definitions
       END TEMPLATE T
 
-B2. The permitted order of statements in a TEMPLATE is the same as that for
-    modules.
+B2. The permitted order of statements in a TEMPLATE is the same as
+    that for modules.
 
-    Note: Depends on the answer for UTI-1.
-
-B3. A dummy template parameter definition must appear before reference
-    to that parameter and must appear after any USE, IMPORT, and
-    IMPLICIT NONE statements in the TEMPLATE.
+B3. A TEMPLATE dummy parameter definition must appear before any
+    reference to that parameter and must appear after any USE, IMPORT,
+    and IMPLICIT NONE statements in the TEMPLATE.
 
 C. A TEMPLATE can be defined in the specification section of:
    - PROGRAM
@@ -46,22 +43,24 @@ C. A TEMPLATE can be defined in the specification section of:
    - SUBMODULE
    - procedure (including internal subprogram)
    - BLOCK construct
-   - another TEMPLATE (UTI-1)
+   - another TEMPLATE
 
    Aside:  Basically any place that a TYPE can be defined.
+
+   Straw Vote 1: Should a TEMPLATE be permitted to contain an internal
+                 TEMPLATE definition?  YES-NO-UNDECIDED
+
    
 D. A TEMPLATE may only be referenced by host association or use
    association.
 
 E1. There shall be a nonexecutable specification construct INSTANTIATE
     for instantiating templates by providing the means by which a
-    scoping unit defines named data objects, nonintrinsic types,
-    procedures, abstract interfaces, generic identifiers, and namelist
-    groups provided by a TEMPLATE.
+    scoping unit defines named entities provided by a TEMPLATE.
 
 E2. An INSTANTIATE statement must provide the name of an accessible
-    TEMPLATE and a list of actual template parameters corresponding to
-    the dummy template parameters of the specified TEMPLATE.
+    TEMPLATE and a list of TEMPLATE actual parameters corresponding to
+    the TEMPLATE dummy parameters of the specified TEMPLATE.
 
     Suggestive syntax:
 
@@ -69,12 +68,11 @@ E2. An INSTANTIATE statement must provide the name of an accessible
            ...
         END TEMPLATE MY_TMPL
         ...
-	! Host association ...
+        ! Host association ...
         INSTANTIATE  MY_TMPL(MY_U, MY_V, MY_SUBR)
         
-E3. The INSTANTIATE statement can only appear in the specification
+E3. The INSTANTIATE statement can appear only in the specification
     section in any of:
-
     - PROGRAM
     - MODULE
     - SUBMODULE
@@ -84,95 +82,131 @@ E3. The INSTANTIATE statement can only appear in the specification
 
     Aside:  I.e., any place one could declare a variable.
 
-E4. The INSTANTIATE statement must provide ONLY and rename
-    capabilities analogous to those of the USE statement to enable
-    disambiguation.
+E4. The INSTANTIATE feature must allow functionality analogous to the
+    ONLY and rename clauses of module USE statements to enable
+    disambiguation of provided entities.
 
     Suggestive syntax:
 
-       USE my_module, only:  T ! T is a template
+       USE my_module, ONLY:  T ! T is a TEMPLATE
        ...
        ! The following statement provides access to any
-       ! entities defined inside template T
+       ! entities defined inside TEMPLATE T
        INSTANTIATE :: T(param1, param2), ONLY: S_1 => S
 
 
-F1. A REQUIREMENT is a specifier that establishes a set
+F1. A RESTRICTION is a specifier that establishes a set
     of relations among its dummy parameters.
 
-F2. A REQUIREMENT definition has the following elements:
-    - REQUIREMENT name
-    - nonempty list of dummy TEMPLATE parameters
+F3. A relation is an interface body defined in a RESTRICTION.
+
+F4. A RESTRICTION definition has the following elements:
+    - RESTRICTION name
+    - nonempty list of RESTRICTION dummy parameters
     - specification section that consists of
-      * declaration of dummy TEMPLATE parameters
+      * declaration of RESTRICTION dummy parameters
       * interface blocks that define relations among the dummy
         parameters
       * REQUIRES statements (see below)
 
-   Note: Allowing REQUIRES provides the ability to assemble complex
-         REQUIREMENTS and reduces duplication.
+    Rationale: Allowing REQUIRES within a RESTRICTION provides the
+         ability to assemble complex RESTRICTIONS and reduces
+         duplication.
 
-   Aside: This looks a bit like a TEMPLATE in terms of its parameters,
-          but is much narrower in terms of what is allowed in the
-          contents.
+    See UTI-10.
+
+    Aside: This looks a bit like a TEMPLATE in terms of its parameters,
+           but is much narrower in terms of what is allowed in the
+           contents.
    
-   Suggestive syntax:
+    Suggestive syntax:
 
-      REQUIREMENT C(T, U, FUNC)
-         TYPE :: T
-         END TYPE
-         TYPE :: U
-         END TYPE U
-         INTERFACE
-            <relation-1>
-            <relation-2>
-         END INTERFACE
+       RESTRICTION C(T, U, FUNC)
+          TYPE :: T; END TYPE
+          TYPE :: U; END TYPE
+
+          INTERFACE
+             <relation-1>
+             <relation-2>
+          END INTERFACE
          
-      END REQUIREMENT C
+       END RESTRICTION C
 
-F3. Declarations of a REQUIREMENT dummy parameter must precede any
+F5. Declarations of a RESTRICTION dummy parameter must precede any
     reference to that parameter.
 
-G. A REQUIREMENT can be defined in the specification section of:
+    UTI-## - not if we use REQUIRES to declare procedures!
+    
+G. A RESTRICTION can be defined in the specification section of:
    - PROGRAM
    - MODULE
    - SUBMODULE
-   - TEMPLATE (see UTI-3)
+   - TEMPLATE
    - procedure (including internal subprogram)
    - BLOCK construct
 
+H. A RESTRICTION can only be referenced by host association or use
+   association.
 
-H. A REQUIREMENT can only be referenced by host association or use association.
+   Suggestive syntax:
 
-I1. Each relation establishes the interface of a single SUBROUTINE, FUNCTION,
-    or OPERATOR corresponding to a REQUIREMENT dummy parameter.
+      RESTRICTION R(...)
+         ...
+      END RESTRICTION
 
-I2. Relations cannot overload.
+      TEMPLATE T(...)
+         REQUIRES R(...) ! host association
+      END TEMPLATE
 
-    I.e., if you want a generic interface with 2 separate procedures,
-    use 2 dummy REQUIREMENT parameters.
+I1. Each relation in a RESTRICTION establishes the interface of a
+    single SUBROUTINE, FUNCTION, or OPERATOR corresponding to a
+    RESTRICTION dummy parameter.
+
+    NOTE: Further generalization is possible and possibly desirable,
+          but the above satisfies the currently use cases driving this
+          design.
+
+I2. The interface established by relations must be unique.
+
+    E.g., the following pseudocode is illegal because F is
+    given 2 different interfaces.
+
+       RESTRICTION R(T, U, F)
+          TYPE :: T; END TYPE
+          TYPE :: U; END TYPE
+          INTERFACE
+             FUNCTION F(x,y) RESULT(z)
+                TYPE(T) :: x, y, z
+             END FUNCTION
+             FUNCTION F(x,y) RESULT(z)
+                TYPE(U) :: x, y, z
+             END FUNCTION
+          END INTERFACE
+       END RESTRICTION
 
 J1. There shall be a nonexecutable specification construct REQUIRES
-    which is used to enforce a REQUIREMENT during the instantiation of
+    which is used to enforce a RESTRICTION during the instantiation of
     a TEMPLATE.
 
-J2. A REQUIRES statement must provide the name of an accessible
-    REQUIREMENT and a list of actual REQUIREMENT parameters
-    corresponding to the dummy REQUIREMENT parameters.
+    See UTI-8
+
+J2. A REQUIRES statement must provide the name of an accessible named
+    RESTRICTION and a list of actual RESTRICTION parameters
+    corresponding to the RESTRICTION dummy parameters.
 
     Suggestive syntax:
 
-       REQUIREMENT MAGMA(T, binaryop)
+       RESTRICTION MAGMA(T, binaryop)
           TYPE :: T
-	  END TYPE
+          END TYPE
 
           INTERFACE
-	     PURE FUNCTION binaryop(x, y) RESULT(z)
+             PURE FUNCTION binaryop(x, y) RESULT(z)
                 TYPE(T) :: z
-	        TYPE(T), INTENT(IN) :: x, y
-	     END FUNCTION
+                TYPE(T), INTENT(IN) :: x, y
+             END FUNCTION
           END INTERFACE
-       END REQUIREMENT MAGMA
+       END RESTRICTION MAGMA
 
        TEMPLATE MY_TMPL2(U, V, plus, times)
           ...
@@ -181,56 +215,70 @@ J2. A REQUIRES statement must provide the name of an accessible
           ...
        END TEMPLATE
 
+J3. A REQUIRES statement may be placed only in the specification
+    section of:
+    - TEMPLATE
 
-K. A TEMPLATE may only be instantiated if all of its REQUIRES hold for
-   the given set of TEMPLATE dummy parameters.  This is referred to as
-   "weak" constraints.
+    See UTI-8
 
-L. A TEMPLATE may only reference a procedure or operator if the relevant
-   interface is defined in either the template or in a REQUIRES statement.
-   This is referred to as "strong" constraints.
+L. A TEMPLATE may only be instantiated if all of the relations
+   established by the REQUIRES statements hold for the TEMPLATE actual
+   parameters.  This is referred to as "weak" constraints/concepts.
+
+M. A TEMPLATE may only reference a procedure or operator if the
+   relevant interface is defined in one of:
+      - a REQUIRES statement
+      - an interface
+      - a procedure defined in the CONTAINS section of the TEMPLATE.
+
+
+   This is referred to as "strong" constraints/concepts.
 
    See UTI-7
 
+   MODULE M1
+      ...
+      public :: T1, F
+
+      TEMPLATE T1(T, G)
+      END TEMPLATE
+   END MODULE M1
+
+
+   ...
+   TEMPLATE T2(...)
+      USE M1, ONLY :: F, T1
+   END TEMPLATE
 
 3. Unresolved technical issues
 ==============================
 
-UTI-1: Does TEMPLATE have PUBLIC/PRIVATE?
+UTI-6: Do TEMPLATE dummy type paraameters always have an implied
+       ASSIGNMENT operator or does a TEMPLATE have to make that
+       explicit.
 
-       Initial discussion in subgroup suggests yes.  There is not a strong
-       reason for having PRIVATE, but it certainly would be convenient.
+RESRICTION ASSIGNABLE(T)
+   ...
+END RESTRICTION
 
+INTRINSIC MODULE
 
-UTI-2: Can TEMPLATE be nested?  I.e., can a TEMPLATE define another
-       TEMPLATE inside?  (Note, this is not about allowing a TEMPLATE
-       to be used as a template parameter.)
+TOM: Convert this to a note someplace appropriate.
 
-       Pro: This would keep TEMPLATE more similar to MODULE
-
-       Con: This would complicate instantiation _unless_ such inner
-            TEMPLATES are not allowed to be exported.
-
-UTI-3: Do we want to allow a REQUIREMENT definition inside a TEMPLATE?  If we allow
-       TEMPLATES to be nested, then yes.
-
-
-UTI-4: Is there a problem with BIND(C) in TEMPLATE procedures.
-
-       Seems like they should be allowed, but it will generally
-       restrict a TEMPLATE to a single instantiation.
-
-UTI-5: Can REQUIREMENT be exported from TEMPLATE?
-
-UTI-6: Do TYPES always have an implied ASSIGNMENT operator or does
-       a template have to make that explicit.
 
 UTI-7: Can TEMPLATE dummy parameters be declared implicitly via
        REQUIRES statements?
 
        Subgroup discussion led to many variants of just how we want to
-       implement strong/weak requirements.  Difficult to capture here.
+       implement strong/weak restrictions.  Difficult to capture here.
 
+UTI-8: Where can a REQUIRES statement go?  Something analogous might
+       be useful in terms of expressing programmers intent in
+       satisfying a REQUIREMENT in non TEMPLATE contexts.   Possibly with a
+       different syntax term for clarity.
+
+UTI-10: Should there be a way to restrict values of parameter TEMPLATE
+        and RESTRICTION dummy arguments e.g., rank N must be <= 3?
 
 ===END===
 
