@@ -159,7 +159,7 @@ I. Each relation in a RESTRICTION establishes the interface of a
    RESTRICTION dummy parameter.
 
    NOTE: Further generalization is possible and possibly desirable,
-         but the above satisfies the currently use cases driving this
+         but the above satisfies the current use cases driving this
          design.
 
 J1. There shall be a nonexecutable specification construct REQUIRES
@@ -259,9 +259,8 @@ M3. A RESTRICTION dummy parameter that is a SUBROUTINE, FUNCTION or
 
 M4. No variable of a type corresponding to a TEMPLATE dummy parameter
     may be used as an actual argument to a SUBROUTINE, FUNCTION, or
-    OPERATOR unless that SUBROUTINE, FUNCTION, or OPERATOR unless the
-    corresponding dummy argument is declared with the same TEMPLATE
-    dummy parameter type.
+    OPERATOR unless the corresponding dummy argument is declared with
+    the same TEMPLATE dummy parameter type.
 
 M5. A TEMPLATE dummy parameter which is a type name is
     indistinguishable from any other type in a procedure
@@ -305,4 +304,3 @@ UTI-8: Where can a REQUIRES statement go?  Something analogous might
        different syntax term for clarity.
 
 ===END===
-
