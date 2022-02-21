@@ -3,11 +3,14 @@ From: Tom Clune & generics subgroup
 Subject: Generics formal specs 
 Date: 2022-January-019
 
-Reference: 22-120, 21-144r4
+Reference: 22-120r1, 21-144r4
 
 1. Introduction
 ===============
 
+Paper 21-144r4 provided use cases for Fortran generics feature, and
+paper 22-120r1 provided formal requirements.  This paper provides
+formal specifications.
 
 2. Formal specs
 ===============
@@ -36,6 +39,19 @@ B2. The permitted order of statements in a TEMPLATE is the same as
 B3. A TEMPLATE dummy parameter declaration must appear before any
     reference to that parameter and must appear after any USE, IMPORT,
     and IMPLICIT NONE statements in the TEMPLATE.
+
+    Suggestive syntax:
+
+       TEMPLATE TMPL(T, FLAG, sub)
+          TYPE :: T; END TYPE ! dummy type parameter
+          LOGICAL :: FLAG     ! dummy constant (logical) parameter
+          INTERFACE
+             SUBROUTINE sub(x, y)    ! dummy subroutine parameter
+	        TYPE(T), INTENT(IN) :: x
+	        TYPE(T), INTENT(OUT) :: y
+             END SUBROUTINE
+         END INTERFACE
+		
 
 C. A TEMPLATE can be defined in the specification section of:
    - PROGRAM
@@ -90,9 +106,9 @@ E5. The INSTANTIATE feature must allow functionality analogous to the
 
        USE my_module, ONLY:  T ! T is a TEMPLATE
        ...
-       ! The following statement provides access to any
-       ! entities defined inside TEMPLATE T
-       INSTANTIATE :: T(param1, param2), ONLY: S_1 => S
+       ! The following statement provides access to the entity S
+       ! defined inside TEMPLATE T, but using the name S_1
+       INSTANTIATE :: T(param1, param2), ONLY: S_1 => S   
 
 
 F1. A RESTRICTION is a specifier that establishes a set
@@ -162,7 +178,7 @@ I. Each relation in a RESTRICTION establishes the interface of a
          but the above satisfies the current use cases driving this
          design.
 
-J1. There shall be a nonexecutable specification construct REQUIRES
+J1. There shall be a nonexecutable specification statement REQUIRES
     which is used to enforce a RESTRICTION during the instantiation of
     a TEMPLATE as well as to limit permitted operations used within
     the template.
@@ -207,7 +223,7 @@ M1. A TEMPLATE may only reference a dummy parameter that is a
 
     This is referred to as "strong" constraints/concepts.
 
-    AN example with suggestive syntax:
+    A example with suggestive syntax:
     
        MODULE M1
           ...
@@ -274,10 +290,10 @@ M5. A TEMPLATE dummy parameter which is a type name is
              MODULE SUBROUTINE BAR_T(x)
                 TYPE(T) :: x
              END SUBROUTINE
-             MODULE SUBROUTINE BAR_i(x) ! ambiguous - what if T is integer
+             MODULE SUBROUTINE BAR_i(x)! Ambiguous: what if T is integer?
                 TYPE(integer) :: x
              END SUBROUTINE
-             MODULE SUBROUTINE BAR_U(x) ! ambiguous - what if T is same as U
+             MODULE SUBROUTINE BAR_U(x)! Ambiguous: what if U is same as T?
                 TYPE(U) :: x
              END SUBROUTINE
           END INTERFACE
@@ -300,7 +316,7 @@ M6. A TEMPLATE dummy parameter which is a type name may not be
 
 UTI-8: Where can a REQUIRES statement go?  Something analogous might
        be useful in terms of expressing programmers intent in
-       satisfying a REQUIREMENT in non TEMPLATE contexts.   Possibly with a
-       different syntax term for clarity.
+       satisfying a REQUIREMENT in non TEMPLATE contexts; possibly
+       with a different syntax term for clarity.
 
 ===END===
