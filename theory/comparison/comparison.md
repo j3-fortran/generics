@@ -484,3 +484,10 @@ The Haskell compiler even noticed that the use of `string` implies the need for
 the type class `Stringer` and suggests adding it to the type signature.
 
 Unlike in C++, where this compiles and we get an error at instantiation time.
+
+
+# Fortran
+
+Here is an example how to do this example in Fortran using the latest proposal so far (https://j3-fortran.org/doc/year/22/22-120r3.txt):
+
+* https://github.com/j3-fortran/generics/issues/74#issuecomment-1058725274
