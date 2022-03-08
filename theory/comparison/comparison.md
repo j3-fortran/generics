@@ -484,3 +484,93 @@ The Haskell compiler even noticed that the use of `string` implies the need for
 the type class `Stringer` and suggests adding it to the type signature.
 
 Unlike in C++, where this compiles and we get an error at instantiation time.
+
+
+# Fortran
+
+Here is an example how to do this example in Fortran using the [latest proposal](https://j3-fortran.org/doc/year/22/22-120r3.txt) so far, first posted at https://github.com/j3-fortran/generics/issues/74#issuecomment-1058725274:
+
+The Rust example is probably the easiest to grok and the most similar, so we will go with that one.
+
+```rust
+trait Stringer {
+    fn string(&self) -> &'static str;
+}
+
+fn stringify<T : Stringer>(s: Vec<T>) -> String {
+    let mut ret = String::new();
+    for x in s.iter() {
+        ret.push_str(x.string());
+    }
+    ret
+}
+```
+
+would be equivalent to
+
+```fortran
+restriction stringable(T, to_string)
+  type :: T; end type
+  interface
+    function to_string(x) result(string)
+      type(T), intent(in) :: x
+      character(len=:), allocatable :: string
+    end function
+  end interface
+end restriction
+
+template stringify_tmpl(T, to_string)
+  requires stringable(T, to_string)
+contains
+  function stringify(s) result(string)
+    type(T), intent(in) :: s(:)
+    character(len=:), allocatable :: string
+
+    integer :: i
+
+    string = ""
+    do i = 1, size(s)
+      string = string // to_string(s(i))
+    end do
+  end function
+end template
+```
+
+and then
+
+```rust
+struct MyT {
+}
+
+impl Stringer for MyT {
+    fn string(&self) -> &'static str {
+        "X"
+    }
+}
+
+fn main() {
+    let v = vec![MyT{}, MyT{}, MyT{}];
+    println!("{}", stringify(v));
+}
+```
+
+would be equivalent to
+
+```fortran
+type :: my_t
+end type
+
+function to_string(x) result(string)
+  type(my_t), intent(in) :: x
+  character(len=:), allocatable :: string
+
+  string = "X"
+end function
+
+instantiate stringify_tmpl(my_t, to_string)
+
+type(my_t), allocatable :: v(:)
+
+v = [my_t(), my_t(), my_t()]
+print *, stringify(v)
+```
