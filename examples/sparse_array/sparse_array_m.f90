@@ -49,6 +49,7 @@ module sparse_array_m
         function map_(transformation, xs) result(ys)
             interface
                 pure function transformation_i(x) result(y)
+                    import :: T, U
                     type(T), intent(in) :: x
                     type(U) :: y
                 end function
@@ -59,7 +60,7 @@ module sparse_array_m
 
             integer :: i
 
-            ys%indeces = xs%indeces
+            ys%indices = xs%indices
             ys%elements = [(transformation(xs%elements(i)), i = 1, size(xs%elements))]
         end function
     end template
@@ -76,6 +77,7 @@ module sparse_array_m
         function filter_(array, predicate) result(filtered)
             interface
                 pure function predicate_i(element)
+                    import :: T
                     type(T), intent(in) :: element
                     logical :: predicate_i
                 end function
@@ -106,6 +108,7 @@ module sparse_array_m
         function reduce_(array, accumulator, initial) result(combined)
             interface
                 function accumulator_i(x, y) result(z)
+                    import :: T, U
                     type(U), intent(in) :: x
                     type(T), intent(in) :: y
                     type(U) :: z
