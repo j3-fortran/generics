@@ -5,7 +5,9 @@ Reference: 22-120r5.txt
 ===============
 
 The purpose of this paper is to establish the formal specs for the
-proposed TEMPLATE feature with regard to _scoping_.
+proposed TEMPLATE feature with regard to _scoping_.  Section 2
+contains the specs and section 3 contains a pseudo-code example that
+demonstrates several aspects.
 
 
 2. Formal Specs
