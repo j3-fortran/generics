@@ -17,7 +17,7 @@ A. The TEMPLATE construct provides host association to the scope in
    which the template is defined.
 
    Rationale: We expect templates will often make use of types,
-              restrictions, and other types that are provided by the
+              restrictions, and other entities that are provided by the
               containing scope.
 
    Variant: We could require use of IMPORT to establish such host
@@ -33,7 +33,7 @@ B2. The default accessibility for TEMPLATE items is PUBLIC, but this
     PUBLIC statement.
 
 
-C1. The INSTANTIATE statement defines concrete realization of entities
+C1. The INSTANTIATE statement defines concrete realizations of entities
     of the specified TEMPLATE as entities of an _unnamed_ external
     scope.  I.e., instantiated entities do not reside in the same
     scope as the referenced template, nor are they global identifiers.
@@ -41,7 +41,7 @@ C1. The INSTANTIATE statement defines concrete realization of entities
 C2. Entities instantiated via the INSTANTIATE statement are accessible
     within the scope in which the INSTANTIATE statement appears.
 
-C3. Entities instantiate via the INSTANTIATE statement retain host
+C3. Entities instantiated via the INSTANTIATE statement retain host
     association to the scope in which the referenced TEMPLATE is
     defined.
 
@@ -80,7 +80,7 @@ UTI-1: What if a template has a procedure/operator parameter and
         END RESTRICTION
         
         TEMPLATE TMPL(T, F)
-           REQUIRES(R(T, F)
+           REQUIRES R(T, F)
            PRIVATE
            PUBLIC :: ITERATE
 
@@ -115,10 +115,10 @@ UTI-1: What if a template has a procedure/operator parameter and
         INSTANTIATE TMPL(INTEGER, ADD_ONE_INTEGER), ONLY: ITERATE_INTEGER => ITERATE
 
 
-	y = ITERATE(0., n=100)
+	y = ITERATE_REAL(0., n=100)
 	PRINT*, 'y = ', y,'; expected 100'
 
-	m = ITERATE(0, n=1000)
+	m = ITERATE_INTEGER(0, n=1000)
 	PRINT*, 'm = ', m,'; expected 1000'
 
         PRINT*, 'TOTAL: ', counter, '; expected 1100'
