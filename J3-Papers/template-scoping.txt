@@ -1,0 +1,142 @@
+
+Reference: 22-120r5.txt
+
+1. Introduction
+===============
+
+The purpose of this paper is to establish the formal specs for the
+proposed TEMPLATE feature with regard to _scoping_.
+
+
+2. Formal Specs
+===============
+
+A. The TEMPLATE construct provides host association to the scope in
+   which the template is defined.
+
+   Rationale: We expect templates will often make use of types,
+              restrictions, and other types that are provided by the
+              containing scope.
+
+   Variant: We could require use of IMPORT to establish such host
+            association more explicitly
+
+B1. Entities defined within a template may have either PUBLIC or
+    PRIVATE accessibility.  PRIVATE template entities must not be
+    referenced outside of the template, while PUBLIC entities can be
+    referenced outside of the template though the INSTANTIATE statement.
+
+B2. The default accessibility for TEMPLATE items is PUBLIC, but this
+    may be overridden with a PRIVATE statement or confirmed with a
+    PUBLIC statement.
+
+
+C1. The INSTANTIATE statement defines concrete realization of entities
+    of the specified TEMPLATE as entities of an _unnamed_ external
+    scope.  I.e., instantiated entities do not reside in the same
+    scope as the referenced template, nor are they global identifiers.
+
+C2. Entities instantiated via the INSTANTIATE statement are accessible
+    within the scope in which the INSTANTIATE statement appears.
+
+C3. Entities instantiate via the INSTANTIATE statement retain host
+    association to the scope in which the referenced TEMPLATE is
+    defined.
+
+D. Instantiations of a given TEMPLATE with identical actual template
+   parameters define the same concrete realizations.
+
+
+UTI-1: What if a template has a procedure/operator parameter and
+       "different" generic interface names are passed but the _same_
+       actual procedure is the one that is selected?  This can happen
+       either because the same generic name is "built" up differently
+       via USE statements or more simply because it has a different
+       name.
+
+3. Example
+==========
+
+     MODULE A
+        IMPLICIT NONE
+        PRIVATE
+
+        PUBLIC :: TMPL
+	PUBLIC :: COUNTER
+
+        TYPE :: MY_T
+        END TYPE MY_T
+
+        INTEGER :: COUNTER = 0
+
+        RESTRICTION R(T, F)
+           TYPE :: T; END TYPE
+           PURE FUNCTION F(x) RESULT(y)
+              TYPE(T) :: y
+              TYPE(T), INTENT(IN) :: x
+           END FUNCTION F
+        END RESTRICTION
+        
+        TEMPLATE TMPL(T, F)
+           REQUIRES(R(T, F)
+           PRIVATE
+           PUBLIC :: ITERATE
+
+        CONTAINS
+
+              PURE FUNCTION ITERATE(x, n) RESULT(y)
+                 TYPE(T) :: y
+                 TYPE(T), INTENT(IN) :: x
+                 INTEGER, INTENT(IN) :: n
+
+                 INTEGER :: i
+
+                 y = x
+                 DO i = 1, n
+                    y = F(y)
+		    counter = counter + 1
+                 END DO
+             END FUNCITON ITERATE        
+
+        END TEMPLATE
+
+     END MODULE A
+
+
+     PROGRAM MAIN
+        USE A
+
+	REAL :: y
+	INTEGER :: m
+	
+        INSTANTIATE TMPL(REAL, ADD_ONE_REAL), ONLY: ITERATE_REAL => ITERATE
+        INSTANTIATE TMPL(INTEGER, ADD_ONE_INTEGER), ONLY: ITERATE_INTEGER => ITERATE
+
+
+	y = ITERATE(0., n=100)
+	PRINT*, 'y = ', y,'; expected 100'
+
+	m = ITERATE(0, n=1000)
+	PRINT*, 'm = ', m,'; expected 1000'
+
+        PRINT*, 'TOTAL: ', counter, '; expected 1100'
+
+     CONTAINS
+
+        PURE FUNCTION ADD_ONE_REAL(x) RESULT(Y)
+           REAL :: y
+	   REAL, INTENT(in) :: x
+
+           y = x + 1
+	END FUNCTION ADD_ONE_REAL
+
+        PURE FUNCTION ADD_ONE_INTEGER(x) RESULT(Y)
+	   INTEGER :: y
+	   INTEGER, INTENT(in) :: x
+
+           y = x + 1
+	END FUNCTION ADD_ONE_INTEGER
+     END PROGRAM
+
+
+===END===
