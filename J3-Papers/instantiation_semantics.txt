@@ -1,0 +1,39 @@
+
+Reference: 22-120r5.txt
+
+1. Introduction
+===============
+
+The purpose of this paper is to establish the formal specs for the
+proposed TEMPLATE feature with regard to semantics of the INSTANTIATE
+statement.  Section 2 contains the specs.
+
+2. Formal specs
+===============
+
+A. The INSTANTIATE statement defines concrete instances of entities of
+   the specified template as external entities.
+
+Concerns:
+  - identical instances for identical params
+
+B1. Instantiations of a given TEMPLATE with identical actual template
+    parameters define the same concrete instance.
+
+A2. The actual parameter for a procedure template parameter is
+    determined by generic resolution and resolves to the actual
+    procedure used.
+
+????
+**** I found this sentence confusing as worded ****
+    It also is determined by resolving any renames of the procedure
+    through use association.
+*****************************
+
+???? is D3 necessary?
+A3. The actual parameter for a type template parameter is the actual type
+    defined, not simply the name provided at instantiation.
+
+A4. The actual parameter for a constant template parameter is the value of the
+    parameter.
+
