@@ -123,7 +123,6 @@ a single TEMPLATE may use the same host-associated module variable
         USE A
 
         REAL :: y
-        INTEGER :: r
 
         ! The following instantiations provide access to the template
         ! declared entity iterate
