@@ -51,7 +51,7 @@ D2. The actual parameter for a procedure template parameter is
     determined by generic resolution and resolves to the actual
     procedure used.
 
-???? 
+????
 **** I found this sentence confusing as worded ****
     It also is determined by resolving any renames of the procedure
     through use association.
@@ -79,9 +79,6 @@ a single TEMPLATE may use the same host-associated module variable
         PUBLIC :: TMPL
         PUBLIC :: counter
 
-        TYPE :: MY_T
-        END TYPE MY_T
-
         INTEGER :: counter = 0
 
         RESTRICTION R(T, F)
@@ -92,14 +89,18 @@ a single TEMPLATE may use the same host-associated module variable
            END FUNCTION F
         END RESTRICTION
 
-        TEMPLATE TMPL(T, F)
+        TEMPLATE tmpl(T, F)
            REQUIRES R(T, F)
            PRIVATE
            PUBLIC :: iterate
 
+           INTERFACE iterate
+             MODULE PROCEDURE iterate_tmpl
+           END INTERFACE
+
         CONTAINS
 
-              PURE FUNCTION iterate(x, n) RESULT(y)
+              PURE FUNCTION iterate_tmpl(x, n) RESULT(y)
                  TYPE(T) :: y
                  TYPE(T), INTENT(IN) :: x
                  INTEGER, INTENT(IN) :: n
@@ -111,7 +112,7 @@ a single TEMPLATE may use the same host-associated module variable
                     y = F(y)
                     counter = counter + 1 ! HOST association
                  END DO
-             END FUNCTION iterate
+             END FUNCTION iterate_tmpl
 
         END TEMPLATE
 
@@ -122,18 +123,15 @@ a single TEMPLATE may use the same host-associated module variable
         USE A
 
         REAL :: y
-        REAL :: r 
 
         ! The following instantiations provide access to the template
         ! declared entity iterate
 
-        INSTANTIATE TMPL(REAL, square), ONLY: 
-            & iterate_square => iterate
-        INSTANTIATE TMPL(INTEGER, logistic), ONLY:
-            & iterate_logistic => iterate
+        INSTANTIATE tmpl(INTEGER, square)
+        INSTANTIATE tmpl(REAL, logistic)
 
-        y = iterate_square(2., n=3)
-        PRINT*, 'y = ', y,'; expected 256.'
+        y = iterate_square(2, n=3)
+        PRINT*, 'y = ', y, '; expected 256.'
 
         y = iterate_logistic(0.1, n=10)
         PRINT*, 'y = ', y,'; expected 0.8872352'
@@ -143,16 +141,16 @@ a single TEMPLATE may use the same host-associated module variable
      CONTAINS
 
         PURE FUNCTION square(x) RESULT(Y)
-           REAL :: y
-           REAL, INTENT(in) :: x
+           INTEGER :: y
+           INTEGER, INTENT(in) :: x
 
            y = x*x
         END FUNCTION square
 
         PURE FUNCTION logistic(x) RESULT(Y)
-           INTEGER :: y
-           INTEGER, INTENT(in) :: x
-           real :: feigenbaum = 3.56995
+           REAL :: y
+           REAL, INTENT(in) :: x
+           REAL, PARAMETER :: feigenbaum = 3.56995
            y = feigenbaum * x * (1-x)
         END FUNCTION logistic
 
