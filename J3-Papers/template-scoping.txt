@@ -23,20 +23,20 @@ A. The TEMPLATE construct has access to entities in the host scope
    Straw Vote - Should the IMPORT statement be required to access
                 entities from the host scope of a TEMPLATE construct?
 
-B1. A TEMPLATE may specify the accessibility of each entity declared
-    within it.  PRIVATE template entities must not be referenced
-    outside of the template.  Instantiation provides access to PUBLIC
-    entities declared inside the template.
+B1. A TEMPLATE construct may specify the accessibility of each entity
+    declared within it.  Private template entities must not be
+    referenced outside of the template.  Instantiation provides access
+    to public entities declared inside the template.
 
-    NOTE: Entities accessible in the TEMPLATE via host or use
-          association cannot be made PUBLIC from the TEMPLATE.
+    NOTE: Entities accessible in the template via host or use
+          association cannot be made public from the template.
 
-B2. The default accessibility for TEMPLATE declared entities is
-    PUBLIC, but this may be overridden with a PRIVATE statement or
-    confirmed with a PUBLIC statement.
+B2. The default accessibility for template declared entities is
+    public, but this may be overridden with a PRIVATE statement or
+    made explicit with a PUBLIC statement.
 
 C1. The INSTANTIATE statement defines concrete instances of entities
-    of the specified TEMPLATE as external entities. I.e., instantiated
+    of the specified template as external entities. I.e., instantiated
     entities do not reside in the same scope as the referenced
     template, nor are they global identifiers.
 
@@ -44,25 +44,11 @@ C2. Public entities instantiated via the INSTANTIATE statement are
     accessible within the scope in which the INSTANTIATE statement
     appears.
 
-D1. Instantiations of a given TEMPLATE with identical actual template
-    parameters define the same concrete instance.
+C3. The INSTANTIATE statement provides an optional ONLY clause that
+    enables fine-grained access to individual template entities.
 
-D2. The actual parameter for a procedure template parameter is
-    determined by generic resolution and resolves to the actual
-    procedure used.
-
-????
-**** I found this sentence confusing as worded ****
-    It also is determined by resolving any renames of the procedure
-    through use association.
-*****************************
-
-???? is D3 necessary?
-D3. The actual parameter for a type template parameter is the actual type
-    defined, not simply the name provided at instantiation.
-
-D4. The actual parameter for a constant template parameter is the value of the
-    parameter.
+C4. The INSTANTIATE statement provides rename capabilities analogous
+    to those of the USE statement for modules.
 
 
 3. Example
@@ -94,13 +80,9 @@ a single TEMPLATE may use the same host-associated module variable
            PRIVATE
            PUBLIC :: iterate
 
-           INTERFACE iterate
-             MODULE PROCEDURE iterate_tmpl
-           END INTERFACE
-
         CONTAINS
 
-              PURE FUNCTION iterate_tmpl(x, n) RESULT(y)
+              PURE FUNCTION iterate(x, n) RESULT(y)
                  TYPE(T) :: y
                  TYPE(T), INTENT(IN) :: x
                  INTEGER, INTENT(IN) :: n
@@ -112,7 +94,7 @@ a single TEMPLATE may use the same host-associated module variable
                     y = F(y)
                     counter = counter + 1 ! HOST association
                  END DO
-             END FUNCTION iterate_tmpl
+             END FUNCTION iterate
 
         END TEMPLATE
 
@@ -127,8 +109,8 @@ a single TEMPLATE may use the same host-associated module variable
         ! The following instantiations provide access to the template
         ! declared entity iterate
 
-        INSTANTIATE tmpl(INTEGER, square)
-        INSTANTIATE tmpl(REAL, logistic)
+        INSTANTIATE iterate_tmpl(INTEGER, square), only: iterate_square => iterate
+        INSTANTIATE iterate_tmpl(REAL, logistic),  only: iterate_logistic => iterate
 
         y = iterate_square(2, n=3)
         PRINT*, 'y = ', y, '; expected 256.'
