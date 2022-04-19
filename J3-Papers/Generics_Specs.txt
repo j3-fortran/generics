@@ -51,7 +51,10 @@ B3. A TEMPLATE dummy parameter declaration must appear before any
 	        TYPE(T), INTENT(OUT) :: y
              END SUBROUTINE
          END INTERFACE
-		
+
+B4. A TEMPLATE dummy parameter declaration that is a type may not
+    contain any components, type-bound procedures, or KIND or LEN
+    type parameters.
 
 C. A TEMPLATE can be defined in the specification section of:
    - PROGRAM
