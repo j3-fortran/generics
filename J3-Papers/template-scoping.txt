@@ -17,50 +17,67 @@ A. The TEMPLATE construct has access to entities in the host scope
    through host association.
 
    Rationale: We expect templates will often make use of types,
-              restrictions, and other templates that are provided
-              by the containing scope.
+              restrictions, and other templates that are provided by
+              the containing scope.
 
-   Straw Vote - Variant: We could require use of IMPORT to establish such host
-            association more explicitly
+   Straw Vote - Should the IMPORT statement be required to access
+                entities from the host scope of a TEMPLATE construct?
 
-B1. A TEMPLATE may specify the accessibility of each entity declared within it.
-    PRIVATE template entities must not be referenced outside of the template.
-    Instantiation provides access to PUBLIC entities declared inside the template.
+B1. A TEMPLATE may specify the accessibility of each entity declared
+    within it.  PRIVATE template entities must not be referenced
+    outside of the template.  Instantiation provides access to PUBLIC
+    entities declared inside the template.
 
-NOTE: Entities accessible in the TEMPLATE via host or use association cannot be made PUBLIC from the TEMPLATE.
+    NOTE: Entities accessible in the TEMPLATE via host or use
+          association cannot be made PUBLIC from the TEMPLATE.
 
-B2. The default accessibility for TEMPLATE declared entities is PUBLIC, but this
-    may be overridden with a PRIVATE statement or confirmed with a
-    PUBLIC statement.
+B2. The default accessibility for TEMPLATE declared entities is
+    PUBLIC, but this may be overridden with a PRIVATE statement or
+    confirmed with a PUBLIC statement.
 
 C1. The INSTANTIATE statement defines concrete instances of entities
-    of the specified TEMPLATE as external entities. I.e., instantiated entities do not reside in the same
-    scope as the referenced template, nor are they global identifiers.
+    of the specified TEMPLATE as external entities. I.e., instantiated
+    entities do not reside in the same scope as the referenced
+    template, nor are they global identifiers.
 
-C2. Public entities instantiated via the INSTANTIATE statement are accessible
-    within the scope in which the INSTANTIATE statement appears.
+C2. Public entities instantiated via the INSTANTIATE statement are
+    accessible within the scope in which the INSTANTIATE statement
+    appears.
 
 D1. Instantiations of a given TEMPLATE with identical actual template
-    parameters define the same concrete instances.
+    parameters define the same concrete instance.
 
-D2. The actual parameter for a procedure parameter is determined by
-    generic resolution and resolves to the actual procedure used.
-    It also is determined by resolving any renames of the procedure through use association.
+D2. The actual parameter for a procedure template parameter is
+    determined by generic resolution and resolves to the actual
+    procedure used.
 
-D3. The actual parameter for a type parameter is the actual type defined, not simply the name provided at instantiation.
+???? 
+**** I found this sentence confusing as worded ****
+    It also is determined by resolving any renames of the procedure
+    through use association.
+*****************************
 
-D4. The actual parameter for a constant parameter is the value of the parameter.
+???? is D3 necessary?
+D3. The actual parameter for a type template parameter is the actual type
+    defined, not simply the name provided at instantiation.
+
+D4. The actual parameter for a constant template parameter is the value of the
+    parameter.
 
 
 3. Example
 ==========
+
+The example below demonstrates how multiple distinct instantiations of
+a single TEMPLATE may use the same host-associated module variable
+"counter".
 
      MODULE A
         IMPLICIT NONE
         PRIVATE
 
         PUBLIC :: TMPL
-        PUBLIC :: COUNTER
+        PUBLIC :: counter
 
         TYPE :: MY_T
         END TYPE MY_T
@@ -78,11 +95,11 @@ D4. The actual parameter for a constant parameter is the value of the parameter.
         TEMPLATE TMPL(T, F)
            REQUIRES R(T, F)
            PRIVATE
-           PUBLIC :: ITERATE
+           PUBLIC :: iterate
 
         CONTAINS
 
-              PURE FUNCTION ITERATE(x, n) RESULT(y)
+              PURE FUNCTION iterate(x, n) RESULT(y)
                  TYPE(T) :: y
                  TYPE(T), INTENT(IN) :: x
                  INTEGER, INTENT(IN) :: n
@@ -92,9 +109,9 @@ D4. The actual parameter for a constant parameter is the value of the parameter.
                  y = x
                  DO i = 1, n
                     y = F(y)
-                    counter = counter + 1
+                    counter = counter + 1 ! HOST association
                  END DO
-             END FUNCTION ITERATE
+             END FUNCTION iterate
 
         END TEMPLATE
 
@@ -105,34 +122,40 @@ D4. The actual parameter for a constant parameter is the value of the parameter.
         USE A
 
         REAL :: y
-        INTEGER :: m
+        REAL :: r 
 
-        INSTANTIATE TMPL(REAL, ADD_ONE_REAL), ONLY: ITERATE_REAL => ITERATE
-        INSTANTIATE TMPL(INTEGER, ADD_ONE_INTEGER), ONLY: ITERATE_INTEGER => ITERATE
+        ! The following instantiations provide access to the template
+        ! declared entity iterate
 
-        y = ITERATE_REAL(0., n=100)
-        PRINT*, 'y = ', y,'; expected 100'
+        INSTANTIATE TMPL(REAL, square), ONLY: 
+            & iterate_square => iterate
+        INSTANTIATE TMPL(INTEGER, logistic), ONLY:
+            & iterate_logistic => iterate
 
-        m = ITERATE_INTEGER(0, n=1000)
-        PRINT*, 'm = ', m,'; expected 1000'
+        y = iterate_square(2., n=3)
+        PRINT*, 'y = ', y,'; expected 256.'
 
-        PRINT*, 'TOTAL: ', counter, '; expected 1100'
+        y = iterate_logistic(0.1, n=10)
+        PRINT*, 'y = ', y,'; expected 0.8872352'
+
+        PRINT*, 'TOTAL: ', counter, '; expected 13 (3 + 10)'
 
      CONTAINS
 
-        PURE FUNCTION ADD_ONE_REAL(x) RESULT(Y)
+        PURE FUNCTION square(x) RESULT(Y)
            REAL :: y
            REAL, INTENT(in) :: x
 
-           y = x + 1
-        END FUNCTION ADD_ONE_REAL
+           y = x*x
+        END FUNCTION square
 
-        PURE FUNCTION ADD_ONE_INTEGER(x) RESULT(Y)
+        PURE FUNCTION logistic(x) RESULT(Y)
            INTEGER :: y
            INTEGER, INTENT(in) :: x
+           real :: feigenbaum = 3.56995
+           y = feigenbaum * x * (1-x)
+        END FUNCTION logistic
 
-           y = x + 1
-        END FUNCTION ADD_ONE_INTEGER
      END PROGRAM
 
 
