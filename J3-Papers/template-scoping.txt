@@ -134,7 +134,7 @@ a single TEMPLATE may use the same host-associated module variable
         r = iterate(2, n=3)
         PRINT*, 'r = ', r,'; expected 256.'
 
-        y = iterate(0.1, n=10)
+        y = iterate_logistic(0.1, n=10)
         PRINT*, 'y = ', y,'; expected 0.8872352'
 
         PRINT*, 'TOTAL: ', counter, '; expected 13 (3 + 10)'
