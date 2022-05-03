@@ -8,11 +8,80 @@ The purpose of this paper is to establish the formal specs for the
 proposed TEMPLATE feature with regard to semantics of the INSTANTIATE
 statement.  Section 2 contains the specs.
 
+Topics:
+  - ONLY clause
+  - duplicate (and where)
+  - what do we mean by "the same"
+  - placement in code
+  - generic resolution
+
 2. Formal specs
 ===============
 
-A. The INSTANTIATE statement defines concrete instances of entities of
-   the specified template as external entities.
+A. The INSTANTIATE statement defines instances of the entities
+   declared by the specified template.
+
+B1. The INSTANTIATE statement can only appear in the specification
+    section of a program unit.
+
+B2. The INSTANTIATE statement can not appear before any of the
+    following statements in the same program unit:
+      - USE statements
+      - IMPLICIT statements
+
+B3. References to entities defined by an INSTANTIATE statement must
+    appear after the INSTANTIATE statement, except for PUBLIC/PRIVATE
+    statements.
+
+
+C1. The INSTANTIATE statement must provide a mechanism that can limit
+    which template entities are visible in the instantiating scope.
+
+    Note: This is analogous to the ONLY clause for USE statements.
+
+C2. The INSTANTIATE statement must provide a rename mechanism that
+    alters the name by which template entities can be accessed in the
+    current scope.
+
+    Note: This is analogous to the rename capabilities for USE statements.
+
+
+
+
+
+
+
+
+
+
+Choice 1: Identical instantiations produce duplicate (but indistinguishable)
+          entities inside the scope where the instantiation happen.
+
+Choice 2: Identical instantiations produce entities that are outside
+          the scope where the instantiations happen.  The question is
+          then where are the entities?
+
+
+   Intantiate:
+      - types
+      - procedures
+      - object/variables
+
+   INTANTIATE FOO(...), only: T, some_obj
+   Type(T) :: my_obj
+
+   C++ "One-definition rule"
+   First.cpp
+   vector<int> :: obj
+
+   do_something(obj)
+
+   Second.cpp
+   do_something(vector<int> obj) {
+      vector<int> other;
+      other = obj;
+      ...
+   }
 
 Concerns:
   - identical instances for identical params
@@ -34,6 +103,6 @@ A2. The actual parameter for a procedure template parameter is
 A3. The actual parameter for a type template parameter is the actual type
     defined, not simply the name provided at instantiation.
 
-A4. The actual parameter for a constant template parameter is the value of the
-    parameter.
+A4. The actual parameter for a constant template parameter is the
+    value of the parameter.
 
