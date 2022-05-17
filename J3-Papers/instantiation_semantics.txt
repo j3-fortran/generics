@@ -1,5 +1,5 @@
 
-Reference: 22-120r5.txt
+References: 22-120r5, 22-151r1
 
 1. Introduction
 ===============
@@ -9,11 +9,26 @@ proposed TEMPLATE feature with regard to semantics of the INSTANTIATE
 statement.  Section 2 contains the specs.
 
 Topics:
-  - ONLY clause
+  - generic resolution
+  - association of actual and dummy template parameters
   - duplicate (and where)
   - what do we mean by "the same"
+
+TEMPLATE foo(T, flag)
+   logical :: flag
+
+TEMPLATE foo(T, rank)
+  integer :: rank
+  type(T), rank(rank), allocatable :: arr
+
+
+INSTANTIATE foo(REAL, 2)
+INSTANTIATE foo(REAL, 5)
+
+Done:
+  - ONLY/rename clause
   - placement in code
-  - generic resolution
+
 
 2. Formal specs
 ===============
@@ -37,22 +52,112 @@ B3. References to entities defined by an INSTANTIATE statement must
 C1. The INSTANTIATE statement must provide a mechanism that can limit
     which template entities are visible in the instantiating scope.
 
-    Note: This is analogous to the ONLY clause for USE statements.
+    Note: This is analogous to the ONLY clause of USE statements.
 
 C2. The INSTANTIATE statement must provide a rename mechanism that
     alters the name by which template entities can be accessed in the
     current scope.
 
-    Note: This is analogous to the rename capabilities for USE statements.
+    Note: This is analogous to the rename capabilities of USE
+          statements.
+
+type parameter association
+
+D1. The corresponding actual template parameter for a dummy type
+    template parameter must be a type-spec.
+
+    Example:
+
+         TEMPLATE tmpl(T)
+             TYPE(T); END TYPE
+             ...
+         END TEMPLATE tmpl
+
+         INSTANTIATE tmpl(REAL)
+         INSTANTIATE tmpl(INTEGER(KIND=INT64))
+         INSTANTIATE tmpl(my_type)
+
+D2. The corresponding actual template parameter for an dummy value
+    template parameter must be a constant expression of the same type,
+    kind, rank, and kind-type parameters of the dummy template
+    parameter.  If a len-type parameters of the dummy template
+    parameter is not assumed, then the actual parameter must have the
+    same value for that len-type parameter.
+
+    Example:
+
+         TEMPLATE tmpl1(flag, pet_type)
+            LOGICAL, PARAMETER :: flag
+            CHARACTER(LEN=*), PARAMETER :: pet_type
+         END TEPMLATE tmpl1 
+         TEMPLATE tmpl2(T, zero, str, param)
+            USE some_pdt, ONLY: pdt
+            TYPE(T); END TYPE
+            TYPE(T), parameter :: zero
+            CHARACTER(LEN=8), PARAMETER :: str
+            TYPE(pdt(kind=5,len=*)), PARAMETER :: param
+         END TEPMLATE tmpl1 
+
+         ! Legal instantiations
+         INSTANTIATE tmpl1(.true.,  'cat')
+         INSTANTIATE tmpl1(.false., 'iguana')
+         type(pdt(kind=5,len=10)), parameter :: A
+         INSTANTIATE tmpl2(REAL, 0., 'elephant' .false., A
+
+         ! The following are illegal.
+         INSTANTIATE tmpl1(0.1, 'cat')         ! flag: wrong type
+         INSTANTIATE tmpl2(REAL, 1., 'cat', A) ! str: wrong len
+            
+            
+
+E1. A generic interface name may be used as an actual procedure
+    template parameter at instantiation provided one of its specific
+    procedures matches the required interface of the corresponding
+    dummy procedure template parameter.  The matching specific
+    procedure is then treated as the effective actual procedure
+    template parameter.
+
+    Note: Procedure dummy template parameters are not permitted to
+          have an implicit interface.  Thus, there can never be any
+          ambiguity in the generic resolution in this context.
+
+E2. An operator may be used as an actual operator template parameter
+    at instantiation provided one of its specific procedures matches
+    the required interface of the corresponding dummy operator
+    template parameter.  The matching specific procedure is then
+    treated as the effective actual procedure template parameter.
+
+TEMPLATE foo(T, >)
+TEMPLATE bar(C, proc)
+
+INSTANTIATE foo(REAL, <)
+INSTANTIATE foo(MY_T, <)
+INSTANTIATE foo(MY_T, my_proc) ! possibly generic interface
+
+INSTANTIATE bar(REAL, <)
+INSTANTIATE bar(MY_T, <)
+INSTANTIATE bar(MY_T, my_proc) ! possibly generic interface
+
+TEMPLATE foofoo(T, U, .op1., .op2.)
+    OPERATOR(<) => .op1., .op2.
+    flag = T < T
+    flag = U < U
+    
+
+simple elemental logical function my_real_less_than(x, y)
+     real, intent(in) :: x, y
+     my_real_less_than = x < y
+end function my_real_less_than
 
 
 
+E3. Intrinsic operator ...
 
+------------------ Older partial work -----
+- Same parameters ==> same instantiation
 
-
-
-
-
+E1. Instantiations of a given template with identical actual template
+    parameters define the same concrete instance.
 
 Choice 1: Identical instantiations produce duplicate (but indistinguishable)
           entities inside the scope where the instantiation happen.
@@ -61,43 +166,10 @@ Choice 2: Identical instantiations produce entities that are outside
           the scope where the instantiations happen.  The question is
           then where are the entities?
 
-
-   Intantiate:
-      - types
-      - procedures
-      - object/variables
-
-   INTANTIATE FOO(...), only: T, some_obj
-   Type(T) :: my_obj
-
-   C++ "One-definition rule"
-   First.cpp
-   vector<int> :: obj
-
-   do_something(obj)
-
-   Second.cpp
-   do_something(vector<int> obj) {
-      vector<int> other;
-      other = obj;
-      ...
-   }
-
 Concerns:
   - identical instances for identical params
 
-B1. Instantiations of a given TEMPLATE with identical actual template
-    parameters define the same concrete instance.
 
-A2. The actual parameter for a procedure template parameter is
-    determined by generic resolution and resolves to the actual
-    procedure used.
-
-????
-**** I found this sentence confusing as worded ****
-    It also is determined by resolving any renames of the procedure
-    through use association.
-*****************************
 
 ???? is D3 necessary?
 A3. The actual parameter for a type template parameter is the actual type
@@ -105,4 +177,86 @@ A3. The actual parameter for a type template parameter is the actual type
 
 A4. The actual parameter for a constant template parameter is the
     value of the parameter.
+
+===END===
+
+
+Supplemental material (mostly adhoc examples)
+
+subroutine foo(f)
+   interface
+     subroutine f(obj)
+        integer, intent(inout) :: obj
+     end subroutine
+   end interface
+   ...
+end subroutine foo
+
+subroutine one_integer_f(obj)
+   integer, intent(inout) :: obj
+   ...
+end subroutine one_integer_f
+
+subroutine one_real_f(obj)
+   integer, intent(inout) :: obj
+   ...
+end subroutine one_real_f
+
+subroutine another_f(x, y)
+   integer, intent(in) :: x
+   integer, intent(out) :: y
+end subroutine
+
+interface all_f
+   module procedure one_real_f
+   module procedure one_int_f
+   module procedure another_f
+end interface
+
+call foo(all_f)
+
+instantiate my_tmpl(all_f)
+instantiate my_tmpl(one_int_f)
+
+TEMPLATE my_tmpl(T, S)
+  TYPE :: T; END TYPE
+  INTERFACE
+     SUBROUTINE S(x)
+        TYPE(T), INTENT(INOUT) :: x
+     END SUBROUTINE S
+  END INTERFACE
+
+CONTAINS
+
+   ...
+END TEMPLATE
+
+INSTANTIATE my_tmpl(REAL, all_f)
+INSTANTIATE my_tmpl(REAL, one_real_f)
+
+INSTANTIATE my_tmpl(REAL, one_int_f)
+INSTANTIATE my_tmpl(REAL, one_real_f)
+INSTANTIATE my_tmpl(REAL, another_f)
+
+
+TEMPLATE MY_TMPL2(T, F)
+   TYPE :: T; END TYPE
+   INTERFACE OPERATOR(+)
+      MODULE FUNCTION F(x,y)
+         TYPE(T) :: F
+         TYPE(T), INTENT(IN) :: x, y
+      END FUNCTION
+   END INTERFACE
+
+   INTERFACE OPERATOR(+)
+      ... F
+   END INTERFACE OPERATOR(+)
+...
+END TEMPLATE
+
+INTANTIATE MY_TMPL2(T, .my_plus.)
+
+
+
+
 
