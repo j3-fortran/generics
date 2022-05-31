@@ -14,17 +14,6 @@ Topics:
   - duplicate (and where)
   - what do we mean by "the same"
 
-TEMPLATE foo(T, flag)
-   logical :: flag
-
-TEMPLATE foo(T, rank)
-  integer :: rank
-  type(T), rank(rank), allocatable :: arr
-
-
-INSTANTIATE foo(REAL, 2)
-INSTANTIATE foo(REAL, 5)
-
 Done:
   - ONLY/rename clause
   - placement in code
@@ -61,7 +50,9 @@ C2. The INSTANTIATE statement must provide a rename mechanism that
     Note: This is analogous to the rename capabilities of USE
           statements.
 
-type parameter association
+
+2.1 Association of actual template parameters in INSTANTIATE
+------------------------------------------------------------
 
 D1. The corresponding actual template parameter for a dummy type
     template parameter must be a type-spec.
@@ -80,23 +71,24 @@ D1. The corresponding actual template parameter for a dummy type
 D2. The corresponding actual template parameter for an dummy value
     template parameter must be a constant expression of the same type,
     kind, rank, and kind-type parameters of the dummy template
-    parameter.  If a len-type parameters of the dummy template
-    parameter is not assumed, then the actual parameter must have the
-    same value for that len-type parameter.
+    parameter.  Any length-type parameter of an actual value template
+    parameter must have the same value as the corresponding
+    length-type parameter of the dummy template parameter if it is not
+    assumed.
 
     Example:
 
          TEMPLATE tmpl1(flag, pet_type)
             LOGICAL, PARAMETER :: flag
             CHARACTER(LEN=*), PARAMETER :: pet_type
-         END TEPMLATE tmpl1 
+         END TEMPLATE tmpl1 
          TEMPLATE tmpl2(T, zero, str, param)
             USE some_pdt, ONLY: pdt
             TYPE(T); END TYPE
             TYPE(T), parameter :: zero
             CHARACTER(LEN=8), PARAMETER :: str
             TYPE(pdt(kind=5,len=*)), PARAMETER :: param
-         END TEPMLATE tmpl1 
+         END TEMPLATE tmpl1 
 
          ! Legal instantiations
          INSTANTIATE tmpl1(.true.,  'cat')
@@ -110,7 +102,7 @@ D2. The corresponding actual template parameter for an dummy value
             
             
 
-E1. A generic interface name may be used as an actual procedure
+D3. A generic interface name may be used as an actual procedure
     template parameter at instantiation provided one of its specific
     procedures matches the required interface of the corresponding
     dummy procedure template parameter.  The matching specific
@@ -121,37 +113,53 @@ E1. A generic interface name may be used as an actual procedure
           have an implicit interface.  Thus, there can never be any
           ambiguity in the generic resolution in this context.
 
-E2. An operator may be used as an actual operator template parameter
+    Example:
+
+        TEMPLATE mytmpl(T, F)
+           TYPE :: T; END TYPE
+           INTERFACE
+              FUNCTION F(x)
+                 TYPE(T), INTENT(IN) :: x
+                 TYPE(T) :: F
+              END FUNCTION
+           END INTERFACE
+           ...
+        END TEMPLATE mytmpl
+
+        ...
+
+        INSTANTIATE mytmpl(REAL, sin)
+        INSTANTIATE mytmpl(DOUBLE PRECISION, sin)
+        
+D4. An operator may be used as an actual operator template parameter
     at instantiation provided one of its specific procedures matches
     the required interface of the corresponding dummy operator
     template parameter.  The matching specific procedure is then
     treated as the effective actual procedure template parameter.
 
-TEMPLATE foo(T, >)
-TEMPLATE bar(C, proc)
+    NOTE: This approach is arguably a bit klunky but it sidesteps
+          thorny issues related to how dummy operator parameters could
+          be declared, and allows template authors to define useful
+          operators inside the template.
 
-INSTANTIATE foo(REAL, <)
-INSTANTIATE foo(MY_T, <)
-INSTANTIATE foo(MY_T, my_proc) ! possibly generic interface
+    Example:
 
-INSTANTIATE bar(REAL, <)
-INSTANTIATE bar(MY_T, <)
-INSTANTIATE bar(MY_T, my_proc) ! possibly generic interface
+        TEMPLATE mytmpl(T, F)
+           TYPE :: T; END TYPE
+           INTERFACE
+              FUNCTION F(x, y)
+                 TYPE(T), INTENT(IN) :: x, y
+                 TYPE(T) :: F
+              END FUNCTION
+           END INTERFACE
+           ...
+        END TEMPLATE mytmpl
 
-TEMPLATE foofoo(T, U, .op1., .op2.)
-    OPERATOR(<) => .op1., .op2.
-    flag = T < T
-    flag = U < U
-    
+        ...
 
-simple elemental logical function my_real_less_than(x, y)
-     real, intent(in) :: x, y
-     my_real_less_than = x < y
-end function my_real_less_than
+        INSTANTIATE mytmpl(REAL, +)
+        INSTANTIATE mytmpl(INTEGER, *)
 
-
-
-E3. Intrinsic operator ...
 
 ------------------ Older partial work -----
 - Same parameters ==> same instantiation
@@ -166,8 +174,37 @@ Choice 2: Identical instantiations produce entities that are outside
           the scope where the instantiations happen.  The question is
           then where are the entities?
 
-Concerns:
-  - identical instances for identical params
+E2. Two instantiations have the same actual value template
+    parameter if the constant expressions have the same value.
+
+Choice 1: Disallow derived type value parameters
+
+Choice 2: Require "==" operator on any type used as a value template
+
+Choice 3: Structural equivalence.  Expressions have the same
+          components with the same values, and kind/length parameters.
+
+E3.  A valid type-spec for an actual templat parameter is ...
+
+E4. Two instantions have the same actual type-spec template parameter
+    for a given dummy template parameter, if 
+
+a==b 
+type Bar
+  real, pointer :: p
+end type Bar
+real, target :: one
+real, target :: two
+
+type(Bar), parameter :: obj(one)
+
+interface A
+   module procedure S
+interface B
+   module procedure S
+
+INSTANTIATE foo(REAL, A)
+INSTANTIATE foo(REAL, B)
 
 
 
