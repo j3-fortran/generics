@@ -8,16 +8,6 @@ The purpose of this paper is to establish the formal specs for the
 proposed TEMPLATE feature with regard to semantics of the INSTANTIATE
 statement.  Section 2 contains the specs.
 
-Topics:
-  - generic resolution
-  - association of actual and dummy template parameters
-  - duplicate (and where)
-  - what do we mean by "the same"
-
-Done:
-  - ONLY/rename clause
-  - placement in code
-
 
 2. Formal specs
 ===============
@@ -82,45 +72,52 @@ D1. The corresponding actual template parameter for a dummy type
          INSTANTIATE tmpl(my_pdt(len=:, n=3)) ! illegal; no deferred
 
 
-D2. The corresponding actual template parameter for a dummy value
+D2. A dummy template parameter can be a constant value of type
+    integer, logical, or character.
+
+    The corresponding actual template parameter for a dummy value
     template parameter must be a constant expression of the same type,
-    kind, rank, and kind-type parameters of the dummy template
-    parameter.  Any length-type parameter of an actual value template
-    parameter must have the same value as the corresponding
-    length-type parameter of the dummy template parameter if it is not
-    assumed.
+    kind, and rank.
 
-    Exception: A (constant) string actual value template parameter may
-               have a different length than a (constant) string dummy
-               value parameter.  In such cases, the dummy value is
-               either padded with blanks or truncated, analogous to
-               dummy argument association for strings.
+    If the the dummy value template parameter is a character, it must
+    be of assumed length.
 
-    Example:
+    An array dummy value template parameter can either have explicit
+    shape, assumed shape, or assumed rank.  If the shape is explicit
+    then the corresponding actual parameter must have the same shape.
+    If the shape is assumed, then the corresponding actual parameter
+    must have the same rank.  For an assumed rank dummy parameter the
+    corresponding actual parameter can have any rank or shape.
 
-         TEMPLATE tmpl1(flag, pet_type)
+    NOTE: To avoid complexities about what "same" means for
+          user-defined types as well as round-off issues with
+          expressions involving numeric types, subgroup has decided to
+          restrict value dummy template parameters to be logical,
+          integer, or assumed-len strings.  These cover all of the
+          generics use cases, but the original requirements paper then
+          generalized to any const expression.  A revision to the
+          requirements paper will be submitted.
+
+    Suggestive example:
+
+         TEMPLATE tmpl1(T, flag, n, pet_type)
+            TYPE T; END TYPE
             LOGICAL, PARAMETER :: flag
+            INTEGER, PARAMETER :: n
             CHARACTER(LEN=*), PARAMETER :: pet_type
-         END TEMPLATE tmpl1 
 
-         TEMPLATE tmpl2(T, zero, str, param)
-            USE some_pdt, ONLY: pdt
-            TYPE(T); END TYPE
-            TYPE(T), parameter :: zero
-            CHARACTER(LEN=8), PARAMETER :: str
-            TYPE(my_pdt(n=5,len=*)), PARAMETER :: param
+            TYPE(T), RANK(n), ALLOCATABLE :: data
+            
          END TEMPLATE tmpl1 
 
          ! Legal instantiations
-         INSTANTIATE tmpl1(.true.,  'cat')
-         INSTANTIATE tmpl1(.false., 'iguana')
-         TYPE(my_pdt(n=5,len=10)), parameter :: A
-         INSTANTIATE tmpl2(REAL, 0., 'elephant', A)
+         INSTANTIATE tmpl1(REAL,    .true.,  0, 'cat')
+         INSTANTIATE tmpl1(INTEGER, .false., 1, 'doggy')
 
          ! The following are illegal.
-         INSTANTIATE tmpl1(0.1, 'cat')         ! flag: wrong type
-         INSTANTIATE tmpl2(REAL, 1., 'cat', A) ! str: wrong len
-            
+         INSTANTIATE tmpl1(REAL, 1, 1, 'cat') ! wrong type expr for 'flag'
+         INSTANTIATE tmpl2(REAL, .true., 0, &
+              [character(len=5)::'cat','doggy']) ! wrong rank for pet_type
             
 
 D3. A generic interface name may be used as an actual procedure
@@ -185,36 +182,29 @@ D4. An operator may be used as an actual operator template parameter
 2.2 Identical instantiations
 ----------------------------
 
-E1. Instantiations of a given template with the same actual template
-    parameters define the same concrete instance.
-
-Choice 1: Identical instantiations produce duplicate (but indistinguishable)
-          entities inside the scope where the instantiation happen.
-
-Choice 2: Identical instantiations produce entities that are outside
-          the scope where the instantiations happen.  The question is
-          then where are the entities?
+E1. Instantiations of a given template with the same corresponding
+    actual template parameters define the same concrete instance of
+    that template.
 
 E2. Two corresponding value actual template parameters are the same if
     the constant expressions have the same value.
 
-    NOTE: To avoid complexities about what "same" means for
-          user-defined types as well as round-off issues with
-          expressions involving numeric types, subgroup has decided to
-          restrict value dummy template parameters to be logical,
-          real, or assumed-len strings.  These cover all of the
-          generics use cases, but the original requirements paper then
-          generalized to any const expression.  A revision to the
-          requirements paper will be submitted.
+    - Two logical actual template parameters are the same if they are
+      equivalent.
 
-E3. A valid type-spec for an actual template parameter is ...
+    - Two integer actual template parameters are the same if they
+      evaluate to the same value.
 
-E4. Two corresponding type-spec actual template parameters are the
-    same if they have are the same type and have the same kind and
+    - Two string actual template parameters  are the same if they
+      are equal and have the same length.
+
+E3. Two corresponding type-spec actual template parameters are the
+    same if they have the same type and have the same kind and
     length-type parameters.  Note that assumed length-type parameters
     are not permitted for type-spec actual template parameters.
 
-E5. Two corresponding procedure actual tempalate parameters are the
+
+E4. Two corresponding procedure actual template parameters are the
     same if they resolve to the same specific procedure within the
     template.
 
@@ -239,96 +229,16 @@ E5. Two corresponding procedure actual tempalate parameters are the
             END INTERFACE
         END TEMPLATE
 
+        INSTANTIATE TMPL(MY_T, A) ! Resolves to F1
+        INSTANTIATE TMPL(MY_T, A) ! Resolves to F1 ==> same
 
-        INSTANTIATE TMPL(MY_T, A) 
-        INSTANTIATE TMPL(MY_T, A) ! Same instance as line above (F1=F1)
+        INSTANTIATE TMPL(MY_T, A) ! Resolves to F1
+        INSTANTIATE TMPL(MY_T, B) ! Resolves to F1 ==> same
 
-        INSTANTIATE TMPL(MY_T, A) 
-        INSTANTIATE TMPL(MY_T, B) ! Same instance as line above (F1=F1)
-
-        INSTANTIATE TMPL(MY_U, A) 
-        INSTANTIATE TMPL(MY_U, B) ! Different instance (F2 /= F3)
+        INSTANTIATE TMPL(MY_U, A) ! Resolves to F2
+        INSTANTIATE TMPL(MY_U, B) ! Resolves to F3 ==> different
         
 
 ===END===
-
-
-Supplemental material (mostly adhoc examples)
-
-subroutine foo(f)
-   interface
-     subroutine f(obj)
-        integer, intent(inout) :: obj
-     end subroutine
-   end interface
-   ...
-end subroutine foo
-
-subroutine one_integer_f(obj)
-   integer, intent(inout) :: obj
-   ...
-end subroutine one_integer_f
-
-subroutine one_real_f(obj)
-   integer, intent(inout) :: obj
-   ...
-end subroutine one_real_f
-
-subroutine another_f(x, y)
-   integer, intent(in) :: x
-   integer, intent(out) :: y
-end subroutine
-
-interface all_f
-   module procedure one_real_f
-   module procedure one_int_f
-   module procedure another_f
-end interface
-
-call foo(all_f)
-
-instantiate my_tmpl(all_f)
-instantiate my_tmpl(one_int_f)
-
-TEMPLATE my_tmpl(T, S)
-  TYPE :: T; END TYPE
-  INTERFACE
-     SUBROUTINE S(x)
-        TYPE(T), INTENT(INOUT) :: x
-     END SUBROUTINE S
-  END INTERFACE
-
-CONTAINS
-
-   ...
-END TEMPLATE
-
-INSTANTIATE my_tmpl(REAL, all_f)
-INSTANTIATE my_tmpl(REAL, one_real_f)
-
-INSTANTIATE my_tmpl(REAL, one_int_f)
-INSTANTIATE my_tmpl(REAL, one_real_f)
-INSTANTIATE my_tmpl(REAL, another_f)
-
-
-TEMPLATE MY_TMPL2(T, F)
-   TYPE :: T; END TYPE
-   INTERFACE OPERATOR(+)
-      MODULE FUNCTION F(x,y)
-         TYPE(T) :: F
-         TYPE(T), INTENT(IN) :: x, y
-      END FUNCTION
-   END INTERFACE
-
-   INTERFACE OPERATOR(+)
-      ... F
-   END INTERFACE OPERATOR(+)
-...
-END TEMPLATE
-
-INTANTIATE MY_TMPL2(T, .my_plus.)
-
-
-
 
 
