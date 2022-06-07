@@ -55,20 +55,34 @@ C2. The INSTANTIATE statement must provide a rename mechanism that
 ------------------------------------------------------------
 
 D1. The corresponding actual template parameter for a dummy type
-    template parameter must be a type-spec.
+    template parameter must be a type-spec with constant specification
+    expressions.
 
     Example:
 
          TEMPLATE tmpl(T)
-             TYPE(T); END TYPE
+             TYPE T; END TYPE
+
+             TYPE(T), public :: x
              ...
+
          END TEMPLATE tmpl
+
+         TYPE :: my_pdt(len, n)
+            INTEGER, LEN :: len
+            INTEGER, KIND :: n
+            INTEGER :: B(len)
+            REAL, RANK(n), ALLOCATABLE :: A
+            INTEGER :: data
+         END TYPE
 
          INSTANTIATE tmpl(REAL)
          INSTANTIATE tmpl(INTEGER(KIND=INT64))
-         INSTANTIATE tmpl(my_type)
+         INSTANTIATE tmpl(my_pdt(len=5, n=3)) ! ok
+         INSTANTIATE tmpl(my_pdt(len=:, n=3)) ! illegal; no deferred
 
-D2. The corresponding actual template parameter for an dummy value
+
+D2. The corresponding actual template parameter for a dummy value
     template parameter must be a constant expression of the same type,
     kind, rank, and kind-type parameters of the dummy template
     parameter.  Any length-type parameter of an actual value template
@@ -76,25 +90,32 @@ D2. The corresponding actual template parameter for an dummy value
     length-type parameter of the dummy template parameter if it is not
     assumed.
 
+    Exception: A (constant) string actual value template parameter may
+               have a different length than a (constant) string dummy
+               value parameter.  In such cases, the dummy value is
+               either padded with blanks or truncated, analogous to
+               dummy argument association for strings.
+
     Example:
 
          TEMPLATE tmpl1(flag, pet_type)
             LOGICAL, PARAMETER :: flag
             CHARACTER(LEN=*), PARAMETER :: pet_type
          END TEMPLATE tmpl1 
+
          TEMPLATE tmpl2(T, zero, str, param)
             USE some_pdt, ONLY: pdt
             TYPE(T); END TYPE
             TYPE(T), parameter :: zero
             CHARACTER(LEN=8), PARAMETER :: str
-            TYPE(pdt(kind=5,len=*)), PARAMETER :: param
+            TYPE(my_pdt(n=5,len=*)), PARAMETER :: param
          END TEMPLATE tmpl1 
 
          ! Legal instantiations
          INSTANTIATE tmpl1(.true.,  'cat')
          INSTANTIATE tmpl1(.false., 'iguana')
-         type(pdt(kind=5,len=10)), parameter :: A
-         INSTANTIATE tmpl2(REAL, 0., 'elephant' .false., A
+         TYPE(my_pdt(n=5,len=10)), parameter :: A
+         INSTANTIATE tmpl2(REAL, 0., 'elephant', A)
 
          ! The following are illegal.
          INSTANTIATE tmpl1(0.1, 'cat')         ! flag: wrong type
@@ -161,10 +182,10 @@ D4. An operator may be used as an actual operator template parameter
         INSTANTIATE mytmpl(INTEGER, *)
 
 
------------------- Older partial work -----
-- Same parameters ==> same instantiation
+2.2 Identical instantiations
+----------------------------
 
-E1. Instantiations of a given template with identical actual template
+E1. Instantiations of a given template with the same actual template
     parameters define the same concrete instance.
 
 Choice 1: Identical instantiations produce duplicate (but indistinguishable)
@@ -174,46 +195,60 @@ Choice 2: Identical instantiations produce entities that are outside
           the scope where the instantiations happen.  The question is
           then where are the entities?
 
-E2. Two instantiations have the same actual value template
-    parameter if the constant expressions have the same value.
+E2. Two corresponding value actual template parameters are the same if
+    the constant expressions have the same value.
 
-Choice 1: Disallow derived type value parameters
+    NOTE: To avoid complexities about what "same" means for
+          user-defined types as well as round-off issues with
+          expressions involving numeric types, subgroup has decided to
+          restrict value dummy template parameters to be logical,
+          real, or assumed-len strings.  These cover all of the
+          generics use cases, but the original requirements paper then
+          generalized to any const expression.  A revision to the
+          requirements paper will be submitted.
 
-Choice 2: Require "==" operator on any type used as a value template
+E3. A valid type-spec for an actual template parameter is ...
 
-Choice 3: Structural equivalence.  Expressions have the same
-          components with the same values, and kind/length parameters.
+E4. Two corresponding type-spec actual template parameters are the
+    same if they have are the same type and have the same kind and
+    length-type parameters.  Note that assumed length-type parameters
+    are not permitted for type-spec actual template parameters.
 
-E3.  A valid type-spec for an actual templat parameter is ...
+E5. Two corresponding procedure actual tempalate parameters are the
+    same if they resolve to the same specific procedure within the
+    template.
 
-E4. Two instantions have the same actual type-spec template parameter
-    for a given dummy template parameter, if 
+    Example:
 
-a==b 
-type Bar
-  real, pointer :: p
-end type Bar
-real, target :: one
-real, target :: two
+        INTERFACE A
+            module procedure F1  ! operates on MY_T
+            module procedure F2  ! operates on MY_U
+        END INTERFACE A
 
-type(Bar), parameter :: obj(one)
+        INTERFACE B
+            module procedure F1  ! operates on MY_T
+            module procedure F3  ! operates on MY_U
+        END INTERFACE B
 
-interface A
-   module procedure S
-interface B
-   module procedure S
+        TEMPLATE TMPL(T, F)
+            TYPE T; END TYPE
+            INTERFACE
+               SUBROUTINE f(x)
+                  TYPE(T), INTENT(INOUT) :: x
+               END SUBROUTINE f(x)
+            END INTERFACE
+        END TEMPLATE
 
-INSTANTIATE foo(REAL, A)
-INSTANTIATE foo(REAL, B)
 
+        INSTANTIATE TMPL(MY_T, A) 
+        INSTANTIATE TMPL(MY_T, A) ! Same instance as line above (F1=F1)
 
+        INSTANTIATE TMPL(MY_T, A) 
+        INSTANTIATE TMPL(MY_T, B) ! Same instance as line above (F1=F1)
 
-???? is D3 necessary?
-A3. The actual parameter for a type template parameter is the actual type
-    defined, not simply the name provided at instantiation.
-
-A4. The actual parameter for a constant template parameter is the
-    value of the parameter.
+        INSTANTIATE TMPL(MY_U, A) 
+        INSTANTIATE TMPL(MY_U, B) ! Different instance (F1 /= F3)
+        
 
 ===END===
 
