@@ -247,7 +247,7 @@ E5. Two corresponding procedure actual tempalate parameters are the
         INSTANTIATE TMPL(MY_T, B) ! Same instance as line above (F1=F1)
 
         INSTANTIATE TMPL(MY_U, A) 
-        INSTANTIATE TMPL(MY_U, B) ! Different instance (F1 /= F3)
+        INSTANTIATE TMPL(MY_U, B) ! Different instance (F2 /= F3)
         
 
 ===END===
