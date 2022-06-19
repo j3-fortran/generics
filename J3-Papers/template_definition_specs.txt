@@ -1,0 +1,124 @@
+References: 22-120r5, 22-151r1
+
+1. Introduction
+===============
+
+The purpose of this paper is to establish the formal specs for the
+proposed TEMPLATE feature with regard to semantics of defining a
+template.  Section 2 contains the specs.
+
+
+2. Formal specs
+===============
+
+***
+Done A, B1.
+***
+
+- What are actual and dummy template parameters
+- What goes inside
+- order of statement (rules)
+
+
+A. TEMPLATE is a named scoping unit.
+
+B1. A TEMPLATE definition has the following elements:
+   - template  name
+   - list of template dummy parameters
+   - specification section (possibly empty)
+   - optional procedure section begining with a CONTAINS statement
+
+   Notional syntax:
+
+      TEMPLATE T([param1[, param2[, ...]]])
+      [! specification section]
+      [CONTAINS
+        [! procedure definitions]]
+      END TEMPLATE T
+
+************
+---------- DRAFT COPIED FROM EARLIER SPECS PAPER
+************
+
+
+B2. The permitted order of statements in a TEMPLATE is the same as
+    that for modules.
+
+B3. A TEMPLATE dummy parameter declaration must appear before any
+    reference to that parameter and must appear after any USE, IMPORT,
+    and IMPLICIT NONE statements in the TEMPLATE.
+
+    Suggestive syntax:
+
+       TEMPLATE TMPL(T, FLAG, sub)
+          TYPE :: T; END TYPE ! dummy type parameter
+          LOGICAL :: FLAG     ! dummy constant (logical) parameter
+          INTERFACE
+             SUBROUTINE sub(x, y)    ! dummy subroutine parameter
+	        TYPE(T), INTENT(IN) :: x
+	        TYPE(T), INTENT(OUT) :: y
+             END SUBROUTINE
+         END INTERFACE
+
+B4. A TEMPLATE dummy parameter declaration that is a type may not
+    contain any components, type-bound procedures, or KIND or LEN
+    type parameters.
+
+C. A TEMPLATE can be defined in the specification section of:
+   - PROGRAM
+   - MODULE
+   - SUBMODULE
+   - procedure (including internal subprogram)
+   - BLOCK construct
+   - another TEMPLATE
+
+   Aside:  Basically any place that a TYPE can be defined.
+
+   Straw Vote 1: Should a TEMPLATE be permitted to contain an internal
+                 TEMPLATE definition?  YES-NO-UNDECIDED
+
+   
+D. A TEMPLATE may only be referenced by host association or use
+   association.
+
+E1. There shall be a nonexecutable specification construct INSTANTIATE
+    for instantiating templates by providing the means by which a
+    scoping unit defines named entities provided by a TEMPLATE.
+
+E2. An INSTANTIATE statement must provide the name of an accessible
+    TEMPLATE and a list of TEMPLATE actual parameters corresponding to
+    the TEMPLATE dummy parameters of the specified TEMPLATE.
+
+    Suggestive syntax:
+
+        TEMPLATE MY_TMPL(U, V, S)
+           ...
+        END TEMPLATE MY_TMPL
+        ...
+        ! Host association ...
+        INSTANTIATE  MY_TMPL(MY_U, MY_V, MY_SUBR)
+
+E4. The INSTANTIATE statement can appear only in the specification
+    section in any of:
+    - PROGRAM
+    - MODULE
+    - SUBMODULE
+    - another TEMPLATE
+    - procedure
+    - BLOCK construct
+
+    Aside:  I.e., any place one could declare a variable.
+
+E5. The INSTANTIATE feature must allow functionality analogous to the
+    ONLY and rename clauses of module USE statements to enable
+    disambiguation of provided entities.
+
+    Suggestive syntax:
+
+       USE my_module, ONLY:  T ! T is a TEMPLATE
+       ...
+       ! The following statement provides access to the entity S
+       ! defined inside TEMPLATE T, but using the name S_1
+       INSTANTIATE :: T(param1, param2), ONLY: S_1 => S   
+
+

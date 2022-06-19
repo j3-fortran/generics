@@ -1,12 +1,15 @@
+To: J3                                                     J3/##-###
+From: Tom Clune & subgroup generics
+Subject: Generics formal specs: semantics of instatiating templates 
+Date: 2022-06-19
 
 References: 22-120r5, 22-151r1
 
 1. Introduction
 ===============
 
-The purpose of this paper is to establish the formal specs for the
-proposed TEMPLATE feature with regard to semantics of the INSTANTIATE
-statement.  Section 2 contains the specs.
+This paper is intended to establish the formal specs of generic
+programming with respect to the semantics of instantiating templates.
 
 
 2. Formal specs
@@ -52,10 +55,7 @@ D1. The corresponding actual template parameter for a dummy type
 
          TEMPLATE tmpl(T)
              TYPE T; END TYPE
-
-             TYPE(T), public :: x
              ...
-
          END TEMPLATE tmpl
 
          TYPE :: my_pdt(len, n)
@@ -72,15 +72,15 @@ D1. The corresponding actual template parameter for a dummy type
          INSTANTIATE tmpl(my_pdt(len=:, n=3)) ! illegal; no deferred
 
 
-D2. A dummy template parameter can be a constant value of type
+D2. A dummy template parameter can be a value parameter of type
     integer, logical, or character.
+
+    If the the dummy value template parameter is a character, it must
+    be of assumed length.
 
     The corresponding actual template parameter for a dummy value
     template parameter must be a constant expression of the same type,
     kind, and rank.
-
-    If the the dummy value template parameter is a character, it must
-    be of assumed length.
 
     An array dummy value template parameter can either have explicit
     shape, assumed shape, or assumed rank.  If the shape is explicit
@@ -98,7 +98,7 @@ D2. A dummy template parameter can be a constant value of type
           generalized to any const expression.  A revision to the
           requirements paper will be submitted.
 
-    Suggestive example:
+    Example using notional syntax:
 
          TEMPLATE tmpl1(T, flag, n, pet_type)
             TYPE T; END TYPE
@@ -118,8 +118,23 @@ D2. A dummy template parameter can be a constant value of type
          INSTANTIATE tmpl1(REAL, 1, 1, 'cat') ! wrong type expr for 'flag'
          INSTANTIATE tmpl2(REAL, .true., 0, &
               [character(len=5)::'cat','doggy']) ! wrong rank for pet_type
-            
 
+    Another example using assumed rank:
+
+         TEMPLATE tmpl2(C)
+            INTEGER, PARAMETER :: C(..)
+
+         CONTAINS
+
+            SUBROUTINE ACCUM(x y)
+               INTEGER, INTENT(IN),  RANK(RANK(C)) :: x
+               INTEGER, INTENT(OUT), RANK(RANK(C)) :: y
+               y = x + C
+            END SUBROUTINE 
+            
+         END TEMPLATE tmpl2
+
+            
 D3. A generic interface name may be used as an actual procedure
     template parameter at instantiation provided one of its specific
     procedures matches the required interface of the corresponding
@@ -149,9 +164,9 @@ D3. A generic interface name may be used as an actual procedure
         INSTANTIATE mytmpl(REAL, sin)
         INSTANTIATE mytmpl(DOUBLE PRECISION, sin)
         
-D4. An operator may be used as an actual operator template parameter
+D4. An operator may be used as an actual template parameter
     at instantiation provided one of its specific procedures matches
-    the required interface of the corresponding dummy operator
+    the required interface of the corresponding dummy procedure
     template parameter.  The matching specific procedure is then
     treated as the effective actual procedure template parameter.
 
@@ -211,13 +226,13 @@ E4. Two corresponding procedure actual template parameters are the
     Example:
 
         INTERFACE A
-            module procedure F1  ! operates on MY_T
-            module procedure F2  ! operates on MY_U
+            MODULE PROCEDURE F1  ! operates on MY_T
+            MODULE PROCEDURE F2  ! operates on MY_U
         END INTERFACE A
 
         INTERFACE B
-            module procedure F1  ! operates on MY_T
-            module procedure F3  ! operates on MY_U
+            MODULE PROCEDURE F1  ! operates on MY_T
+            MODULE PROCEDURE F3  ! operates on MY_U
         END INTERFACE B
 
         TEMPLATE TMPL(T, F)

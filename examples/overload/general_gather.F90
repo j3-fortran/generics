@@ -8,17 +8,22 @@ module MPI_Support_mod
       type :: T; end type T
       integer, parameter :: N     ! rank
 
+      private
+
+      public :: array_gather
+
       interface array_gather
-         module procedure array_gather_t
+         module procedure array_gather_
       end interface array_gather
 
    contains
 
-      subroutine array_gather_t(local_array, global_array, grid, mask, depe, hw, rc)
+      subroutine array_gather_(local_array, global_array, grid, mask, depe, hw, rc)
          use ESMF, only: ESMF_Grid
          use ESMF, only: ESMF_DELayout
          use ESMF, only: ESMF_DistGrid
          use ESMF, only: ESMF_VM
+
          type(T), intent(IN),  RANK(N) :: local_array
          type(T), intent(OUT), RANK(N) :: global_array
          type (ESMF_Grid)      :: grid
@@ -166,11 +171,11 @@ module MPI_Support_mod
                   K = MASK(I)
                   II = KK(K)
                   if (N == 1) then
-                     GLOBAL_ARRAY(I) = VAR(II)
+                     GLOBAL_ARRAY@(...) = VAR(II)
                   else
                      LX = AU(1,K) - AL(1,K) + 1 
                      do J=1,JSZ
-                        GLOBAL_ARRAY(I,J) = VAR(II+LX*(J-1))
+                        GLOBAL_ARRAY@(...) = VAR(II+LX*(J-1))
                      end do
                   end if
                   KK(MASK(I)) = KK(MASK(I)) + 1 
@@ -208,7 +213,7 @@ module MPI_Support_mod
          call ESMF_VmBarrier(vm, rc=status)
          VERIFY_(STATUS)
          RETURN_(ESMF_SUCCESS)
-      end subroutine ARRAY_GATHER_T
+      end subroutine array_gather_
 
    end template
 
