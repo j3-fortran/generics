@@ -11,9 +11,7 @@ template.  Section 2 contains the specs.
 2. Formal specs
 ===============
 
-***
-Done A, B1.
-***
+C2 was last section examined.
 
 - What are actual and dummy template parameters
 - What goes inside
@@ -22,29 +20,109 @@ Done A, B1.
 
 A. TEMPLATE is a named scoping unit.
 
-B1. A TEMPLATE definition has the following elements:
-   - template  name
+B. A TEMPLATE can be defined in the specification section of:
+   - PROGRAM
+   - MODULE
+   - SUBMODULE
+   - procedure (including internal subprogram)
+   - BLOCK construct
+   - another TEMPLATE* (see straw vote 1)
+
+   Aside:  Basically any place that a TYPE can be defined.
+
+   Straw Vote 1: Should a template definition be permitted to contain
+                 an internal template definition?  YES-NO-UNDECIDED
+
+C1. A TEMPLATE definition has the following elements:
+   - template name
    - list of template dummy parameters
-   - specification section (possibly empty)
-   - optional procedure section begining with a CONTAINS statement
+   - specification section
+   - optional procedure section beginning with a CONTAINS statement
 
    Notional syntax:
 
-      TEMPLATE T([param1[, param2[, ...]]])
-      [! specification section]
+      TEMPLATE T(param1[, param2[, ...]])
+      ! specification section
       [CONTAINS
         [! procedure definitions]]
       END TEMPLATE T
 
-************
----------- DRAFT COPIED FROM EARLIER SPECS PAPER
-************
+
+C2. The permitted order of statements within a TEMPLATE construct is
+    the following.
+
+    - TEMPLATE statement
+    - USE statements
+    - IMPORT statements
+    - IMPLICIT statements
+    - Misc. specifications in any order:
+      * REQUIRES statements
+      * RESTRICTION definitions
+      * Derived type definitions
+      * INTERFACE blocks
+      * TYPE declaration statements
+      * specification statements
+      * enumeration definitions
+      * TEMPLATE definitions*
+    - CONTAINS statement
+    - TEMPLATE subprograms
+    - END TEMPLATE statement
+
+    If straw vote 1 is "No" then TEMPLATE definitions will be deleted
+    from the above list.
+
+    Note: The order of statements within a MODULE will need
+          modification to permit TEMPLATE and RESTRICTION definitions.
 
 
-B2. The permitted order of statements in a TEMPLATE is the same as
-    that for modules.
+    TEMPLATE T_outer(U)
+       TYPE U; END TYPE
+       TYPE :: LIST
+          TYPE(U), allocatable :: elements(:)
+       END TYE
 
-B3. A TEMPLATE dummy parameter declaration must appear before any
+       TEMPLATE T_inner(F)
+          INTERFACE
+             LOGICAL FUNCTION F(x,y)
+               TYPE(U), INTENT(IN) :: x, y
+             END FUNCTION
+          END INTERFACE
+       CONTAINS
+          SUBROUTINE SORT(x)
+             TYPE(LIST), INTENT(INOUT) :: x
+             ...
+             IF (F(x(i),x(j)) THEN ...
+
+             END SUBROUTINE SORT
+       END TEMPLATE
+    END TEMPLATE  
+
+    INSTANTIATE T_outer(REAL)
+    INSTANTIATE T_INNER(my_F)
+
+    TYPE(List) :: my_list ! list of U's
+
+    CALL sort(my_list)           
+
+ 
+-------------- 2022-06-21 ----------
+
+
+C3. Statement of spec is contingent on outcome of straw vote 1.
+
+    If "yes" then:
+    
+      The permitted order of statements in a TEMPLATE definition is the
+      same as that for modules.
+
+    otherwise:
+
+      The permitted order of statements in a TEMPLATE definition is the
+      same as that for modules except that a template definition may not
+      appear within another template definition.
+
+
+C3. A dummy template parameter declaration must appear before any
     reference to that parameter and must appear after any USE, IMPORT,
     and IMPLICIT NONE statements in the TEMPLATE.
 
@@ -64,18 +142,8 @@ B4. A TEMPLATE dummy parameter declaration that is a type may not
     contain any components, type-bound procedures, or KIND or LEN
     type parameters.
 
-C. A TEMPLATE can be defined in the specification section of:
-   - PROGRAM
-   - MODULE
-   - SUBMODULE
-   - procedure (including internal subprogram)
-   - BLOCK construct
-   - another TEMPLATE
 
-   Aside:  Basically any place that a TYPE can be defined.
 
-   Straw Vote 1: Should a TEMPLATE be permitted to contain an internal
-                 TEMPLATE definition?  YES-NO-UNDECIDED
 
    
 D. A TEMPLATE may only be referenced by host association or use
