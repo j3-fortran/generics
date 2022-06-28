@@ -26,14 +26,10 @@ B. A TEMPLATE can be defined in the specification section of:
    - SUBMODULE
    - procedure (including internal subprogram)
    - BLOCK construct
-   - another TEMPLATE* (see straw vote 1)
+   - another TEMPLATE
 
-   Aside:  Basically any place that a TYPE can be defined.
 
-   Straw Vote 1: Should a template definition be permitted to contain
-                 an internal template definition?  YES-NO-UNDECIDED
-
-C1. A TEMPLATE definition has the following elements:
+C. A TEMPLATE definition has the following elements:
    - template name
    - list of template dummy parameters
    - specification section
@@ -48,7 +44,7 @@ C1. A TEMPLATE definition has the following elements:
       END TEMPLATE T
 
 
-C2. The permitted order of statements within a TEMPLATE construct is
+D.  The permitted order of statements within a TEMPLATE construct is
     the following.
 
     - TEMPLATE statement
@@ -63,70 +59,62 @@ C2. The permitted order of statements within a TEMPLATE construct is
       * TYPE declaration statements
       * specification statements
       * enumeration definitions
-      * TEMPLATE definitions*
+      * TEMPLATE definitions
     - CONTAINS statement
     - TEMPLATE subprograms
     - END TEMPLATE statement
-
-    If straw vote 1 is "No" then TEMPLATE definitions will be deleted
-    from the above list.
 
     Note: The order of statements within a MODULE will need
           modification to permit TEMPLATE and RESTRICTION definitions.
 
 
-    TEMPLATE T_outer(U)
-       TYPE U; END TYPE
-       TYPE :: LIST
-          TYPE(U), allocatable :: elements(:)
-       END TYE
-
-       TEMPLATE T_inner(F)
-          INTERFACE
-             LOGICAL FUNCTION F(x,y)
-               TYPE(U), INTENT(IN) :: x, y
-             END FUNCTION
-          END INTERFACE
-       CONTAINS
-          SUBROUTINE SORT(x)
-             TYPE(LIST), INTENT(INOUT) :: x
-             ...
-             IF (F(x(i),x(j)) THEN ...
-
-             END SUBROUTINE SORT
-       END TEMPLATE
-    END TEMPLATE  
-
-    INSTANTIATE T_outer(REAL)
-    INSTANTIATE T_INNER(my_F)
-
-    TYPE(List) :: my_list ! list of U's
-
-    CALL sort(my_list)           
-
- 
--------------- 2022-06-21 ----------
+    Example: The following shows nested templates enable conditional
+             functionality.  I.e., a user that wants to only use some
+             subset of a template is not then forced to define
+             arbitrary extra parameters to satisfy requirements of
+             other portions of the template.
 
 
-C3. Statement of spec is contingent on outcome of straw vote 1.
+        TEMPLATE T_outer(U)
+           TYPE U; END TYPE
+           TYPE :: LIST
+              TYPE(U), allocatable :: elements(:)
+           END TYPE
+        
+           TEMPLATE T_inner(F)
+              INTERFACE
+                 LOGICAL FUNCTION F(x,y)
+                   TYPE(U), INTENT(IN) :: x, y
+                 END FUNCTION
+              END INTERFACE
+           CONTAINS
+              SUBROUTINE sort(x)
+                 TYPE(LIST), INTENT(INOUT) :: x
+                 ...
+                 IF (F(x(i),x(j)) THEN ...
+        
+                 END SUBROUTINE sort
+           END TEMPLATE
+        CONTAINS
+           ...
+        END TEMPLATE  
+        
+        INSTANTIATE T_outer(REAL) ! makes T_INNER accessible
+        INSTANTIATE T_INNER(my_less), ONLY: sort_ascending => sort
+        INSTANTIATE T_INNER(my_greater), ONLY: sort_descending => sort
 
-    If "yes" then:
-    
-      The permitted order of statements in a TEMPLATE definition is the
-      same as that for modules.
+        ! Another type that does not need sorting
+        INSTANTIATE T_outer(my_other_type), only: unsortable_list => LIST
 
-    otherwise:
-
-      The permitted order of statements in a TEMPLATE definition is the
-      same as that for modules except that a template definition may not
-      appear within another template definition.
+        TYPE(List) :: my_list ! list of REALs
+        CALL sort_descending(my_list)           
 
 
-C3. A dummy template parameter declaration must appear before any
+C4. A dummy template parameter declaration must appear before any
     reference to that parameter and must appear after any USE, IMPORT,
     and IMPLICIT NONE statements in the TEMPLATE.
 
-    Suggestive syntax:
+    Example:
 
        TEMPLATE TMPL(T, FLAG, sub)
           TYPE :: T; END TYPE ! dummy type parameter
@@ -136,57 +124,81 @@ C3. A dummy template parameter declaration must appear before any
 	        TYPE(T), INTENT(IN) :: x
 	        TYPE(T), INTENT(OUT) :: y
              END SUBROUTINE
-         END INTERFACE
+          END INTERFACE
+       END TEMPLATE
 
-B4. A TEMPLATE dummy parameter declaration that is a type may not
-    contain any components, type-bound procedures, or KIND or LEN
-    type parameters.
+E1. A dummy template parameter must be one of
+    - a type,
+    - a value, or
+    - a procedure
+
+E2. A dummy template parameter declaration that is a type may not
+    contain any components, type-bound procedures, or KIND or LEN type
+    parameters.
+
+E3. A dummy template parameter can be a value parameter of type
+    integer, logical, or character.
+
+    If the the dummy value template parameter is a character, it must
+    be of assumed length.
+
+    An array dummy value template parameter can either have explicit
+    shape, assumed shape, or assumed rank.  
+
+    Example using notional syntax:
+
+         TEMPLATE tmpl1(T, flag, n, pet_type)
+            TYPE T; END TYPE
+            LOGICAL, PARAMETER :: flag
+            INTEGER, PARAMETER :: n
+            CHARACTER(LEN=*), PARAMETER :: pet_type
+
+            TYPE(T), RANK(n), ALLOCATABLE :: data
+            
+         END TEMPLATE tmpl1 
+
+E4. A dummy procedure template parameter must have an
+    explicit interface.
+
+    Note: The interface may be defined in terms the template dummy
+          parameters.
+
+F1. Any procedure invoked within a template must have an explicit
+    interface.  
+
+ All arguments and return values must be be of 
+
+    While processing a template to determine if it is valid, a template
+    type parameter is considered its own type.
+
+The interfaces arguments and return values must all be
+    either intrnsic, host associated, or template dummy type.
+
+    The declared type of an entity with declared type that is a dummy
+    template type parameter is considered to be of the dummy template
+    parameter type.
 
 
+    minval(x)
+
+    If it involves entities of dummy template type parameters,
+and be used accordingly.
+
+F2. A template definition may use intrinsic operators on operands of
+    intrinsic type.
 
 
-   
-D. A TEMPLATE may only be referenced by host association or use
-   association.
+F3.  
 
-E1. There shall be a nonexecutable specification construct INSTANTIATE
-    for instantiating templates by providing the means by which a
-    scoping unit defines named entities provided by a TEMPLATE.
+  procedures that have actual arguments that are of dummy template
+    parameter type must have interfaces with the dummy arguments that
+    are declared in terms of that dummy template parameter type.
 
-E2. An INSTANTIATE statement must provide the name of an accessible
-    TEMPLATE and a list of TEMPLATE actual parameters corresponding to
-    the TEMPLATE dummy parameters of the specified TEMPLATE.
+    minval(x) ! type T
 
-    Suggestive syntax:
+Template procedures may only invoke procedures that have explicit
+    interfaces declared in the template, host associated, or
+    instrinsics.
 
-        TEMPLATE MY_TMPL(U, V, S)
-           ...
-        END TEMPLATE MY_TMPL
-        ...
-        ! Host association ...
-        INSTANTIATE  MY_TMPL(MY_U, MY_V, MY_SUBR)
-
-E4. The INSTANTIATE statement can appear only in the specification
-    section in any of:
-    - PROGRAM
-    - MODULE
-    - SUBMODULE
-    - another TEMPLATE
-    - procedure
-    - BLOCK construct
-
-    Aside:  I.e., any place one could declare a variable.
-
-E5. The INSTANTIATE feature must allow functionality analogous to the
-    ONLY and rename clauses of module USE statements to enable
-    disambiguation of provided entities.
-
-    Suggestive syntax:
-
-       USE my_module, ONLY:  T ! T is a TEMPLATE
-       ...
-       ! The following statement provides access to the entity S
-       ! defined inside TEMPLATE T, but using the name S_1
-       INSTANTIATE :: T(param1, param2), ONLY: S_1 => S   
 
 
