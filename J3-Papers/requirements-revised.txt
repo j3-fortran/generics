@@ -1,0 +1,328 @@
+To: J3                                                     J3/##-###
+From: Tom Clune
+Subject: Revised formal requirements for generics
+Date: 2022-07-05
+
+Reference: 22-120r5
+
+1. Introduction
+===============
+
+The generics subgroup has continued developing formal specs and
+further analyzing how generic features should be integrated within
+Fortran.  As part of this improved understanding, subgroup has found
+some of the requirements passed in 22-120r5 to be at least partially
+unworkable and/or undesirable.
+
+In particular, we have found that _operator_ dummy template parameters
+are not strictly necessary and allowing for them introduces a
+significant amount of complexity.  Instead, actual operators can be wrapped
+in functions and passed to templates as procedure parameters.
+
+We recognize that operators are extremely useful, and believe that
+reintroduction of operator dummy template arguments is possible in
+later evolutions of generic Fortran features.
+
+This paper is largely the same as that of 22-120r5, but with targeted
+changes enumerated here for ease of comparison.  All line/section
+numbering here is with respect to 22-120r5.
+
+  * Requriement B:
+    - Line 82 delete "and operators"
+    
+  * Requirement D:
+    - Delete line 126
+    - Modify lines 131-144. The example has been simplified to
+      eliminate use of the operator dummy template parameter.
+
+  * Requirement E5:
+    - Delete E4 on lines 161-162. Modify lines 179-184 to eliminate
+       reference to operoators.
+
+  * Requirement H:
+    - Delete ", operator" on line 218
+
+  * Requirement I:
+    - Line 218 - delete "/operoator"
+
+  * Requirement K:
+    - Line 236 delete "/operators"
+    - Lines 246-276 example has been changed to use a procedure
+      instead of an operator
+
+  * Requirement M:
+    - Line 285: Delete "or operators"
+    
+
+2. Formal requirements
+======================
+
+
+  A. Named templates shall be provided.  A TEMPLATE is a parameterized
+     scoping unit which can contain variables, type definitions,
+     procedure definitions, etc.  Templates can be 'instantiated' to
+     yield concrete (i.e., non-parameterized) instances of entities
+     defined within the template.
+
+   
+     Aside: The TEMPLATE approach for providing generic programming
+            facilities is similar to previously proposed PARAMETERIZED
+            MODULES (PM) (paper 03-264).  The key differences are:
+
+            1. A template can be declared within a program unit and
+               then instantiated within that same program unit.  (Not
+               within itself!)  This is _not_ a formal requirement,
+               but it can be useful to use locally defined specialized
+               templates within a program unit.
+
+            2. The template approach sidesteps some thorny issues that
+               would need to be resolved for PM.  In particular,
+               SUBMODULEs, which were specifically disallowed in paper
+               03-264.  Basically, instantiation of a parameterized
+               module would necessitate instantiation of the
+               corresponding submodules, but there is (currently) no
+               mechanism to determine this set of submodules.  Likely,
+               a solution could be found for this, but would itself be an
+               extension.
+
+     An example of a simple TEMPLATE with suggestive syntax is given
+     below.  The TEMPLATE name is "TMPL" and has one (dummy) TEMPLATE
+     parameter "U" which is a type.  The TEMPLATE provides a single
+     function "GET_ITH" whose first argument is of type U.
+     
+
+        TEMPLATE TMPL(U)
+           TYPE :: U
+           END TYPE
+        CONTAINS
+           PURE FUNCTION GET_ITH(arr, i) result(ith)
+              TYPE(U) :: ith
+              TYPE(U), INTENT(IN) :: arr(:)
+              INTEGER, INTENT(IN) :: i
+              ith = arr(i)
+           END FUNCTION
+        END TEMPLATE TMPL
+
+  B. Named restrictions shall be provided.  A RESTRICTION is a
+     parameterized construct that provides a mechanism for expressing
+     necessary relationships among a set of TEMPLATE dummy parameters.
+     Such relationships serve as a filter on allowed actual parameters
+     to a TEMPLATE (see "weak concepts" below), and also to facilitate
+     verification that a template will produce valid code for sets
+     of actual parameters that satisfy the restriction.  (See "strong
+     concepts" below.)
+
+     Notionally, a RESTRICTION is a construct which specifies the
+     procedures that must be supported for legal
+     instantiations of a TEMPLATE.  E.g., one may require that types T
+     and U can be added to produce objects of type V.  Suggestive syntax
+     for this is:
+
+        RESTRICTION :: BINARYOP(F,T,U,V)
+           TYPE T; END TYPE
+           TYPE U; END TYPE
+           TYPE V; END TYPE
+           INTERFACE
+              FUNCTION F(x,y) RESULT(z)
+                 TYPE(T), INTENT(IN) :: x
+                 TYPE(U), INTENT(IN) :: y
+                 TYPE(V) :: z
+              END FUNCTION
+           END INTERFACE
+        END RESTRICTION
+
+
+     Aside: A RESTRICTION is somewhat similar to an abstract interface
+            in that it contains a group of otherwise unrelated
+            procedure interfaces, but different in that (1) it has a
+            name, which facilitates reuse in multiple contexts, and (2) is
+            parameterized.
+
+
+  C1. A template shall have zero or more template dummy parameters.
+
+  C2. A template can define any of the following entities:
+      - derived type
+      - procedure
+      - interface
+      - variable
+      - another template
+      - constants
+      - enumeration types and their enumerators
+
+     Note: Allowing PUBLIC enumeration types/enumerators is probably
+           problematic.
+
+  D. A template dummy parameter must be one of the following:
+     - type
+     - value
+     - procedure
+
+     A suggestive example involving all categories of template dummy
+     parameters:
+
+        TEMPLATE TMPL2(T,C,sub)
+            TYPE :: T
+            END TYPE
+            COMPLEX :: C
+            INTERFACE
+               SUBROUTINE sub(x)
+                   TYPE(T), INTENT(INOUT) :: x
+               END SUBROUTINE sub
+            END INTERFACE
+        END TEMPLATE
+
+
+  E. The INSTANTIATE statement shall be provided.  The INSTANTIATE
+     statement specifies the name of a TEMPLATE and a list of
+     TEMPLATE actual parameters corresponding to the TEMPLATE's dummy
+     parameters.
+
+     E1. A type-spec must be provided for a type name template dummy
+         parameter.
+
+     E2. A const-expr (of the correct type) must be provided for a
+         value template dummy parameter.
+
+     E3. A procedure or a generic-spec must be provided for a
+         procedure template dummy parameter
+
+     Suggestive syntax:
+
+         INSTANTIATE TMPL(INTEGER(KIND=INT32))
+         ...
+         INTEGER(KIND=INT32) :: I, ARRAY(10)
+         ...
+         I = GET_ITH(ARRAY, 3)
+
+
+     E5. A generic-spec may be passed as an actual template parameter
+         corresponding to a dummy procedure parameter, because generic
+         resolution can be done during instantiation.
+
+
+         Rationale: Client code often does not have access to specific
+                    names for procedures.  And the ability to use
+                    generic entities is far too valuable too disallow
+                    in this context. 
+
+
+  F. Multiple instantiations of a given TEMPLATE with identical
+     template actual parameters define the same instance within a
+     program.
+
+     Consequences:
+
+        1. A derived type defined in a template is the _same_ type
+           across all instantiations that have the identical template
+           actual parameters.
+
+        2. An enumeration and its associated enumerators are the same
+           across all instantiations that have the identical template
+           actual parameters.
+
+     Multiple instantiations of a given template with _any_ different
+     actual parameters do _not_ define the same instance.  In
+     particular any derived types, enumerators etc. defined in these
+     instances are distinct.
+
+     NOTE: While BIND(C) use is not prohibited within a TEMPLATE, it
+           may be problematic as it can associate distinct entities
+           with the same global identifier.
+
+  G. A named RESTRICTION shall have a set of zero or more dummy restriction
+     parameters.
+
+     NOTE: The zero-parameter case here is not useful.  Possibly this
+           should become "one or more parameters".
+
+
+  H. A RESTRICTION dummy parameter shall be one of the same categories
+     as for TEMPLATE dummy parameters. (type, value, procedure)
+
+     Note: "value" probably does not make sense in this context.  But
+           possibly does no harm?
+
+  I. A named RESTRICTION shall specify a set of interfaces that hold
+     among its dummy parameters: TKR of procedure arguments
+     and function results.
+
+
+  K. The REQUIRES statement shall be provided.  A REQUIRES statement
+     specifies the name of a RESTRICTION and a set of actual
+     parameters corresponding to the RESTRICTION parameters.
+
+     A TEMPLATE uses REQUIRES statements to indicate relations among
+     its own parameters that are necessary for the TEMPLATE to be
+     valid.  Legal instantiations must provide actual parameters that
+     satisfy all of a template's REQUIRES statements ("weak
+     concepts") and also may not use any other procedures
+     involving the template parameters that are types ("strong
+     concepts").
+
+     Note: A more precise statement of strong concepts will be
+           provided in the specs paper to come.  Also, weak and strong
+           concepts are called out as separate requirements below.
+
+     A suggestive example of a template with 2 REQUIRES:
+
+        RESTRICTION :: MAGMA(U, F)
+           TYPE :: U
+           END TYPE :: U
+           INTERFACE
+               FUNCTION F(x,y) RESULT(z)
+                  TYPE(T), INTENT(IN) :: x, y
+                  TYPE(T) :: Z
+               END FUNCTION
+           END INTERFACE
+        END RESTRICTION
+
+        TEMPLATE :: TMPL2(U, V, ADD, TIMES)
+
+           REQUIRES MAGMA(U, ADD)   ! implements U+U -> U
+           REQUIRES MAGMA(V, TIMES) ! implements U*U -> U
+        ...
+
+        CONTAINS
+
+           SUBROUTINE DO_SOMETHING(x, y)
+              TYPE(U) :: x
+              TYPE(V) :: y
+
+              x = x + x*x ! legal
+              y = y + y*y ! legal
+
+              x = x + y ! illegal - no supporting requirement
+              x = 2*x   ! illegal integer multiply not in requirements
+           END SUBROUTINE DO_SOMETHING
+
+        END TEMPLATE TMPL2
+
+  L. A TEMPLATE instantiation must satisfy all imposed restrictions.
+
+     Note: This is the notion of a "weak concept" which requires that
+           invalid template dummy parameters be diagnosed as such
+           rather than being diagnosed as syntax or linkage errors in
+           the instantiated code.
+
+  M. A TEMPLATE may not reference any procedures whose arguments
+     and/or function result variable are of a type that is a dummy
+     type parameter except for those whose interfaces have been
+     specified in a REQUIRES statement.
+
+
+     Rationale: This is the notion of a "strong concept" which allows
+                template developers to ensure that a template does not
+                have any _implicit_ restrictions that might not be
+                detected for some unanticipated template parameters.
+                
+
+  N. Declarations of dummy template parameters that are types may not
+     specify:
+     - type-bound procedures
+     - data components
+     - kind/len type parameters
+
+
+===END===
+
