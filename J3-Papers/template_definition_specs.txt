@@ -166,39 +166,57 @@ E4. A dummy procedure template parameter must have an
 F1. Any procedure invoked within a template must have an explicit
     interface.  
 
- All arguments and return values must be be of 
+    Entities of a type that is a dummy type parameter may only be
+    associated with procedure arguments whose declared type is that of
+    the dummy type parameter.
 
-    While processing a template to determine if it is valid, a template
-    type parameter is considered its own type.
-
-The interfaces arguments and return values must all be
-    either intrnsic, host associated, or template dummy type.
-
-    The declared type of an entity with declared type that is a dummy
-    template type parameter is considered to be of the dummy template
+    Intrinsic assignment is only defined for entities of dummy
+    parameter type with other entities of the same declared dummy
     parameter type.
 
+    Note 1: An explicit interface may be provided by a REQUIRES
+            statement.
 
-    minval(x)
+    Note 2: Intrinsic operators on operands of intrinsic type are
+            allowed within a template definition.
 
-    If it involves entities of dummy template type parameters,
-and be used accordingly.
+    Example:
 
-F2. A template definition may use intrinsic operators on operands of
-    intrinsic type.
+        TYPE :: U
+           ...
+        END TYPE
 
+        TEMPLATE tmpl(T)
+           type :: T; end TYPE
+        CONTAINS
+           SUBROUTINE s(x, y)
+              TYPE(T) :: x, y
+              ...
+           END SUBROUTINE s
+           FUNCTION f(x, i)
+              TYPE(T) :: f
+              TYPE(T), INTENT(IN) :: x
+              TYPE(U), INTENT(IN) :: i
+              ...
+           END FUNCTION f
+           SUBROUTINE run()
+              TYPE(T) :: t1, t2
+              TYPE(U) :: u1
+              REAL :: x
 
-F3.  
+              CALL s(t1,t2) ! Legal
+              CALL s(t1,x)  ! Illegal: x not declared to be of type T
+              t1 = f(t2,3)  ! Legal
+              ! The following assignmentis illegal because the return
+              ! value of f is of type T and x is not of declared type
+              ! T.
+              x  = f(t2,3)
+           END SUBROTUINE
 
-  procedures that have actual arguments that are of dummy template
-    parameter type must have interfaces with the dummy arguments that
-    are declared in terms of that dummy template parameter type.
+        END TEMPLATE tmpl
 
-    minval(x) ! type T
+        INSTANTIATE tmpl(INTEGER)
+        INSTANTIATE tmpl(REAL) ! does not make template legal
 
-Template procedures may only invoke procedures that have explicit
-    interfaces declared in the template, host associated, or
-    instrinsics.
-
-
+===END===
 
