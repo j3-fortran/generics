@@ -1,18 +1,19 @@
 !-----------------
 ! The following module defines a template swap_T that is
-! parameterized by a single type parameter T.
+! parameterized by a type parameter T and an integer rank N.
+!
 ! The template in turn defines 3 procedures
-!   - swap for arbitrary rank, non-pointer, non-allocatable entities
-!   - swap for arbitrary rank, pointer entities
-!   - swap for arbitrary rank, allocatable entities
+!   - swap for rank N, non-pointer, non-allocatable entities
+!   - swap for rank N, pointer entities
+!   - swap for rank N, allocatable entities
 !-----------------
 
-module swap_m
+module alt_swap_m
    implicit none
    private
    public :: swap_t
    
-   template swap_t(T)
+   template swap_t(T, N)
       private
 
       public :: swap
@@ -20,6 +21,7 @@ module swap_m
    
       type :: T
       end type T
+      integer, parameter :: N
    
       interface swap
          module procedure swap_
@@ -33,10 +35,10 @@ module swap_m
    contains
 
       ! Note: The following procedure fails if x and y are of
-      ! different rank and/or shape.
+      ! different shape.
       subroutine swap_(x, y)
-         type(T), intent(inout) :: x(..), y(..)
-         type(T), rank(rank(x)), allocatable :: tmp
+         type(T), rank(N), intent(inout) :: x, y
+         type(T), rank(N), allocatable :: tmp
          
          tmp = x
          x = y
@@ -45,8 +47,8 @@ module swap_m
       end subroutine swap_
 
       subroutine swap_ptr(x, y)
-         type(T), pointer, intent(inout) :: x(..), y(..)
-         type(T), rank(rank(x)), pointer :: tmp
+         type(T), rank(N), pointer, intent(inout) :: x, y
+         type(T), rank(N), pointer :: tmp
          
          tmp => x
          x => y
@@ -55,8 +57,8 @@ module swap_m
       end subroutine swap_ptr
 
       subroutine swap_alloc(x, y)
-         type(T), allocatable, intent(inout) :: x(..), y(..)
-         type(T), rank(rank(x)), allocatable :: tmp
+         type(T), rank(N), allocatable, intent(inout) :: x, y
+         type(T), rank(N), allocatable :: tmp
 
          call move_alloc(from=x, to=tmp)
          call move_alloc(from=y, to= x)
@@ -66,4 +68,4 @@ module swap_m
 
    end template swap_t
 
-end module swap_m
+end module alt_swap_m
