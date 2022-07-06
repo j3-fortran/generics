@@ -7,7 +7,7 @@ module restrictions_m
         type :: T
         end type
         interface
-            function equals(x, y)
+            pure function equals(x, y)
                 type(T), intent(in) :: x, y
                 logical :: equals
             end function
@@ -17,7 +17,7 @@ module restrictions_m
     restriction comparable(T, equals, less_than)
         requires equatable(T, equals)
         interface
-            function less_than(x, y)
+            pure function less_than(x, y)
                 type(T), intent(in) :: x, y
                 logical :: less_than
             end function
