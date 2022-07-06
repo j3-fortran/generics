@@ -1,13 +1,18 @@
 module minloc_m
-    use restrictions_m, only: comparable
+    use comparable_m, only: comparable, comparisons_t
 
     implicit none
     private
     public :: minloc_tmpl
 
-    template minloc_tmpl(T, equals, less_than, result_kind)
-        requires comparable(T, equals, less_than)
+    template minloc_tmpl(T, less_than, result_kind)
+        requires comparable(T, less_than)
         integer, parameter :: result_kind
+
+        private
+        public :: minloc
+
+        instantiate comparisons_t(T, less_than), only: operator(<)
 
         interface minloc
             module procedure minloc_no_dim
@@ -41,7 +46,6 @@ module minloc_m
                 end if
             end if
 
-            location = [(1_result_kind, i = 1, rank(array))]
             if (present(back)) then
                 back_ = back
             else
@@ -52,6 +56,7 @@ module minloc_m
             else
                 idx = shape(array)
             end if
+            location = idx
 
             do
                 ! increment idx in element order
@@ -73,7 +78,7 @@ module minloc_m
                     end if
                 end do
                 if (i > rank(array)) exit
-                if (less_than(array(@idx), array(@location))) then
+                if (array(@idx) < array(@location)) then
                     if (present(mask)) then
                         if (mask(@idx)) then
                             location = idx
@@ -118,6 +123,11 @@ module minloc_m
                 idx_front = 1
                 idx_back = 1
                 do
+                    if (present(mask)) then
+                        locations(@idx_front, @idx_back) = minloc(array(@idx_front, :, @idx_back), dim=1, mask=mask(@idx_front, :, @idx_back), back=back)
+                    else
+                        locations(@idx_front, @idx_back) = minloc(array(@idx_front, :, @idx_back), dim=1, back=back)
+                    end if
                     ! increment idx
                     do i = 1, dim-1
                         idx_front(i) = idx_front(i) + 1
@@ -137,11 +147,6 @@ module minloc_m
                             end if
                         end do
                         if (i > rank(array)) exit
-                    end if
-                    if (present(mask)) then
-                        locations(@idx_front, @idx_back) = minloc(array(@idx_front, :, @idx_back), dim=1, mask=mask(@idx_front, :, @idx_back), back=back)
-                    else
-                        locations(@idx_front, @idx_back) = minloc(array(@idx_front, :, @idx_back), dim=1, back=back)
                     end if
                 end do
             end select

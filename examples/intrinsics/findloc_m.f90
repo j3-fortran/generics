@@ -1,33 +1,31 @@
 module findloc_m
-    use restrictions_m, only: equatable
+    use comparable_m, only: comparable, comparisons_t
 
     implicit none
     private
     public :: findloc_tmpl
 
-    template findloc_tmpl(T, equals, result_kind)
-        requires equatable(T, equals)
+    template findloc_tmpl(T, less_than, result_kind)
+        requires comparable(T, less_than)
         integer, parameter :: result_kind
+
+        private
+        public :: findloc
+
+        instantiate comparisons_t(T, less_than), only: operator(==)
 
         interface findloc
             module procedure findloc_no_dim
             module procedure findloc_with_dim
         end interface
     contains
-        function elemental_equals(lhs, rhs) result(eq)
-            type(T), intent(in) :: lhs, rhs
-            logical :: eq
-
-            eq = equals(lhs, rhs)
-        end function
-
         function findloc_no_dim(array, value, mask, back) result(location)
             type(T), intent(in) :: array(..), value
             logical, intent(in), optional :: mask(..)
             logical, intent(in), optional :: back
             integer(result_kind) :: location(rank(array))
 
-            location = findloc(elemental_equals(array, value), .true., mask, result_kind, back)
+            location = findloc(array == value, .true., mask, result_kind, back)
         end function
 
         function findloc_with_dim(array, value, dim, mask, back) result(locations)
@@ -43,7 +41,7 @@ module findloc_m
             rank(rank(array)-1), &
             bounds([(size(array, dim=i), i = 1, dim-1), (size(array, dim=1), i = dim+1, rank(array))]) :: locations
 
-            locations = findloc(elemental_equals(array, value), .true., dim, mask, result_kind, back)
+            locations = findloc(array == value, .true., dim, mask, result_kind, back)
         end function
     end template
 end module
