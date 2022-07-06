@@ -27,7 +27,7 @@ module findloc_m
             logical, intent(in), optional :: back
             integer(result_kind) :: location(rank(array))
 
-            location = findloc(elemental_equals(array, value), .true., mask, back)
+            location = findloc(elemental_equals(array, value), .true., mask, result_kind, back)
         end function
 
         function findloc_with_dim(array, value, dim, mask, back) result(locations)
@@ -43,7 +43,7 @@ module findloc_m
             rank(rank(array)-1), &
             bounds([(size(array, dim=i), i = 1, dim-1), (size(array, dim=1), i = dim+1, rank(array))]) :: locations
 
-            locations = findloc(elemental_equals(array, value), .true., dim, mask, back)
+            locations = findloc(elemental_equals(array, value), .true., dim, mask, result_kind, back)
         end function
     end template
 end module
