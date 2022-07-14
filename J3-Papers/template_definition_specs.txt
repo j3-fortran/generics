@@ -1,4 +1,9 @@
-References: 22-120r5, 22-151r1
+To: J3                                                     J3/##-###
+From: Tom Clune
+Subject: Formal specs for TEMPLATE
+Date: 2022-07-12
+
+References: 22-161
 
 1. Introduction
 ===============
@@ -10,13 +15,6 @@ template.  Section 2 contains the specs.
 
 2. Formal specs
 ===============
-
-C2 was last section examined.
-
-- What are actual and dummy template parameters
-- What goes inside
-- order of statement (rules)
-
 
 A. TEMPLATE is a named scoping unit.
 

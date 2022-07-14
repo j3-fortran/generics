@@ -108,8 +108,8 @@ module LinearAlgebra_m
        contains
 
           pure function reduce_(x) result(y)
-             type(T), intent(in) :: x(:)
-             type(T) :: y
+             type(MatrixBlock), intent(in) :: x(:)
+             type(MatrixBlock) :: y
 
              integer :: i, j
              integer :: ni, nj

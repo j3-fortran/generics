@@ -38,7 +38,6 @@ module findloc_m
             integer(result_kind) :: i
 
             integer(result_kind), &
-            rank(rank(array)-1), &
             bounds([(size(array, dim=i), i = 1, dim-1), (size(array, dim=1), i = dim+1, rank(array))]) :: locations
 
             locations = findloc(array == value, .true., dim, mask, result_kind, back)

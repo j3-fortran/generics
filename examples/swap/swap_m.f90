@@ -2,9 +2,9 @@
 ! The following module defines a template swap_T that is
 ! parameterized by a single type parameter T.
 ! The template in turn defines 3 procedures
-!   - swap for arbitrary rank, non-pointer, non-allocatable entities
-!   - swap for arbitrary rank, pointer entities
-!   - swap for arbitrary rank, allocatable entities
+!   - swap for scalar, non-pointer, non-allocatable entities
+!   - swap for scalar rank, pointer entities
+!   - swap for scalar, allocatable entities
 !-----------------
 
 module swap_m
@@ -35,9 +35,9 @@ module swap_m
       ! Note: The following procedure fails if x and y are of
       ! different rank and/or shape.
       subroutine swap_(x, y)
-         type(T), intent(inout) :: x(..), y(..)
-         type(T), rank(rank(x)), allocatable :: tmp
-         
+         type(T), intent(inout) :: x
+         type(T) :: tmp
+
          tmp = x
          x = y
          y = tmp
@@ -45,8 +45,8 @@ module swap_m
       end subroutine swap_
 
       subroutine swap_ptr(x, y)
-         type(T), pointer, intent(inout) :: x(..), y(..)
-         type(T), rank(rank(x)), pointer :: tmp
+         type(T), pointer, intent(inout) :: x, y
+         type(T), pointer :: tmp
          
          tmp => x
          x => y
@@ -55,8 +55,8 @@ module swap_m
       end subroutine swap_ptr
 
       subroutine swap_alloc(x, y)
-         type(T), allocatable, intent(inout) :: x(..), y(..)
-         type(T), rank(rank(x)), allocatable :: tmp
+         type(T), allocatable, intent(inout) :: x, y
+         type(T), allocatable :: tmp
 
          call move_alloc(from=x, to=tmp)
          call move_alloc(from=y, to= x)

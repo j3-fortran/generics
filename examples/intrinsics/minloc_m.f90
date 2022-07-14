@@ -99,7 +99,6 @@ module minloc_m
             integer(result_kind) :: i
 
             integer(result_kind), &
-            rank(rank(array)-1), &
             bounds([(size(array, dim=i), i = 1, dim-1), (size(array, dim=1), i = dim+1, rank(array))]) :: locations
 
             if (rank(array) == 0) error stop "array must have rank > 0"

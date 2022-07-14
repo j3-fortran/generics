@@ -8,11 +8,11 @@
 !   - swap for rank N, allocatable entities
 !-----------------
 
-module alt_swap_m
+module array_swap_m
    implicit none
    private
    public :: swap_t
-   
+
    template swap_t(T, N)
       private
 
@@ -68,4 +68,4 @@ module alt_swap_m
 
    end template swap_t
 
-end module alt_swap_m
+end module array_swap_m
