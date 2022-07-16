@@ -16,7 +16,8 @@ examples are hosted on GitHub and evolve over time.
 2. Examples
 ===========
 
-The examples listed here are (roughly) in order of increasing complexity.
+The examples listed here are (roughly) in order of increasing
+complexity.
 
 A. Swap
 
@@ -36,13 +37,14 @@ B. Instrinsics
    https://github.com/j3-fortran/generics/tree/main/examples/intrinsics
 
    This example shows how one may write templates that provide similar
-   functionality as that of various Fortran intrinsic procedures but extended
-   across arbitrary types.   We expect this example to grow over time to
-   cover an increasing subset of Fortran intrinsics.
+   functionality as that of various Fortran intrinsic procedures but
+   extended across arbitrary types.  We expect this example to grow
+   over time to cover an increasing subset of Fortran intrinsics.
 
 C. Functional iteration
 
-   https://github.com/j3-fortran/generics/tree/main/examples/functional_iteration
+   https://github.com/
+      j3-fortran/generics/tree/main/examples/functional_iteration
 
    This example shows how to implement scan() and fold() for arrays of
    arbitrary type given a binary operation.
