@@ -1,0 +1,79 @@
+To: J3                                                     J3/##-###
+From: Tom Clune
+Subject: Generics Tutorial
+Date: 2022-07-16
+
+
+
+1. Introduction
+===============
+
+This paper provides references to a series of detailed examples that
+exercise generics features supported by the generics subgroup.  These
+examples are hosted on GitHub and evolve over time.
+
+
+2. Examples
+===========
+
+The examples listed here are (roughly) in order of increasing complexity.
+
+A. Swap
+
+   https://github.com/j3-fortran/generics/tree/main/examples/swap
+
+   This example shows how one might write a template that supports
+   swap on scalars of arbitrary Fortran types.  A variant template is
+   provided that tases an additional integer parameter to support swap
+   of arrays in a rank-agnostic manner.
+
+   Each template provides additional procedures to cover the case
+   of swapping pointers and allocatables.
+
+
+B. Instrinsics
+
+   https://github.com/j3-fortran/generics/tree/main/examples/intrinsics
+
+   This example shows how one may write templates that provide similar
+   functionality as that of various Fortran intrinsic procedures but extended
+   across arbitrary types.   We expect this example to grow over time to
+   cover an increasing subset of Fortran intrinsics.
+
+C. Functional iteration
+
+   https://github.com/j3-fortran/generics/tree/main/examples/functional_iteration
+
+   This example shows how to implement scan() and fold() for arrays of
+   arbitrary type given a binary operation.
+
+D. Vector (container)
+
+   https://github.com/j3-fortran/generics/tree/main/examples/vector
+
+   This example shows how to to use a template to define a vector
+   container (similar to a list container) for arbitrary Fortran type.
+   The primary template provides a vector type and an iterator type
+   with various methods for manipulation.
+
+   The module also provides a "inner" template 'find_tmpl' which takes
+   an additional comparison procedure parameter to produce af find()
+   procedure that can search a container.  (In a more robust system,
+   find_tmpl would be completely separate and have 4 parameters:
+   element type, container type, iterator type, and comparison
+   procedure.)
+
+E. Block matrix multiply
+
+   https://github.com/j3-fortran/generics/tree/main/examples/matmul
+
+   This example shows how a template can be used to produce a matmul
+   procedure for block matrices.   The driver demonstrates use on:
+       (1) matmul of ordinary Fortran arrays
+       (2) matmul on arrays whose elements are blocks
+       (3) matmul on arrays whose elements are blocks of blocks
+
+   This example also makes use of an inner procedure to induce a
+   reduce() method on the BlockMatrix type that encapsulates an array
+   of elements on a type that has its own reduce() method.
+
