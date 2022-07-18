@@ -1,0 +1,43 @@
+Reference: 22-120r5.txt
+
+1. Introduction
+===============
+
+The purpose of this paper is to establish the formal specs for
+the RESTRICTION construct and REQUIRES statement.
+
+2 . Formal specs
+================
+
+A1. A RESTRICTION is a named construct for encapsulating a
+   set of interfaces involving deferred types.
+
+A2. A RESTRICTION has a list of named dummy parameters that have same
+    specifications as those of template dummy parameters.
+
+
+B1. A REQUIRES statement specifies the name of a RESTRICTION and
+    provides actual parameters corresponding to its dummy parameters.
+
+B2. A REQUIRES statement is confirmed if the actual parameters conform
+    to the corresponding dummy parameters of the reference RESTRICTION.
+
+C1. If a template dummy parameter appears in a REQUIRES statement it
+    does not need to be separately declared in the template
+    specification section.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
