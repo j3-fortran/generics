@@ -9,38 +9,61 @@ module findloc_m
         requires comparable(T, less_than)
         integer, parameter :: result_kind
 
-        private
-        public :: findloc
+        instantiate inner_findloc(T, less_than, result_kind, 1)
+        instantiate inner_findloc(T, less_than, result_kind, 2)
+        instantiate inner_findloc(T, less_than, result_kind, 3)
+        instantiate inner_findloc(T, less_than, result_kind, 4)
+        instantiate inner_findloc(T, less_than, result_kind, 5)
+        instantiate inner_findloc(T, less_than, result_kind, 6)
+        instantiate inner_findloc(T, less_than, result_kind, 7)
+        instantiate inner_findloc(T, less_than, result_kind, 8)
+        instantiate inner_findloc(T, less_than, result_kind, 9)
+        instantiate inner_findloc(T, less_than, result_kind, 10)
+        instantiate inner_findloc(T, less_than, result_kind, 11)
+        instantiate inner_findloc(T, less_than, result_kind, 12)
+        instantiate inner_findloc(T, less_than, result_kind, 13)
+        instantiate inner_findloc(T, less_than, result_kind, 14)
+        instantiate inner_findloc(T, less_than, result_kind, 15)
 
-        instantiate comparisons_t(T, less_than), only: operator(==)
+        template inner_findloc(T, less_than, result_kind, N)
+            requires comparable(T, less_than)
+            integer, parameter :: result_kind
+            integer, parameter :: N
 
-        interface findloc
-            module procedure findloc_no_dim
-            module procedure findloc_with_dim
-        end interface
-    contains
-        function findloc_no_dim(array, value, mask, back) result(location)
-            type(T), intent(in) :: array(..), value
-            logical, intent(in), optional :: mask(..)
-            logical, intent(in), optional :: back
-            integer(result_kind) :: location(rank(array))
+            private
+            public :: findloc
 
-            location = findloc(array == value, .true., mask, result_kind, back)
-        end function
+            instantiate comparisons_t(T, less_than), only: operator(==)
 
-        function findloc_with_dim(array, value, dim, mask, back) result(locations)
-            type(T), intent(in) :: array(..)
-            type(T) :: value
-            integer, intent(in) :: dim
-            logical, intent(in), optional :: mask(..)
-            logical, intent(in), optional :: back
+            interface findloc
+                module procedure findloc_no_dim
+                module procedure findloc_with_dim
+            end interface
+        contains
+            function findloc_no_dim(array, value, mask, back) result(location)
+                type(T), intent(in), rank(N) :: array
+                type(T), intent(in) :: value
+                logical, intent(in), rank(N), optional :: mask
+                logical, intent(in), optional :: back
+                integer(result_kind) :: location(N)
 
-            integer(result_kind) :: i
+                location = findloc(array == value, .true., mask, result_kind, back)
+            end function
 
-            integer(result_kind), &
-            bounds([(size(array, dim=i), i = 1, dim-1), (size(array, dim=1), i = dim+1, rank(array))]) :: locations
+            function findloc_with_dim(array, value, dim, mask, back) result(locations)
+                type(T), intent(in), rank(N) :: array
+                type(T), intent(in) :: value
+                integer, intent(in) :: dim
+                logical, intent(in), rank(N), optional :: mask
+                logical, intent(in), optional :: back
 
-            locations = findloc(array == value, .true., dim, mask, result_kind, back)
-        end function
+                integer(result_kind) :: i
+
+                integer(result_kind), &
+                bounds([(size(array, dim=i), i = 1, dim-1), (size(array, dim=1), i = dim+1, rank(N))]) :: locations
+
+                locations = findloc(array == value, .true., dim, mask, result_kind, back)
+            end function
+        end template
     end template
 end module
