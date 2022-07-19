@@ -66,7 +66,7 @@ module vector_m
          function find(v, val) result(iter)
             type(iterator) :: iter
             type(vector), intent(in) :: v
-            type(T), intent(in :: val
+            type(T), intent(in) :: val
 
             associate ( b => v%begin() )
               associate ( e => v%end() )
