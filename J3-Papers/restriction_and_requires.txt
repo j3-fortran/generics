@@ -1,0 +1,99 @@
+To: J3                                                     J3/##-###
+From: Tom Clune and generics subgroup
+Subject: Formal specs for RESTRICTION and REQUIRES
+Date: 2022-July-19
+
+Reference: 22-161r1
+
+1. Introduction
+===============
+
+The purpose of this paper is to establish the formal specs for
+the RESTRICTION construct and REQUIRES statement.
+
+2 . Formal specs
+================
+
+A. A RESTRICTION is a named construct for encapsulating a
+   set of interfaces involving deferred types.
+
+B. A RESTRICTION has a list of named dummy parameters that have the
+   same characteristics as those of template dummy parameters.
+
+   Example using notional sytax:
+
+   RESTRICTION binary_op(op, T, U, V)
+      type T; end type
+      type U; end type
+      type V; end type
+      interface
+         function op(x, y) result(z)
+            type(V) :: z
+            type(T), intent(in) :: x
+            type(U), intent(in) :: y
+         end function
+      end interface
+   END RESTRICTION
+             
+
+C. A REQUIRES statement specifies the name of a RESTRICTION and
+   provides actual parameters corresponding to the restriction
+   construct's dummy parameters.
+
+   Example using notional syntax:
+
+      TEMPLATE metric_t(T, binop)
+         REQUIRES binary_op(binop, T, T, real)
+      CONTAINS
+         function path_length(arr) result(x)
+            type(T), intent(in) :: arr(:)
+            real :: x
+
+            integer :: i
+
+            x = 0
+            do i = 1, size(arr)-1
+               x = x + binop(arr(i), arr(i+1))
+            end do 
+
+         end function
+      END TEMPlATE
+
+
+D. A REQUIRES statement is validated if its actual parameters conform
+   to the corresponding dummy parameters of the referenced
+   RESTRICTION.
+
+   Note: A given template parameter may be used in multiple requires
+         statements.  
+
+   Example using notional syntax:
+
+      TEMPLATE saxpy_t(T, U, V, times, plus)
+         REQUIRES binary_op(times, T, U, V)
+         REQUIRES binary_op(plus, V, V, V)
+
+      contains
+
+         subroutine saxpy(x, y, z)
+           type(T), intent(in) :: x
+           type(U), intent(in) :: y
+           type(V), intent(inout) :: z
+        
+           z = plus(z, times(x,y))       
+        
+        end subroutine       
+     END TEMPLATE saxpy_t
+
+     ! The following instantiate statement is valid
+     INSTANTIATE saxpy_t(real, real, real, operator(*), operator(+))
+
+     ! The following instantiate statement is not valid, because there
+     ! is no "*" operator between real and logical that returns a real.
+     INSTANTIATE saxpy_t(real, logical, real, operator(*), operator(+))
+
+E. If a template dummy parameter appears in a REQUIRES statement it
+   does not need to be separately declared in the template
+   specification section.
+
+===END===
