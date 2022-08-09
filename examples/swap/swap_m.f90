@@ -35,7 +35,7 @@ module swap_m
       ! Note: The following procedure fails if x and y are of
       ! different rank and/or shape.
       subroutine swap_(x, y)
-         type(T), intent(inout) :: x
+         type(T), intent(inout) :: x, y
          type(T) :: tmp
 
          tmp = x
