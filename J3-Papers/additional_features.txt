@@ -1,0 +1,86 @@
+To: J3                                                     J3/##-###
+From: Tom Clune & subgroup generics
+Subject: Thoughts on additional generics features
+Date: 2022-Aug-16
+
+
+1. Introduction
+---------------
+
+This paper provides a rough summary additional generics capabilities
+that the generics subgroup hopes to introduce in F202y in roughly the
+order of decreasing priority (within each section).  Completing syntax
+and edits for the currently approved set of generics features remains
+the top priority, of course.
+
+Section 2 concerns features that support rank-agnostic algorithms,
+while section 3 concerns features that support algorithms on
+containers.  We will follow-up with use-case papers as we digest these
+further.
+
+2. Further rank-agnostic features
+---------------------------------
+
+2.1 Enable additional usage of assumed rank arguments
+
+  As noted at the July meeting, many existing template use cases could
+  be considerably simplified if more operations were allowed for
+  assumed rank arguments.
+
+2.2 Deferred rank entities
+
+  As the name suggests, a deferred rank entity has a rank that is
+  unknown at compile time.  These are a bit like assumed rank
+  arguments, except that there is no "ultimate" actual argument with
+  known rank.
+
+  A simple motivating use case here is making a rank-agnostic
+  implementation for a swap template, assuming that certain operations
+  on assumed rank arguments also become permitted.  (In this case, we
+  need whole array intrinsic assignment.)
+
+2.3 Rank agnostic nested loops
+
+  The motivating use case here is to enable the ability to write a
+  template for outer product for two arrays of rank N and rank M. This
+  generally involves an M + N nested loop.  Existing Fortran elemental
+  capabilities are sufficient to encapsulate M (or N) of these
+  loops, but not all.
+
+2.4 Mathematics of Arrays
+
+  We intend to form a working group to look at "A Mathematics of
+  Arrays" (Lenore Mullin PhD 1988.)  This paper introduces a series of
+  operators that treat arrays in a rank-agnostic manner.  Fortran
+  already has some of these capabilities, and the new "@" notation is
+  a fundamental operator in the paper from which the others are
+  defined.
+
+  We expect that once we fully understand the paper (it uses very
+  dense unconventional notation), we will propose a small set of
+  additional intrinsic procedures/operators that "complete" Fortran's
+  support for arrays in this context.
+
+3. Further support for containers
+---------------------------------
+
+3.1 Provide looping mechanism for containers
+
+   The goal here is to provide succinct syntax that is simple and safe
+   and executes the body of the loop on each element in the container.
+
+   Possible approaches to this were discussed at the July meeting and
+   we think something reasonably elegant is possible.
+
+3.2 Provide analog of ELEMENTAL
+
+   A common operation with containers is to apply some function to
+   each of the elements in a container.  Arrays are one type of
+   container, and Fortran provides ELEMENTAL which avoids the need
+   for managing explicit loops in user code.
+
+   If successful with the looping mechanism above, it should be quite
+   straightforward to generalize ELEMENTAL to the case of containers.
+
+===END===
+      
