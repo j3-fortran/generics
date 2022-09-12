@@ -1,0 +1,85 @@
+1. Introduction
+
+This paper contains the syntax for the TEMPLATE construct.
+
+Section 3 contains the formal syntax and section 4 contains the semantics.
+
+2. Syntax example
+
+< do we want/need this section>
+
+3. Formal Syntax
+
+
+3.1 General
+
+A <template> <<is>> a primary (<primary>).
+A <parameter> <<is>> a ...
+
+
+3.2 Syntax details
+
+<template>          <<is>>  <template-stmt>
+                           [ <template-specification-part> ] ...
+                           [ <module-subprogram-part> ]
+                        <end-template-stmt>
+
+<template-stmt>     <<is>>  TEMPLATE <template-name> ([<dummy-arg-list>])
+
+<end-template-stmt> <<is>>  END [TEMPLATE [<template-name>]]
+
+<template-specification-part> <<is>> [ <specification-part> ]
+                              <<or>> [ <requirement-part> ]
+                              <<or>> [ <requires-stmt> ]
+
+Note: <module-subprogram-part> carries over from module syntax.
+
+Rule: If the <template-name> <<is>> specified in the <end-template-stmt>,
+      it shall be identical to the <template-name> specified in the
+      <template-stmt>.
+
+3.3 Constraints and other requirements
+
+3.4 Examples
+
+
+4.0 Semantics
+
+
+===END===
+
+
+
+Misc
+
+ [ <use-stmt> ] ...
+                                 [ <template-specification-construct> ]
+
+<template-specification-construct> <<is>> <derived-type-def>
+                                   <<or>> enum-def
+                                   <<or>> enumeration-type-def
+                                   <<or>> generic-stmt
+                                   <<or>> interface-block
+                                   <<or>> parameter-stmt
+                                   <<or>> procedure-declaration-stmt
+                                   <<or>> other-template-specification-stmt
+                                   <<or>> type-declaration-stmt
+
+<other-template-specification-stmt> <<is>> <access-stmt>
+                                    <<or>> <allocatable-stmt>
+                                    <<or>> <asynchronous-stmt>
+                                    <<or>> <bind-stmt>
+                                    <<or>> <codimension-stmt>
+                                    <<or>> <contiguous-stmt>
+                                    <<or>> <dimension-stmt>
+                                    <<or>> <external-stmt>
+                                    <<or>> <intent-stmt>
+                                    <<or>> <intrinsic-stmt>
+                                    <<or>> <namelist-stmt>
+                                    <<or>> <optional-stmt>
+                                    <<or>> <pointer-stmt>
+                                    <<or>> <protected-stmt>
+                                    <<or>> <save-stmt>
+                                    <<or>> <target-stmt>
+                                    <<or>> <volatile-stmt>
+                                    <<or>> <value-stmt>
