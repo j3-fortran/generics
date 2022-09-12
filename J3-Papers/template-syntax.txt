@@ -8,6 +8,11 @@ Section 3 contains the formal syntax and section 4 contains the semantics.
 
 < do we want/need this section>
 
+2.1 UTI
+
+Do we want to 
+
+
 3. Formal Syntax
 
 
@@ -19,18 +24,78 @@ A <parameter> <<is>> a ...
 
 3.2 Syntax details
 
-<template>          <<is>>  <template-stmt>
-                           [ <template-specification-part> ] ...
-                           [ <module-subprogram-part> ]
-                        <end-template-stmt>
+<template> <<is>>  <template-stmt>
+                      [ <template-specification-part> ]
+                      [ <template-subprogram-part> ]
+                   <end-template-stmt>
 
-<template-stmt>     <<is>>  TEMPLATE <template-name> ([<dummy-arg-list>])
+<template-stmt> <<is>> TEMPLATE <template-name> ([<dummy-arg-list>])
 
 <end-template-stmt> <<is>>  END [TEMPLATE [<template-name>]]
 
-<template-specification-part> <<is>> [ <specification-part> ]
-                              <<or>> [ <requirement-part> ]
-                              <<or>> [ <requires-stmt> ]
+<template-specification-part> <<is>> [ use-stmt ] ...
+                                       [ implicit-part ]
+                                       [ template-declaration-construct ] ...
+
+
+<template-subprogram-part> <<is>> <contains-stmt>
+                                     [ template-subprogram ] ...
+
+
+<module-subprogram> <<is>> <function-subprogram>
+                    <<or>> <subroutine-subprogram>
+
+
+<template-declaration-construct> <<is>> <template-specification-construct>
+                                 <<or>> <format-stmt>
+
+<template-arg-declaration-stmt> <<is>> <template-const-declaration-stmt>
+                                <<or>> <template-type-declaration-stmt>
+                                <<or>> <template-proc-declaration-stmt>
+
+<template-const-declaration-stmt> <<is>>
+      <declaration-type-spec>,  <template-attr-constant-spec> :: ] entity-decl-list
+
+Rule: The type of the entities declared may only be INTEGER, LOGICAL,
+      and assumed-length character.
+
+<template-attr-constant-spec> <<is>> [<template-attr-spec>]...
+                                        CONSTANT
+                                        [<template-attr-spec>]...
+
+<template-attr-spec> <<is>> CONTIGUOUS
+                     <<or>> DIMENSION ( <array-spec> )
+
+<template-type-declaration-stmt> <<is>>  TYPE, DEFERRED :: <type-argument-list>
+
+<type-argument> <<is>> <type-name>
+
+<template-specification-construct> <<is>> <derived-type-def>
+                                   <<or>> <enum-def>
+                                   <<or>> <enumeration-type-def>
+                                   <<or>> <generic-stmt>
+                                   <<or>> <interface-block>
+                                   <<or>> <parameter-stmt>
+                                   <<or>> <procedure-declaration-stmt>
+                                   <<or>> <template-other-specification-stmt>
+                                   <<or>> <type-declaration-stmt>
+                                   <<or>> <template>
+
+<template-other-specification-stmt> <<is>> <access-stmt>
+                                    <<or>> <allocatable-stmt>
+                                    <<or>> <asynchronous-stmt>
+                                    <<or>> <bind-stmt>
+                                    <<or>> <codimension-stmt>
+                                    <<or>> <contiguous-stmt>
+                                    <<or>> <dimension-stmt>
+                                    <<or>> <external-stmt>
+                                    <<or>> <intrinsic-stmt>
+                                    <<or>> <namelist-stmt>
+                                    <<or>> <pointer-stmt>
+                                    <<or>> <protected-stmt>
+                                    <<or>> <save-stmt>
+                                    <<or>> <target-stmt>
+                                    <<or>> <volatile-stmt>
 
 Note: <module-subprogram-part> carries over from module syntax.
 
@@ -48,38 +113,3 @@ Rule: If the <template-name> <<is>> specified in the <end-template-stmt>,
 
 ===END===
 
-
-
-Misc
-
- [ <use-stmt> ] ...
-                                 [ <template-specification-construct> ]
-
-<template-specification-construct> <<is>> <derived-type-def>
-                                   <<or>> enum-def
-                                   <<or>> enumeration-type-def
-                                   <<or>> generic-stmt
-                                   <<or>> interface-block
-                                   <<or>> parameter-stmt
-                                   <<or>> procedure-declaration-stmt
-                                   <<or>> other-template-specification-stmt
-                                   <<or>> type-declaration-stmt
-
-<other-template-specification-stmt> <<is>> <access-stmt>
-                                    <<or>> <allocatable-stmt>
-                                    <<or>> <asynchronous-stmt>
-                                    <<or>> <bind-stmt>
-                                    <<or>> <codimension-stmt>
-                                    <<or>> <contiguous-stmt>
-                                    <<or>> <dimension-stmt>
-                                    <<or>> <external-stmt>
-                                    <<or>> <intent-stmt>
-                                    <<or>> <intrinsic-stmt>
-                                    <<or>> <namelist-stmt>
-                                    <<or>> <optional-stmt>
-                                    <<or>> <pointer-stmt>
-                                    <<or>> <protected-stmt>
-                                    <<or>> <save-stmt>
-                                    <<or>> <target-stmt>
-                                    <<or>> <volatile-stmt>
-                                    <<or>> <value-stmt>
