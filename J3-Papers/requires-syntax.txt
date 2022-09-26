@@ -1,0 +1,3 @@
+<requires-stmt> is REQUIRES <requirement-name> ([<actual-arg-spec-list>])
+
+Rule: ...

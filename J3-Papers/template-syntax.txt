@@ -8,10 +8,11 @@ Section 3 contains the formal syntax and section 4 contains the semantics.
 
 < do we want/need this section>
 
-2.1 UTI
+2.1 UTIs
 
-Do we want to 
+* <format-stmt> should be possibly be removed (or maybe refactored to allow reuse of enclosing BNF)
 
+*
 
 3. Formal Syntax
 
@@ -29,14 +30,18 @@ A <parameter> <<is>> a ...
                       [ <template-subprogram-part> ]
                    <end-template-stmt>
 
-<template-stmt> <<is>> TEMPLATE <template-name> ([<dummy-arg-list>])
+<template-stmt> <<is>> TEMPLATE <template-name> ([<template-arg-list>])
+
 
 <end-template-stmt> <<is>>  END [TEMPLATE [<template-name>]]
+
+Constraint: If the <end-template-stmt> includes <template-name> the
+            <template-stmt> shall specify the same <template-name>.
+
 
 <template-specification-part> <<is>> [ use-stmt ] ...
                                        [ implicit-part ]
                                        [ template-declaration-construct ] ...
-
 
 <template-subprogram-part> <<is>> <contains-stmt>
                                      [ template-subprogram ] ...
@@ -47,6 +52,8 @@ A <parameter> <<is>> a ...
 
 
 <template-declaration-construct> <<is>> <template-specification-construct>
+                                 <<or>> <requires-stmt>
+                                 <<or>> <requirement-construct>
                                  <<or>> <format-stmt>
 
 <template-arg-declaration-stmt> <<is>> <template-const-declaration-stmt>
@@ -54,10 +61,24 @@ A <parameter> <<is>> a ...
                                 <<or>> <template-proc-declaration-stmt>
 
 <template-const-declaration-stmt> <<is>>
-      <declaration-type-spec>,  <template-attr-constant-spec> :: ] entity-decl-list
+           <declaration-type-spec>, <template-attr-constant-spec> ::
+           entity-decl-list
 
-Rule: The type of the entities declared may only be INTEGER, LOGICAL,
-      and assumed-length character.
+Constraint: The type of the entities declared shall only be INTEGER,
+            LOGICAL, and assumed-length character.
+
+Constraint: Each <template-arg> shall be one of <template-const>,
+            <template-type>, or a <template-proc>.
+
+Constraint: Each <template-const> shall appear in a
+            <template-const-declaration-stmt>.
+
+Constraint: Each <template-type> shall appear in a
+            <template-type-declaration-stmt>.
+
+Constraint: Each <template-proc> shall appear in a
+            <template-proc-declaration-stmt> or a <requires-stmt> or an
+            <interface-block>.
 
 <template-attr-constant-spec> <<is>> [<template-attr-spec>]...
                                         CONSTANT
@@ -70,6 +91,11 @@ Rule: The type of the entities declared may only be INTEGER, LOGICAL,
 
 <type-argument> <<is>> <type-name>
 
+<template-proc-declaration-stmt> <<is>> PROCEDURE[(<interface>)] :: <template-proc-decl-list>
+
+<template-proc-decl> <<is>> <procedure-entity-name>
+
+
 <template-specification-construct> <<is>> <derived-type-def>
                                    <<or>> <enum-def>
                                    <<or>> <enumeration-type-def>
@@ -80,6 +106,8 @@ Rule: The type of the entities declared may only be INTEGER, LOGICAL,
                                    <<or>> <template-other-specification-stmt>
                                    <<or>> <type-declaration-stmt>
                                    <<or>> <template>
+                                   <<or>> <template-arg-declaration-stmt>
+                                   <<or>> <instantiate-stmt>
 
 <template-other-specification-stmt> <<is>> <access-stmt>
                                     <<or>> <allocatable-stmt>

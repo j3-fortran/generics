@@ -1,0 +1,6 @@
+<requirement-def>   <<is>>  REQUIREMENT <requirement-name> ([<dummy-arg-list>])
+                               <requirement-specification-part> ...
+                            END [REQUIREMENT [<requirement-name>]]
+
+<requirement-specification-part> <<is>> [<deferred-type-decl>]
+                                 <<or>> [<interface-block>]
