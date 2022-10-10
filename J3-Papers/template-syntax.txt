@@ -9,8 +9,8 @@ Reference: 22-151r3, 22-154r5, 22-161r1, 22-162r3
 ===============
 
 This paper contains the syntax for generic programming features.
-Section 2 contains examples, while section 3 provides the formal syntax.
-Section 4 contains straw votes for alternatives.
+Section 2 contains examples, while section 3 provides the formal
+syntax.  Section 4 contains straw votes for alternatives.
 
 2. Examples
 ===========
