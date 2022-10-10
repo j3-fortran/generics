@@ -6,18 +6,64 @@ Date: 10-10-2022
 Reference: 22-151r3, 22-154r5, 22-161r1, 22-162r3
 
 1. Introduction
-
+===============
 
 This paper contains the syntax for generic programming features.
+Section 2 contains examples, while section 3 provides the formal syntax.
+Section 4 contains straw votes for alternatives.
 
+2. Examples
+===========
 
-2. Formal Syntax
+MODULE A
+
+   REQUIREMENT R(T,F)
+      TYPE, DEFERRED :: T
+      INTERFACE
+         FUNCTION F(x) RESULT(y)
+            TYPE(T) :: y
+            TYPE(T), INTENT(IN) :: x
+         END FUNCTION
+      END INTERFACE
+   END REQUIREMENT
+   
+   TEMPLATE B(T,F,C)
+      REQUIRES R(T,F)            ! provides interface for F
+      TYPE, DEFERRED :: T        ! redundant
+      INTEGER, CONSTANT :: C(..) ! deferred rank
+      TYPE(T) :: var
+   END TEMPLATE B
+
+END MODULE A
+
+MODULE B
+ USE MODULE A
+
+ TYPE :: MY_TYPE
+    REAL :: val
+ END TYPE
+ 
+ INSTANTIATE B(MY_TYPE, F, [3,4]), ONLY: my_var => var
+
+CONTAINS
+   FUNCTION SQUARE(x) RESULT(y)
+      TYPE(MY_TYPE) :: y
+      TYPE(MY_TYPE), INTENT(IN) :: x
+      y%val = x%val ** 2
+   END FUNCTION
+
+   SUBROUTINE DO_SOMETHING()
+      my_var%val = my_var%val + 1.
+   END SUBROUTINE
+END MODULE B
+
+3. Formal Syntax
 ================
 
-2.1 Syntax for the TEMPLATE construct
+3.1 Syntax for the TEMPLATE construct
 -------------------------------------
 
-<template> <<is>>  <template-stmt>
+<template> <<is>> <template-stmt>
                       [ <template-specification-part> ]
                       [ <template-subprogram-part> ]
                    <end-template-stmt>
@@ -30,8 +76,6 @@ Constraint: If the <end-template-stmt> includes <template-name> the
             <template-stmt> shall specify the same <template-name>.
 
 <template-arg> <<is>> <template-arg-name>
-
-
 
 <template-specification-part> <<is>>
             [ use-stmt ] ...
@@ -65,7 +109,7 @@ Constraint: The type of entities declared shall be INTEGER, LOGICAL,
             or assumed-length character.
 
 Constraint: Each <template-arg> shall be one of <template-const>,
-            <template-type>, or be specified in on of 
+            <template-type>, or be specified in one of 
             <template-proc-declaration-stmt>, <interface-block>
             or <requires-stmt>.
 
@@ -99,31 +143,29 @@ Constraint: Each <template-type> shall appear in <template-arg-list>.
                       <<or>> <interface-block>
                       <<or>> <parameter-stmt>
                       <<or>> <procedure-declaration-stmt>
+                      <<or>> <access-stmt>
                       <<or>> <template-other-specification-stmt>
                       <<or>> <type-declaration-stmt>
                       <<or>> <template>
                       <<or>> <template-arg-declaration-stmt>
                       <<or>> <instantiate-stmt>
 
+
 <template-arg-declaration-stmt> <<is>> <template-const-declaration-stmt>
                                 <<or>> <template-type-declaration-stmt>
                                 <<or>> <template-proc-declaration-stmt>
 
-<template-other-specification-stmt> <<is>> <access-stmt>
-                                    <<or>> <allocatable-stmt>
-                                    <<or>> <asynchronous-stmt>
-                                    <<or>> <bind-stmt>
+<template-other-specification-stmt> <<or>> <allocatable-stmt>
                                     <<or>> <codimension-stmt>
                                     <<or>> <contiguous-stmt>
                                     <<or>> <dimension-stmt>
-                                    <<or>> <external-stmt>
                                     <<or>> <intrinsic-stmt>
                                     <<or>> <namelist-stmt>
                                     <<or>> <pointer-stmt>
                                     <<or>> <protected-stmt>
                                     <<or>> <save-stmt>
                                     <<or>> <target-stmt>
-                                    <<or>> <volatile-stmt>
+
 
 
 Additional constraints and other requirements
@@ -133,7 +175,7 @@ Constraint: <template> shall not contain any reference to any
             does not have an explicit interface.
 
 
-2.2 syntax for the INSTANTIATE stateement
+3.2 syntax for the INSTANTIATE stateement
 -----------------------------------------
 
 <instantiate-stmt>
@@ -155,7 +197,7 @@ Constraint: If an <actual-template-arg> is a <derived-type-spec>, its
             <type-name> shall support intrinsic assignment.
 
 
-2.3 Syntax for the REQUIREMENT construct
+3.3 Syntax for the REQUIREMENT construct
 ----------------------------------------
 
 <requirement-def> <<is>> REQUIREMENT <requirement-name> ([<dummy-arg-list>])
@@ -165,7 +207,7 @@ Constraint: If an <actual-template-arg> is a <derived-type-spec>, its
 <requirement-specification-part> <<is>> [<deferred-type-decl>]
                                  <<or>> [<interface-block>]
 
-2.4 Syntax for the REQUIRES statement
+3.4 Syntax for the REQUIRES statement
 -------------------------------------
 
 
@@ -173,6 +215,31 @@ Constraint: If an <actual-template-arg> is a <derived-type-spec>, its
 
 Constraint:  <requirement-name> must be previously defined.
 
+
+4. Straw votes
+----------------------
+Straw vote 1: Template variables introduce the possibility of
+              surprising side-effects when multiple instantiations
+              with identical arg lists access/modify such entities.
+
+              Allow template variables:  YES-NO-UNDECIDED
+
+Straw vote 2: Subgroup foresees that the list of permitted attributes
+              in the specification section of a template diverges from
+              that of module specification section.
+
+              Option 1: Introduce separate BNF for attributes and
+                        other specification statements at the risk of
+                        missing new attributes introduced in
+                        subsequent revisions.
+
+              Option 2: Add constraints such that such attributes are
+                        disallowed at the risk of accidentally
+                        permitting new attributes introduced in
+                        subsquent revisions.
+
+              Vote: Should we introduce separate/new BNF for template
+                    statements: YES-NO-UNDECIDED
 
 ===END===
 
