@@ -23,11 +23,6 @@ contains
       one_real = 1
    end function one_real
 
-   elemental function minus_real(x,y) result(z)
-      real, intent(in) :: x, y
-      real :: z
-      z = x - y
-   end function minus_real
 
 end module RealInstance_mod
 
