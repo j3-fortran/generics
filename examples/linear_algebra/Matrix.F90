@@ -3,13 +3,13 @@ module Matrix_mod
 
    public :: Matrix_tmpl
 
-   requirement oper(T, op)
+   requirement pure_oper(T, op)
      type, deferred :: T
      pure function op(x,y) result(z)
         type(T), intent(in) :: x, y
         type(T)) :: z
      end function op
-   end requirement oper
+   end requirement pure_oper
 
    requirement elemental_oper(T, op)
      type, deferred :: T
@@ -23,7 +23,7 @@ module Matrix_mod
 
    template Matrix_tmpl(T,plus,times,n)
       requires elemental_oper(T,plus)
-      requires oper(T,times)
+      requires elemental_oper(T,times)
       integer, constant :: n
       private
 
@@ -47,7 +47,7 @@ module Matrix_mod
       !======================================
       template MatrixZero_tmpl(zero_t)
       !--------------------------------------
-         requires elemental_oper(zero_t)
+         requires pure_oper(zero_t)
          private
          public :: zero
 
@@ -75,8 +75,8 @@ module Matrix_mod
       !=====================================
       template MatrixOne_tmpl(zero_t, one_t)
       !-------------------------------------
-         requires oper(zero_t)
-         requires elemental_oper(one_t)
+         requires pure_oper(zero_t)
+         requires pure_oper(one_t)
          private
          public :: one
 
@@ -95,7 +95,7 @@ module Matrix_mod
          pure function identity_matrix()
             type(Matrix) :: matrix_one
 
-            matix_one%elements = zero_t()
+            matrix_one%elements = zero_t()
             do concurrent (i=1:n)
                matrix_one%elements(i,i) = one_t()
             end do
@@ -128,49 +128,45 @@ module Matrix_mod
 
      
      !=====================================
-     template MatrixOrder_tmpl(min_t,max_t)
+     template MatrixPartialOrder_tmpl(min_t,max_t)
      !-------------------------------------
         requires elemental_oper(T, min)
         requires elemental_oper(T, max)
         private
 
-        public :: min
-        public :: max
+        public :: elementwise_min
+        public :: elementwise_max
 
-        interface :: min
-           procedure :: min_matrix
+        interface :: elementwise_min
+           procedure :: elementwise_min_
         end interface
-        interface :: max
-           procedure :: max_matrix
+        interface :: elementwise_max
+           procedure :: elementwise_max_
         end interface
 
      contains
 
-      pure function min_matrix(m_x, m_y) result(m_z)
+      pure function elementwise_min_(m_x, m_y) result(m_z)
          type(Matrix), intent(in) :: m_x, m_y
          type(Matrix) :: m_z
-
          m_z%elements = min_t(m_x%elements, m_y%elements)
+      end function elementwise_min_
 
-      end function min_matrix
-
-      pure function max_matrix(m_x, m_y) result(m_z)
+      pure function elementwise_max_(m_x, m_y) result(m_z)
          type(Matrix), intent(in) :: m_x, m_y
          type(Matrix) :: m_z
-
          m_z%elements = max_t(m_x%elements, m_y%elements)
+      end function elementwise_max_
 
-      end function max_matrix
-
-     end template MatrixOrder_tmpl
+     end template MatrixPartialOrder_tmpl
      !=====================================
 
      !===================================================
      template GaussianSolver_tmpl(zero_t, minus_t, div_t)
      !---------------------------------------------------
-        requires oper(T, zero_t)
-        requires oper(T, minus_t)
-        requires oper(T, div_t)
+        requires pure_oper(T, zero_t)
+        requires pure_oper(T, minus_t)
+        requires pure_oper(T, div_t)
         private
         public :: div
 
@@ -185,7 +181,7 @@ module Matrix_mod
            type(Matrix), intent(in) :: m_x, m_y
            type(Matrix) :: m_z
 
-           m_z = back_substitution(m_y, row_eschelon(m_x))
+           m_z = back_substitution(row_eschelon(m_x),m_y)
 
         end function div
 
@@ -224,33 +220,26 @@ module Matrix_mod
               ! x_i = (b_m - sum (a_i,j * x_j)/a_i,i
               tmp(:) = zero_t()
               do j = i+1, n
-                 tmp(:) = tmp(:) + m_x(i,j)*m_z(:,j)
+                 tmp(:) = plus(tmp(:),times(m_x(i,j),m_z(:,j)))
               end do
               m_z(:,i) = div(minus(m_z(:,i), tmp), m_x(i,i))
            end do
 
         end function back_substitution
-
-
         
      end template GaussianSolver_tmpl
      !=====================================
-
             
    contains
 
-      function plus_matrix(m_x, m_y) result(m_z)
+      elemental function plus_matrix(m_x, m_y) result(m_z)
          type(Matrix), intent(in) :: m_x, m_y
          type(Matrix) :: m_z
-
-         integer :: i,j
-         do concurrent (i=1:n, j=1:n)
-            m_z%elements(i,j) = plus(m_x%elements(i,j),m_y%elements(i,j))
-         end do
+         m_z%elements = plus(m_x%elements, m_y%elements)
       end function plus_matrix
 
 
-      function matmul_matrix(m_x, m_y) result(m_z)
+      elemental function matmul_matrix(m_x, m_y) result(m_z)
          type(Matrix), intent(in) :: m_x, m_y
          type(Matrix) :: m_z
 
