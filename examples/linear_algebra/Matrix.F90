@@ -64,7 +64,7 @@ module Matrix_mod
 
          pure function zero_matrix()
             type(Matrix) :: zero_matrix
-            zero_matrix%elements = zero()
+            zero_matrix%elements = zero_t()
          end function zero_matrix
       end template
       !======================================
