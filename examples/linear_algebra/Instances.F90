@@ -23,7 +23,6 @@ contains
       one_real = 1
    end function one_real
 
-
 end module RealInstance_mod
 
    

@@ -24,7 +24,8 @@ module Matrix_mod
    template Matrix_tmpl(T,plus,times,n)
       requires elemental_oper(T,plus)
       requires oper(T,times)
-      privawe
+      integer, constant :: n
+      private
 
       public :: Matrix
       public :: operator(+)
@@ -38,7 +39,7 @@ module Matrix_mod
          procedure :: plus_matrix
       end interface operator(+)
 
-      interface operator(.matmul.)
+      interface operator(*)
          procedure :: matmul_matrix
       end interface operator(*)
 
@@ -94,7 +95,7 @@ module Matrix_mod
          pure function identity_matrix()
             type(Matrix) :: matrix_one
 
-            matix_one%elements = 0
+            matix_one%elements = zero_t()
             do concurrent (i=1:n)
                matrix_one%elements(i,i) = one_t()
             end do
@@ -108,7 +109,7 @@ module Matrix_mod
      !---------------------------------------
         requires elemental_oper(T, minus_t)
         private
-        public :: minus_t
+        public :: minus
 
         interface minus
            module procedure minus_matrix
