@@ -46,6 +46,7 @@ module Matrix_mod
       !======================================
       template MatrixZero_tmpl(zero_t)
       !--------------------------------------
+         requires elemental_oper(zero_t)
          private
          public :: zero
 
@@ -71,8 +72,10 @@ module Matrix_mod
 
 
       !=====================================
-      template MatrixOne_tmpl(one_t)
+      template MatrixOne_tmpl(zero_t, one_t)
       !-------------------------------------
+         requires elemental_oper(zero_t)
+         requires elemental_oper(one_t)
          private
          public :: one
 
@@ -83,15 +86,19 @@ module Matrix_mod
          end interface
 
          interface one
-            procedure :: one_matrix
+            procedure :: identity_matrix
          end interface one
 
       contains
 
-         pure function one_matrix()
+         pure function identity_matrix()
             type(Matrix) :: matrix_one
-            matrix_one%elements = one()
-         end function one_matrix
+
+            matix_one%elements = 0
+            do concurrent (i=1:n)
+               matrix_one%elements(i,i) = one_t()
+            end do
+         end function identity_matrix
      end template
      !=====================================
 
