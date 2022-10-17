@@ -13,7 +13,7 @@ module Matrix_mod
 
    requirement elemental_oper(T, op)
      type, deferred :: T
-     pure function op(x,y) result(z)
+     elemental function op(x,y) result(z)
         type(T), intent(in) :: x, y
         type(T)) :: z
      end function op
