@@ -11,7 +11,7 @@ module RealInstance_mod
    instantiate MatrixOne_tmpl(zero_real, zero_one)
    instantiate MatrixSubtraction_tmpl(-)
    instantiate MatrixOrder(min,max)
-   instantiate GaussianSolver(/)
+   instantiate GaussianSolver(zero_real, -, /)
 
 contains
 

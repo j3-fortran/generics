@@ -75,7 +75,7 @@ module Matrix_mod
       !=====================================
       template MatrixOne_tmpl(zero_t, one_t)
       !-------------------------------------
-         requires elemental_oper(zero_t)
+         requires oper(zero_t)
          requires elemental_oper(one_t)
          private
          public :: one
@@ -165,9 +165,11 @@ module Matrix_mod
      end template MatrixOrder_tmpl
      !=====================================
 
-     !=====================================
-     template GaussianSolver_tmpl(div_t)
-     !-------------------------------------
+     !===================================================
+     template GaussianSolver_tmpl(zero_t, minus_t, div_t)
+     !---------------------------------------------------
+        requires oper(T, zero_t)
+        requires oper(T, minus_t)
         requires oper(T, div_t)
         private
         public :: div
