@@ -6,15 +6,13 @@ module semigroup_m
     !! that type into a single object, or to repeatedly combine an object with
     !! itself. These operations can be derived in terms of combine.
     !! Examples include integer (i.e. +), and character (i.e. //)
-    use non_empty_m, only: non_empty_t
-
     implicit none
     private
     public :: minimal_semigroup, semigroup, derive_semigroup
 
     requirement minimal_semigroup(T, combine)
         type, deferred :: T
-        function combine(x, y) result(combined)
+        elemental function combine(x, y) result(combined)
             type(T), intent(in) :: x, y
             type(T) :: combined
         end function
@@ -23,11 +21,11 @@ module semigroup_m
     requirement semigroup(T, combine, sconcat, stimes)
         requires minimal_semigroup(T, combine)
         instantiate non_empty_t(T), only: non_empty
-        function sconcat(list) result(combined)
-            type(non_empty), intent(in) :: list
+        pure function sconcat(list) result(combined)
+            type(T), intent(in) :: list(:) !! Must contain at least one element
             type(T) :: combined
         end function
-        function stimes(n, a) result(repeated)
+        elemental function stimes(n, a) result(repeated)
             integer, intent(in) :: n
             type(T), intent(in) :: a
             type(T) :: repeated
@@ -40,8 +38,6 @@ module semigroup_m
         private
         public :: sconcat, stimes
 
-        instantiate non_empty_t(T), only: non_empty
-
         interface sconcat
             template procedure sconcat_
         end interface
@@ -50,21 +46,23 @@ module semigroup_m
             template procedure stimes_
         end interface
     contains
-        function sconcat_(list) result(combined)
-            type(non_empty), intent(in) :: list
+        pure function sconcat_(list) result(combined)
+            type(T), intent(in) :: list(:)
             type(T) :: combined
 
             integer :: i
 
-            combined = list%first()
-            associate(rest => list%rest())
-                do i = 1, size(rest)
-                    combined = combine(combined, rest(i))
+            if (size(list) > 0) then
+                combined = list(1)
+                do i = 2, size(list)
+                    combined = combine(combined, list(i))
                 end do
-            end associate
+            else
+                error stop "Attempted to sconcat empty list"
+            end if
         end function
 
-        function stimes_(n, a) result(repeated)
+        elemental function stimes_(n, a) result(repeated)
             integer, intent(in) :: n
             type(T), intent(in) :: a
             type(T) :: repeated

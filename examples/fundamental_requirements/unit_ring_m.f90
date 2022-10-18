@@ -1,4 +1,5 @@
 module unit_ring_m
+    !! A unit ring is a type that is a semiring with negation or minus operations.
     use semiring_m, only: semiring
 
     implicit none
@@ -12,7 +13,7 @@ module unit_ring_m
 
     requirement unit_ring_only_minus(T, plus, zero, mult, one, minus)
         requires semiring(T, plus, zero, mult, one)
-        function minus(x, y) result(difference)
+        elemental function minus(x, y) result(difference)
             type(T), intent(in) :: x, y
             type(T) :: difference
         end function
@@ -20,7 +21,7 @@ module unit_ring_m
 
     requirement unit_ring_only_negate(T, plus, zero, mult, one, negate)
         requires semiring(T, plus, zero, mult, one)
-        function negate(x) result(negated)
+        elemental function negate(x) result(negated)
             type(T), intent(in) :: x
             type(T) :: negated
         end function
@@ -41,7 +42,7 @@ module unit_ring_m
             template procedure negate_
         end interface
     contains
-        function negate_(x) result(negated)
+        elemental function negate_(x) result(negated)
             type(T), intent(in) :: x
             type(T) :: negated
 
@@ -59,7 +60,7 @@ module unit_ring_m
             template procedure minus_
         end interface
     contains
-        function minus_(x, y) result(difference)
+        elemental function minus_(x, y) result(difference)
             type(T), intent(in) :: x, y
             type(T) :: difference
 

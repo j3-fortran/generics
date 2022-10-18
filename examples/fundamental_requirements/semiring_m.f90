@@ -1,4 +1,6 @@
 module semiring_m
+    !! A semiring is a type that is a monoid with two separate operations and zero values
+    !! For example integer is a monoid with + and 0, or * and 1.
     use monoid_m, only: minimal_monoid
 
     implicit none

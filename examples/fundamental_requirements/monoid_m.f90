@@ -9,7 +9,7 @@ module monoid_m
 
     requirement minimal_monoid(T, combine, empty)
         requires minimal_semigroup(T, combine)
-        function empty()
+        pure function empty()
             type(T) :: empty
         end function
     end requirement
@@ -17,7 +17,7 @@ module monoid_m
     requirement monoid(T, combine, sconcat, stimes, empty, mconcat)
         requires semigroup(T, combine, sconcat, stimes)
         requires minimal_monoid(T, empty)
-        function mconcat(list) result(combined)
+        pure function mconcat(list) result(combined)
             type(T), intent(in) :: list(:)
             type(T) :: combined
         end function
@@ -27,31 +27,28 @@ module monoid_m
         requires minimal_monoid(T, combine, empty)
 
         private
-        public :: sconcat, stimes, mconcat
+        public :: stimes, mconcat
 
-        instantiate derive_semigroup(T, combine), only: sconcat, stimes
+        instantiate derive_semigroup(T, combine), only: stimes
 
         interface mconcat
             template procedure mconcat_
         end interface
     contains
-        function mconcat_(list) result(combined)
-            type(T), intent(in) :: list
+        pure function mconcat_(list) result(combined)
+            type(T), intent(in) :: list(:)
             type(T) :: combined
 
             integer :: i
 
-            select case (size(list))
-            case (0)
-                combined = empty()
-            case (1)
-                combined = list(1)
-            case (2:)
+            if (size(list) > 0) then
                 combined = list(1)
                 do i = 2, size(list)
                     combined = combine(combined, list(i))
                 end do
-            end select
+            else
+                combined = empty()
+            end if
         end function
     end template
 end module
