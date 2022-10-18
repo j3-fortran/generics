@@ -1,3 +1,7 @@
-<requires-stmt> is REQUIRES <requirement-name> ([<actual-arg-spec-list>])
+2. Syntax
+---------
 
-Rule: ...
+<requires-stmt> <<is>> REQUIRES <requirement-name>([<template-arg-list>])
+
+Constraint:  <requirement-name> must be previously defined.
+
