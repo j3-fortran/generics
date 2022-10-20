@@ -1,8 +1,3 @@
-To: J3                                                     J3/##-###
-From: Tom Clune & generics subgroup
-Subject: Formal syntax for generic programming features
-Date: 10-10-2022
-
 Reference: 22-151r3, 22-154r5, 22-161r1, 22-162r3
 
 1. Introduction
@@ -19,12 +14,10 @@ MODULE A
 
    REQUIREMENT R(T,F)
       TYPE, DEFERRED :: T
-      INTERFACE
-         FUNCTION F(x) RESULT(y)
-            TYPE(T) :: y
-            TYPE(T), INTENT(IN) :: x
-         END FUNCTION
-      END INTERFACE
+      FUNCTION F(x) RESULT(y)
+         TYPE(T) :: y
+         TYPE(T), INTENT(IN) :: x
+      END FUNCTION
    END REQUIREMENT
    
    TEMPLATE B(T,F,C)
@@ -37,13 +30,13 @@ MODULE A
 END MODULE A
 
 MODULE B
- USE MODULE A
+  USE MODULE A
 
- TYPE :: MY_TYPE
-    REAL :: val
- END TYPE
+  TYPE :: MY_TYPE
+     REAL :: val
+  END TYPE
  
- INSTANTIATE B(MY_TYPE, F, [3,4]), ONLY: my_var => var
+  INSTANTIATE B(MY_TYPE, SQUARE, [3,4]), ONLY: my_var => var
 
 CONTAINS
    FUNCTION SQUARE(x) RESULT(y)
@@ -99,15 +92,6 @@ Constraint: If a variable appears in a
             <template-declaration-construct>, it shall be explicitly
             typed.
 
-<template-const-declaration-stmt> <<is>>
-           <declaration-type-spec>, <template-attr-constant-spec> ::
-           <template-const-list>
-
-<template-const> <<is>> <template-const-name>
-
-Constraint: The type of entities declared shall be INTEGER, LOGICAL,
-            or assumed-length character.
-
 Constraint: Each <template-arg> shall be one of <template-const>,
             <template-type>, or be specified in one of 
             <template-proc-declaration-stmt>, <interface-block>
@@ -116,24 +100,6 @@ Constraint: Each <template-arg> shall be one of <template-const>,
 Constraint: Each <template-const> shall appear in a
             <template-const-declaration-stmt>.
 
-
-<template-attr-constant-spec> <<is>> [<template-attr-spec>,]...
-                                     CONSTANT
-                                     [,<template-attr-spec>]...
-
-<template-attr-spec> <<is>> CONTIGUOUS
-                     <<or>> DIMENSION ( <array-spec> )
-
-<template-type-declaration-stmt> <<is>>  TYPE, DEFERRED :: <template-type-list>
-
-<template-type> <<is>> <type-name>
-
-Constraint: Each <template-type> shall appear in <template-arg-list>.
-
-<template-proc-declaration-stmt> <<is>> PROCEDURE[(<interface>)] ::
-              <template-proc-decl-list>
-
-<template-proc-decl> <<is>> <procedure-entity-name>
 
 <template-specification-construct> 
                       <<is>> <derived-type-def>
@@ -155,6 +121,35 @@ Constraint: Each <template-type> shall appear in <template-arg-list>.
                                 <<or>> <template-type-declaration-stmt>
                                 <<or>> <template-proc-declaration-stmt>
 
+<template-const-declaration-stmt> <<is>>
+           <declaration-type-spec>, <template-attr-constant-spec> ::
+           <template-const-list>
+
+Constraint: An entity declared in <template-const-declaration-stmt>
+            shall be INTEGER, LOGICAL, or assumed-length character.
+
+<template-attr-constant-spec> <<is>> [<template-attr-spec>,]...
+                                     CONSTANT
+                                     [,<template-attr-spec>]...
+
+<template-attr-spec> <<is>> CONTIGUOUS
+                     <<or>> DIMENSION ( <array-spec> )
+
+<template-const> <<is>> <template-const-name>
+
+<template-type-declaration-stmt>
+       <<is>>  TYPE, DEFERRED :: <template-type-list>
+
+<template-type> <<is>> <type-name>
+
+Constraint: Each <template-type> shall appear in <template-arg-list>.
+
+<template-proc-declaration-stmt> <<is>> PROCEDURE[(<interface>)] ::
+              <template-proc-decl-list>
+
+<template-proc-decl> <<is>> <procedure-entity-name>
+
+
 <template-other-specification-stmt> <<or>> <allocatable-stmt>
                                     <<or>> <codimension-stmt>
                                     <<or>> <contiguous-stmt>
@@ -167,7 +162,6 @@ Constraint: Each <template-type> shall appear in <template-arg-list>.
                                     <<or>> <target-stmt>
 
 
-
 Additional constraints and other requirements
 
 Constraint: <template> shall not contain any reference to any
@@ -175,8 +169,8 @@ Constraint: <template> shall not contain any reference to any
             does not have an explicit interface.
 
 
-3.2 syntax for the INSTANTIATE stateement
------------------------------------------
+3.2 syntax for the INSTANTIATE statement
+----------------------------------------
 
 <instantiate-stmt>
      <<is>> INSTANTIATE [::] <template-name> (
@@ -200,20 +194,70 @@ Constraint: If an <actual-template-arg> is a <derived-type-spec>, its
 3.3 Syntax for the REQUIREMENT construct
 ----------------------------------------
 
-<requirement-def> <<is>> REQUIREMENT <requirement-name> ([<dummy-arg-list>])
-                             <requirement-specification-part> ...
-                         END [REQUIREMENT [<requirement-name>]]
+<requirement-def>
+      <<is>> REQUIREMENT <requirement-name> ([<template-arg-list>])
+                <requirement-specification-part> ...
+             END [REQUIREMENT [<requirement-name>]]
 
-<requirement-specification-part> <<is>> [<deferred-type-decl>]
-                                 <<or>> [<interface-block>]
+<requirement-specification-part> <<is>> <template-const-declaration-stmt>
+                                 <<or>> <deferred-type-decl>
+                                 <<or>> <requirement-interface-body>
+
+<requirement-interface-body>
+      <<is>> <function-stmt>
+                [ <requirement-interface-specification-part> ]
+             <end-function-stmt>
+      <<or>> <subroutine-stmt>
+                [ <requirement-interface-specification-part> ]
+             <end-subroutine-stmt>
+
+<requirement-interface-specification-part>
+          <<is>> [ <use-stmt> ] ...
+                 [ <requirement-interface-declaration-construct> ] ...
+
+<requirement-interface-declaration-construct>
+          <<is>> <requirement-interface-specification-construct>
+
+
+<requirement-interface-specification-construct>
+          <<is>> <parameter-stmt>
+          <<or>> <procedure-declaration-stmt>
+          <<or>> <template-other-specification-stmt>
+          <<or>> <requirement-interface-type-declaration-stmt>
+
+<requirement-interface-type-declaration-stmt>
+          <<is>> <declaration-type-spec>
+                 [ [ , <requirement-interface-attr-spec> ] ... :: ]
+                 <entity-decl-list>
+
+<requirement-interface-attr-spec>
+        <<is>> ALLOCATABLE
+        <<or>> ASYNCHRONOUS
+        <<or>> CODIMENSION <lbracket> <coarray-spec> <rbracket>
+        <<or>> CONTIGUOUS
+        <<or>> DIMENSION ( <array-spec> )
+        <<or>> INTENT ( <intent-spec> )
+        <<or>> OPTIONAL
+        <<or>> PARAMETER
+        <<or>> POINTER
+        <<or>> <rank-clause>
+        <<or>> TARGET
+        <<or>> VALUE
+        <<or>> VOLATILE
+
+Constraint: <namelist-stmt>, <protected-stmt>, and <save-stmt> shall
+            not appear within
+            <requirement-interface-specification-construct>.
+
 
 3.4 Syntax for the REQUIRES statement
 -------------------------------------
 
 
-<requires-stmt> <<is>> REQUIRES <requirement-name>([<template-arg-list>])
+<requires-stmt> <<is>>
+      REQUIRES <requirement-name>([<actual-template-arg-spec-list>])
 
-Constraint:  <requirement-name> must be previously defined.
+Constraint: <requirement-name> must be previously defined.
 
 
 4. Straw votes
@@ -240,6 +284,22 @@ Straw vote 2: Subgroup foresees that the list of permitted attributes
 
               Vote: Should we introduce separate/new BNF for template
                     statements: YES-NO-UNDECIDED
+
+
+Straw vote 3: Should we introduce syntax for declaring a procedure in
+              a template?  I.e., in a template should:
+
+              INTERFACE SUB
+                 MODULE PROCEDURE sub_1
+              END INTERFACE
+
+              instead be written as
+                 
+              INTERFACE SUB
+                 TEMPLATE PROCEDURE sub_1
+              END INTERFACE
+
+                            
 
 ===END===
 
