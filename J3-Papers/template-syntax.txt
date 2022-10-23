@@ -110,8 +110,6 @@ Constraint: Each <template-const> shall appear in a
                       <<or>> <parameter-stmt>
                       <<or>> <procedure-declaration-stmt>
                       <<or>> <access-stmt>
-                      <<or>> <template-other-specification-stmt>
-                      <<or>> <type-declaration-stmt>
                       <<or>> <template>
                       <<or>> <template-arg-declaration-stmt>
                       <<or>> <instantiate-stmt>
@@ -148,18 +146,6 @@ Constraint: Each <template-type> shall appear in <template-arg-list>.
               <template-proc-decl-list>
 
 <template-proc-decl> <<is>> <procedure-entity-name>
-
-
-<template-other-specification-stmt> <<or>> <allocatable-stmt>
-                                    <<or>> <codimension-stmt>
-                                    <<or>> <contiguous-stmt>
-                                    <<or>> <dimension-stmt>
-                                    <<or>> <intrinsic-stmt>
-                                    <<or>> <namelist-stmt>
-                                    <<or>> <pointer-stmt>
-                                    <<or>> <protected-stmt>
-                                    <<or>> <save-stmt>
-                                    <<or>> <target-stmt>
 
 
 Additional constraints and other requirements
@@ -226,33 +212,11 @@ Constraint: If an <actual-template-arg> is a <derived-type-spec>, its
           <<or>> <requirement-interface-type-declaration-stmt>
 
 <requirement-interface-type-declaration-stmt>
-          <<is>> <declaration-type-spec>
-                 [ [ , <requirement-interface-attr-spec> ] ... :: ]
-                 <entity-decl-list>
-
-<requirement-interface-attr-spec>
-        <<is>> ALLOCATABLE
-        <<or>> ASYNCHRONOUS
-        <<or>> CODIMENSION <lbracket> <coarray-spec> <rbracket>
-        <<or>> CONTIGUOUS
-        <<or>> DIMENSION ( <array-spec> )
-        <<or>> INTENT ( <intent-spec> )
-        <<or>> OPTIONAL
-        <<or>> PARAMETER
-        <<or>> POINTER
-        <<or>> <rank-clause>
-        <<or>> TARGET
-        <<or>> VALUE
-        <<or>> VOLATILE
-
-Constraint: <namelist-stmt>, <protected-stmt>, and <save-stmt> shall
-            not appear within
-            <requirement-interface-specification-construct>.
+          <<is>> TYPE, DEFERRED :: <entity-decl-list>
 
 
 3.4 Syntax for the REQUIRES statement
 -------------------------------------
-
 
 <requires-stmt> <<is>>
       REQUIRES <requirement-name>([<actual-template-arg-spec-list>])
@@ -262,30 +226,6 @@ Constraint: <requirement-name> must be previously defined.
 
 4. Straw votes
 ----------------------
-Straw vote 1: Template variables introduce the possibility of
-              surprising side-effects when multiple instantiations
-              with identical arg lists access/modify such entities.
-
-              Allow template variables:  YES-NO-UNDECIDED
-
-Straw vote 2: Subgroup foresees that the list of permitted attributes
-              in the specification section of a template diverges from
-              that of module specification section.
-
-              Option 1: Introduce separate BNF for attributes and
-                        other specification statements at the risk of
-                        missing new attributes introduced in
-                        subsequent revisions.
-
-              Option 2: Add constraints such that such attributes are
-                        disallowed at the risk of accidentally
-                        permitting new attributes introduced in
-                        subsquent revisions.
-
-              Vote: Should we introduce separate/new BNF for template
-                    statements: YES-NO-UNDECIDED
-
-
 Straw vote 3: Should we introduce syntax for declaring a procedure in
               a template?  I.e., in a template should:
 
