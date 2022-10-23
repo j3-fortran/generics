@@ -94,7 +94,7 @@ Constraint: If a variable appears in a
 
 Constraint: Each <template-arg> shall be one of <template-const>,
             <template-type>, or be specified in one of 
-            <template-proc-declaration-stmt>, <interface-block>
+            <template-proc-declaration-stmt>, <template-interface-block>
             or <requires-stmt>.
 
 Constraint: Each <template-const> shall appear in a
@@ -106,7 +106,7 @@ Constraint: Each <template-const> shall appear in a
                       <<or>> <enum-def>
                       <<or>> <enumeration-type-def>
                       <<or>> <generic-stmt>
-                      <<or>> <interface-block>
+                      <<or>> <template-interface-block>
                       <<or>> <parameter-stmt>
                       <<or>> <procedure-declaration-stmt>
                       <<or>> <access-stmt>
@@ -116,7 +116,17 @@ Constraint: Each <template-const> shall appear in a
                       <<or>> <template-arg-declaration-stmt>
                       <<or>> <instantiate-stmt>
 
+<template-interface-block> <<is>> <interface-stmt>
+                                     [ <template-interface-specification> ]
+                                     <end-interface-stmt>
 
+
+<template-interface-specification> <<is>> <interface-body>
+                                   <<or>> <template-procedure-stmt>
+
+<template-procedure-stmt> <<is>> PROCEDURE :: <specific-procedure-list>
+
+                                   
 <template-arg-declaration-stmt> <<is>> <template-const-declaration-stmt>
                                 <<or>> <template-type-declaration-stmt>
                                 <<or>> <template-proc-declaration-stmt>
@@ -143,6 +153,8 @@ Constraint: An entity declared in <template-const-declaration-stmt>
 <template-type> <<is>> <type-name>
 
 Constraint: Each <template-type> shall appear in <template-arg-list>.
+
+
 
 <template-proc-declaration-stmt> <<is>> PROCEDURE[(<interface>)] ::
               <template-proc-decl-list>
