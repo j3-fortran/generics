@@ -72,11 +72,12 @@ Constraint: If the <end-template-stmt> includes <template-name> the
 
 <template-specification-part> <<is>>
             [ use-stmt ] ...
-            [IMPLICIT NONE [(<implicit-none-spec-list>)]]
             [ <template-declaration-construct> ] ...
 
-Constraint: If EXTERNAL is specified in <implicit-none-spec-list>,
-            then TYPE shall also be specified.
+            [IMPLICIT NONE [(<implicit-none-spec-list>)]]
+
+Constraint: Implicit mapping in <template> is as if IMPLICIT
+            NONE(TYPE,EXTERNAL) is in place.
 
 <template-subprogram-part> <<is>> <contains-stmt>
                                      [ <template-subprogram> ] ...
