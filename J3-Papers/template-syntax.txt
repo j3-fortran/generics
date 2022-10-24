@@ -72,11 +72,10 @@ Constraint: If the <end-template-stmt> includes <template-name> the
 
 <template-specification-part> <<is>>
             [ use-stmt ] ...
-            [IMPLICIT NONE [(<implicit-none-spec-list>)]]
             [ <template-declaration-construct> ] ...
 
-Constraint: If EXTERNAL is specified in <implicit-none-spec-list>,
-            then TYPE shall also be specified.
+Constraint: The implicit mapping in <template> is as if
+            IMPLICIT NONE(TYPE,EXTERNAL) is in place.
 
 <template-subprogram-part> <<is>> <contains-stmt>
                                      [ <template-subprogram> ] ...
@@ -109,17 +108,36 @@ Constraint: Each <template-const> shall appear in a
                       <<or>> <interface-block>
                       <<or>> <parameter-stmt>
                       <<or>> <procedure-declaration-stmt>
-                      <<or>> <access-stmt>
                       <<or>> <template-other-specification-stmt>
                       <<or>> <type-declaration-stmt>
                       <<or>> <template>
                       <<or>> <template-arg-declaration-stmt>
                       <<or>> <instantiate-stmt>
 
+Constraint: In <type-declaration-stmt>, <entity> must have the
+            PARAMETER attribute.
+
+<template-interface-block> <<is>> <interface-stmt>
+                                     [ <template-interface-specification> ] ...
+                                     <end-interface-stmt>
+
+<template-interface-specification> <<is>> <interface-body>
+                                   <<or>> <template-procedure-stmt>
+
+<template-procedure-stmt> <<is>> PROCEDURE [ :: ] <specific-procedure-list>
+
+Constraint: In an <interface-block> the MODULE keyword shall not appear.
+
+NOTE: MODULE does not appear in interface blocks in templates.
+
 
 <template-arg-declaration-stmt> <<is>> <template-const-declaration-stmt>
                                 <<or>> <template-type-declaration-stmt>
                                 <<or>> <template-proc-declaration-stmt>
+
+Constraint: A <template-procedure-stmt> is allowed only in an
+            interface block that has a generic-spec.
+
 
 <template-const-declaration-stmt> <<is>>
            <declaration-type-spec>, <template-attr-constant-spec> ::
@@ -150,17 +168,9 @@ Constraint: Each <template-type> shall appear in <template-arg-list>.
 <template-proc-decl> <<is>> <procedure-entity-name>
 
 
-<template-other-specification-stmt> <<or>> <allocatable-stmt>
-                                    <<or>> <codimension-stmt>
-                                    <<or>> <contiguous-stmt>
+<template-other-specification-stmt> <<is>> <access-stmt>
                                     <<or>> <dimension-stmt>
                                     <<or>> <intrinsic-stmt>
-                                    <<or>> <namelist-stmt>
-                                    <<or>> <pointer-stmt>
-                                    <<or>> <protected-stmt>
-                                    <<or>> <save-stmt>
-                                    <<or>> <target-stmt>
-
 
 Additional constraints and other requirements
 
@@ -213,13 +223,9 @@ Constraint: If an <actual-template-arg> is a <derived-type-spec>, its
 
 <requirement-interface-specification-part>
           <<is>> [ <use-stmt> ] ...
-                 [ <requirement-interface-declaration-construct> ] ...
+                 [ <requirement-interface-declaration-stmt> ] ...
 
-<requirement-interface-declaration-construct>
-          <<is>> <requirement-interface-specification-construct>
-
-
-<requirement-interface-specification-construct>
+<requirement-interface-specification-stmt>
           <<is>> <parameter-stmt>
           <<or>> <procedure-declaration-stmt>
           <<or>> <template-other-specification-stmt>
@@ -255,7 +261,7 @@ Constraint: <namelist-stmt>, <protected-stmt>, and <save-stmt> shall
 
 
 <requires-stmt> <<is>>
-      REQUIRES <requirement-name>([<actual-template-arg-spec-list>])
+`      REQUIRES <requirement-name>([<actual-template-arg-spec-list>])
 
 Constraint: <requirement-name> must be previously defined.
 
