@@ -365,7 +365,7 @@ The `Stringify` example in Haskell looks like:
 class Stringer t where
   string :: t -> String
 
-stringify :: String t => [t] -> String
+stringify :: Stringer t => [t] -> String
 stringify (only:[]) = string only
 stringify (first:rest) = (string first) ++ (stringify rest)
 ```
@@ -375,7 +375,7 @@ and it can be used like this:
 ```haskell
 data MyT = MyT
 
-instance String MyT where
+instance Stringer MyT where
   string :: MyT -> String
   string _ = "X"
 
@@ -510,13 +510,11 @@ would be equivalent to
 
 ```fortran
 restriction stringable(T, to_string)
-  type :: T; end type
-  interface
-    function to_string(x) result(string)
-      type(T), intent(in) :: x
-      character(len=:), allocatable :: string
-    end function
-  end interface
+  type, deferred :: T
+  function to_string(x) result(string)
+    type(T), intent(in) :: x
+    character(len=:), allocatable :: string
+  end function
 end restriction
 
 template stringify_tmpl(T, to_string)
@@ -560,14 +558,14 @@ would be equivalent to
 type :: my_t
 end type
 
-function to_string(x) result(string)
+function my_t_to_string(x) result(string)
   type(my_t), intent(in) :: x
   character(len=:), allocatable :: string
 
   string = "X"
 end function
 
-instantiate stringify_tmpl(my_t, to_string)
+instantiate stringify_tmpl(my_t, my_t_to_string)
 
 type(my_t), allocatable :: v(:)
 
