@@ -100,11 +100,18 @@ end module
 
 module block_matrix_m
     use matrix_m, only: matrix_tmpl
-    use real_matrix_m, only: block => matrix, operator(+), zero, operator(*), one, operator(-), operator(/)
+    use real_matrix_m, only: &
+            block_ => matrix, &
+            operator(+), &
+            zero_b => zero, &
+            operator(*), &
+            one_b => one, &
+            operator(-), &
+            operator(/)
 
     implicit none
 
-    instantiate matrix_tmpl(block, operator(+), zero, operator(*), one, 5), only: &
+    instantiate matrix_tmpl(block_, operator(+), zero_b, operator(*), one_b, 5), only: &
             matrix, operator(+), zero, operator(*), one, matrix_subtraction_tmpl
     instantiate matrix_subtraction_tmpl(operator(-)), only: operator(-), gaussian_solver_tmpl
     instantiate gaussian_solver_tmpl(operator(/)), only: operator(/)
