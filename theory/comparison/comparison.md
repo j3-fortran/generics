@@ -44,24 +44,30 @@ func Stringify[T any](s []T) (ret []string) {
 To fix that, we have to define a new constraint:
 
 ```go
-// Stringer is a type constraint that requires the type argument to have
-// a String method and permits the generic function to call String.
-// The String method should return a string representation of the value.
 type Stringer interface {
     String() string
 }
-```
 
-and use it in the `Stringify` function:
-
-```go
-// Stringify calls the String method on each element of s,
-// and returns the results.
 func Stringify[T Stringer](s []T) (ret []string) {
     for _, v := range s {
         ret = append(ret, v.String())
     }
     return ret
+}
+```
+
+```go
+type My_t struct {
+}
+
+func (m My_t) String() string {
+	return "X"
+}
+
+func main() {
+	var s [3]My_t
+
+	fmt.Println(Stringify(s[0:3]))
 }
 ```
 
