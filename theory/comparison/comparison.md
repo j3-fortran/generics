@@ -515,13 +515,13 @@ fn stringify<T : Stringer>(s: Vec<T>) -> String {
 would be equivalent to
 
 ```fortran
-restriction stringable(T, to_string)
+requirement stringable(T, to_string)
   type, deferred :: T
   function to_string(x) result(string)
     type(T), intent(in) :: x
     character(len=:), allocatable :: string
   end function
-end restriction
+end requirement
 
 template stringify_tmpl(T, to_string)
   requires stringable(T, to_string)
