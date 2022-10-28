@@ -25,21 +25,8 @@ module matrix_m
             type(T) :: elements(n, n)
         end type
 
-        interface operator(+)
-            template procedure plus_matrix
-        end interface
-
-        interface zero
-            template procedure zero_matrix
-        end interface
-
-        interface operator(*)
-            template procedure times_matrix
-        end interface
-
-        interface one
-            template procedure identity_matrix
-        end interface
+        generic :: operator(+) => plus_matrix
+        generic :: operator(*) => times_matrix
 
         template matrix_subtraction_tmpl(minus_t)
             requires unit_ring_only_minus(T, plus_t, zero_t, times_t, one_t, minus_t)
@@ -47,9 +34,7 @@ module matrix_m
             private
             public :: operator(-), gaussian_solver_tmpl
 
-            interface operator(-)
-                template procedure minus_matrix
-            end interface
+            generic :: operator(-) => minus_matrix
 
             template gaussian_solver_tmpl(div_t)
                 instantiate derive_unit_ring_from_minus(T, plus_t, zero_t, times_t, one_t, minus_t), only: negate
@@ -58,9 +43,7 @@ module matrix_m
                 private
                 public :: operator(/)
 
-                interface operator(/)
-                    template procedure div_matrix
-                end interface
+                generic :: operator(/) => div_matrix
             contains
                 elemental function div_matrix(x, y) result(quotient)
                     type(matrix), intent(in) :: x, y
@@ -123,17 +106,17 @@ module matrix_m
             combined%elements = plus_t(x%elements, y%elements)
         end function
 
-        pure function zero_matrix()
-            type(matrix) :: zero_matrix
+        pure function zero()
+            type(matrix) :: zero
 
-            zero_matrix%elements = zero_t()
+            zero%elements = zero_t()
         end function
 
         elemental function times_matrix(x, y) result(combined)
             type(matrix), intent(in) :: x, y
             type(matrix) :: combined
 
-            instantiate derive_monoid(T, plus_t, zero_t), only: sum => mconcat
+            instantiate derive_extended_monoid(T, plus_t, zero_t), only: sum => mconcat
             integer :: i, j
 
             do concurrent (i = 1:n, j = 1:n)
@@ -141,14 +124,14 @@ module matrix_m
             end do
         end function
 
-        pure function identity_matrix()
-            type(matrix) :: identity_matrix
+        pure function one()
+            type(matrix) :: one
 
             integer :: i
 
-            identity_matrix%elements = zero_t()
+            one%elements = zero_t()
             do concurrent (i = 1:n)
-                identity_matrix%elements(i, i) = one_t()
+                one%elements(i, i) = one_t()
             end do
         end function
     end template

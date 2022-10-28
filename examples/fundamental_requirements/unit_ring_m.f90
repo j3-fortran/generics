@@ -38,9 +38,7 @@ module unit_ring_m
         private
         public :: negate
 
-        interface negate
-            template procedure negate_
-        end interface
+        generic :: negate => negate_
     contains
         elemental function negate_(x) result(negated)
             type(T), intent(in) :: x
@@ -56,9 +54,7 @@ module unit_ring_m
         private
         public :: minus
 
-        interface minus
-            template procedure minus_
-        end interface
+        generic :: minus => minus_
     contains
         elemental function minus_(x, y) result(difference)
             type(T), intent(in) :: x, y

@@ -8,9 +8,9 @@ module semigroup_m
     !! Examples include integer (i.e. +), and character (i.e. //)
     implicit none
     private
-    public :: minimal_semigroup, semigroup, derive_semigroup
+    public :: semigroup, extended_semigroup, derive_extended_semigroup
 
-    requirement minimal_semigroup(T, combine)
+    requirement semigroup(T, combine)
         type, deferred :: T
         elemental function combine(x, y) result(combined)
             type(T), intent(in) :: x, y
@@ -18,9 +18,8 @@ module semigroup_m
         end function
     end requirement
 
-    requirement semigroup(T, combine, sconcat, stimes)
-        requires minimal_semigroup(T, combine)
-        instantiate non_empty_t(T), only: non_empty
+    requirement extended_semigroup(T, combine, sconcat, stimes)
+        requires semigroup(T, combine)
         pure function sconcat(list) result(combined)
             type(T), intent(in) :: list(:) !! Must contain at least one element
             type(T) :: combined
@@ -32,19 +31,14 @@ module semigroup_m
         end function
     end requirement
 
-    template derive_semigroup(T, combine)
-        requires minimal_semigroup_r(T, combine)
+    template derive_extended_semigroup(T, combine)
+        requires semigroup(T, combine)
 
         private
         public :: sconcat, stimes
 
-        interface sconcat
-            template procedure sconcat_
-        end interface
-
-        interface stimes
-            template procedure stimes_
-        end interface
+        generic :: sconcat => sconcat_
+        generic :: stimes => stimes_
     contains
         pure function sconcat_(list) result(combined)
             type(T), intent(in) :: list(:)

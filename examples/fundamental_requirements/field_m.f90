@@ -1,4 +1,5 @@
 module field_m
+    !! field is a unit_ring that also has a division or inverse operation
     use unit_ring_m, only: unit_ring
 
     implicit none
@@ -37,9 +38,7 @@ module field_m
         private
         public :: invert
 
-        interface invert
-            template procedure invert_
-        end interface
+        generic :: invert => invert_
     contains
         elemental function invert_(x) result(inverse)
             type(T), intent(in) :: x
@@ -55,9 +54,7 @@ module field_m
         private
         public :: divide
 
-        interface divide
-            template procedure invert_
-        end interface
+        generic :: divide => divide_
     contains
         elemental function divide_(x, y) result(quotient)
             type(T), intent(in) :: x, y
