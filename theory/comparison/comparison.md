@@ -44,24 +44,30 @@ func Stringify[T any](s []T) (ret []string) {
 To fix that, we have to define a new constraint:
 
 ```go
-// Stringer is a type constraint that requires the type argument to have
-// a String method and permits the generic function to call String.
-// The String method should return a string representation of the value.
 type Stringer interface {
     String() string
 }
-```
 
-and use it in the `Stringify` function:
-
-```go
-// Stringify calls the String method on each element of s,
-// and returns the results.
 func Stringify[T Stringer](s []T) (ret []string) {
     for _, v := range s {
         ret = append(ret, v.String())
     }
     return ret
+}
+```
+
+```go
+type My_t struct {
+}
+
+func (m My_t) String() string {
+	return "X"
+}
+
+func main() {
+	var s [3]My_t
+
+	fmt.Println(Stringify(s[0:3]))
 }
 ```
 
@@ -365,7 +371,7 @@ The `Stringify` example in Haskell looks like:
 class Stringer t where
   string :: t -> String
 
-stringify :: String t => [t] -> String
+stringify :: Stringer t => [t] -> String
 stringify (only:[]) = string only
 stringify (first:rest) = (string first) ++ (stringify rest)
 ```
@@ -375,7 +381,7 @@ and it can be used like this:
 ```haskell
 data MyT = MyT
 
-instance String MyT where
+instance Stringer MyT where
   string :: MyT -> String
   string _ = "X"
 
@@ -509,15 +515,13 @@ fn stringify<T : Stringer>(s: Vec<T>) -> String {
 would be equivalent to
 
 ```fortran
-restriction stringable(T, to_string)
-  type :: T; end type
-  interface
-    function to_string(x) result(string)
-      type(T), intent(in) :: x
-      character(len=:), allocatable :: string
-    end function
-  end interface
-end restriction
+requirement stringable(T, to_string)
+  type, deferred :: T
+  function to_string(x) result(string)
+    type(T), intent(in) :: x
+    character(len=:), allocatable :: string
+  end function
+end requirement
 
 template stringify_tmpl(T, to_string)
   requires stringable(T, to_string)
@@ -560,14 +564,14 @@ would be equivalent to
 type :: my_t
 end type
 
-function to_string(x) result(string)
+function my_t_to_string(x) result(string)
   type(my_t), intent(in) :: x
   character(len=:), allocatable :: string
 
   string = "X"
 end function
 
-instantiate stringify_tmpl(my_t, to_string)
+instantiate stringify_tmpl(my_t, my_t_to_string)
 
 type(my_t), allocatable :: v(:)
 
