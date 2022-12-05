@@ -1,0 +1,16 @@
+
+<interface-stmt> <<is>> [NEWFANGLED] INTERFACE [generic-spec]
+                 <<or>> [NEWFANGLED] ABSTRACT INTERFACE
+
+Constraint: If NEWFANGLED does not appear, then there is no host
+            association and the default implicit mapping is in effect
+            in the interface bodies.
+
+Straw vote: How should NEWFANGLED be spelled?
+            - EXPLICIT
+            - HOSTED
+            - DIRECT
+            - EXACT
+            - INCLUSIVE
+            - CONFUSING
+

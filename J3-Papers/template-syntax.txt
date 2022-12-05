@@ -228,7 +228,10 @@ Note: This constraint expresses the notion of "strong constraints".
      <<or>> INSTANTIATE [::] <template-name> (
                [ <actual-template-arg-spec-list> ] , ONLY : [ <only-list> ]
 
-<actual-template-arg-spec-list> <<is>> [ keyword = ] <actual-template-arg>
+<actual-template-arg-spec> <<is>> [ keyword = ] <actual-template-arg>
+
+Constraint: Each keyword shall be the name of a <template-arg> in the
+            referenced template.
 
 <actual-template-arg> <<is>> <const-expr>
                       <<or>> <type-spec>
@@ -245,13 +248,16 @@ Constraint: If an <actual-template-arg> is a <derived-type-spec>, its
 ----------------------------------------
 
 <requirement-def>
-      <<is>> REQUIREMENT <requirement-name> ([<template-arg-list>])
-                <requirement-specification-part> ...
+      <<is>> REQUIREMENT <requirement-name> ( [<template-arg-list>] )
+                [ <use-stmt> ] ...
+                <requirement-specification-construct> ...
              END [REQUIREMENT [<requirement-name>]]
 
-<requirement-specification-part> <<is>> <template-const-declaration-stmt>
-                                 <<or>> <deferred-type-decl>
-                                 <<or>> <requirement-interface-body>
+<requirement-specification-construct>
+      <<is>> <requirement-interface-body>
+      <<or>> <requires-stmt>
+      <<or>> <template-const-declaration-stmt>
+      <<or>> <template-type-declaration-stmt>
 
 <requirement-interface-body>
       <<is>> <function-stmt>
@@ -266,10 +272,23 @@ Constraint: If an <actual-template-arg> is a <derived-type-spec>, its
                  [ <requirement-interface-declaration-stmt> ] ...
 
 <requirement-interface-specification-stmt>
-          <<is>> <parameter-stmt>
-          <<or>> <procedure-declaration-stmt>
-          <<or>> <template-other-specification-stmt>
+          <<is>> <procedure-declaration-stmt>
           <<or>> <requirement-interface-type-declaration-stmt>
+          <<or>> <requirement-other-specification-stmt>
+
+<requirement-other-specification-stmt>
+        <<is>> <allocatable-stmt>
+        <<or>> <asynchronous-stmt>
+        <<or>> <codimension-stmt>
+        <<or>> <contiguous-stmt>
+        <<or>> <dimension-stmt>
+        <<or>> <intent-stmt>
+        <<or>> <optional-stmt>
+        <<or>> <paramter-stmt>
+        <<or>> <pointer-stmt>
+        <<or>> <target-stmt>
+        <<or>> <value-stmt>
+        <<or>> <volatile-stmt>
 
 <requirement-interface-type-declaration-stmt>
           <<is>> <declaration-type-spec>
@@ -291,61 +310,19 @@ Constraint: If an <actual-template-arg> is a <derived-type-spec>, its
         <<or>> VALUE
         <<or>> VOLATILE
 
-Constraint: <namelist-stmt>, <protected-stmt>, and <save-stmt> shall
-            not appear within
-            <requirement-interface-specification-construct>.
-
 
 3.4 Syntax for the REQUIRES statement
 -------------------------------------
 
-
 <requires-stmt> <<is>>
-`      REQUIRES <requirement-name>([<actual-template-arg-spec-list>])
+      REQUIRES [::] <requirement-name> ( [<actual-template-arg-spec-list>] )
 
-Constraint: <requirement-name> must be previously defined.
-
+Constraint: <requirement-name> must be previously defined by a
+            <requirement-def>.
 
 4. Straw votes
 ----------------------
-Straw vote 1: Template variables introduce the possibility of
-              surprising side-effects when multiple instantiations
-              with identical arg lists access/modify such entities.
 
-              Allow template variables:  YES-NO-UNDECIDED
-
-Straw vote 2: Subgroup foresees that the list of permitted attributes
-              in the specification section of a template diverges from
-              that of module specification section.
-
-              Option 1: Introduce separate BNF for attributes and
-                        other specification statements at the risk of
-                        missing new attributes introduced in
-                        subsequent revisions.
-
-              Option 2: Add constraints such that such attributes are
-                        disallowed at the risk of accidentally
-                        permitting new attributes introduced in
-                        subsquent revisions.
-
-              Vote: Should we introduce separate/new BNF for template
-                    statements: YES-NO-UNDECIDED
-
-
-Straw vote 3: Should we introduce syntax for declaring a procedure in
-              a template?  I.e., in a template should:
-
-              INTERFACE SUB
-                 MODULE PROCEDURE sub_1
-              END INTERFACE
-
-              instead be written as
-                 
-              INTERFACE SUB
-                 TEMPLATE PROCEDURE sub_1
-              END INTERFACE
-
-                            
 
 ===END===
 
