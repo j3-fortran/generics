@@ -1,10 +1,17 @@
 
+Introduction:
+=============
+
 <interface-stmt> <<is>> [NEWFANGLED] INTERFACE [generic-spec]
                  <<or>> [NEWFANGLED] ABSTRACT INTERFACE
 
 Constraint: If NEWFANGLED does not appear, then there is no host
             association and the default implicit mapping is in effect
             in the interface bodies.
+
+Note: If NEWFANGLED is present, then <interface-body> has host
+      association and inherits the implicit mapping from the surrounding
+      scope.   Likewise, <procedure-stmt> does not need MODULE.
 
 Straw vote: How should NEWFANGLED be spelled?
             - EXPLICIT
@@ -14,3 +21,5 @@ Straw vote: How should NEWFANGLED be spelled?
             - INCLUSIVE
             - CONFUSING
 
+
+===END===

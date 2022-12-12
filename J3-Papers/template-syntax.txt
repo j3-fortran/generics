@@ -8,15 +8,6 @@ Section 2 contains examples, while section 3 provides the formal
 syntax.  Section 4 contains straw votes for alternatives.
 
 
-UTI's
-
-1. Should INTERFACE inherit IMPLICIT NONE and host association in
-   <template-interface-block>.
-   Difficult change - deferred until structure is more complete.
-
-Further -- need new defs of function and subroutine subprogram that
-exclude ...
-
 2. Examples
 ===========
 
@@ -64,208 +55,54 @@ END MODULE B
 3. Formal Syntax
 ================
 
-3.1 Syntax for the TEMPLATE construct
--------------------------------------
-
-<template> <<is>> <template-stmt>
-                      [ <template-specification-part> ]
-                      [ <template-subprogram-part> ]
-                      <end-template-stmt>
-
-<template-stmt> <<is>> TEMPLATE <template-name> ([<template-arg-list>])
-
-<end-template-stmt> <<is>>  END [TEMPLATE [<template-name>]]
-
-Constraint: If the <end-template-stmt> includes <template-name> the
-            <template-stmt> shall specify the same <template-name>.
-
-<template-arg> <<is>> <template-arg-name>
-
-Constraint: Each <template-arg> shall be one of <template-const>,
-            <template-type>, or be specified in one of
-            <procedure-declaration-stmt>, <interface-block> or
-            <requires-stmt>, within <template-specification-part>.
-
-Note: If a <procedure-declaration-stmt> appears in the
-      <template-specification-part> it can only be used to define a
-      <template-arg>.
-
-
-Constraint: A <template-arg> declaration shall not have an
-            <access-spec> nor shall it appear in a PUBLIC statement.
-
-Note: Template dummy arguments are local identifiers and are not
-      externally accessible.
-
-
-<template-specification-part> <<is>>
-            [ use-stmt ] ...
-            [ <template-declaration-construct> ] ...
-
-Constraint: The implicit mapping within <template> is as if IMPLICIT
-            NONE(TYPE,EXTERNAL) is in place.
-
-<template-declaration-construct> <<is>> <template-specification-construct>
-                                 <<or>> <requires-stmt>
-                                 <<or>> <requirement-construct>
-
-<template-specification-construct> 
-                      <<is>> <access-stmt>
-                      <<or>> <derived-type-def>
-                      <<or>> <dimension-stmt>
-                      <<or>> <enum-def>
-                      <<or>> <enumeration-type-def>
-                      <<or>> <generic-stmt>
-                      <<or>> <instantiate-stmt>
-                      <<or>> <intrinsic-stmt>
-                      <<or>> <parameter-stmt>
-                      <<or>> <procedure-declaration-stmt>
-                      <<or>> <template>
-                      <<or>> <template-const-declaration-stmt>
-                      <<or>> <template-interface-block>
-                      <<or>> <template-type-declaration-stmt>
-                      <<or>> <type-declaration-stmt>
-
-Note: The analogous construct for MODULE is divided into two separate
-      constructs: <specific-construct> and
-      <other-specification-construct>.  However, subgroup does not see
-      the criteria by which items were assigned to either construct.
-      Further since TEMPLATE admits fewer items, we have decided to
-      merge these two constructs.
-
-Constraint: In <type-declaration-stmt>, <entity> must have the
-            PARAMETER attribute.
-
-Note: This is to say, no template global variables are permitted.
-
-
-
-
-<template-interface-block> <<is>> <interface-stmt>
-                                     [ <template-interface-specification> ] ...
-                                     <end-interface-stmt>
-
-<template-interface-specification> <<is>> <interface-body>
-                                   <<or>> <template-procedure-stmt>
-
-<template-procedure-stmt> <<is>> PROCEDURE [ :: ] <specific-procedure-list>
-
-Constraint: A <template-procedure-stmt> is allowed only in an
-            interface block that has a <generic-spec>.
-
-Constraint: In a <template-interface-block> the MODULE keyword shall
-            not appear.
-
-NOTE: Subgroup finds that using "MODULE PROCEDURE" for procedures
-      defined in a template to be confusing and unnecessarily verbose.  Thus,
-      in this context, interfaces should only have "PROCEDURE".
-
-
-
-
-<template-const-declaration-stmt> <<is>>
-           <declaration-type-spec>, <template-attr-constant-spec> ::
-           <template-const-list>
-
-Constraint: An entity declared in <template-const-declaration-stmt>
-            shall be INTEGER, LOGICAL, or assumed-length character.
-
-<template-const> <<is>> <template-const-name>
-
-Constraint: Each <template-const> shall appear in a
-            <template-const-declaration-stmt>.
-
-<template-attr-constant-spec> <<is>> [<template-attr-spec>,]...
-                                     CONSTANT
-                                     [,<template-attr-spec>]...
-
-<template-attr-spec> <<is>> CONTIGUOUS
-                     <<or>> <dimension-spec>
-                     <<or>> <rank-clause>
-
-
-
-<template-type-declaration-stmt>
-       <<is>>  TYPE, DEFERRED :: <template-type-list>
-
-<template-type> <<is>> <type-name>
-
-Constraint: Each <template-type> shall appear in <template-arg-list>.
-
-
-
-<template-proc-declaration-stmt> <<is>>
-     PROCEDURE[(<interface>)] :: <template-proc-decl-list>
-
-<template-proc-decl> <<is>> <procedure-entity-name>
-
-
-3.1.1 Additional constraints and other requirements:
-
-Constraint: <template> shall not contain any reference to any
-            non-intrinsic procedure or non-intrinsic operator that
-            does not have an explicit interface.
-
-Note: This constraint expresses the notion of "strong constraints".
-      In particular, this allows a template implementation to be
-      verified to be internally consistent.
-
-
-**** THE NEW BOTTOM OF THIS SECTION ***
-
-<template-subprogram-part> <<is>> <contains-stmt>
-                                     [ <template-subprogram> ] ...
-
-<template-subprogram> <<is>> <function-subprogram>
-                      <<or>> <subroutine-subprogram>
-
-3.2 syntax for the INSTANTIATE statement
-----------------------------------------
-
-<instantiate-stmt>
-     <<is>> INSTANTIATE [::] <template-name> (
-               [ <actual-template-arg-spec-list> ] ) [, <rename-list> ]
-     <<or>> INSTANTIATE [::] <template-name> (
-               [ <actual-template-arg-spec-list> ] , ONLY : [ <only-list> ]
-
-<actual-template-arg-spec> <<is>> [ keyword = ] <actual-template-arg>
-
-Constraint: Each keyword shall be the name of a <template-arg> in the
-            referenced template.
-
-<actual-template-arg> <<is>> <const-expr>
-                      <<or>> <type-spec>
-                      <<or>> <generic-spec>
-                      <<or>> <procedure-name>
-                      
-Constraint: <const-expr> must be type INTEGER, LOGICAL or CHARACTER.
-
-Constraint: If an <actual-template-arg> is a <derived-type-spec>, its
-            <type-name> shall support intrinsic assignment.
-
-
-3.3 Syntax for the REQUIREMENT construct
+3.1 Syntax for the REQUIREMENT construct
 ----------------------------------------
 
 <requirement-def>
-      <<is>> REQUIREMENT <requirement-name> ( [<template-arg-list>] )
+      <<is>> REQUIREMENT <requirement-name> ( [<requirement-arg-list>] )
                 [ <use-stmt> ] ...
                 <requirement-specification-construct> ...
              END [REQUIREMENT [<requirement-name>]]
 
+Note: <requirement-interface-body> is defined in section 3.1.1, and
+      requirement declaration statements are define in section 3.1.2.
+
+<requirement-arg> <<is>> <requirement-arg-name>
+
+Constraint: Each <requirement-arg> shall be one of
+            <requirement-const>, <requirement-type>, or be specified
+            in one of <procedure-declaration-stmt>, <interface-block>
+            or <requires-stmt>, within
+            <requirement-specification-part>.
+
+Note: If a <procedure-declaration-stmt> appears in the
+      <requirement-specification-part> it can only be used to define a
+      <requirement-arg>.
+
+
+Constraint: A <requirement-arg> declaration shall not have an
+            <access-spec> nor shall it appear in a PUBLIC statement.
+
+Note: Requirement dummy arguments are local identifiers and are not
+      externally accessible.
+
+
 <requirement-specification-construct>
       <<is>> <requirement-interface-body>
       <<or>> <requires-stmt>
-      <<or>> <template-const-declaration-stmt>
-      <<or>> <template-type-declaration-stmt>
+      <<or>> <requirement-const-declaration-stmt>
+      <<or>> <requirement-type-declaration-stmt>
+
+3.1.1 Requirement interface body
+--------------------------------
 
 <requirement-interface-body>
       <<is>> <function-stmt>
                 [ <requirement-interface-specification-part> ]
-             <end-function-stmt>
+                <end-function-stmt>
       <<or>> <subroutine-stmt>
                 [ <requirement-interface-specification-part> ]
-             <end-subroutine-stmt>
+                <end-subroutine-stmt>
 
 <requirement-interface-specification-part>
           <<is>> [ <use-stmt> ] ...
@@ -310,15 +147,211 @@ Constraint: If an <actual-template-arg> is a <derived-type-spec>, its
         <<or>> VALUE
         <<or>> VOLATILE
 
+3.1.2 Requirement const and type declarations
+---------------------------------------------
 
-3.4 Syntax for the REQUIRES statement
+<requirement-const-declaration-stmt> <<is>>
+           <declaration-type-spec>, <requirement-attr-constant-spec> ::
+           <requirement-const-list>
+
+<requirement-attr-constant-spec> <<is>> [<requirement-attr-spec>,]...
+                                          CONSTANT
+                                          [,<requirement-attr-spec>]...
+
+<requirement-attr-spec> <<is>> CONTIGUOUS
+                        <<or>> <dimension-spec>
+                        <<or>> <rank-clause>
+
+Constraint: An entity declared in <requirement-const-declaration-stmt>
+            shall be INTEGER, LOGICAL, or assumed-length character.
+
+<requirement-const> <<is>> <requirement-const-name>
+
+Constraint: Each <requirement-const> shall appear in a
+            <requirement-const-declaration-stmt>.
+
+
+<requirement-type-declaration-stmt>
+       <<is>>  TYPE, DEFERRED :: <requirement-type-list>
+
+<requirement-type> <<is>> <type-name>
+
+Constraint: Each <requirement-type> shall appear in
+            <requirement-arg-list>.
+
+
+3.2 Syntax for the REQUIRES statement
 -------------------------------------
 
 <requires-stmt> <<is>>
-      REQUIRES [::] <requirement-name> ( [<actual-template-arg-spec-list>] )
+      REQUIRES [::] <requirement-name>
+            ( [<actual-requirement-arg-spec-list>] )
 
 Constraint: <requirement-name> must be previously defined by a
             <requirement-def>.
+
+<actual-requirement-arg-spec> <<is>>
+        [ keyword = ] <actual-requirement-arg>
+
+Constraint: Each keyword shall be the name of a <requirement-arg> in the
+            referenced requirement.
+
+
+3.3 Syntax for the TEMPLATE construct
+-------------------------------------
+
+<template> <<is>> <template-stmt>
+                      [ <template-specification-part> ]
+                      [ <template-subprogram-part> ]     
+                      <end-template-stmt>
+
+Note: <template-specification-part> is defined in section 3.3.1, and
+      <template-subprogram-part> is defined in section 3.3.2.
+
+<template-stmt> <<is>> TEMPLATE <template-name> ([<template-arg-list>])
+
+<end-template-stmt> <<is>>  END [TEMPLATE [<template-name>]]
+
+Constraint: If the <end-template-stmt> includes <template-name> the
+            <template-stmt> shall specify the same <template-name>.
+
+<template-arg> <<is>> <template-arg-name>
+
+Constraint: Each <template-arg> shall be one of <requirement-const>,
+            <requirement-type>, or be specified in one of
+            <procedure-declaration-stmt>, <interface-block> or
+            <requires-stmt>, within <template-specification-part>.
+
+Note: If a <procedure-declaration-stmt> appears in the
+      <template-specification-part> it can only be used to define a
+      <template-arg>.
+
+
+Constraint: A <template-arg> declaration shall not have an
+            <access-spec> nor shall it appear in a PUBLIC statement.
+
+Note: The BNF for template and requirement args are the same, but we
+      found the distinction to be useful for context.
+
+Note: Template dummy arguments are local identifiers and are not
+      externally accessible.
+
+3.3.1 Template specification part
+---------------------------------
+
+<template-specification-part> <<is>>
+            [ use-stmt ] ...
+            [ <template-declaration-construct> ] ...
+
+Constraint: The implicit mapping within <template> is as if IMPLICIT
+            NONE(TYPE,EXTERNAL) is in place.
+
+<template-declaration-construct> <<is>> <template-specification-construct>
+                                 <<or>> <requires-stmt>
+                                 <<or>> <requirement-construct>
+
+<template-specification-construct> 
+                      <<is>> <access-stmt>
+                      <<or>> <derived-type-def>
+                      <<or>> <dimension-stmt>
+                      <<or>> <enum-def>
+                      <<or>> <enumeration-type-def>
+                      <<or>> <generic-stmt>
+                      <<or>> <instantiate-stmt>
+                      <<or>> <intrinsic-stmt>
+                      <<or>> <parameter-stmt>
+                      <<or>> <procedure-declaration-stmt>
+                      <<or>> <template>
+                      <<or>> <requirement-const-declaration-stmt>
+                      <<or>> <template-interface-block>
+                      <<or>> <requirement-type-declaration-stmt>
+                      <<or>> <type-declaration-stmt>
+
+Note: The analogous construct for MODULE is divided into two separate
+      constructs: <specific-construct> and
+      <other-specification-construct>.  However, subgroup does not see
+      the criteria by which items were assigned to either construct.
+      Further since TEMPLATE admits fewer items, we have decided to
+      merge these two constructs.
+
+Constraint: In <type-declaration-stmt>, <entity> must have the
+            PARAMETER attribute.
+
+Note: This is to say, no template global variables are permitted.
+
+<template-interface-block> <<is>> <interface-stmt>
+                                     [ <template-interface-specification> ] ...
+                                     <end-interface-stmt>
+
+<template-interface-specification> <<is>> <interface-body>
+                                   <<or>> <template-procedure-stmt>
+
+<template-procedure-stmt> <<is>> PROCEDURE [ :: ] <specific-procedure-list>
+
+Constraint: A <template-procedure-stmt> is allowed only in an
+            interface block that has a <generic-spec>.
+
+Constraint: In a <template-interface-block> the MODULE keyword shall
+            not appear.
+
+NOTE: Subgroup finds that using "MODULE PROCEDURE" for procedures
+      defined in a template to be confusing and unnecessarily verbose.  Thus,
+      in this context, interfaces should only have "PROCEDURE".
+
+
+<template-proc-declaration-stmt> <<is>>
+     PROCEDURE[(<interface>)] :: <template-proc-decl-list>
+
+<template-proc-decl> <<is>> <procedure-entity-name>
+
+
+
+3.3.2 Subprogram part
+---------------------
+
+<template-subprogram-part> <<is>> <contains-stmt>
+                                     [ <template-subprogram> ] ...
+
+<template-subprogram> <<is>> <function-subprogram>
+                      <<or>> <subroutine-subprogram>
+
+3.3.3 Additional constraints and other requirements:
+----------------------------------------------------
+
+Constraint: <template> shall not contain any reference to any
+            non-intrinsic procedure or non-intrinsic operator that
+            does not have an explicit interface.
+
+Note: This constraint expresses the notion of "strong constraints".
+      In particular, this allows a template implementation to be
+      verified to be internally consistent.
+
+
+3.4 syntax for the INSTANTIATE statement
+----------------------------------------
+
+<instantiate-stmt>
+     <<is>> INSTANTIATE [::] <template-name> (
+               [ <actual-template-arg-spec-list> ] ) [, <rename-list> ]
+     <<or>> INSTANTIATE [::] <template-name> (
+               [ <actual-template-arg-spec-list> ] , ONLY : [ <only-list> ]
+
+<actual-template-arg-spec> <<is>> [ keyword = ] <actual-template-arg>
+
+Constraint: Each keyword shall be the name of a <template-arg> in the
+            referenced template.
+
+<actual-template-arg> <<is>> <const-expr>
+                      <<or>> <type-spec>
+                      <<or>> <generic-spec>
+                      <<or>> <procedure-name>
+                      
+Constraint: <const-expr> must be type INTEGER, LOGICAL or CHARACTER.
+
+Constraint: If an <actual-template-arg> is a <derived-type-spec>, its
+            <type-name> shall support intrinsic assignment.
+
+
 
 4. Straw votes
 ----------------------
