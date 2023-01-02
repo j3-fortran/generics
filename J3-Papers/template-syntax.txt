@@ -1,12 +1,17 @@
-Reference: 22-151r3, 22-154r5, 22-161r1, 22-162r3
+Reference: 22-120r5, 22-151r3, 22-154r5
 
 1. Introduction
 ===============
 
 This paper contains the syntax for generic programming features.
-Section 2 contains examples, while section 3 provides the formal
-syntax.  Section 4 contains straw votes for alternatives.
+Section 2 contains a succinct, non-pedagogical example that exercises
+most of the proposed syntax.  Section 3 provides the formal syntax and
+is further broken into the following subsections:
 
+  3.1 Syntax for the REQUIREMENT construct
+  3.2 Syntax for the REQUIRES statement
+  3.3 Syntax for the TEMPLATE construct
+  3.4 syntax for the INSTANTIATE statement
 
 2. Examples
 ===========
@@ -350,11 +355,6 @@ Constraint: <const-expr> must be type INTEGER, LOGICAL or CHARACTER.
 
 Constraint: If an <actual-template-arg> is a <derived-type-spec>, its
             <type-name> shall support intrinsic assignment.
-
-
-
-4. Straw votes
-----------------------
 
 
 ===END===
