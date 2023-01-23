@@ -1,0 +1,264 @@
+1. Introduction
+===============
+
+The introduction of generics features which allow parameterizations of
+an algorithm by the ranks of one or more arrays, is unfortunately
+limited in certain important cases.  ELEMENTAL and rank-agnostic
+access of array elements handle a great many use cases, but important
+gaps remain.
+
+I propose that Fortran should be extended to include support for
+rank-agnostic nested loops.
+
+UTI:  0-dimensional indexing
+
+2. Use cases
+============
+
+The use cases presented here are:
+  2.1 Tensor/outer product
+  2.2 MINLOC analog
+  2.3 user-rolled stuff with assumed-rank (test framework generate comparison messages)
+      https://gitlab.com/everythingfunctional/prune
+  2.4 In-place multi-dimensional transpose
+
+2.1 Tensor/outer product
+========================
+
+Consider how one might write a template procedure that computes the
+outer product of 2 array arguments.  We assume that the template is
+parameterized by two integers RA and RB that specify the ranks of the
+two arguments A and B.
+
+With the current features planned for Fortran 202X, the user would be
+forced to manually implement rather tedious logic for iterating through a set
+of indices:
+
+   FUNCTION OUTER_PRODUCT(A, B) RESULT(C)
+      REAL, RANK(RA), INTENT(IN) :: A
+      REAL, RANK(RB), INTENT(IN) :: B
+      REAL, RANK(RA+RB) :: C ! C(I,J) = A(I) * B(J)
+
+      INTEGER :: a_idx(RA)
+      INTEGER, POINTER :: b_idx(:)
+      INTEGER, POINTER :: c_idx(:)
+      LOGICAL :: done
+
+      c_idx = 1
+
+      DO
+        C(@c_idx) = A(@c_idx(1:RA)) * B(@c_idx(1:RB))
+
+        c_idx(1:RA) = next_idx(c_idx(1:RA), shape(A), done)
+        IF (done) THEN
+           a_idx = 1
+           c_idx(RA+1:) = next_idx(c_idx(RA+1:), shape(B), done)
+           IF (done) EXIT
+        END IF
+      
+      END DO
+
+   CONTAINS
+
+      FUNCTION next_idx(idx, shp, done) result(new_idx)
+          INTEGER, INTENT(IN) :: idx(:)
+          INTEGER, INTENT(IN) :: shp(:)
+          LOGICAL, INTENT(OUT) :: done
+          INTEGER, INTENT(OUT) :: new_idx(size(idx))
+
+          INTEGER :: m
+
+          done = .FALSE. ! unless
+
+          DO m = 1, SIZE(idx)
+             IF (idx(m) < shp(m)) THEN
+                new_idx(m) = idx(m) + 1
+                RETURN
+             ELSE ! 
+                IF (m == SIZE(shp)) THEN
+                   done = .true.
+                   RETURN
+                ELSE
+                   new_idx(m) = 1
+                END IF
+             END IF
+          END DO
+       END FUNCTION next_idx             
+
+   END FUNCTION
+
+
+2.2 MINLOC analog
+=================
+
+The proposed TEMPLATE features in F202Y will in theory allow us to
+define a TEMPLATE that implements an intrinsic-like MINLOC function
+for rank-N arrays of arbitrary type provided a compare operation.
+However, the existing rank agnostic machinery in F2023 makes this more
+difficult than one might expect.
+
+Brad Richards has implemented this generalized MINLOC at:
+https://github.com/j3-fortran/generics/blob/main/examples/intrinsics/minloc_m.f90
+
+Much as with the previous use case, the code is particularly complex
+due to the need to manually loop through an arbitrary number of
+dimensions.
+
+
+
+2.3 Assertion library
+=====================
+
+Consider the use case where a testing framework wishes to provide an
+overloaded assert() function that compares 2 same-shape arrays of rank
+N for equality.  If any elements differ, then the procedure produces a
+message indicating the location of the first difference and the values
+at that location.
+
+This use case is quite similar to that of MINLOC, as it could be
+expressed a
+
+SUBROUTINE assert(expected, found)
+   REAL, RANK(N), INTENT(IN) :: expected
+   REAL, RANK(N), INTENT(IN) :: found
+
+   ASSOCIATE ( loc => FINDLOC(found /= expected) )
+      print*,'First difference at location ", loc
+      print*,'  Expected: ', expected(@loc)
+      print*,'  Found:    ', found(@loc)
+   END ASSOCIATE
+
+END SUBROUTINE
+
+
+2.4 In-place rank-N transpose
+=============================
+
+Consider the following implementation of a procedure that attempts to
+perform an inplace transpose of an array A between two dimensions N1
+and N2 that have the same extent. 
+
+TEMPLATE MY_TMPL(T, N)
+   TYPE, DEFERRED :: T
+   INTEGER, CONSTANT :: N
+
+CONTAINS
+
+   SUBROUTINE INPLACE_TRANSPOSE(A, n1, n2)
+      TYPE(T), RANK(N), INTENT(INOUT) :: A
+      INTEGER, INTENT(IN) :: n1, n2
+
+      INTEGER :: i, j
+      INTEGER :: shp(N)
+
+      shp = SHAPE(A)
+
+      DO j = 1, SIZE(A,n2)
+         DO i =1, SIZE(A,n1)
+            call SWAP(A(@:shp(:n1-1),i,@:shp(n1+1:n2-1),j,@:shp(n2+1:)),
+           &          A(@:shp(:n1-1),j,@:shp(n1+1:n2-1),i,@:shp(n2+1:)))
+         END DO
+      END DO
+
+   END SUBROUTINE
+END TEMPLATE
+
+
+3. Suggested simplification
+===========================
+
+My suggested approach is weakly analogous to the approach for
+rank-agnostic access of array elements.  The index and bounds of a DO
+loop would be permited to be a multi-index.
+
+To clarify the syntax consider this simple doubly nested loop:
+
+   INTEGER :: I, J
+   DO I = 1, M
+      DO J = 1, N
+         A(I,J) =  < some expression >
+      END DO
+   END DO
+
+This could be rewritten as:
+
+   INTEGER :: IJ(2)
+   DO @IJ = [1,1]:[M,N]
+      A(@IJ) = < some expression >
+   END DO
+
+
+-----------
+
+Now consider the outer product use case
+
+   FUNCTION  OUTER_PRODUCT(A, B) RESULT(C)
+       REAL, RANK(RA), INTENT(IN) :: A
+       REAL, RANK(RB), INTENT(IN) :: B
+       REAL, RANK(RA+RB) :: C   ! C(I,J) = A(I) * B(J)
+
+       INTEGER :: idx(RA+RB)
+
+       DO @idx = 1:[SHAPE(A), SHAPE(B)]
+          C(@idx) = A(@idx(1:RA)) * B(@idx(RA+1:))
+       END DO
+
+   END FUNCTION
+
+A variant that could exploit some degree of ELEMENTAL optimizations:
+
+   FUNCTION  OUTER_PRODUCT(A, B) RESULT(C)
+       REAL, RANK(RA), INTENT(IN) :: A
+       REAL, RANK(RB), INTENT(IN) :: B
+       REAL, RANK(RA+RB) :: C   ! C(I,J) = A(I) * B(J)
+
+       INTEGER :: idx(RA)
+
+       DO @idx = 1:SHAPE(A)
+          C(@idx,@:shape(B)) = A(@idx) * B
+       END DO
+
+   END FUNCTION
+
+
+----------
+
+For the MINLOC case, the suggestion notation would permit the
+following much simpler, and arguably clearer, implementation shown
+below. (For simplicity, I have omitted the mask and dim arguments.)
+
+TEMPLATE MINLOC_T(T, N, less)
+    TYPE, DEFERRED :: T
+    INTEGER, CONSTANT :: N
+    INTERFACE
+       LOGICAL FUNCTION  less(x,y)
+           TYPE(T), INTENT(IN) :: x, y
+       END FUNCTION
+    END INTERFACE
+
+CONTAINS
+
+   FUNCTION MINLOC(A) RESULT(idx)
+       INTEGER :: idx(N)
+       TYPE(T), RANK(N), INTENT(IN) :: A
+
+       TYPE(T) :: x_min
+       INTEGER :: i(N)
+
+       idx = 1
+       x_min = A(@idx)
+
+       DO @i = 1:SHAPE(A)
+          ASSOCIATE( x => A(@i) )
+             IF (less(x, x_min)) THEN
+                idx = i
+                x_min = x
+             END IF
+          END ASSOCIATE
+       END DO
+
+   END FUNCTION
+
+END TEMPLATE
+
+===END===
