@@ -1,10 +1,22 @@
 ! A. Donev, Courant Institute
 ! April 2023, J3 generics discussion group
 
+! This is an example code of something I and my students / postdocs have implemented many times
+! in different programming languages.
+! What I show here is how I would like to write this using TEMPLATEs in F202Y
+! I have assumed here also that Tom Clune's proposal 23-130 for "rank-agnostic loops" is accepted
+! Without that feature some of the code below would be hard to make independent of the space dimension
+
+! In this example, I do not use type extension.
+! Each options have advantages and disadvantages;
+! The good thing about this non-OOP version is that it does not bind the user to a specific class hierarchy.
+! Since we do not have multiple inheritance, requiring that all types be an extension of some base type
+! can be a problem in large codes, especially if they reuse code from other projects.
+! The OOP version will make it easier to define new kinds of unit cells using type extension
+
 module UnitCells
 
 ! This is a simple template, without type arguments
-! Nevertheless, I do not think even this is supported by the current design, is it?
 template UnitCellTemplate(wp,dim)
    integer, constant :: wp, dim
 
@@ -12,14 +24,13 @@ template UnitCellTemplate(wp,dim)
    ! Specifically, we support simple orthogonal unit cells: (rectangular in 2D, rectangular cuboid in 3D)
    ! and also more general (sheared) unit cells (parallelogram in 2D, parallelepiped in 3D)
 
-   ! Do we allow this in templates? Or do I need to put a module inside the template?
    private 
    public :: OrthogonalUnitCell, GeneralUnitCell
 
    ! Every type consistent with a UnitCell should have a component lengths(dim)
    ! It gives the size of the unit cell along each dimension in unit cell coordinates   
    ! A more OOP design would make a UnitCell type and then extend it into a GeneralUnitCell
-   ! But I keep it "simple" here   
+   ! But I keep it "simple" here, see NonSimpleDatatypes_OOP.f2y for the OOP version
 
    type :: OrthogonalUnitCell(wp,dim)
       ! This is an orthogonal unit unit cell (rectangular/rectangular cuboid)
@@ -51,25 +62,23 @@ contains
    ! Compute Euclidean distance between points x and y
    ! This is just an example code so I do not implement here periodic wrapping/unwrapping   
    ! That is, this does not implement the "nearest image convention" commonly used in MD simulations
+
+   ! Benefit of templates: Since dim is a compile-time constant, compiler can inline/vectorize all of this
    
    function EuclideanDistance_ortho(unit_cell,x,y) result(d) 
       class(UnitCell(wp,dim)), intent(in) :: unit_cell
       real(wp), dimension(dim), intent(in) :: x, y 
       real(wp) :: d ! Euclidean ||x-y||
-      ! Example, for an orthogonal unit unit_cell:
-      ! d=sum(((x-y)*unit_cell%lengths)**2)
-      ! For a general unit unit_cell
-      ! d=sum(matmul(unit_cell%lattice, x-y)**2)
-      ! If dim is a compile-time constant, compiler can inline/vectorize all of this
+      
+      d=sum(((x-y)*unit_cell%lengths)**2)
    end function
 
    function EuclideanDistance_nonortho(unit_cell,x,y) result(d) 
       class(UnitCell(wp,dim)), intent(in) :: unit_cell
       real(wp), dimension(dim), intent(in) :: x, y 
       real(wp) :: d ! Euclidean ||x-y||
-
-      d=sum(matmul(unit_cell%lattice, x-y)**2)
-         ! Since dim is a compile-time constant, compiler can inline/vectorize all of this
+      
+      d=sum(matmul(unit_cell%lattice, x-y)**2) ! Can be inlined easily
    end function
 
    !-------------------------------
@@ -89,7 +98,7 @@ contains
       real(wp), intent(in) :: cutoff
       real(wp), dimension(dim) :: lengths
 
-      ! lengths=...complicated formula involving the L2 norm of 
+      lengths=... ! complicated formula involving the L2 norm of 
       ! matmul(transpose(L^(-1)),L^(-1)) where L=unit_cell%lattice
    end function
 
@@ -118,11 +127,11 @@ requirement UnitCellClass(wp,dim,UnitCell)
    integer, constant :: wp, dim ! Working precision and space dimension (1-max_dim)
    
    ! This is not allowed by the current design (not even in syntax)
+   ! My proposal:
    ! The corresponding argument in the instantiate statement can be
    ! any type that has at least these components and TBPs.
    ! Notably, any extension of this type would qualify.
-   type, deferred :: UnitCell(wp,dim) ! This is an orthogonal unit unit_cell
-      integer, kind :: wp,dim ! These are type parameters here, distinct from the template parameters
+   type, deferred :: UnitCell ! This is periodic unit cell
       ! Every type consistent with a UnitCell should have this component
       real(wp), dimension(dim) :: lengths
    contains ! Every type of UnitCell should have at least these type-bound procedures:
@@ -132,13 +141,15 @@ requirement UnitCellClass(wp,dim,UnitCell)
 
    interface ! These routines could either be template parameters/requirements, or, 
              ! as I do here since I prefer OOP design, type-bound procedures of type UnitCell
-   
-      function EuclideanDistance(unit_cell,x,y) result(d) ! Euclidean distance between points x and y
+    
+      ! Euclidean distance between points x and y
+      function EuclideanDistance(unit_cell,x,y) result(d) 
          type(UnitCell(wp,dim)), intent(in) :: unit_cell
          real(wp), dimension(dim), intent(in) :: x, y 
          real(wp) :: d ! Euclidean ||x-y||
       end function
       
+      ! Determines cutoffs for neighbor search in grid cells
       function GridCellSize(unit_cell,cutoff) result(lengths)
          type(UnitCell(wp,dim)), intent(in) :: unit_cell
          real(wp), intent(in) :: cutoff
@@ -151,13 +162,11 @@ end requirement
    
 template NeighborListTemplate(wp,dim,UnitCell)   
    requires UnitCellClass(wp,dim,UnitCell)
+   ! Dim can go up to 15 (max portable rank)
+   ! Question: How do we specify this as a requirement?
    
-   ! Do we allow this in templates? Or do I need to put a module inside the template?
    private 
    public :: NeighborList   
-   
-   integer, parameter :: max_dim=3 ! Since we do not have rank-genericity
-      ! Can go up to 15 (max portable rank) but then you need to make arrays below of rank 15...
       
    type :: NeighborList ! A linked-list data structure for neighbor search
       real(wp) :: cutoff=-1.0_wp ! Euclidean cutoff for search
@@ -168,10 +177,12 @@ template NeighborListTemplate(wp,dim,UnitCell)
       ! What I really want here is dimension(grid_size), i.e., for the rank of heads to be dim
       ! I do not think there is a way to do that yet in F202x/y
       ! So I declare this to be of dimension max_dim, the max possible dimension allowed
-      real(wp), dimension(:,:,:), allocatable :: heads ! Heads of linked lists "pointers"
+      real(wp), rank(dim), allocatable :: heads ! Heads of linked lists "pointers"
    contains
       procedure, pass :: create => CreateNeighborList
-      procedure, pass :: add => AddPoints    
+      procedure, pass :: add => AddPoints
+      procedure, pass :: iterate => IterateNeighborPoints
+      procedure, pass :: callback => ProcessNeighborPair
    end type
 
 contains
@@ -179,23 +190,20 @@ contains
    subroutine CreateNeighborList(list, unit_cell, cutoff, max_n_points)
       class(NeighborList), intent(inout) :: list
       type(UnitCell(wp,dim)), intent(in) :: unit_cell
-      real(wp) intent(in) :: cutoff
+      real(wp), intent(in) :: cutoff
       integer, intent(in) :: max_n_points (for allocating arrays)
 
       real(wp), dimension(dim) :: cell_lengths
-      integer :: n_cells(dim), n_cells_(max_dim) ! We need the second one since no rank genericity      
+      integer, dimension(dim) :: n_cells
 
       cell_lengths=unit_cell%grid_size(unit_cell,cutoff)
       n_cells=unit_cell%cell_lengths/cell_lengths
-      n_cells(dim+1:)=1 ! Dummy dimensions because we don't have variable rank yet
 
       list%cutoff=cutoff
       list%grid_size=n_cells
       list%grid_lengths=unit_cell%lengths/list%grid_size
 
-      n_cells_=1
-      n_cells_(1:dim)=n_cells
-      allocate(list%heads(n_cells_(1),n_cells_(2),n_cells_(3))) ! Not pretty without rank-generic features
+      allocate(list%heads(n_cells))
       list%heads=0 ! zero means no particles in that grid cell
       
       allocate(list%next(max_n_points))
@@ -205,36 +213,73 @@ contains
    
    subroutine AddPoints(list, unit_cell, positions, n_points)
       class(NeighborList), intent(inout) :: list
-      type(UnitCell(wp,dim)), intent(in) :: unit_cell
+      ! Question 2: Tom Clune says class is not allowed here for type UnitCell, right?
+      ! This example will work if this is changed to class, but it is limiting indeed
+      class(UnitCell), intent(in) :: unit_cell
+      integer :: n_points
       real(wp), dimension(dim,n_points) :: positions ! Positions of points to add to the list
       
       integer :: point, next_point
-      integer :: grid_cell(dim), grid_cell_(max_dim)
+      integer, dimension(dim) :: grid_cell
       
       ! One can of course reallocate here to increase the size of list%next but for now:
       if(n_points>size(list%next)) stop "Increase max_n_points"
       
-      grid_cell_=1
       ! Insert points into linked lists done using integers instead of pointers (much more efficient)
       do point=1, n_points
          grid_cell=floor(points(:,particle)/list%grid_lengths)
-         grid_cell(1:dim)=grid_cell
-         ! Ugly without rank genericity:
-         next_point=list%heads(grid_cell_(1),grid_cell_(2),grid_cell_(3))
-         list%heads(grid_cell_(1),grid_cell_(2),grid_cell_(3))=point
+         next_point=list%heads(@grid_cell)
+         list%heads(@grid_cell)=point
          list%next(point)=next_point
       end do   
    
    end subroutine   
-         
-  ! There would be other routines here, like one to find all the neighbors of a given point,
-  ! or all pairs of points, that are within a Euclidean distance list%cutoff
-  ! This would use the test 
-  ! if(unit_cell%eucl_distance(point_1,point_2)<=cutoff) then
-  ! add this pair of particles to the output
-  ! Even better if one can construct an iterator over neighbors, but we don't have that yet either...
-  
-  ! Etc.
+
+   ! Execute callback for every pairs of neighboring points
+   subroutine IterateNeighborPoints(list, unit_cell, positions, n_points) 
+      class(NeighborList), intent(in) :: list
+      class(UnitCell), intent(in) :: unit_cell
+      integer :: n_points
+      ! Note that positions could have changed since the list was filled,
+      ! but only if no particle crossed into another cell
+      ! Type extensions of NeighborList can add methods to do elemental updates (particle by particle)
+      ! to ensure no particle leaves the grid cell it is assigned to
+      real(wp), dimension(dim,n_points) :: positions ! Positions of points to add to the list
+            
+      integer :: points(2)
+      integer, dimension(dim) :: grid_cell, neigh_cell
+      real, dimension(dim) :: position1, position2
+      
+      ! Question 3: Should we all push for Tom's proposal for "rank-agnostic loops" to be accepted? 
+      ! It is very useful with TEMPLATEs!
+      do @grid_cell=1:list%grid_size ! Assumes Tom Clune's proposal gets accepted
+         ! One needs to worry here about boundary conditions (going out of bounds of the unit cell)
+         ! It is easy to do for periodic domains but I omit for simplicity
+         do @neigh_cell = grid_cell-1:grid_cell+1
+            ! One should do periodic wrapping here but I omit for brevity
+            point(1)=list%heads(@grid_cell)
+            do while point(1)>0
+               point(2)=list%heads(@neigh_cell)
+               do while point(2)>0
+                  position1=positions(:,point(1));
+                  position2=positions(:,point(2));
+                  if(unit_cell%eucl_distance(position1,position2)<=list%cutoff) &
+                     call list%ProcessNeighborPair(points)
+               end do
+            end do
+         end do
+      end do           
+   
+   end subroutine   
+
+   ! This method/TBP is meant to be overridden by child classes;
+   ! The default method just prints to stdout.
+   subroutine ProcessNeighborPair(list, points) ! Execute callback for every pairs of neighboring points
+      class(NeighborList), intent(inout) :: list
+      integer, intent(in)  :: points(2)            
+      
+      write(*,*) points
+   end subroutine   
 
 end template NeighborListTemplate
 
@@ -254,8 +299,8 @@ program FancyTemplates
    
    real(wp) :: lattice(dim,dim), lengths(dim)
    
-   integer, parameter :: max_points = 1000
-   real(wp) :: points(dim,max_points)
+   integer, parameter :: n_points = 1000
+   real(wp) :: points(dim,n_points)
    
    type(OrthogonalUnitCell) :: unit_cell_ortho
    type(GeneralUnitCell) :: unit_cell_nonortho
@@ -276,20 +321,25 @@ program FancyTemplates
       points(k,:)=points(k,:)*lengths(k)
    end do   
 
-   ! First try an orthogonal cell:
+   ! First try an orthogonal cell
+   !------------------------
    unit_cell_ortho%lengths=lengths
-   call NeighborListOrtho%create(unit_cell_ortho, cutoff, max_n_points)
-   call NeighborListOrtho%add(unit_cell_ortho, positions, n_max_points)
-   
+   call NeighborListOrtho%create(unit_cell_ortho, cutoff, n_points)
+   call NeighborListOrtho%add(unit_cell_ortho, positions, n_points)
+   call NeighborListGen%iterate(unit_cell_ortho, positions, n_points)
+  
    ! Now a non-orthogonal cell
+   !------------------------
    call random_number(lattice)
    do concurrent k=1,d
       ! First normalize then make of the desired Euclidean length
       lattice(:,k)=lattice(:,k)*lengths(k)/sqrt(sum(lattice(:,k)**2))
    end do   
       
+   call NeighborListGen%create(unit_cell_nonortho, cutoff, n_points)
    call unit_cell_nonortho%set_lattice(lattice)
-   call NeighborListGen%create(unit_cell_nonortho, cutoff, max_n_points)
-   call NeighborListGen%add(unit_cell_nonortho, positions, n_max_points)
+   call NeighborListGen%add(unit_cell_nonortho, positions, n_points)
+   call NeighborListGen%iterate(unit_cell_nonortho, positions, n_points)
    
 end program
+
