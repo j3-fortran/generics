@@ -1,3 +1,9 @@
+To: J3                                                     J3/##-###
+From: Tom Clune
+Subject: Rank-agnostic nested loops
+Date: 2023-02-21
+
+
 1. Introduction
 ===============
 
@@ -5,7 +11,7 @@ The introduction of generics features which allow parameterizations of
 an algorithm by the ranks of one or more arrays, is unfortunately
 limited in certain important cases.  ELEMENTAL and rank-agnostic
 access of array elements handle a great many use cases, but important
-gaps remain.
+capability gaps remain.
 
 I propose that Fortran should be extended to include support for
 rank-agnostic nested loops.
@@ -18,9 +24,9 @@ UTI:  0-dimensional indexing
 The use cases presented here are:
   2.1 Tensor/outer product
   2.2 MINLOC analog
-  2.3 user-rolled stuff with assumed-rank (test framework generate comparison messages)
+  2.3 user-rolled stuff with assumed-rank (test framework generate
+      comparison messages)
       https://gitlab.com/everythingfunctional/prune
-  2.4 In-place multi-dimensional transpose
 
 2.1 Tensor/outer product
 ========================
@@ -31,8 +37,8 @@ parameterized by two integers RA and RB that specify the ranks of the
 two arguments A and B.
 
 With the current features planned for Fortran 202X, the user would be
-forced to manually implement rather tedious logic for iterating through a set
-of indices:
+forced to manually implement rather tedious logic for iterating
+through a set of indices:
 
    FUNCTION OUTER_PRODUCT(A, B) RESULT(C)
       REAL, RANK(RA), INTENT(IN) :: A
@@ -98,7 +104,8 @@ However, the existing rank agnostic machinery in F2023 makes this more
 difficult than one might expect.
 
 Brad Richards has implemented this generalized MINLOC at:
-https://github.com/j3-fortran/generics/blob/main/examples/intrinsics/minloc_m.f90
+https://github.com/j3-fortran/generics/blob/main/examples/intrinsics/
+minloc_m.f90
 
 Much as with the previous use case, the code is particularly complex
 due to the need to manually loop through an arbitrary number of
@@ -131,37 +138,6 @@ SUBROUTINE assert(expected, found)
 END SUBROUTINE
 
 
-2.4 In-place rank-N transpose
-=============================
-
-Consider the following implementation of a procedure that attempts to
-perform an inplace transpose of an array A between two dimensions N1
-and N2 that have the same extent. 
-
-TEMPLATE MY_TMPL(T, N)
-   TYPE, DEFERRED :: T
-   INTEGER, CONSTANT :: N
-
-CONTAINS
-
-   SUBROUTINE INPLACE_TRANSPOSE(A, n1, n2)
-      TYPE(T), RANK(N), INTENT(INOUT) :: A
-      INTEGER, INTENT(IN) :: n1, n2
-
-      INTEGER :: i, j
-      INTEGER :: shp(N)
-
-      shp = SHAPE(A)
-
-      DO j = 1, SIZE(A,n2)
-         DO i =1, SIZE(A,n1)
-            call SWAP(A(@:shp(:n1-1),i,@:shp(n1+1:n2-1),j,@:shp(n2+1:)),
-           &          A(@:shp(:n1-1),j,@:shp(n1+1:n2-1),i,@:shp(n2+1:)))
-         END DO
-      END DO
-
-   END SUBROUTINE
-END TEMPLATE
 
 
 3. Suggested simplification
@@ -239,23 +215,28 @@ TEMPLATE MINLOC_T(T, N, less)
 CONTAINS
 
    FUNCTION MINLOC(A) RESULT(idx)
-       INTEGER :: idx(N)
-       TYPE(T), RANK(N), INTENT(IN) :: A
+      INTEGER :: idx(N)
+      TYPE(T), RANK(N), INTENT(IN) :: A
 
-       TYPE(T) :: x_min
-       INTEGER :: i(N)
+      TYPE(T) :: x_min
+      INTEGER :: i(N)
 
-       idx = 1
-       x_min = A(@idx)
+      SELECT RANK (A)
+      RANK (0) ! scalar
+         idx = 1
+      RANK DEFAULT
+         idx = 1
+         x_min = A(@idx)
 
-       DO @i = 1:SHAPE(A)
-          ASSOCIATE( x => A(@i) )
-             IF (less(x, x_min)) THEN
-                idx = i
-                x_min = x
-             END IF
-          END ASSOCIATE
-       END DO
+         DO @i = 1:SHAPE(A)
+            ASSOCIATE( x => A(@i) )
+               IF (less(x, x_min)) THEN
+                  idx = i
+                  x_min = x
+               END IF
+           END ASSOCIATE
+         END DO
+      END SELECT RANK
 
    END FUNCTION
 
