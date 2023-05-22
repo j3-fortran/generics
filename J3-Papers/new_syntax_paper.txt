@@ -5,6 +5,18 @@ Date: 2023-March-06
 
 Reference: 22-120r5, 22-151r3, 22-154r5, 23-007
 
+UTI
+
+2. I could not find where we state that multiple declarations of a
+   deferred argument (i.e., via redundant REQUIRES statements) is
+   allowed.  Even if this is allowed because nothing prevents it, I
+   think an affirmative statement would be best.
+
+3. Keyword association - proposed text is included below.
+
+4. Should we split this into multiple papers now that the structure appears stable?
+
+
 1. Introduction
 ===============
 
@@ -117,10 +129,15 @@ REQUIREMENT or TEMPLATE arguments.
 
 <deferred-arg> <<is>> <deferred-arg-name>
 
-<deferred-arg-decl-construct> <<is>> <deferred-const-declaration-stmt>
-                              <<or>> <deferred-proc-declaration-stmt>
-                              <<or>> <deferred-type-declaration-stmt>
-                              <<or>> <requires-stmt>
+<deferred-arg-decl-stmt> <<is>> <deferred-arg-explicit-stmt>
+                         <<or>> <requires-stmt>
+
+<deferred-arg-explicit-stmt> <<is>> <deferred-const-declaration-stmt>
+                             <<or>> <deferred-proc-declaration-stmt>
+                             <<or>> <deferred-type-declaration-stmt>
+
+Constraint: Each <deferred-arg> shall appear in at most one
+            <deferred-arg-explicit-stmt>.
 
 <deferred-const-declaration-stmt> <<is>>
            <declaration-type-spec>, <deferred-attr-constant-spec> ::
@@ -131,8 +148,8 @@ REQUIREMENT or TEMPLATE arguments.
                                           [,<deferred-attr-spec>]...
 
 <deferred-attr-spec> <<is>> CONTIGUOUS
-                        <<or>> <dimension-spec>
-                        <<or>> <rank-clause>
+                     <<or>> <dimension-spec>
+                     <<or>> <rank-clause>
 
 Constraint: An entity declared in <deferred-const-declaration-stmt>
             shall be INTEGER, LOGICAL, or assumed-length CHARACTER.
@@ -191,7 +208,7 @@ Constraint: Each <deferred-proc> that appears in a
             <deferred-arg-list> of the innermost scoping unit.
 
 Constraint: Each <deferred-arg> shall appear in a
-            <deferred-arg-decl-construct> or as a <function-name> or
+            <deferred-arg-decl-stmt> or as a <function-name> or
             <subroutine-name> within an <interface-body> or a
             <deferred-interface-body>.
 
@@ -289,6 +306,38 @@ Constraint: Each <function-name> and <subroutine-name> in a
 
 A <deferred-interface-body> is a scoping unit that has use and host
 association.
+
+
+
+****** New Text *******
+
+Straw vote: Can we use keywords with deferred procedures?
+
+
+Option 1: Disallow keyword use entirely.
+
+Option 2: Keyword use allowed only if all declarations to be consistent.
+
+Option 3: Keyword use allowed with inconsistent declarations, but with
+          explicit declaration in template.  Explicit declaration
+          "wins".
+
+Option 4: Keyword only with explicit declaration.
+
+
+Edits for Option xxx:
+
+Constraint: The <keyword> = shall not appear in a reference to a
+            deferred procedure unless the deferred procedure has been
+            declared by a <deferred-interface-body>.
+
+Note: Within a template, a given deferred procedure may be declared
+      multiple times via REQUIRES statements.  While the
+      characteristics of each such declaration must be consistent, it
+      would be prohibitive to require each declaration to use the same
+      keywords for their arguments. 
+
+
 
 3.1.3 Deferred argument association
 -----------------------------------
@@ -388,7 +437,7 @@ other requirements.
              END [REQUIREMENT [<requirement-name>]]
 
 <requirement-specification-construct>
-        <<is>> <deferred-arg-decl-construct>
+        <<is>> <deferred-arg-decl-stmt>
         <<or>> <deferred-interface-body>
 
 Constraint: Each <deferred-arg> shall appear in a
@@ -418,6 +467,49 @@ Constraint: <requirement-name> shall be the name of a previously
 
 Constraint: Each <keyword> shall be the name of a <deferred-arg> in the
             referenced requirement.
+
+
+Constraint: If a <deferred-arg> appears in multiple
+            <deferred-arg-decl-stmt> statements, all must be
+            <deferred-const> or all must be <deferred-type> or all
+            must be <deferred-proc>.
+
+Constraint: If a <deferred-const> appears in multiple
+            <deferred-arg-decl-stmt> statements, the type and kind
+            shall be the same.
+
+Constraint: If a <deferred-const> appears in multiple
+            <deferred-arg-decl-stmt> and all of the declarations of
+            the corresponding <deferred-arg> in the referenced
+            requirements are of deferred rank, then it is of deferred
+            rank.
+
+Constraint: 
+
+Constraint: If a <deferred-const> appears in multiple REQUIRES
+            statements, each declaration must have the same rank or have
+            deferred rank.
+
+Constraint: If a <deferred-const> appears in multiple REQUIRES
+            statements, each declaration that is not of deferred rank
+            must have the same shape or have implied shape
+
+            the shape must be consistent.  All must have
+            the same rank or be of deferred rank.  All must have the
+            same shape or be of implied shape or of deferred rank.
+
+integer, constant :: A(5)
+integer, constant :: A(*)
+integer, constant :: A(..)
+
+integer, parameter :: A(3,3,5) = ....
+
+intstantiate Foo(..., C=A)
+
+
+Constraint: If a <deferred-type> appears in a REQUIRES statement, the
+            corresponding <deferred-arg> in the referenced requirement
+            must also be a <deferred-type>.
 
 
 3.4 Syntax for the TEMPLATE construct
@@ -455,7 +547,7 @@ The implicit mapping within <template> is as if
 is in place.
 
 <template-declaration-construct> <<is>> <template-specification-construct>
-                                 <<or>> <deferred-arg-decl-construct>
+                                 <<or>> <deferred-arg-decl-stmt>
                                  <<or>> <requirement>
                                  <<or>> <template>
                                  <<or>> <interface-block>
