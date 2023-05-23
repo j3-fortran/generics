@@ -7,12 +7,15 @@ Reference: 22-120r5, 22-151r3, 22-154r5, 23-007
 
 UTI
 
+1. <deferred-interface-body> not accounted for in <deferred-arg-decl-stmt>
+
+
 2. I could not find where we state that multiple declarations of a
    deferred argument (i.e., via redundant REQUIRES statements) is
    allowed.  Even if this is allowed because nothing prevents it, I
    think an affirmative statement would be best.
 
-3. Keyword association - proposed text is included below.
+3. Keyword association
 
 4. Should we split this into multiple papers now that the structure appears stable?
 
@@ -121,6 +124,21 @@ procedure references within a REQUIREMENT or TEMPLATE construct.  A
 deferred procedure's interface shall be defined by that REQUIREMENT or
 TEMPLATE construct, possibly in terms of deferred types and constants.
 
+An explicit specification of a <deferred-arg> is either
+<deferred-arg-explicit-stmt> or <deferred-interface-body>.
+
+An ultimate specification for a <deferred-arg> is either an explicit
+specification or the ultimate specification of a requirement referenced
+in a REQUIRES statement.
+
+Note: The approach here is that each deferred argument is always
+eventualy explicitly declared at some level of nesting of
+requirements.  Any given deferred argument must have at least one
+ultimate specification and may have multiple.  All must be
+"consistent" in a sense to be made explicit later in this paper.
+
+
+
 3.1.1 Syntax for deferred arguments
 -----------------------------------
 
@@ -160,10 +178,11 @@ Note: For now, we explicitly disallow fixed-length character deferred
 
 <deferred-const-entity-decl> <<is>> <deferred-const> [ ( <array-spec> ) ]
 
-Constraint: If <array-spec> appears in <deferred-const-entity-decl>, it
-           shall be <implied-shape-spec>,
-           <assumed-or-deferred-rank-spec>, or
-           <explicit-shape-spec-list>, <explicit-shape-bounds-spec>.
+Constraint: If <array-spec> appears in <deferred-const-entity-decl>,
+            it shall be <implied-shape-spec>,
+            <assumed-or-deferred-rank-spec>,
+            <explicit-shape-spec-list>, or
+            <explicit-shape-bounds-spec>.
 
 <deferred-const> <<is>> <name>
 
@@ -239,6 +258,49 @@ A <deferred-type> is a deferred type.
 
 Note: Deferred arguments are local identifiers and are not externally
       accessible.
+
+
+Constraint: A <deferred-arg> shall have at most one explicit
+            specification in a given scoping unit.
+
+Constraint: If any ultimate specification of a <deferred-arg> is a
+            <deferred-type> then all of the ultimate specifications of
+            that <deferred-arg> shall be <deferred-type>.
+
+Constraint: If any ultimate specification of a <deferred-arg> is a
+            <deferred-const> then all of the ultimate specifications of
+            that <deferred-arg> shall be <deferred-const>.
+
+Lattice of specifications:
+
+The active specification of a <deferred-arg> in each scope is the
+intersection of the ultimate specifications of that <deferred-arg>.
+An active specification is either well-defined or is inconsistent.
+
+Constraint: The active specification of a <deferred-arg> shall be well-defined.
+
+If 2 ultimate specifications of a <deferred-const> have types T1 and
+T2 respectively, then their active specification is of type T1 if T1
+and T2 are the same type.  Otherwise it is inconsistent.
+
+If 2 ultimate specifications of a <deferred-const> have kinds K1 and
+K2 respectively, then their active specification is of kind K1 if K1
+and K2 are the same kind.  Otherwise it is inconsistent.
+
+If 2 ultimate specifications of a <deferred-const> have ranks R1 and
+R2 then:
+
+  - if R1 and R2 are defined ranks, then their active specification is
+    of rank R1 if R1 and R2 are the same, otherwise the active
+    specification is inconsistent.
+
+  - if one of R1 and R2 is deferred rank and the other has defined
+    rank R, then the active specification is R.
+
+  - if both R1 and R2 are deferred rank, then the active specification
+    has deferred rank.
+
+
 
 
 3.1.2 Deferred interface body
@@ -318,11 +380,7 @@ Option 1: Disallow keyword use entirely.
 
 Option 2: Keyword use allowed only if all declarations to be consistent.
 
-Option 3: Keyword use allowed with inconsistent declarations, but with
-          explicit declaration in template.  Explicit declaration
-          "wins".
-
-Option 4: Keyword only with explicit declaration.
+Option 3: Keyword only with explicit declaration.
 
 
 Edits for Option xxx:
@@ -467,7 +525,6 @@ Constraint: <requirement-name> shall be the name of a previously
 
 Constraint: Each <keyword> shall be the name of a <deferred-arg> in the
             referenced requirement.
-
 
 Constraint: If a <deferred-arg> appears in multiple
             <deferred-arg-decl-stmt> statements, all must be
