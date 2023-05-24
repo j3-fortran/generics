@@ -1,0 +1,82 @@
+! Uses MPI-like library to send/receive/put/get arrays of a given type T
+
+! I don't see a way to write this so it works for contiguous arrays of intrinsic types  (which do not require packing/unpacking)
+
+! without at least a local copy in/out from a buffer...
+
+template :: communicate(T, n_bytes, pack)
+
+    integer, constant :: n_bytes ! How many bytes of storage does an object of type T take when packed
+
+    ! Think further about how to make n_bytes not be a compile-time constant
+
+    ! since a user has to compute it via a sum over C_SIZEOFs over components of T
+    type, deferred :: T
+
+        ! Unknown components taking a total of n_bytes bytes
+
+    contains
+
+        procedure(pack_T), pass :: pack
+
+        ! Also needs unpack but omitted here for brevity
+
+    end type
+
+    interface
+
+        subroutine pack_T(object, buffer, offset)
+
+            use iso_c_binding
+
+            type(c_int), intent(in) :: offset ! Pack into memory starting at buffer+offset*n_bytes
+
+            class(T), intent(in) :: object ! Some object that can have padding for alignment etc., as decided by Fortran processor
+
+            type(c_ptr), value :: buffer ! Pack object into a block of n_bytes bytes of memory with no alignment padding
+
+        end subroutine
+
+    end interface
+
+    generic :: Send ! Not sure if this is the right syntax to add the type-specific Send routine to a generic interface Send?
+
+contains
+
+    subroutine Send(from, to)
+
+        type(T), dimension(:), intent(in) :: from ! Challenge for us: Write a generic package that can take as input an assumed rank array and do this!
+
+        type(T), dimension(:), intent(out) :: to ! This requires knowing the type T (it performs default initialization) but we do at instantiation time
+
+        integer :: element
+
+        type(c_ptr) :: buffer
+
+        call c_malloc(buffer, size(from)*n_bytes) ! Some C routine that allocates memory
+
+            ! I don't there is a way to do this within Fortran since we do not have "byte" or unit of storage as a concept
+
+        do element = 1, size(from)           
+
+            call from(element)%pack_T(buffer, offset=(element-1)*n_bytes)
+
+        end do
+
+        ! Now call MPI/GassNet or whatever
+
+        ! And then unpack into to
+
+    end subroutine
+
+end template
+
+...
+
+! Actual renaming happens here:
+
+instantiate  communicate(T=my_type, n_bytes=..., pack=>my_type%compress)
+
+! Not really sure how to gracefully handle n_bytes...
+
+! Not sure how to make this work for intrinsic types either (unless we make pack not be a TBP but just an ordinary template argument)
