@@ -7,13 +7,13 @@ Reference: 22-120r5, 22-151r3, 22-154r5, 23-007
 
 UTI
 
-1. <deferred-interface-body> not accounted for in <deferred-arg-decl-stmt>
+1. Need a word for "ultimate" specification.  Already have "ultimate"
+   argument for instantiate and requires, so cannot use "ultimate".
+   "leaf" is wrong because it includes intermediate nodes in the
+   current definition.  Have used "terminal" as a placeholder for now.
 
-
-2. I could not find where we state that multiple declarations of a
-   deferred argument (i.e., via redundant REQUIRES statements) is
-   allowed.  Even if this is allowed because nothing prevents it, I
-   think an affirmative statement would be best.
+   Alternatives:  "pertinent"  "apropos"  "contributing" "participating",
+                  "stakeholder", "partner" "allied"  "associated"
 
 3. Keyword association
 
@@ -127,14 +127,14 @@ TEMPLATE construct, possibly in terms of deferred types and constants.
 An explicit specification of a <deferred-arg> is either
 <deferred-arg-explicit-stmt> or <deferred-interface-body>.
 
-An ultimate specification for a <deferred-arg> is either an explicit
-specification or the ultimate specification of a requirement referenced
-in a REQUIRES statement.
+A terminal specification for a <deferred-arg> is either an explicit
+specification or the terminal specification of a requirement
+referenced in a REQUIRES statement.
 
 Note: The approach here is that each deferred argument is always
 eventualy explicitly declared at some level of nesting of
 requirements.  Any given deferred argument must have at least one
-ultimate specification and may have multiple.  All must be
+terminal specification and may have multiple.  All must be
 "consistent" in a sense to be made explicit later in this paper.
 
 
@@ -263,31 +263,31 @@ Note: Deferred arguments are local identifiers and are not externally
 Constraint: A <deferred-arg> shall have at most one explicit
             specification in a given scoping unit.
 
-Constraint: If any ultimate specification of a <deferred-arg> is a
-            <deferred-type> then all of the ultimate specifications of
+Constraint: If any terminal specification of a <deferred-arg> is a
+            <deferred-type> then all of the terminal specifications of
             that <deferred-arg> shall be <deferred-type>.
 
-Constraint: If any ultimate specification of a <deferred-arg> is a
-            <deferred-const> then all of the ultimate specifications of
+Constraint: If any terminal specification of a <deferred-arg> is a
+            <deferred-const> then all of the terminal specifications of
             that <deferred-arg> shall be <deferred-const>.
 
 Lattice of specifications:
 
 The active specification of a <deferred-arg> in each scope is the
-intersection of the ultimate specifications of that <deferred-arg>.
+intersection of the terminal specifications of that <deferred-arg>.
 An active specification is either well-defined or is inconsistent.
 
 Constraint: The active specification of a <deferred-arg> shall be well-defined.
 
-If 2 ultimate specifications of a <deferred-const> have types T1 and
+If 2 terminal specifications of a <deferred-const> have types T1 and
 T2 respectively, then their active specification is of type T1 if T1
 and T2 are the same type.  Otherwise it is inconsistent.
 
-If 2 ultimate specifications of a <deferred-const> have kinds K1 and
+If 2 terminal specifications of a <deferred-const> have kinds K1 and
 K2 respectively, then their active specification is of kind K1 if K1
 and K2 are the same kind.  Otherwise it is inconsistent.
 
-If 2 ultimate specifications of a <deferred-const> have ranks R1 and
+If 2 terminal specifications of a <deferred-const> have ranks R1 and
 R2 then:
 
   - if R1 and R2 are defined ranks, then their active specification is
@@ -300,6 +300,21 @@ R2 then:
   - if both R1 and R2 are deferred rank, then the active specification
     has deferred rank.
 
+*** UNREVIEWED TEXT (TOM) ***
+
+Constraint: If 2 terminal specifications of a <deferred-proc> have
+            characterictics C1 and C2, then their active specification
+            has characteristics C1.  Otherwise their active
+            specification is inconsistent.
+
+Constraint: If 2 terminal specifications of a <deferred-proc> have
+            argument names A = {a_1, a_2, ..., a_na} and B = {b_1,
+            b_2, ..., b_nb}, then their active specification has names
+            A if na = nb, and a_i = b_i for i = 1, 2, ... na.
+            Otherwise their active specification is inconsistent.
+
+
+*** END UNREVIEWED TEXT ***
 
 
 
