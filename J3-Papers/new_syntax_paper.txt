@@ -302,16 +302,14 @@ R2 then:
 
 *** UNREVIEWED TEXT (TOM) ***
 
-Constraint: If 2 terminal specifications of a <deferred-proc> have
-            characterictics C1 and C2, then their active specification
-            has characteristics C1.  Otherwise their active
-            specification is inconsistent.
+If 2 terminal specifications of a <deferred-proc> have characterictics
+C1 and C2, then their active specification has characteristics C1.
+Otherwise their active specification is inconsistent.
 
-Constraint: If 2 terminal specifications of a <deferred-proc> have
-            argument names A = {a_1, a_2, ..., a_na} and B = {b_1,
-            b_2, ..., b_nb}, then their active specification has names
-            A if na = nb, and a_i = b_i for i = 1, 2, ... na.
-            Otherwise their active specification is inconsistent.
+If 2 terminal specifications of a <deferred-proc> have argument names
+A = {a_1, a_2, ..., a_na} and B = {b_1, b_2, ..., b_nb}, then their
+active specification has names A if na = nb, and a_i = b_i for i = 1,
+2, ... na.  Otherwise their active specification is inconsistent.
 
 
 *** END UNREVIEWED TEXT ***
