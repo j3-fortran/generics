@@ -31,9 +31,11 @@ is further broken into the following subsections:
   3.1 Deferred entities
   3.1.1 Syntax for deferred arguments
   3.1.2 Deferred interface body
-  3.1.3 Deferred argument association
+  3.1.3 Active specification of deferred arguments
+  3.1.4 Deferred argument association
 
   3.2 Syntax for the REQUIREMENT construct
+
   3.3 Syntax for the REQUIRES statement
 
   3.4 Syntax for the TEMPLATE construct
@@ -178,11 +180,21 @@ Note: For now, we explicitly disallow fixed-length character deferred
 
 <deferred-const-entity-decl> <<is>> <deferred-const> [ ( <array-spec> ) ]
 
-Constraint: If <array-spec> appears in <deferred-const-entity-decl>,
-            it shall be <implied-shape-spec>,
-            <assumed-or-deferred-rank-spec>,
+Constraint: If <array-spec> appears in
+            <deferred-const-declaration-stmt>, it shall be
+            <implied-shape-spec>, <assumed-or-deferred-rank-spec>,
             <explicit-shape-spec-list>, or
             <explicit-shape-bounds-spec>.
+
+Constraint: If <implied-shape-spec>, <explicit-shape-spec> or
+            <explicit-shape-bounds-spec> appears in
+            <deferred-const-declaration-stmt>, then <lower-bound>
+            shall not be specified.
+
+Constraint: If <explicit-shape-bounds-spec> appears in
+            <deferred-const-declaration-stmt>, then
+            <explicit-bounds-expr> shall not appear as a lower bound.
+
 
 <deferred-const> <<is>> <name>
 
@@ -194,27 +206,18 @@ A <deferred-const> is a deferred constant.
 Some examples of declaring deferred constants are as follows.
 
     ! explicit shape
-    integer, constant :: x1 ! LB = []
-    integer, constant :: x2(3)     ! LB = 1
-    integer, constant :: x3(0:2)   ! LB = 0
-    integer, constant :: x4(0:2,5:8) ! LB = [0,5]
+    integer, constant  :: x1 
+    integer, constant  :: x2(3)
     integer, parameter :: v1(2) = [5,15]
-    integer, parameter :: v2(2) = [7,18]
-    integer, parameter :: v3(2) = [3,4]
-    integer, constant :: x5(v1:v2)   ! LB = v1
-    integer, constant :: x6(v3)      ! LB = [1,1]
+    integer, constant  :: x3(v1)
 
     ! implied shape
-    integer, constant :: x7(*)     ! LB = 1
-    integer, constant :: x8(0:*)   ! LB = 0
-    integer, constant :: x9(*,*)     ! LB = [1,1]
-    integer, constant :: x10(*,-1:*)  ! LB = [0,-1]
-    integer, constant :: x11(0:*,-1:*)! LB = [0,-1]
-    integer, constant :: x12(v1:*)    ! LB = v1
-    integer, constant, rank(2) :: x13 ! LB = [1,1]
+    integer, constant :: x7(*)
+    integer, constant :: x9(*,*)
+    integer, constant, rank(2) :: x13
 
     ! assumed-or-deferred-rank-spec
-    integer, constant :: x14(..)    ! LB = [1,1,...]
+    integer, constant :: x14(..)
 
 
 <deferred-proc-declaration-stmt> <<is>>
@@ -270,36 +273,6 @@ Constraint: If any ultimate specification of a <deferred-arg> is a
 Constraint: If any ultimate specification of a <deferred-arg> is a
             <deferred-const> then all of the ultimate specifications of
             that <deferred-arg> shall be <deferred-const>.
-
-Lattice of specifications:
-
-The active specification of a <deferred-arg> in each scope is the
-intersection of the ultimate specifications of that <deferred-arg>.
-An active specification is either well-defined or is inconsistent.
-
-Constraint: The active specification of a <deferred-arg> shall be well-defined.
-
-If 2 ultimate specifications of a <deferred-const> have types T1 and
-T2 respectively, then their active specification is of type T1 if T1
-and T2 are the same type.  Otherwise it is inconsistent.
-
-If 2 ultimate specifications of a <deferred-const> have kinds K1 and
-K2 respectively, then their active specification is of kind K1 if K1
-and K2 are the same kind.  Otherwise it is inconsistent.
-
-If 2 ultimate specifications of a <deferred-const> have ranks R1 and
-R2 then:
-
-  - if R1 and R2 are defined ranks, then their active specification is
-    of rank R1 if R1 and R2 are the same, otherwise the active
-    specification is inconsistent.
-
-  - if one of R1 and R2 is deferred rank and the other has defined
-    rank R, then the active specification is R.
-
-  - if both R1 and R2 are deferred rank, then the active specification
-    has deferred rank.
-
 
 
 
@@ -370,34 +343,112 @@ A <deferred-interface-body> is a scoping unit that has use and host
 association.
 
 
-
-****** New Text *******
-
-Straw vote: Can we use keywords with deferred procedures?
-
-
-Option 1: Disallow keyword use entirely.
-
-Option 2: Keyword use allowed only if all declarations to be consistent.
-
-Option 3: Keyword only with explicit declaration.
-
-
-Edits for Option xxx:
-
-Constraint: The <keyword> = shall not appear in a reference to a
+Constraint: "<keyword> = " shall not appear in a reference to a
             deferred procedure unless the deferred procedure has been
             declared by a <deferred-interface-body>.
 
-Note: Within a template, a given deferred procedure may be declared
-      multiple times via REQUIRES statements.  While the
-      characteristics of each such declaration must be consistent, it
-      would be prohibitive to require each declaration to use the same
-      keywords for their arguments. 
 
 
+3.1.3 Active specification of deferred arguments
+------------------------------------------------
 
-3.1.3 Deferred argument association
+The active specification of a <deferred-arg> in each scope is the
+intersection of the ultimate specifications of that <deferred-arg>.
+An active specification is either well-defined or is inconsistent.
+
+Constraint: The active specification of a <deferred-arg> shall be
+            well-defined.
+
+If a <deferred-arg> has a single ultimate specification, its active
+specification is that specification.
+
+A <deferred-arg> shall only be referenced within a template or a
+requirement in a way that is consistent with its active specification.
+
+If 2 ultimate specifications of a <deferred-arg> are both
+<deferred-const> then the active specification is a deferred constant.
+
+If 2 ultimate specifications of a <deferred-arg> are both
+<deferred-type> then the active specification is a deferred type.
+
+If 2 ultimate specifications of a <deferred-arg> are both
+<deferred-proc> then the active specification is a deferred procedure.
+
+
+3.1.3.1 Active specification of deferred constants
+
+If 2 ultimate specifications of a <deferred-const> have types T1 and
+T2 respectively, then their active specification is of type T1 if T1
+and T2 are the same type.  Otherwise it is inconsistent.
+
+If the active specification of 2 ultimate specifications is of type
+character, then both shall have assumed-length and the active
+specification is an assumed-length character.  Otherwise it is
+inconsistent.
+
+If 2 ultimate specifications of a <deferred-const> have kinds K1 and
+K2 respectively, then their active specification is of kind K1 if K1
+and K2 are the same kind.  Otherwise it is inconsistent.
+
+If 2 ultimate specifications of a <deferred-const> have ranks R1 and
+R2 then:
+
+  - if R1 and R2 are defined ranks, then their active specification is
+    of rank R1 if R1 and R2 are the same, otherwise the active
+    specification is inconsistent.
+
+  - if one of R1 and R2 is deferred rank and the other has defined
+    rank R, then the active specification is R.
+
+  - if both R1 and R2 are deferred rank, then the active specification
+    has deferred rank.
+
+If 2 ultimate specifications of a <deferred-const> have shapes S1 and
+S2, then:
+
+  - if S1 and S2 both have explicit shapes then their active
+    specification has shape S1 if S1 and S2 are the same.  Otherwise
+    it is inconsistent.
+
+  - if one of S1 and S2 is of assumed-shape and the other has explicit
+    shape S, then the active specification has shape S.
+
+  - if S1 and S2 are both assumed-shape, then their active
+    specification has assumed-shape.
+
+
+3.1.3.2 Active specification of deferred procedures
+
+If at least one of two ultimate specifications of a <deferred-proc>
+is simple, then the active specification is simple.
+
+If at least one of two ultimate specifications of a <deferred-proc> is
+pure and the other is not simple, then the active specification is
+pure.
+
+If at least one of two ultimate specifications of a <deferred-proc>
+is elemental, then the active specification is elemental.
+
+If 2 ultimate specifications of <deferred-proc> are subroutines, then
+the active specification is a subroutine.  If 2 ultimate
+specifications of a <deferred-proc> are functions then the active
+specification is a function.  Otherwise, they are inconsistent.
+
+If two ultimate specifications of a <deferred-proc> have the same
+characteristics of their dummy arguments then the active specification
+has the same characteristics of its dummy arguments.  Otherwise it is
+inconsistent.
+
+If two ultimate specifications of a <deferred-proc> that is a function
+have the same characteristics for their results then the active
+specification has the same characteristics of its result.  Otherwise
+it is inconsistent.
+
+The active specification of a <deferred-proc> does not define the
+names of its dummy arguments.
+
+
+3.1.4 Deferred argument association
 -----------------------------------
 
 Instantiation arguments are specified by either an INSTANTIATE or a
@@ -425,33 +476,33 @@ Constraint: <constant-expr> shall be type INTEGER, LOGICAL or
             CHARACTER.
 
 Constraint: An <instantiation-arg> that is a <constant-expr> shall
-            correspond to a <deferred-arg> that is declared as a
-            <deferred-const> in the referenced template or requirement.
+            correspond to a <deferred-arg> that has an active
+            specification that is a <deferred-const> in the referenced
+            template or requirement.
 
 Constraint: The type and kind of an <instantiation-arg> that is a
-            <constant-expr> shall have the same type and kind of the
-            declaration of the corresponding <deferred-const> in the
-            referenced template or requirement.
+            <constant-expr> shall have the same type and kind as the
+            active specification of the corresponding <deferred-const>
+            in the referenced template or requirement.
 
-Constraint: If the shape of the corresponding <deferred-const> in the
-            referenced template or requirement is not assumed, then
-            <constant-expr> shall have the same shape.
+Constraint: If the shape of the active specification of the
+            corresponding <deferred-const> in the referenced template
+            or requirement is not assumed, then <constant-expr> shall
+            have the same shape.
 
-Constraint: If the rank of the corresponding <deferred-const> in the
-            referenced template or requirement is not assumed, then
-            <constant-expr> shall have the same rank.
+Constraint: If the rank of the active specifation of the corresponding
+            <deferred-const> in the referenced template or requirement
+            is not assumed, then <constant-expr> shall have the same
+            rank.
 
 Constraint: An <instantiation-arg> that is a <type-spec> shall
-            correspond to a <deferred-arg> that is declared as a
-            <deferred-type> in the referenced template or requirement.
+            correspond to a <deferred-arg> that has an active
+            specification that is a <deferred-type> in the
+            referenced template or requirement.
 
 Constraint: If an <instantiation-arg> is a <derived-type-spec>, it
             shall be allowed for a variable of that type to appear in
             a variable definition context.
-
-Constraint: A <derived-type-spec> shall only appear as an
-            instantiation argument if a variable of that type is
-            permitted in a variable definition context.
 
 Constraint: A <derived-type-spec> shall only appear as an
             instantiation argument if a variable of that type is
@@ -463,23 +514,38 @@ Constraint: If an <instantiation-arg> is a <type-spec>, it shall not
 
 Constraint: An <instantiation-arg> that is a <generic-spec> or
             <procedure-name> shall correspond to a <deferred-arg> that
-            is declared as a <deferred-proc> in the referenced
-            template or requirement.
+            has an active specification that is a <deferred-proc> in
+            the referenced template or requirement.
 
 Constraint: An <instantiation-arg> that is a <procedure-name> shall
-            have the same characteristics as the corresponding
-            <deferred-proc> in the referenced template or requirement.
+            have the same characteristics as the active specification
+            of the corresponding <deferred-proc> in the referenced
+            template or requirement, except that a pure instantiation
+            argument may be associated with a deferred argument that
+            is not pure, a simple instantiation argument may be
+            associated with a deferred argument that is not simple,
+            and an elemental instantiation agrgument may be associated
+            with a deferred procedure that is not elemental.
 
 Constraint: An <instantiation-arg> that is a <generic-spec> shall have
             one specific procedure that has the same characteristics
-            as the corresponding <deferred-proc> in the referenced
-            template or requirement.
+            as the active specification of the corresponding
+            <deferred-proc> in the referenced template or requirement,
+            except that a pure instantiation argument may be
+            associated with a deferred argument that is not pure, a
+            simple instantiation argument may be associated with a
+            deferred argument that is not simple, and an elemental
+            instantiation agrgument may be associated with a deferred
+            procedure that is not elemental.
 
 Note: The previous two constraints constitute what is referred to as
       "weak constraints" in other languages.
 
 The <deferred-proc> shall be associated with the specific procedure
 that is consistent with the characteristics.
+
+
+
 
 3.2 Syntax for the REQUIREMENT construct
 ----------------------------------------
@@ -742,6 +808,15 @@ Constraint: <constant-expr> shall be of type integer, logical or
 
   To:
       <<or>>   <assumed-or-deferred-rank-spec>
+
+* 8.5.8.2 Explicit-shape array
+
+Note: 
+
+It may be better to modify <explicit-shape-bounds-spec> to
+disambiguate <explicit-bounds-expr> for lower and upper bounds.  This
+would make constraint for deferred constants clearer.
+
 
 * 8.5.8.7 Assumed-rank entity
 
