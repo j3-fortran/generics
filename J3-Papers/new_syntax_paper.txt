@@ -5,21 +5,6 @@ Date: 2023-March-06
 
 Reference: 22-120r5, 22-151r3, 22-154r5, 23-007
 
-UTI
-
-1. <deferred-interface-body> not accounted for in <deferred-arg-decl-stmt>
-
-
-2. I could not find where we state that multiple declarations of a
-   deferred argument (i.e., via redundant REQUIRES statements) is
-   allowed.  Even if this is allowed because nothing prevents it, I
-   think an affirmative statement would be best.
-
-3. Keyword association
-
-4. Should we split this into multiple papers now that the structure appears stable?
-
-
 1. Introduction
 ===============
 
