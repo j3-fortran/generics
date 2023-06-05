@@ -27,9 +27,11 @@ is further broken into the following subsections:
   3.4.1 Template specification part
   3.4.2 Template subprogram part
   3.4.3 Additional constraint
+
   3.5 Syntax for the INSTANTIATE statement
 
-Section 4 provides other miscellaneous changes.
+Section 4 summarized miscellaneous related changes needed in other
+sections of the standard.
 
 2. Example
 ==========
@@ -84,6 +86,7 @@ CONTAINS
       PRINT*,'MAX: ', x ! expect 3. + max(3,4) = 7.
 
    END SUBROUTINE DO_SOMETHING
+
 END MODULE B
 
 
@@ -101,29 +104,31 @@ instantiation arguments occurs in the REQUIRES and INSTANTIATE
 statements.
 
 A deferred constant is a deferred argument that can appear in constant
-expressions with a REQUIREMENT or TEMPLATE construct.
+expressions within a REQUIREMENT or TEMPLATE construct.
 
-A deferred type is a deferred argument that can appear as a type-spec
+A deferred type is a deferred argument that can appear as a <type-spec>
 within a REQUIREMENT or TEMPLATE construct.
 
 A deferred procedure is a deferred argument that can appear in
 procedure references within a REQUIREMENT or TEMPLATE construct.  A
-deferred procedure's interface shall be defined by that REQUIREMENT or
-TEMPLATE construct, possibly in terms of deferred types and constants.
+deferred procedure's interface shall be established by that
+REQUIREMENT or TEMPLATE construct, possibly in terms of deferred types
+and constants.
 
 An explicit specification of a <deferred-arg> is either
 <deferred-arg-explicit-stmt> or <deferred-interface-body>.
 
-An ultimate specification for a <deferred-arg> is either an explicit
-specification or the ultimate specification of a requirement referenced
-in a REQUIRES statement.
+A <deferred-arg> shall have one or more ultimate specifications.  An
+ultimate specification for a <deferred-arg> is either an explicit
+specification or the ultimate specification of a requirement
+referenced in a REQUIRES statement.
 
 Note: The approach here is that each deferred argument is always
-eventualy explicitly declared at some level of nesting of
-requirements.  Any given deferred argument must have at least one
-ultimate specification and may have multiple.  All must be
-"consistent" in a sense to be made explicit later in this paper.
-
+      eventually explicitly declared at some level of nesting of
+      requirements.  Any given deferred argument must have at least
+      one ultimate specification and may have multiple.  All must have
+      a well-defined active specification which will be defined in
+      section 3.1.3.
 
 
 3.1.1 Syntax for deferred arguments
@@ -133,6 +138,16 @@ A deferred argument declaration construct is used to declare
 REQUIREMENT or TEMPLATE arguments.
 
 <deferred-arg> <<is>> <deferred-arg-name>
+
+Constraint: A <deferred-arg> shall have at most one explicit
+            specification in a given scoping unit.
+
+Constraint: A <deferred-arg> declaration shall not have an
+            <access-spec> nor shall it appear in a PUBLIC statement.
+
+Note: Deferred arguments are local identifiers and are not externally
+      accessible.`
+
 
 <deferred-arg-decl-stmt> <<is>> <deferred-arg-explicit-stmt>
                          <<or>> <requires-stmt>
@@ -144,16 +159,33 @@ REQUIREMENT or TEMPLATE arguments.
 Constraint: Each <deferred-arg> shall appear in at most one
             <deferred-arg-explicit-stmt>.
 
+Constraint: If any ultimate specification of a <deferred-arg> is a
+            <deferred-const> then all of the ultimate specifications of
+            that <deferred-arg> shall be <deferred-const>.
+
+Constraint: If any ultimate specification of a <deferred-arg> is a
+            <deferred-proc> then all of the ultimate specifications of
+            that <deferred-arg> shall be <deferred-proc>.
+
+Constraint: If any ultimate specification of a <deferred-arg> is a
+            <deferred-type> then all of the ultimate specifications of
+            that <deferred-arg> shall be <deferred-type>.
+
+Note: Technically the previous 3 constraints are implied by the first
+      constraint in section 3.1.3.
+
+
+3.1.1.1 Syntax for deferred constants
+
 <deferred-const-declaration-stmt> <<is>>
-           <declaration-type-spec>, <deferred-attr-constant-spec> ::
+           <declaration-type-spec>, <deferred-const-attr-spec> ::
            <deferred-const-entity-decl-list>
 
-<deferred-attr-constant-spec> <<is>> [<deferred-attr-spec>,]...
-                                          CONSTANT
-                                          [,<deferred-attr-spec>]...
+<deferred-const-attr-spec> <<is>> [<deferred-attr-spec>,]...
+                                      CONSTANT
+                                      [,<deferred-attr-spec>]...
 
-<deferred-attr-spec> <<is>> CONTIGUOUS
-                     <<or>> <dimension-spec>
+<deferred-attr-spec> <<is>> <dimension-spec>
                      <<or>> <rank-clause>
 
 Constraint: An entity declared in <deferred-const-declaration-stmt>
@@ -193,7 +225,7 @@ Some examples of declaring deferred constants are as follows.
     ! explicit shape
     integer, constant  :: x1 
     integer, constant  :: x2(3)
-    integer, parameter :: v1(2) = [5,15]
+    integer, parameter :: v1(2) = [5,15] ! not a deferred constant
     integer, constant  :: x3(v1)
 
     ! implied shape
@@ -204,6 +236,7 @@ Some examples of declaring deferred constants are as follows.
     ! assumed-or-deferred-rank-spec
     integer, constant :: x14(..)
 
+3.1.1.2 Syntax for deferred procedures
 
 <deferred-proc-declaration-stmt> <<is>>
      PROCEDURE[(<interface>)] :: <deferred-proc-list>
@@ -214,7 +247,7 @@ Constraint: Each <deferred-proc> that appears in a
             <deferred-proc-declaration-stmt> shall appear in
             <deferred-arg-list> of the innermost scoping unit.
 
-Constraint: Each <deferred-arg> shall appear in a
+Constraint: Each <deferred-proc> shall appear in a
             <deferred-arg-decl-stmt> or as a <function-name> or
             <subroutine-name> within an <interface-body> or a
             <deferred-interface-body>.
@@ -223,6 +256,8 @@ A <deferred-proc> is a deferred procedure.  A <deferred-arg> that
 appears as the <function-name> or <subroutine-name> in an
 <interface-body> or a <deferred-interface-body> is a deferred
 procedure.
+
+3.1.1.3 Syntax for deferred types
 
 <deferred-type-declaration-stmt>
        <<is>>  TYPE, DEFERRED :: <deferred-type-list>
@@ -239,26 +274,7 @@ Note: Possibly a similar constraint is needed for CLASS(T), but
 Constraint: Each <deferred-type> shall appear in
             <deferred-arg-list> of the innermost scoping unit.
 
-Constraint: A <deferred-arg> declaration shall not have an
-            <access-spec> nor shall it appear in a PUBLIC statement.
-
 A <deferred-type> is a deferred type.
-
-Note: Deferred arguments are local identifiers and are not externally
-      accessible.
-
-
-Constraint: A <deferred-arg> shall have at most one explicit
-            specification in a given scoping unit.
-
-Constraint: If any ultimate specification of a <deferred-arg> is a
-            <deferred-type> then all of the ultimate specifications of
-            that <deferred-arg> shall be <deferred-type>.
-
-Constraint: If any ultimate specification of a <deferred-arg> is a
-            <deferred-const> then all of the ultimate specifications of
-            that <deferred-arg> shall be <deferred-const>.
-
 
 
 3.1.2 Deferred interface body
@@ -298,7 +314,7 @@ Constraint: Each <function-name> and <subroutine-name> in a
         <<or>> <dimension-stmt>
         <<or>> <intent-stmt>
         <<or>> <optional-stmt>
-        <<or>> <paramter-stmt>
+        <<or>> <parameter-stmt>
         <<or>> <pointer-stmt>
         <<or>> <target-stmt>
         <<or>> <value-stmt>
@@ -328,12 +344,6 @@ A <deferred-interface-body> is a scoping unit that has use and host
 association.
 
 
-Constraint: "<keyword> = " shall not appear in a reference to a
-            deferred procedure unless the deferred procedure has been
-            declared by a <deferred-interface-body>.
-
-
-
 3.1.3 Active specification of deferred arguments
 ------------------------------------------------
 
@@ -344,20 +354,23 @@ An active specification is either well-defined or is inconsistent.
 Constraint: The active specification of a <deferred-arg> shall be
             well-defined.
 
-If a <deferred-arg> has a single ultimate specification, its active
-specification is that specification.
-
 A <deferred-arg> shall only be referenced within a template or a
 requirement in a way that is consistent with its active specification.
 
-If 2 ultimate specifications of a <deferred-arg> are both
-<deferred-const> then the active specification is a deferred constant.
+If a <deferred-arg> has a single ultimate specification, its active
+specification is that specification.
 
-If 2 ultimate specifications of a <deferred-arg> are both
-<deferred-type> then the active specification is a deferred type.
+If all ultimate specifications of a <deferred-arg> are
+<deferred-const> then the active specification is a deferred constant,
+otherwise it is inconsistent.
 
-If 2 ultimate specifications of a <deferred-arg> are both
-<deferred-proc> then the active specification is a deferred procedure.
+If all ultimate specifications of a <deferred-arg> are <deferred-type>
+then the active specification is a deferred type, otherwise it is
+inconsistent.
+
+If all ultimate specifications of a <deferred-arg> are <deferred-proc>
+then the active specification is a deferred procedure, otherwise it is
+inconsistent.
 
 
 3.1.3.1 Active specification of deferred constants
@@ -404,6 +417,11 @@ S2, then:
 
 3.1.3.2 Active specification of deferred procedures
 
+If 2 ultimate specifications of <deferred-proc> are subroutines, then
+the active specification is a subroutine.  If 2 ultimate
+specifications of a <deferred-proc> are functions then the active
+specification is a function.  Otherwise, they are inconsistent.
+
 If at least one of two ultimate specifications of a <deferred-proc>
 is simple, then the active specification is simple.
 
@@ -413,11 +431,6 @@ pure.
 
 If at least one of two ultimate specifications of a <deferred-proc>
 is elemental, then the active specification is elemental.
-
-If 2 ultimate specifications of <deferred-proc> are subroutines, then
-the active specification is a subroutine.  If 2 ultimate
-specifications of a <deferred-proc> are functions then the active
-specification is a function.  Otherwise, they are inconsistent.
 
 If two ultimate specifications of a <deferred-proc> have the same
 characteristics of their dummy arguments then the active specification
@@ -442,8 +455,8 @@ REQUIRES statement.
 <instantiation-arg-spec> <<is>>
         [ <keyword> = ] <instantiation-arg>
 
-Constraint: Each <keyword> shall be the name of a <deferred-arg> in the
-            referenced requirement or template.
+Constraint: Each <keyword> shall be the name of a <deferred-arg> in
+            the referenced requirement or template.
 
 In the absence of an argument keyword, an instantiation argument
 corresponds to the deferred argument occupying the corresponding
@@ -456,6 +469,9 @@ second deferred argument in the reduced list, etc.
                     <<or>> <type-spec>
                     <<or>> <generic-spec>
                     <<or>> <procedure-name>
+
+
+3.1.4.1 Deferred constant association
 
 Constraint: <constant-expr> shall be type INTEGER, LOGICAL or
             CHARACTER.
@@ -475,10 +491,48 @@ Constraint: If the shape of the active specification of the
             or requirement is not assumed, then <constant-expr> shall
             have the same shape.
 
-Constraint: If the rank of the active specifation of the corresponding
+Constraint: If the rank of the active specification of the corresponding
             <deferred-const> in the referenced template or requirement
             is not assumed, then <constant-expr> shall have the same
             rank.
+
+
+3.1.4.2 Deferred procedure association
+
+Constraint: An <instantiation-arg> that is a <generic-spec> or
+            <procedure-name> shall correspond to a <deferred-arg> that
+            has an active specification that is a <deferred-proc> in
+            the referenced template or requirement.
+
+Constraint: An <instantiation-arg> that is a <procedure-name> shall
+            have the same characteristics as the active specification
+            of the corresponding <deferred-proc> in the referenced
+            template or requirement, except that a pure instantiation
+            argument may be associated with a deferred argument that
+            is not pure, a simple instantiation argument may be
+            associated with a deferred argument that is not simple,
+            and an elemental instantiation argument may be associated
+            with a deferred procedure that is not elemental.
+
+Constraint: An <instantiation-arg> that is a <generic-spec> shall have
+            one specific procedure that has the same characteristics
+            as the active specification of the corresponding
+            <deferred-proc> in the referenced template or requirement,
+            except that a pure instantiation argument may be
+            associated with a deferred argument that is not pure, a
+            simple instantiation argument may be associated with a
+            deferred argument that is not simple, and an elemental
+            instantiation argument may be associated with a deferred
+            procedure that is not elemental.
+
+The <deferred-proc> is associated with the specific procedure that is
+consistent with the characteristics.
+
+Note: The previous two constraints constitute what is referred to as
+      "weak constraints" in other languages.
+
+
+3.1.4.3 Deferred type association
 
 Constraint: An <instantiation-arg> that is a <type-spec> shall
             correspond to a <deferred-arg> that has an active
@@ -496,40 +550,6 @@ Constraint: A <derived-type-spec> shall only appear as an
 Constraint: If an <instantiation-arg> is a <type-spec>, it shall not
             specify a type that has a coarray potential subobject
             component.
-
-Constraint: An <instantiation-arg> that is a <generic-spec> or
-            <procedure-name> shall correspond to a <deferred-arg> that
-            has an active specification that is a <deferred-proc> in
-            the referenced template or requirement.
-
-Constraint: An <instantiation-arg> that is a <procedure-name> shall
-            have the same characteristics as the active specification
-            of the corresponding <deferred-proc> in the referenced
-            template or requirement, except that a pure instantiation
-            argument may be associated with a deferred argument that
-            is not pure, a simple instantiation argument may be
-            associated with a deferred argument that is not simple,
-            and an elemental instantiation agrgument may be associated
-            with a deferred procedure that is not elemental.
-
-Constraint: An <instantiation-arg> that is a <generic-spec> shall have
-            one specific procedure that has the same characteristics
-            as the active specification of the corresponding
-            <deferred-proc> in the referenced template or requirement,
-            except that a pure instantiation argument may be
-            associated with a deferred argument that is not pure, a
-            simple instantiation argument may be associated with a
-            deferred argument that is not simple, and an elemental
-            instantiation agrgument may be associated with a deferred
-            procedure that is not elemental.
-
-Note: The previous two constraints constitute what is referred to as
-      "weak constraints" in other languages.
-
-The <deferred-proc> shall be associated with the specific procedure
-that is consistent with the characteristics.
-
-
 
 
 3.2 Syntax for the REQUIREMENT construct
@@ -553,9 +573,9 @@ Constraint: Each <deferred-arg> shall appear in a
             <requirement-specification-construct>.
 
 Note: A <requirement> is a scoping unit that allows use and host
-      association.  Each <deferred-arg> is local to the REQUIREMENT
-      construct.
+      association.
 
+Note: Each <deferred-arg> is local to the REQUIREMENT construct.
 
 
 3.3 Syntax for the REQUIRES statement
@@ -570,54 +590,6 @@ associating them with the deferred arguments of a REQUIREMENT.
 
 Constraint: <requirement-name> shall be the name of a previously
             defined <requirement>.
-
-<instantiation-arg-spec> <<is>>
-        [ <keyword> = ] <instantiation-arg>
-
-Constraint: Each <keyword> shall be the name of a <deferred-arg> in the
-            referenced requirement.
-
-Constraint: If a <deferred-arg> appears in multiple
-            <deferred-arg-decl-stmt> statements, all must be
-            <deferred-const> or all must be <deferred-type> or all
-            must be <deferred-proc>.
-
-Constraint: If a <deferred-const> appears in multiple
-            <deferred-arg-decl-stmt> statements, the type and kind
-            shall be the same.
-
-Constraint: If a <deferred-const> appears in multiple
-            <deferred-arg-decl-stmt> and all of the declarations of
-            the corresponding <deferred-arg> in the referenced
-            requirements are of deferred rank, then it is of deferred
-            rank.
-
-Constraint: 
-
-Constraint: If a <deferred-const> appears in multiple REQUIRES
-            statements, each declaration must have the same rank or have
-            deferred rank.
-
-Constraint: If a <deferred-const> appears in multiple REQUIRES
-            statements, each declaration that is not of deferred rank
-            must have the same shape or have implied shape
-
-            the shape must be consistent.  All must have
-            the same rank or be of deferred rank.  All must have the
-            same shape or be of implied shape or of deferred rank.
-
-integer, constant :: A(5)
-integer, constant :: A(*)
-integer, constant :: A(..)
-
-integer, parameter :: A(3,3,5) = ....
-
-intstantiate Foo(..., C=A)
-
-
-Constraint: If a <deferred-type> appears in a REQUIRES statement, the
-            corresponding <deferred-arg> in the referenced requirement
-            must also be a <deferred-type>.
 
 
 3.4 Syntax for the TEMPLATE construct
@@ -687,7 +659,6 @@ Note: An ALLOCATABLE, ASYNCHRONOUS, BIND, CODIMENSION, CONTIGUOUS,
       TARGET, VOLATILE, VALUE, COMMON, or EQUIVALENCE statement shall
       not appear in the template specification part.
 
-
 Constraint: An entity declared by <type-declaration-stmt> shall have
             the PARAMETER attribute.
 
@@ -704,9 +675,13 @@ Note: This is to say, the template specification section cannot
 <template-subprogram> <<is>> <function-subprogram>
                       <<or>> <subroutine-subprogram>
 
-Constraint: A variable, common block, or procedure pointer declared in
+Constraint: A variable or procedure pointer declared in
             a <template-subprogram-part> shall not have the SAVE
             attribute.
+
+Note: If variables were permitted to have the SAVE attribute then
+      instantiations of the template with the same instantiation
+      arguments could unintentionally modify each other's values.
 
 Constraint: EQUIVALENCE and COMMON shall not appear in a
             <template-subprogram-part>.
@@ -744,11 +719,6 @@ arguments of that template.
      <<or>> INSTANTIATE [::] <template-name> (
             [ <instantiation-arg-spec-list> ] ), ONLY : [ <only-list> ]
 
-<instantiation-arg-spec> <<is>> [ <keyword> = ] <instantiation-arg>
-
-Constraint: Each <keyword> shall be the name of a <deferred-arg> in the
-            referenced template.
-
 Constraint: Within an <instantiate-stmt>, <instantiation-arg> shall
             not depend on any entity defined within the referenced
             template.
@@ -757,16 +727,13 @@ Note: <generic-spec> includes operators, defined assignment and
       defined I/O.  The last may be somewhat awkward to use within a
       template without re-expressing as defined I/O again.
 
-Constraint: <constant-expr> shall be of type integer, logical or
-            character.
-
 
 4. Other miscellaneous changes
 ------------------------------
 
 * 5.1 High level syntax
 
-  Extend R508 <specifation-construct>:
+  Extend R508 <specification-construct>:
      <<or>> <template>
      <<or>> <instantiate-stmt>
 
