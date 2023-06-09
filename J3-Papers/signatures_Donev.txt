@@ -1,0 +1,216 @@
+To: J3                                                     J3/##-###
+From: Aleksandar Donev, Courant Institute, New York University
+Subject: Packaging long argument lists of templates
+Date: 2023-June-08
+
+1. Background
+===============
+
+This paper relates to one of the unresolved technical issues (UTIs) in the current generic programming proposal.
+
+We are all familiar with Fortran 77 procedures with very long lists of arguments, and how error prone and tedious in typing it is to call them correctly with the right number of arguments and in the right order. Cut and paste are commonly used, but errors are very hard to catch since a code may compile even if there are swapped arguments, for example, and the error can then be cut and paste many times. Fortran 90 solves this problem by allowing one to package multiple parameters into a derived type, which acts as a container that can store multiple related variables/parameters. Only a single scalar argument of that derived type needs to be passed by the user. Default values for many parameters can be specified as initializations of variables inside the derived type definition. This further avoids using long lists of optional arguments.
+
+2. The Problem
+===============
+
+The same situation that happens for procedure argument lists happens for template arguments in INSTANTIATE statements in the current proposal for generic programming. There is no mechanism to package a set of types and a set of operations acting on those types into a unit that can then be passed as an argument when instantiating templates. Such a unit has been referred to by others as a signature (taken from Ada's rationale/textbook) or witness.
+
+I believe the lack of signatures/witnesses is a serious deficiency in the current design, but one that is difficult to resolve. This paper proposes to learn from Ada 2005/2012 and mimic what Ada does.
+
+3. Rejected Solution: TBPs
+===============
+
+It is worth noting that the object-oriented features of F2003 allow a type to be used as a mechanism to package a type along with operations as type-bound procedures. This mechanism is not available in templates in the current proposal since there is no way to use any OOP with deferred types.
+
+However, there are some deficiencies with using TBPs to package procedures acting on objects of a given set of types. Most importantly, every use of a given template that relies on TBPs will require extending a specific type, which will require writing wrapper types, but can be hard or impossible to combine with existing type hierarchies since we do not have multiple inheritance in Fortran. The solution I propose below can in some sense be seen as an alternative to multiple inheritance, and is similar to the way interfaces are used in Java or other languages as an alternative to C++'s multiple inheritance.
+
+4. Signatures in Ada 2005
+===============
+
+The Ada community was aware of this issue when they added generic programming features to Ada 2005, and has already developed a solution. I find this solution elegant and a good basis for developing our own solution for Fortran. It is therefore worthwhile to first briefly discuss signatures in Ada as per the Ada rationale.
+
+In Ada, generic programming is done via generic packages, which can be thought of as generic (parameterized) modules. In Ada, requirements, templates, and signatures are all just (generic) packages, instead of being three different features. This is very flexible but IMO makes the code hard to read and understand, and I prefer how we made a distinction between TEMPLATEs, REQUIREMENTs, and INSTANTIATIONs. I propose below to add SATISFACTIONs to this list.
+
+One of the examples in the Ada rationale is taken from scientific computing and is very relevant for Fortran, so I will use it in this paper. The problem is to construct a type corresponding to a complex number, along with operations on arrays/vectors of complex numbers, starting from existing implementations of real numbers (here I use the intrinsic REAL types) and existing implementations of arrays/vectors of real numbers.
+
+The basic idea in Ada is that packages can be parameters of packages. This way, one can pass to a generic complex vector package a package that implements a generic complex type and a package that implements generic real arrays, to produce an implementation of a generic complex array. In the proposal below, this means that TEMPLATEs can have SATISFACTIONs as arguments. Key to safety is to have a mechanism that ensures that the signatures for the complex type and the real array are based on the same real type. I mimic Ada's approach below to accomplish this.
+
+5. Proposed Solution: SATISFACTIONs
+===============
+
+I propose that a new concept be introduced in Fortran 202X (instead of waiting until Fortran 202Y) that mimics signatures/witnesses. Since REQUIREMENTs are our key mechanism for specifying "concepts," i.e., for specifying a set of relations between a set of deferred types and a set of deferred constants and procedures, I propose we name the new unit a SATISFACTION (of a requirement).
+
+Instead of trying to write a detailed specification or syntax, I simply provide an illustration inspired by the example in the Ada rationale. There are some places where I was not completely certain of what the current design allows. Writing this was a useful exercise to show some limitations of the current design such as requiring to write a wrapper around the intrinsic sum function, and the fact that we want requirements to export/import specific procedures into generic interfaces in addition to defining explicit interfaces for deferred procedures.
+
+Let's begin by defining a REQUIREMENT specifying a complex type along with some basic operations on it:
+
+requirement ComplexNumber(R,C,I,construct,re,im,plus,...)
+   type, deferred :: R ! Type corresponding to a real number
+   type, deferred :: C ! Type corresponding to a complex number
+   ! In Ada, one can add a lot of restrictions on the sort of type that can be passed at instantiation, for example:
+   ! type R is digits <>;
+   ! which obviates the need to write wrappers around intrinisic types corresponding to real numbers
+   
+   ! Imaginary unit
+   ! In Fortran, as currently proposed, we cannot have deferred constants of type(R)
+   ! Therefore, we have to make the imaginary unit a function that returns I:
+   function I()
+      type(R) :: I
+   end function   
+   ! In Ada one can write
+   ! I:constant Complex:=(0.0,1.0);
+   ! and the constants zero and one will be converted to the appropriate Digits type
+      
+   ! Create a complex number from real and imaginary pieces:
+   elemental function construct(re,im) result(cmplx)
+      type(R), intent(in) :: re,im
+      type(C) :: cmplx
+   end function
+
+   ! Split a complex number into real and imaginary pieces:
+   elemental function re(cmplx)
+      type(C), intent(in) :: cmplx
+      type(R) :: re
+   end function
+   elemental function im(cmplx)
+      type(C), intent(in) :: cmplx
+      type(R) :: im
+   end function
+   
+   ! Operations on complex numbers, such as addition:
+   function plus(first,second)
+      type(C), intent(in) :: first,second
+      type(C) :: plus
+   end function
+   ...
+   
+   ! New proposed feature
+   ! It is important for a signature to be able to package generic interfaces along with types and procedures
+   interface operator(+)
+      procedure plus
+   end interface
+
+end requirement
+
+Now let us also create another REQUIREMENT specifying vectors of reals along with operations on them:
+
+requirement RealVector(R,add,...)
+   type, deferred :: R  ! Type corresponding to a real number
+   ...
+   function add(vec) result(sum)
+      type(R), dimension(..), intent(in) :: vec
+      type(R) :: sum
+   end function
+end requirement
+
+Now we want to create generic code for a vector of complex numbers, along with operations such as add, by combining a signature for a complex number with a signature for a real vector:
+
+template ComplexVector(C,Complex,Vector)
+   type, deferred :: C ! Basic type corresponding to a complex number
+   
+   ! New proposed feature: satisfactions
+   satisfaction :: Complex=ComplexNumber(C=C) ! Syntax can use either = or =>
+   ! The instantiation argument must be a satisfaction of the requirement ComplexNumber where the type C is the same type
+   ! as the type passed for the deferred type C when the template ComplexVector is instantiated.
+   
+   ! New proposed feature: importing into namespace from satisfactions
+   import Complex
+   ! The import means that the names R, C, construct, re, im, plus become available in the current scoping unit
+   ! This has the same semantics as if we instead wrote:
+   ! requires ComplexNumber(R, C, construct, re, im, plus, ...)
+   ! Additionally, the function plus gets added to the generic operator(+) so we can use it in this template
+   ! One can restrict what gets imported, for example
+   ! import Complex, only : operator(.plus.)=>operator(+)
+   ! will make + available for complex numbers as .plus. inside this template
+   ! Note that the syntax could be
+   ! use Complex
+   ! which is how it is in Ada
+   ! Note that this feature is key, without it, nested signatures would require 
+   ! typing long selection lists like ComplexVector%ComplexNumber%RealType etc.
+   ! How horrendous this can be was made especially clear to me as I was rewriting 
+   ! the block matrix example to use signatures
+   
+   satisfaction :: Vector=RealVector(R=R) ! A satisfaction of the requirement RealVector
+   ! No import here so the name add is not available in the current scoping unit,
+   ! and one must use Vector%add instead.
+   ! The instantiation argument must be a satisfaction of the requirement RealVector where the type R is the same type
+   ! as the type passed for the deferred type R when the satisfaction Complex is declared
+   ! We could also have written:
+   ! satisfaction :: Vector=>RealVector(R=Complex%R)
+   ! If there were no import for Complex we would be required to write this
+   
+contains
+
+   function add(vec) result(sum)
+      type(C), dimension(..), intent(in) :: vec
+      type(C) :: sum
+      
+      ! This code is certainly not optimal but it is very simple to write:
+      sum = construct(re=Vector%sum(re(vec)), im=Vector%sum(im(vec)))
+   end function
+   
+end template
+
+Now let me illustrate how to use this template. Unfortunately, the currend design forces us to first write some boiler plate code, which should really not be the case once generic programming is available.
+
+module Complex_Vectors
+   use ... ! Assume the requirements and templates above are available in this module
+
+   ! Complex number based on modulus/phase representation
+   template PolarComplex(wp)
+      integer, constant :: wp
+   
+      type :: PolarComplex(wp)
+         integer, kind :: wp
+         real(wp) :: r,theta
+      end type  
+   
+   contains
+       
+      function I()
+         type(PolarComplex(wp)) :: I
+         I%r=1.0_wp
+         I%theta=asin(1.0_wp)
+      end function  
+
+      ! Create a complex number from real and imaginary pieces:
+      elemental function construct(re,im) result(cmplx)
+         real(wp), intent(in) :: re,im
+         type(PolarComplex(wp)) :: cmplx
+         cmplx%r=sqrt(re**2+im**2)
+         cmplx%theta=atan(im,re)
+      end function   
+   
+      ! I omit the functions re, im, plus, etc. for brevity
+      
+   end template   
+   
+   ! The current design of the template feature forces us to write a wraper around the intrinsic function sum
+   template Wrappers(wp)
+      integer, constant :: wp
+   contains   
+      function add(vec)
+         real(wp), dimension(..), intent(in) :: vec
+         real(wp) :: add
+         add = sum(vec) ! I hope this is legal in the current design?
+      end function      
+   end template   
+      
+   integer, parameter :: sp=kind(0.0), dp=kind(0.0d0)
+   integer, paramater :: wp=dp ! Choose what precision we want to use in the rest of the code
+
+   instantiate PolarComplex(wp)
+   instantiate Wrappers(wp)
+
+   satisfaction :: Complex=ComplexNumber(real(wp), PolarComplex, I, plus, ...)
+   satisfaction :: Vector=RealVector(real(wp), add, ...)
+
+   ! Key to new feature: combine two packages together into a new one
+   instantiate :: CVector=ComplexVector(real(wp), Complex, Vector)
+   
+   type(PolarComplex) :: array(10)=I()
+   
+   write(*,*) add(array)
+
+end program
+

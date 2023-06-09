@@ -1,0 +1,155 @@
+To: J3                                                     J3/##-###
+From: Aleksandar Donev, Courant Institute, New York University
+Subject: Keyword arguments for deferred procedures in templates
+Date: 2023-June-08
+
+1. Background
+===============
+
+This paper relates to one of the unresolved technical issues (UTIs) in the current generic programming proposal.
+
+The current proposal for generic programming features in Fortran specifies that interfaces of deferred procedure arguments of templates do *not* specify keywords for the arguments of that procedure, as they would for procedure arguments of procedures, for external procedures, or for procedure pointers. The primary reason for this is that a given deferred procedure argument may appear in multiple requirements, which may be written by different programmers, and may therefore use different names for the arguments even though their TKR signatures agree.
+
+2. The Problem
+===============
+
+This leads to a very unfortunate situation in which programmers cannot use keyword arguments when writing generic code. This not only prevents certain uses where keywords are required (e.g., when there are multiple optional arguments), but also takes away from the programmer a powerful safety feature, since keywords help avoid common mistakes such as swapping the order of parameters that have the same TKR signature. Furthermore, it prevents reusing existing code when writing templates. Lastly, it adds yet one more restriction on generic code that will come as a surprise to programmers, and in the beginning programmers are likely to think this restriction is a compiler bug and not a feature of the language.
+
+I deem this situation unacceptable. We need to integrate the TEMPLATE feature as fully as possible with existing language features, rather than make it orthogonal to existing features (as we have for Object Oriented Programming as this was deemed too complex to tackle in this revision).
+
+3. Proposed Solutions
+===============
+
+There are a number of possible solutions that allow keyword arguments to be used when invoking deferred procedures. I list below those that I could think of, to be discussed after the template tutorial, and potentially be included in a straw vote.
+
+3.A Explicit Redeclaration
+-------------------------
+
+One simple option is to require the programmer to specify an explicit interface (in the specification part of the template) for any deferred procedure that they wish to invoke with keyword arguments, even if an explicit interface was already provided in requirements. For example:
+
+requirement BinaryOp(T,op)
+   type, deferred :: T
+   function op(x,y) result(z)
+      type(T), intent(in) :: x,y
+      type(T) :: z
+   end function
+end requirement
+
+template KeywordArguments(T,op)
+   type, deferred :: T
+
+   requires BinaryOp(T,op) ! Specifies TKR for arguments of op but not keywords
+   ! Option A: Allow an explicit interface for op to specify keywords:
+   interface
+      function op(first,second) result(res)
+         type(T), intent(in) :: first,second
+         type(T) :: res
+      end function   
+   end interface  
+       
+contains
+
+   subroutine UseKeywords(x,y,z)
+      type(T), intent(in) :: x,y
+      type(T), intent(out) :: z
+      
+      !z = op(x=x, y=y) ! Illegal, wrong keywords
+      z=op(first=x, second=y) ! Legal under option A
+      
+   end subroutine
+   
+end template
+
+Positives: It is very clear what the keyword arguments are, and the purpose of the REQUIRES statement becomes to simply check that op has the correct list of arguments and correct TKR for the arguments, but ignores the names of the arguments (that is, in C lingo, the requirement only specifies the procedure prototype). This option is also backwards compatible with the current design.
+
+Negatives: This requires duplicated code, especially in cases when there is no actual conflict in keywords among multiple requirements. To avoid duplication programmers will need to use macros/preprocessors/include, which seems undesirable for generic code.
+
+3.B Require Consistent Keywords
+-------------------------
+
+A second alternative is to *require* that all of the requirements / interfaces specify the same names for the arguments of a deferred procedure, thus removing the ambiguity. This is in direct conflict with the current design. In the example under 3.A, it would require changing the requirement to
+
+requirement BinaryOp(T,op)
+   type, deferred :: T
+   function op(first,second) result(z)
+      type(T), intent(in) :: first,second
+      type(T) :: z ! Note that the name of the result is irrelevant for functions
+   end function
+end requirement
+
+Positives: This avoids ambiguities and thus a programmer can easily understand what the code is doing without having to read and remember all of the restrictions and constraints in the standard.
+
+Negatives: This disallows what are expected to be common use cases, where different library writers define standard requirements (e.g., requirements defining a ring or a group) independently of each other. This option is also not backwards compatible with the current design. I therefore propose this option not be included in the straw vote, but wanted to list it here for completeness.
+
+3.C Allow Consistent Keywords
+-------------------------
+
+A third alternative is to specify that keywords are available for a deferred procedure if and only if all of the interfaces for that procedure (in requirements or explicitly declared in the specification part of the template) specify the *same* argument names.
+
+This option would make the code under option A illegal, but the code under option B legal.
+
+Positives: This allows programmers to use keyword arguments in inambiguous cases. This option is also backwards compatible with the current design.
+
+Negatives: This option requires the compiler to examine the whole specification part of a module before determining whether keywords are available or not. It also poses the same requirement on users reading the specification part of a template. This sort of semantics that depends on the relationship among multiple disjoint code blocks seems uncharacteristic of Fortran and also error-prone. 
+
+3.D Explicit Choice of Keywords
+-------------------------
+
+A final alternative is to add a new keyword/statement that the programmer can use to select one of the interfaces as the one that specifies the keywords. The specific syntax for this should be discussed at the meeting so different ideas can be brought forward. Here is a tentative syntax for illustration that adds a new keyword KEYWORDS:
+
+requirement BinaryOps(T,plus,times)
+   type, deferred :: T
+   function plus(x,y) result(z)
+      type(T), intent(in) :: x,y
+      type(T) :: z ! Note that the name of the result is irrelevant for functions
+   end function
+   function times(x,y) result(z)
+      type(T), intent(in) :: x,y
+      type(T) :: z ! Note that the name of the result is irrelevant for functions
+   end function
+end requirement
+
+template KeywordArguments(T,plus,times,minus,divide)
+   type, deferred :: T
+
+   requires, keywords(minus) :: BinaryOps(T,plus,minus) ! Specifies TKR and keywords only for minus
+   requires, keywords(times,divide) :: BinaryOps(T,times,divide) ! Specifies TKR and keywords for arguments of times and divide
+
+   ! One can do here
+   ! requires, keywords(plus) :: BinaryOp(T,plus)
+   ! or explicitly declare:
+   interface, keywords(plus) ! Syntax TBD
+      ! If keywords(plus) already appeared, a second appearance would be forbidden
+      function plus(first,second) result(res)
+         type(T), intent(in) :: first,second
+         type(T) :: res
+      end function   
+   end interface    
+     
+contains
+
+   subroutine UseKeywords(x,y,z)
+      type(T), intent(in) :: x,y
+      type(T), intent(out) :: z
+      
+      ! All of these are legal and there is only one legal set of keywords:
+      z = minus(x=x, y=y)
+      z = times(x=x, y=y)
+      z = divide(x=x, y=y)
+      z = plus(first=x, second=y)
+      
+   end subroutine
+
+end template
+
+Positives: This allows the most flexibility to programmers, while also enabling the use of keywords, without any potential ambiguity or lack of clarity. This option is also backwards compatible with the current design.
+
+Negatives: This requires introducing yet one more keyword and new syntax to learn before one can use TEMPLATEs.
+
+4. Conclusions
+===============
+
+My personal preference is option D, but I find option C also acceptable. I suggest a straw vote between options A, C, and D.
+
+There are other options, for example, the first interface wins and specifies the keywords. Some of these were discussed briefly in the generics subgroup, and deemed not very "Fortran like." I have therefore not included them here.
+
