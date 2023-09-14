@@ -1,0 +1,77 @@
+To: J3                                                     J3/##-###
+From: Brad Richardson
+Subject: Array Bounds of Constants and Keyword Arguments of Deferred
+         Procedures in Templates
+Date: 2023-September-13
+
+Reference: 23-155r2
+
+1. Introduction
+===============
+
+In the course of developing the syntax for the template feature, we
+encountered a couple of tricky aspects to handle with respect to the
+possible separation and/or duplication of specifications using the
+REQUIREMENT and REQUIRES feature. This paper describes the issues of
+each problematic situation, the possible solutions, and the rationale
+for the solution chosen by the generics subgroup.
+
+2. Deferred Procedure Dummy Argument Names
+==========================================
+
+There is a possibility for the names of the dummy arguments of a
+deferred procedure to be different in the specifications in different
+requirements or templates, but for all other characteristics of that
+procedure to be the same. It is desirable for that to be valid, but
+poses an interesting problem if one would like to use keyword arguments.
+
+Subgroup discussed a few different options to address this problem.
+
+1. The names of the dummy arguments must agree in all specifications
+   of a deferred procedure
+2. Keyword arguments are not allowed for deferred procedures
+3. Keyword arguments are only allowed for deferred procedures if the
+   names of the dummy arguments are the same in all of its
+   specifications
+4. The names the dummy arguments of a deferred procedure are not defined
+   through its appearance in a REQUIRES statement
+
+Subgroup decided option 1 was likely to result in frequent conflicts
+between library authors, and would be untenable for a growing open-source
+ecosystem. Option 2 was deemed too restrictive, as it would prevent some
+use cases; namely the possibility of effective use of deferred procedures
+with multiple optional arguments. Subgroup decided to go with option 4,
+as it does provide a means for using keyword arguments and is backwards
+compatible with a relaxation to option 3. The consequence is that in
+order to use keyword arguments, an interface for a deferred procedure
+must appear in the template for which it is a deferred argument.
+
+3. Deferred Constant Array Bounds
+=================================
+
+There is a possibility for the bounds of a deferred constant to be
+specified differently in the specifications in different requirements
+or templates. It is desirable that it be valid if the specifications are
+not contradictory. The characteristics involved in this possibility are
+rank, shape and bounds.
+
+Subgroup discussed a few different options to address this problem.
+
+1. All declarations of a deferred constant must specify the rank, shape
+   and bounds identically
+2. So long as the declarations are not conflicting, the one that most
+   constrains rank, shape and bounds is what takes effect.
+3. Deferred constants that have declarations that are less
+   constraining on rank and shape may not be arguments to requirements
+   with specifications that are more constraining on rank and shape.
+
+Subgroup decided that option 1 left open the possibility of conflicts
+between library authors, and would be undesirable for a growing
+open-source ecosystem. Option 2 was deemed to leave open the possibility
+of confusion for template users if actual requirements for its use were
+more constraining than the declarations that appeared explicitly within
+it were less constraining. Subgroup thus decided to go with option 3,
+with a slight caveat. Non-default lower bounds are not allowed for
+deferred constants. This preserves backwards compatibility in the event
+we decide on a method for how to handle declarations with conflicting
+bounds.
