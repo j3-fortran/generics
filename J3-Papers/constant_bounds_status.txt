@@ -16,7 +16,7 @@ respect to the rank, shape and bounds of deferred constants,
 the possible solutions, and the rationale for the solution chosen by
 the generics subgroup.
 
-3. Deferred Constant Array Bounds
+2. Deferred Constant Array Bounds
 =================================
 
 There is a possibility for the bounds of a deferred constant to be
