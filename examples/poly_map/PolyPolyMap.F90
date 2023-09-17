@@ -35,7 +35,7 @@ contains
 
    subroutine insert(this, key, value)
       class(Map), intent(inout) :: this
-      type(K), intent(in) :: key
+      class(K), intent(in) :: key
       class(T), intent(in) :: value
 
       type(ValueWrap) :: tw
@@ -49,7 +49,7 @@ contains
 
 
    function get(this, key) result(value)
-      type(T), pointer :: value
+      class(T), pointer :: value
       class(Map), target, intent(inout) :: this
       class(K), intent(in) :: key
 

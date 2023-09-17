@@ -5,17 +5,17 @@ module Oper_m
       type, deferred :: T
       interface
          logical function op(x,y)
-            type(T), intent(in) :: k
+            type(T), intent(in) :: x
             type(T), intent(in) :: y
          end function Op
       end interface
    end requirement
 
    requirement PolyOper(T, op)
-      type, deferred :: T
+      class, deferred :: T
       interface
          logical function op(x,y)
-            class(T), intent(in) :: k
+            class(T), intent(in) :: x
             class(T), intent(in) :: y
          end function op
       end interface

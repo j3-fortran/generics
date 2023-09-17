@@ -7,14 +7,14 @@ module PolyValueMap_m
    template PolyValueap_tmpl(K, T, less)
       type, deferred :: K ! key
       class, deferred :: T ! value
-      requires Oper(K, less)
+      REQUIRES Oper(K, less)
 
       type :: ValueWrap
          class(T), allocatable :: item
       end type ValueWrap
 
       instantiate Pair_tmpl(K, ValueWrap)
-      instantiate Map_tmpl(K, valueWrap, less), only: MapInner => Map
+      instantiate Map_tmpl(K, ValueWrap, less), only: MapInner => Map
 
       type :: Map
          type(MapInner) :: inner
