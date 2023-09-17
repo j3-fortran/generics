@@ -1,7 +1,7 @@
 To: J3                                                     J3/##-###
 From: Tom Clune
 Subject: logical REQUIREMENT in templates
-Date: 2023-10-17
+Date: 2023-09-17
 
 Reference: 23-155r2
 
