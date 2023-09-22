@@ -63,7 +63,7 @@ quickly rejected this as a possible solution.
 3.2 Deferred Kinds or Ranks Are Not Checked When Processing Template
 --------------------------------------------------------------------
 
-This solution pokes a giant whole in the idea of "strong concepts" and
+This solution pokes a giant hole in the idea of "strong concepts" and
 so it was dismissed as well.
 
 3.3 Deferred Expressions as a New Kind of Expression

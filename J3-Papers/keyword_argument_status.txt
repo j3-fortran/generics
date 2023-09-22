@@ -37,12 +37,12 @@ REQUIREMENT R1(T, F, ...)
   END INTERFACE
 END REQUIREMENT
 
-REQUIREMENT R1(T, G, ...)
+REQUIREMENT R2(T, G, ...)
   TYPE, DEFERRED :: T
   INTERFACE
     FUNCTION G(B)
       TYPE(T), INTENT(IN) :: B
-      TYPE(T) :: F
+      TYPE(T) :: G
     END FUNCTION
   END INTERFACE
 END REQUIREMENT
@@ -67,8 +67,8 @@ Subgroup discussed a few different options to address this problem.
 3. Keyword arguments are only allowed for deferred procedures if the
    names of the dummy arguments are the same in all of its
    specifications
-4. The names the dummy arguments of a deferred procedure are not defined
-   through its appearance in a REQUIRES statement
+4. The names of the dummy arguments of a deferred procedure are not
+   defined through its appearance in a REQUIRES statement
 
 Subgroup decided option 1 was likely to result in frequent conflicts
 between library authors, and would be untenable for a growing open-source
