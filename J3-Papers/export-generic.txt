@@ -1,0 +1,98 @@
+To: J3                                                     J3/##-###
+From: Tom Clune
+Subject: exporting operators from templates
+Date: 2023-09-17
+
+Reference: 23-155r2
+
+1. Introduction
+===============
+
+A potential problem arises when a template exports an operator with a
+specific procedure whose arguments are deferred types or intrinsic
+types.  Within the template itself deferred type are distinct from
+intrinsic types, which allows unambiguous extensions of intrinsic
+operators.  However, such operators will conflict with ordinary
+intrinsic operations if the template is instantiated with intrinsic
+types.
+
+This paper is intended to summarize the issue and provide subgroup's
+rational for treatment.
+
+
+2. Problematic example
+======================
+
+Consider the following template:
+
+   TEMPLATE TMPL(T)
+       TYPE, DEFERRED :: T
+       PRIVATE
+       PUBLIC :: OPERATOR(+)
+
+       INTERFACE OPERATOR(+)
+           PROCEDURE :: add
+       END INTERFACE
+
+   CONTAINS
+
+       FUNCTION add(x,y) RESULT(z)
+          TYPE(T), INTENT(IN) :: x, y
+	  type(T) :: z
+	  ...
+       END FUNCTION
+
+   END TEMPLATE
+
+_Within_ the template, the deferred type T is distinct from all
+intrinsic types, and OPERATOR(+) is thus legal.
+
+However the following instantiation of TMPL is problematic:
+
+   INSTANTIATE TMPL(INTEGER) ! with intrinsic int addition
+
+Note that the problem is further complicated by the fact that there is
+no mechanism in Fortran to rename intrinsic operators.
+
+
+3. Analysis
+===========
+
+Subgroup is unaware of any realistic use cases where the scenario
+above would arise.  Instead, actual use cases generally have at least
+one argument that is a derived type defined within the template.  Such
+derived types are always distinct from intrinsic types and therefore
+do not lead to any conflicts.
+
+Subgroup considered the following options:
+
+(1) Disallow template exports of intrinsic operators
+
+(2) Add a constraint disallowing templates from exporting potentially
+    problematic operators.
+
+(3) Do nothing.  Existing language constraints already prevent the
+    instantiation in the example above.    Users may find somewhat
+    obscure compilation error messages.
+
+Subgroup found that (1) was too severe.  We have numerous examples
+that potentially benefit from exporting intrinsic operators extended for
+derived types defined within the same template.
+
+Subgroup preferred option option (2) over (3), primarily on the basis
+that we could not identify legitimate use cases that would justify
+allowing option (3).  If such use cases later emerge, the constraint
+implied by option (2) could subsequently be deleted without loss of backward
+compatibility.
+
+4. Conclusion
+=============
+
+Subgroup proposes to add a constraint to the syntax in 15.4.3.2
+Interface block along the following lines:
+
+Constraint: If <generic-spec> is <extended-intrinsic-op>, then at
+            least one dummy argument in each <interface-specification>
+            shall be non-deferred and non-intrinsic.
+
+=== END ===
