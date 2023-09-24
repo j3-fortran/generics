@@ -80,5 +80,17 @@ Our suggested syntax would be:
 
     CLASS, DEFERRED :: T
 
+4. Implications and consequences
+================================
+
+If a template declares a deferred type T as polymorphic, then any
+corresponding actual argument shall be a non-extensible type.   I.e.,
+the actual type shall not be:
+
+  - intrinsic
+  - SEQUENCE
+  - BIND(C)
+  - etc.
+
 
 ===END===
