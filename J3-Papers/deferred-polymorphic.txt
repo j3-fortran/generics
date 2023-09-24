@@ -20,7 +20,7 @@ generics subgroup for how to support this capability in F202Y.
 
 Consider a List as a protypical category of container.  A programmer
 may wish to declare a list of reals, a list of integers, or a list of
-some user-define type.  As shown in previous tutorials, the existing
+some user-defined type.  As shown in previous tutorials, the existing
 syntax can adequately support all of these.  But another important use
 case is where all of the elements of the list have a declared type T,
 but differing dynamic types.  (Here, T is a deferred type argument for
@@ -49,7 +49,7 @@ deferred objects:
 (1) Implicitly interpret the deferred type T as polymorphic if the
     template references CLASS(T) anywhere in the template.
 
-(2) Introduce _intrinsic_ requirement that indicates that T is
+(2) Introduce an _intrinsic_ requirement that indicates that T is
     polymorphic.  These would be requirements that cannot be defined
     by existing syntax.  Nominal syntax would be:
 
