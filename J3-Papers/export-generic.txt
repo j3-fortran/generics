@@ -79,7 +79,7 @@ Subgroup found that (1) was too severe.  We have numerous examples
 that potentially benefit from exporting intrinsic operators extended for
 derived types defined within the same template.
 
-Subgroup preferred option option (2) over (3), primarily on the basis
+Subgroup preferred option (2) over (3), primarily on the basis
 that we could not identify legitimate use cases that would justify
 allowing option (3).  If such use cases later emerge, the constraint
 implied by option (2) could subsequently be deleted without loss of backward
