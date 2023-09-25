@@ -84,7 +84,7 @@ Our suggested syntax would be:
 ================================
 
 If a template declares a deferred type T as polymorphic, then any
-corresponding actual argument shall be a non-extensible type.   I.e.,
+corresponding actual argument shall be an extensible type.   I.e.,
 the actual type shall not be:
 
   - intrinsic
