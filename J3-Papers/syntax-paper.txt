@@ -269,20 +269,26 @@ procedure.
 
 <deferred-type-declaration-stmt>
        <<is>>  TYPE, DEFERRED :: <deferred-type-list>
+       <<or>>  CLASS, DEFERRED :: <deferred-class-list>
 
 <deferred-type> <<is>> <name>
 
-Constraint: A <deferred-type> entity shall not appear as
-            <parent-type-name> in an EXTENDS attribute.
+Constraint: A <deferred-type> or <deferred-class> entity shall not
+            appear as <parent-type-name> in an EXTENDS attribute.
 
 Note: Possibly a similar constraint is needed for CLASS(T), but
-      current reading of the standard requires CLASS(<derived-type-spec>),
-      and a <deferred-type> is not a <derived-type-spec>.
+      current reading of the standard requires
+      CLASS(<derived-type-spec>), and a <deferred-type> is not a
+      <derived-type-spec>.
 
 Constraint: Each <deferred-type> shall appear in
             <deferred-arg-list> of the innermost scoping unit.
 
 A <deferred-type> is a deferred type.
+
+Note: The actual type-spec passed to a <deferred-class> deferred
+      argument must be extensible.  Thus it may not be intrinsic,
+      sequence, etc.
 
 
 3.1.2 Deferred interface body
@@ -639,8 +645,12 @@ Note: The previous two constraints constitute what is referred to as
 
 Constraint: An <instantiation-arg> that is a <type-spec> shall
             correspond to a <deferred-arg> that has an active
-            specification that is a <deferred-type> in the
-            referenced template or requirement.
+            specification that is a <deferred-type> or
+            <deferred-class> in the referenced template or
+            requirement.
+
+Constraint: An <instantiation-arg> that is a <type-spec> shall not be
+            abstract.
 
 Constraint: If an <instantiation-arg> is a <derived-type-spec>, it
             shall be allowed for a variable of that type to appear in
@@ -653,6 +663,9 @@ Constraint: A <derived-type-spec> shall only appear as an
 Constraint: If an <instantiation-arg> is a <type-spec>, it shall not
             specify a type that has a coarray potential subobject
             component.
+
+Constraint: If an <instantiation-arg> corresponds to a
+            <deferred-class>, it shall be extensible.
 
 
 3.2 Syntax for the REQUIREMENT construct
@@ -852,6 +865,9 @@ Note: <generic-spec> includes operators, defined assignment and
   Extend R703 <declaration-type-spec>:
   "TYPE(<deferred-type>)"
 
+  Extend R703 <declaration-type-spec>:
+  "CLASS(<deferred-class>)"
+
 
 * 7.5.2.1 Syntax of a derived-type definition
 
@@ -971,6 +987,23 @@ Modify C1503 to prevent use of deferred arguments:
 
   Extend R1524 <actual-arg>:
   " <<or>> <deferred-proc> "
+
+* Insert new glossary term after 3.38.2
+
+  [named deferred constant]
+  named data object with the CONSTANT attribute (????)
+  
+* 10.???? Expressions and Assignment
+
+  New section 10.1.13 Deferred constant expressions
+
+  <deferred-const-expr> <<is>> <constant-expr>
+
+  An expression is a <deferred-const-expr> if one of its primaries is
+  a named deferred constant.
+
+  A <deferred-const-expr> is not equal to any other <expr> unless
+  <expr> is syntactically equivalent.
 
 
 ===END===
