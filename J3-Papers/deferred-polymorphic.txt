@@ -1,0 +1,96 @@
+To: J3                                                     J3/##-###
+From: Tom Clune
+Subject: polymorphic deferred types
+Date: 2023-09-17
+
+Reference: 23-155r2
+
+
+1. Introduction
+===============
+
+The current draft syntax for generics features in F202Y can support
+all of the proffered use cases, except those that require polymorphics
+for the deferred type.  This paper summarizes the rationale by
+generics subgroup for how to support this capability in F202Y.
+
+
+2. Polymorphic deferred use cases
+=================================
+
+Consider a List as a protypical category of container.  A programmer
+may wish to declare a list of reals, a list of integers, or a list of
+some user-defined type.  As shown in previous tutorials, the existing
+syntax can adequately support all of these.  But another important use
+case is where all of the elements of the list have a declared type T,
+but differing dynamic types.  (Here, T is a deferred type argument for
+a template.)
+
+In practice, such a user could leverage a (monomorphic) implementation
+of the List template by defining a wrapper type:
+
+
+   TYPE :: Wrapper
+      CLASS(MyBaseType), ALLOCATABLE :: item
+   END TYPE
+
+And then use Wrapper as the argument to the List template.  In
+practice is this is very cumbersome as such a user must wrap or unwrap
+arguments to each procedure involving List.    It would be better to allow
+the template itself to handle these details.
+
+
+3. Options for polymorphic deferred
+===================================
+
+Subgroup considered the following options for allowing polymorphic
+deferred objects:
+
+(1) Implicitly interpret the deferred type T as polymorphic if the
+    template references CLASS(T) anywhere in the template.
+
+(2) Introduce an _intrinsic_ requirement that indicates that T is
+    polymorphic.  These would be requirements that cannot be defined
+    by existing syntax.  Nominal syntax would be:
+
+    REQUIRES EXTENSIBLE(T)
+    
+
+(3) Introduce variant syntax for declaring a deferred type as
+    polymorphic.  E.g., CLASS, DEFERRED :: T
+
+
+Subgroup did not like option (1) as it could be relatively difficult
+for the casual programmer to see whether a deferred type is
+polymorphic.  Some obscure usage deep in the source could trigger the
+difference.
+
+Subgroup decided that option (2) would be attractive if related
+intrinsic requirementsn were also to be introduced.    E.g.,
+
+   REQUIRES TYPE_EXTENDS(T, U) ! differenc that intrinsic EXTENDS_TYPE()
+   REQUIRES DIFFERENT_TYPE(T,U) ! allows overload of T & U
+
+While subgroup believes that such intrinsic requirements may prove
+desirable in the future, our existing use cases do not clearly show
+the need at this time.
+
+Subgroup therefore prefers the more direct approach with option (3).
+Our suggested syntax would be:
+
+    CLASS, DEFERRED :: T
+
+4. Implications and consequences
+================================
+
+If a template declares a deferred type T as polymorphic, then any
+corresponding actual argument shall be an extensible type.   I.e.,
+the actual type shall not be:
+
+  - intrinsic
+  - SEQUENCE
+  - BIND(C)
+  - etc.
+
+
+===END===
