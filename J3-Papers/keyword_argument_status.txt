@@ -1,7 +1,7 @@
-To: J3                                                     J3/##-###
+To: J3                                                     J3/23-212
 From: Brad Richardson
 Subject: Keyword Arguments of Deferred Procedures in Templates
-Date: 2023-September-13
+Date: 2023-September-26
 
 Reference: 23-155r2
 

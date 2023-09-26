@@ -1,7 +1,7 @@
-To: J3                                                     J3/##-###
+To: J3                                                     J3/23-211
 From: Brad Richardson
 Subject: Array Bounds of Constants in Templates
-Date: 2023-September-13
+Date: 2023-September-26
 
 Reference: 23-155r2
 
