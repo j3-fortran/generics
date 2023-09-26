@@ -1,0 +1,97 @@
+To: J3                                                     J3/##-###
+From: Tom Clune
+Subject: logical REQUIREMENT in templates
+Date: 2023-09-17
+
+Reference: 23-155r2
+
+1. Introduction
+===============
+
+In Manchester (meeting #230), a suggestion was made in plenary for
+generics subgroup to consider "logical" requirements as a means of
+expressing additional restrictions on template arguments.  This
+discussion arose tangentially from a discussion about the possibility
+of extending generics to include a small set of _intrinsic_
+requirements.  The latter will be discussed in a separate rationale
+paper.
+
+Subgroup has subsequently decided not to pursue logical requirements
+for F202Y, and this paper is to summarize our rationale for this
+decision.
+
+2. Logical requirements
+=======================
+
+A logical requirement would nominally be of the form:
+
+ REQUIRES  (<logical-deferred-const-expression>)
+
+and would be used to express requirements on the _values_ of deferred
+arguments.  These would complement the already planned REQUIREMENT
+constructs which are used to express requirements on procedure
+interfaces.
+
+A typical example of an logical requirement would be to indicate that
+a deferred constant argument is intended to be used as a KIND and thus
+restrict allowed values in INSTANTIATE statements.
+
+   TEMPLATE  TMPL(K, KI, KR)
+      USE, INTRINSIC :: ISO_FORTRAN_ENV, ONLY: INT_KINDS, REAL_KINDS
+      INTEGER, CONSTANT :: K, KI, KR
+
+      REQUIRES (ANY(INT_KINDS == KI))
+      REQUIRES (ANY(REAL_KINDS == KR))
+
+      TYPE NEW_TYPE
+         INTEGER(KIND=K) :: i
+         INTEGER(KIND=KI) :: j
+         REAL(KIND=KR) :: x
+      END TYPE
+   END TEMPLATE
+
+Other typical examples:
+
+    REQUIRES (0 <= RANK .and. RANK <= 15) ! legal array rang
+    REQUIRES (N - M == 1)   ! deferred params have dependent values
+
+
+3. Analysis
+===========
+
+Subgroup considered the following potential benefits of including logical
+requirements in F202Y
+
+ (1) Identify some violations during compilation of a template. (As
+     opposed to during instantiation.
+
+ (2) Better error messages from the processor.
+
+ (3) A form of explicit documentation for the user of the template.
+
+We have concluded that there is effectively no ability for the
+processor to exploit logical requirements during compilation of the
+template itself.  I.e., _all_ benefits from logical requirements can
+only be manifested during instantiation of the template.  This is in
+direct contrast to the existing (proposed) REQUIREMENT construct which
+allows the processor to disambiguate and to overload by TKR, and make
+various associated inferences.
+
+After considering a variety of concrete, realistic examples, we also
+concluded that processors could likely provide comparable error
+diagnostics without the additional requirements.  E.g., if a deferred
+constant is used in a KIND expression with an unsupported value, the
+processor can recognize the role of a deferred parameter in the
+expression without the extra hint from the programmer.  No doubt, one
+can construct more complicated examples in which the processor is left
+producing a less direct error message during instantiation.  But these
+would not appear to be typical use cases.
+
+Subgroup did recognize the value of logical requirements in expressing
+the intent of the template developer as a form of functional
+documentation.  It is therefore quite possible that this feature will
+be revived in some future iteration of the standard.  But for now we
+feel that the value is relatively low, and pursuit would be a drain on
+the finite resources of generics subgroup.
+
+===END===
