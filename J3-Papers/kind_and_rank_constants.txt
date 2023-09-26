@@ -1,0 +1,147 @@
+To: J3                                                     J3/23-213
+From: Brad Richardson
+Subject: The Use of Deferred Constants to Define Kind and Rank
+Date: 2023-September-26
+
+Reference: 23-155r2
+
+1. Introduction
+===============
+
+A design goal of the template feature is that the majority of interface
+and type checking be done at the time a template is processed, without
+regards to any actual instantiations of that template. This poses a
+difficulty in the case that deferred constants are used to specify the
+kind or rank of a variable. This paper describes the difficulty posed
+and the possible ways to address the problem, and the rationale for
+the solution chosen by the generics subgroup.
+
+2. The Problem
+==============
+
+While deferred constants are constants and one would expect to be able
+to use them in constant expressions, including specification expressions,
+their values are not known at the time the template is processed. If a
+deferred constant is used in an expression to define the kind or rank
+of an argument of a deferred procedure, it then becomes an NP hard
+problem (in the general case) to determine if the rank or kind of the
+dummy and actual argument are the same in a reference to that procedure.
+Consider the following example.
+
+TEMPLATE TMPL(T, R, S)
+  TYPE, DEFERRED :: T
+  INTEGER, CONSTANT :: R
+  INTERFACE
+    SUBROUTINE S(A, B)
+      TYPE(T), INTENT(IN), RANK(R) :: A
+      TYPE(T), INTENT(OUT), RANK(1+R) :: B
+    END SUBROUTINE
+  END INTERFACE
+CONTAINS
+  SUBROUTINE FOO(C, D, ...)
+    TYPE(T), INTENT(IN), RANK(R) :: C
+    TYPE(T), INTENT(OUT), RANK(R+1) :: D
+    ...
+    CALL S(C, D)
+  END SUBROUTINE
+END SUBROUTINE
+
+Note that in this case it seems clear that D and B will always have the
+same rank and that the call to S should be valid, but that in the general
+case of expressions involving deferred constants it may not be easy for
+the compiler to make that determination.
+
+3. Possible Solutions
+=====================
+
+3.1 Deferred Constants Cannot Be Used to Specify Rank or Kind
+-------------------------------------------------------------
+
+This solution eliminates entire classes of use cases. Subgroup thus
+quickly rejected this as a possible solution.
+
+3.2 Deferred Kinds or Ranks Are Not Checked When Processing Template
+--------------------------------------------------------------------
+
+This solution pokes a giant hole in the idea of "strong concepts" and
+so it was dismissed as well.
+
+3.3 Deferred Expressions as a New Kind of Expression
+----------------------------------------------------
+
+This idea involves creating a new kind of expression with constraints in
+between the constraints of constant and specification expressions. I.e.
+constant expressions would be allowed in deferred expressions, and
+deferred expressions would be allowed in specification expressions. Kind
+type parameters would be required to be deferred expressions, as would
+the specification of rank. One nuance to this idea is that intrinsic
+inquiry functions would be deferred expressions if any of their arguments
+have characteristics that are deferred expressions. With this idea there
+came multiple possibilities for how interface checking would be done in
+templates.
+
+3.3.1 Evaluate Whether Deferred Expressions Are the Same
+--------------------------------------------------------
+
+In the general case this is an NP hard problem. Subgroup quickly
+abandoned this as a requirement on compilers.
+
+3.3.2 Simple Substitution Allowed When Comparing Expressions
+------------------------------------------------------------
+
+This idea would require that compilers be able to do simple substitution
+of inquiry functions to simplify expressions before comparing them for
+equality. I.e. in the following declarations, Y and Z would be considered
+to have the same rank.
+
+INTEGER, RANK(N) :: X
+INTEGER, RANK(N+1) :: Y
+INTEGER, RANK(RANK(X) + 1) :: Z
+
+3.3.3 Only Syntactically Equivalent Expressions Are the Same
+------------------------------------------------------------
+
+This solution requires only direct comparison of symbols in a syntax
+tree to determine if deferred expressions are the same. For example:
+
+INTEGER, RANK(N+M) :: X
+INTEGER, RANK(N + M) :: Y ! has same rank as X
+INTEGER, RANK(M + N) :: Z ! does not have same rank as X
+
+4. Chose Solution and Consequences
+==================================
+
+Subgroup has decided to move forward with the solution describe in
+Section 3.3.3. This enables the following example to be checked at
+the time of processing the template.
+
+TEMPLATE TMPL(T, R, S)
+  TYPE, DEFERRED :: T
+  INTEGER, CONSTANT :: R
+  INTERFACE
+    SUBROUTINE S(A, B)
+      TYPE(T), INTENT(IN), RANK(R) :: A
+      TYPE(T), INTENT(OUT), RANK(R+1) :: B
+    END SUBROUTINE
+  END INTERFACE
+CONTAINS
+  SUBROUTINE FOO(C, D, E, ...)
+    TYPE(T), INTENT(IN), RANK(R) :: C
+    TYPE(T), INTENT(OUT), RANK(R+1) :: D
+    TYPE(T), INTENT(INOUT), RANK(R) :: E
+    ...
+    CALL S(C, D) ! Valid
+    CALL S(C, E) ! Invalid
+  END SUBROUTINE
+END SUBROUTINE
+
+This does have a somewhat strange consequence that given the following
+declarations, X and Y are not considered to have the same rank.
+
+INTEGER, CONSTANT :: N
+INTEGER, RANK(N) :: X
+INTEGER, RANK(RANK(X)) :: Y
+
+Subgroup considered this to be an acceptable compromise between placing
+burden on the compiler writers, and still providing safety and usability
+to template authors.

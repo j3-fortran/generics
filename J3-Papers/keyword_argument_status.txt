@@ -1,0 +1,97 @@
+To: J3                                                     J3/23-212
+From: Brad Richardson
+Subject: Keyword Arguments of Deferred Procedures in Templates
+Date: 2023-September-26
+
+Reference: 23-155r2
+
+1. Introduction
+===============
+
+In the course of developing the syntax for the template feature, we
+encountered a couple of tricky aspects to handle with respect to the
+possible separation and/or duplication of specifications using the
+REQUIREMENT and REQUIRES feature. This paper discusses the issue with
+respect to the use of keyword arguments for deferred procedures,
+the possible solutions, and the rationale for the solution chosen by
+the generics subgroup.
+
+2. Deferred Procedure Dummy Argument Names
+==========================================
+
+There is a possibility for the names of the dummy arguments of a
+deferred procedure to be different in the specifications in different
+requirements or templates, but for all other characteristics of that
+procedure to be the same. It is desirable for that to be valid, but
+poses an interesting problem if one would like to use keyword arguments.
+As an example, consider a situation where a template author would like
+to make use of two requirements written by different authors.
+
+REQUIREMENT R1(T, F, ...)
+  TYPE, DEFERRED :: T
+  INTERFACE
+    FUNCTION F(A)
+      TYPE(T), INTENT(IN) :: A
+      TYPE(T) :: F
+    END FUNCTION
+  END INTERFACE
+END REQUIREMENT
+
+REQUIREMENT R2(T, G, ...)
+  TYPE, DEFERRED :: T
+  INTERFACE
+    FUNCTION G(B)
+      TYPE(T), INTENT(IN) :: B
+      TYPE(T) :: G
+    END FUNCTION
+  END INTERFACE
+END REQUIREMENT
+
+TEMPLATE TMPL(T, F, ...)
+  REQUIRES R1(T, F, ...)
+  REQUIRES R2(T, F, ...)
+  ...
+END TEMPLATE
+
+If the characteristics of F are the same between R1 and R2, but the
+names of its arguments are different it would seem as though this should
+be acceptable for the same reason that the names of the arguments are not
+required to match between actual and dummy for procedure arguments to
+procedures.
+
+Subgroup discussed a few different options to address this problem.
+
+1. The names of the dummy arguments must agree in all specifications
+   of a deferred procedure
+2. Keyword arguments are not allowed for deferred procedures
+3. Keyword arguments are only allowed for deferred procedures if the
+   names of the dummy arguments are the same in all of its
+   specifications
+4. The names of the dummy arguments of a deferred procedure are not
+   defined through its appearance in a REQUIRES statement
+
+Subgroup decided option 1 was likely to result in frequent conflicts
+between library authors, and would be untenable for a growing open-source
+ecosystem. Option 2 was deemed too restrictive, as it would prevent some
+use cases; namely the possibility of effective use of deferred procedures
+with multiple optional arguments. Subgroup decided to go with option 4,
+as it does provide a means for using keyword arguments and is backwards
+compatible with a relaxation to option 3. The consequence is that in
+order to use keyword arguments, an interface for a deferred procedure
+must appear in the template for which it is a deferred argument. Thus
+the above example would be valid, but in order to reference F with
+keyword arguments within TMPL, one would need to make the following
+modification.
+
+TEMPLATE TMPL(T, F, ...)
+  REQUIRES R1(T, F, ...)
+  REQUIRES R2(T, F, ...)
+  INTERFACE
+    FUNCTION F(C)
+      TYPE(T), INTENT(IN) :: C
+      TYPE(T) :: F
+    END FUNCTION
+  END INTERFACE
+  ...
+    FOO = F(C=BAR)
+END TEMPLATE

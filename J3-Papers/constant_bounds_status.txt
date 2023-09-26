@@ -1,0 +1,83 @@
+To: J3                                                     J3/23-211
+From: Brad Richardson
+Subject: Array Bounds of Constants in Templates
+Date: 2023-September-26
+
+Reference: 23-155r2
+
+1. Introduction
+===============
+
+In the course of developing the syntax for the template feature, we
+encountered a couple of tricky aspects to handle with respect to the
+possible separation and/or duplication of specifications using the
+REQUIREMENT and REQUIRES feature. This paper discusses the issue with
+respect to the rank, shape and bounds of deferred constants,
+the possible solutions, and the rationale for the solution chosen by
+the generics subgroup.
+
+2. Deferred Constant Array Bounds
+=================================
+
+There is a possibility for the bounds of a deferred constant to be
+specified differently in the specifications in different requirements
+or templates. It is desirable that it be valid if the specifications are
+not contradictory. The characteristics involved in this possibility are
+rank, shape and bounds. As an example, consider the case that a template
+wants to use two separate requirements, one of which requires a constant
+of a specific shape, while the other requires only a constant of the same
+specific rank.
+
+REQUIREMENT R1(T, C, ...)
+  TYPE, DEFERRED :: T
+  INTEGER, CONSTANT :: C(2, 2)
+  ...
+END REQUIREMENT
+
+REQUIREMENT R2(T, C, ...)
+  TYPE, DEFERRED :: T
+  INTEGER, CONSTANT :: C(*, *)
+  ...
+END REQUIREMENT
+
+TEMPLATE TMPL(T, C, ...)
+  REQUIRES R1(T, C, ...)
+  REQUIRES R2(T, C, ...)
+  ...
+END TEMPLATE
+
+Subgroup discussed a few different options to address this problem.
+
+1. All declarations of a deferred constant must specify the rank, shape
+   and bounds identically
+2. So long as the declarations are not conflicting, the one that most
+   constrains rank, shape and bounds is what takes effect.
+3. Deferred constants that have declarations that are less
+   constraining on rank and shape may not be arguments to requirements
+   with specifications that are more constraining on rank and shape.
+
+Subgroup decided that option 1 left open the possibility of conflicts
+between library authors, and would be undesirable for a growing
+open-source ecosystem. Option 2 was deemed to leave open the possibility
+of confusion for template users if actual requirements for its use were
+more constraining than the declarations that appeared explicitly within
+it. Subgroup thus decided to go with option 3, with a slight caveat.
+Non-default lower bounds are not allowed for deferred constants. This
+preserves backwards compatibility in the event we decide on a method for
+how to handle declarations with conflicting bounds. For instance, the
+above example is considered valid, but both of the following
+modifications would be considered invalid.
+
+TEMPLATE TMPL(T, C, ...)
+  INTEGER, CONSTANT :: C(..)
+  REQUIRES R1(T, C, ...)
+  REQUIRES R2(T, C, ...)
+  ...
+END TEMPLATE
+
+TEMPLATE TMPL(T, C, ...)
+  INTEGER, CONSTANT :: C(2:4, 2:4)
+  REQUIRES R1(T, C, ...)
+  REQUIRES R2(T, C, ...)
+  ...
+END TEMPLATE
