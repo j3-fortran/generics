@@ -3,15 +3,7 @@ From: generics
 Subject: Formal syntax for generics
 Date: 
 
-Reference: 23-155r2, 22-120r5, 22-151r3, 22-154r5, 23-007
-
-This is still a work in process, but the basic approach appears to be
-sound.
-
-UTIs:
-
-1.  Do we need to worry about RECURSIVE NON_RECURSIVE consistency in
-    specification of deferred procedures?
+Reference: 23-155r2, 22-120r5, 22-151r3, 22-154r5, 23-007r1
 
 1. Introduction
 ===============
