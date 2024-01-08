@@ -843,9 +843,9 @@ arguments of that template.
      <<or>> INSTANTIATE [::] <template-name> (
             [ <instantiation-arg-spec-list> ] ), ONLY : [ <only-list> ]
 
-Constraint: Within an <instantiate-stmt>, <instantiation-arg> shall
-            not depend on any entity defined within the referenced
-            template.
+Constraint: Within an <instantiate-stmt>, if an <instantiation-arg> is
+            a procedure its interface shall not reference any entity
+            that would be defined by this instantiation.
 
 Note: <generic-spec> includes operators, defined assignment and
       defined I/O.  The last may be somewhat awkward to use within a
