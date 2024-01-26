@@ -2,6 +2,7 @@
 !
 ! $ lfortran simple.f90
 ! 8.00000000e+00
+! 8
 !
 ! 8.00000000e+00
 ! 2.00000000e+00
@@ -52,7 +53,9 @@ contains
 
     subroutine usage3()
         instantiate sub2(real,operator(+),cast_real), only: sub2_real => sub2
+        instantiate sub2(integer,operator(+),cast_integer), only: sub2_integer => sub2
         print *, sub2_real(5.0)
+        print *, sub2_integer(5)
     end subroutine
 
     subroutine usage4()
