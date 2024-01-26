@@ -40,6 +40,11 @@ contains
         res = add(a, cast(3))
     end function
 
+    subroutine usage3()
+        instantiate sub2(real,operator(+),cast_real), only: sub2_real => sub2
+        print *, sub2_real(5.0)
+    end subroutine
+
     subroutine usage4()
         print *, sub2{real,operator(+),cast_real}(5.0)
         print *, sub2{real,operator(-),cast_real}(5.0)
@@ -52,6 +57,8 @@ end module
 program template_simple_02
     use template_simple_02_m
 
+    call usage3()
+    print *
     call usage4()
 
 end
