@@ -1,3 +1,13 @@
+! Compile and run with:
+!
+! $ lfortran simple.f90
+! 8.00000000e+00
+!
+! 8.00000000e+00
+! 2.00000000e+00
+! 8
+! 2
+
 module template_simple_02_m
 
     requirement operator_r(T, U, V, binary_func)
