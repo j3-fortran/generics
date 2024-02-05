@@ -1,0 +1,136 @@
+To: J3                                                     J3/##-###
+From: Aury Shafran & Brad Richardson
+Subject: Defining template procedures in host scope
+Date:
+
+Reference: 
+
+1. Introduction
+===============
+
+
+Concerns have been raised about the proposed location of template
+procedures within the contains section of a template construct.
+
+In particular,
+
+  a. because template constructs appear in a specification section,
+     the procedures in a nested template precede the procedures of the
+     outer template, and
+
+  b. defining procedures within a specification section is unusual in
+     Fortran. Developers may find it more comfortable to define
+     template procedures outside the template construct in a manner
+     similar to type-bound procedures being defined outside the type
+     definition. This is especially true in the case of template
+     constructs that are the entire contents of a module.
+
+This paper proposes additional requirements and specifications to
+enable template procedure definitions to appear outside the template
+construct.
+
+2. Requirements
+===============
+
+ a. It should be possible to define the procedures of a template
+    outside the template construct. We will call these procedures
+    "detached template procedures" (DTPs), and the template for which they
+    are defined will be their "host template".
+
+ b. A DTP should be defined in the same program unit that
+    contains its host template to ensure the template can always be
+    instantiated in its entirety.
+
+ c. There should be no difference between defining a template
+    procedure as a DTP or within the contains section of the host
+    template.  In particular, a DTP has host association association
+    with its host template.
+
+ d. A DTP should indicate the host template in which it is defined.
+
+ e. A DTP does not need to be declared in its host template.
+
+ f. It should be possible to define a DTP for a nested template.
+
+ g. A DTP may also be a simplified template procedure.
+
+
+3. Specifications
+=================
+
+ a. The definition of a DTP shall include an identification of its
+    host template on its function-stmt or subroutine-stmt.
+    Illustrative syntax:
+
+    template(my_tmpl) subroutine s(x) ! host template is my_tmpl
+       ...
+    end subroutine s
+
+ b. A DTP can be defined in the contains section of the host scoping
+    unit of its host template, or in the case of a nested template,
+    the contains section of the host scoping unit of any of its
+    ancestor templates.  Note: this prohibits defining a DTP in a
+    separate submodule.
+
+    Example with illustrative syntax:
+    module A
+       template outer_tmpl{T}
+         type, deferred :: T
+	 template inner_tmpl{U}
+	    type, deferred :: U
+         contains
+
+            subroutine S0()
+            end subroutine
+
+	 end template
+
+       contains
+
+          ! The following DTP is part of inner_tmpl
+          template(inner_tmpl) subroutine S1()
+	  end subroutine
+
+       end template
+    contains
+
+       ! The following DTP is part of inner_tmpl
+       template(outer_tmpl:inner_tmpl) subroutine S2()
+       end subroutine
+
+       ! The following DTP is part of outer_tmpl
+       template(outer_tmpl) subroutine S3()
+       end subroutine
+
+    end module
+
+ c. If a template's host scoping unit cannot have a CONTAINS statement
+    (for example, if it is an internal procedure), then a DTP is not
+    possible for that template.
+
+ d. A DTP shall have host association with its host template -- not
+    directly with its lexical scope -- as if it were declared within the
+    contains section of its host template construct.  Consequently,
+    unlike other procedures defined in the same contains section, a
+    DTP cannot access by host association entities declared in
+    specification statements subsequent to the template construct.
+
+
+Example of a DTP using simplified template procedure syntax (other
+paper):
+
+    module m
+        template tmpl{T}
+            type, deferred :: T
+        end template
+    contains
+        ! DTP combined with simplified template procedure
+        template(tmpl) subroutine s{V}(a, b)
+            type, deferred :: V
+            type(T), intent(in) :: a
+            type(V), intent(in) :: b
+            ...
+        end subroutine
+    end module
+
+===END===
