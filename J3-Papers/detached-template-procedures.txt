@@ -3,7 +3,7 @@ From: Aury Shafran & Brad Richardson
 Subject: Defining template procedures in host scope
 Date:
 
-Reference: 
+Reference: 24-105 (simplified template procedures)
 
 1. Introduction
 ===============
