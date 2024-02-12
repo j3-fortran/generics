@@ -1,0 +1,92 @@
+To: J3                                                     J3/24-105
+From: Aury Shafran & Brad Richardson
+Subject: Requirements and specs for simplified template procedures
+Date: 2024-February-07
+
+1. Introduction
+===============
+
+There have been comments that the current template syntax is verbose.
+This paper proposes a simplified method for the common case where a
+template contains only a single procedure. We will call these
+"simplified template procedures" (STP).
+
+Note: This paper introduces illustrative syntax that uses curly braces
+      rather than parentheses for deferred argument lists and
+      instantiation argument lists.  Our motivation is to avoid
+      ambiguity in the syntax where an STP is instantiated and the
+      resulting procedure is referenced in a single statement.  (See
+      final example below.)
+
+
+2. Requirements
+===============
+
+Requirements for STPs:
+
+  a. It should be possible to easily convert an existing,
+     non-templated, procedure to an STP.
+  b. An STP should support deferred arguments, analogous to those of
+     an ordinary template construct.
+  c. It should be possible to reference an instantiation of an STP as
+     a normal procedure.
+  d. It should be possible to instantiate an STP and reference the
+     resulting procedure in a single statement.  It should also be
+     possible to separately instantiate an STP to be referenced
+     subsequently.
+  e. An STP should enforce type-safety (aka "strong concepts").
+  f. Instantiations of an STP with the same instantiation arguments
+     should be the same procedure.  (As with normal templates.)
+
+3. Specifications
+=================
+
+  a. An STP definition is a procedure definition with additional
+     syntax to accommodate a deferred argument list.  The
+     specification section of an STP is the union of a
+     template-specification-part and a specification-part.
+
+An example of a simplified template procedure using illustrative
+syntax:
+
+    subroutine swap{T}(a, b)
+        type, deferred :: T
+        type(T), intent(inout) :: a, b
+        type(T) :: tmp
+        tmp = a
+        a = b
+        b = tmp
+    end subroutine swap
+
+  b. An STP can be instantiated in the specification section using
+     an INSTANTIATE statement.
+
+For example,
+
+    instantiate swap{real}
+    real :: a, b
+    a = 1.0
+    b = 2.0
+    call swap(a, b)
+
+  c. The single statement instantiation-plus-reference of an STP
+     should look like a conventional procedure reference with minimal
+     additional syntax for deferred
+
+Example 1: Single statement invocation:
+
+    real :: a, b
+    a = 1.0
+    b = 2.0
+    call swap{real}(a, b)
+
+Example 2: Single statement declarations
+    ! instantiate initial target of procedure pointer
+    procedure(), pointer :: my_swap => swap{real}
+    ! provide interface for dummy procedure
+    procedure(swap{real}) :: dummy_proc
+
+Example 3: Single statement procedure actual argument
+    call do_something(x, swap{real})
+
+===END===
