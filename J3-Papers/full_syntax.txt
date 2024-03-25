@@ -6,8 +6,6 @@ Date: 2024-February-28
 Reference: 23-222, 24-105r3
 
 Note - UTI's below
-  - UTI-1 3.1.3.1 ~ line 415
-  - UTI-2 3.2 ~ line 685
   - UTI-3 We need to say where simple procedures can appear.
   - UTI-4 We use the terms "well-defined" and "consistent" for
           deferred args.  But I think Malcolm insisted we change that
@@ -28,10 +26,6 @@ Note - UTI's below
          Constraint: A <derived-type-spec> shall only appear as an
                      instantiation argument if a variable of that type
                      is permitted in an allocate statement.
-
-  - UTI 7 Section about use of keywords in deferred procedures has
-          normative text that contradicts a constraint.
-
 
 1. Introduction
 ===============
@@ -154,7 +148,7 @@ REQUIREMENT or TEMPLATE construct, possibly in terms of deferred types
 and constants.
 
 An explicit specification of a <deferred-arg> is either
-<deferred-arg-explicit-stmt> or <deferred-interface-body>.
+<deferred-arg-explicit-stmt> or <interface-body>.
 
 A <deferred-arg> shall have one or more ultimate specifications.  An
 ultimate specification for a <deferred-arg> is either an explicit
@@ -287,13 +281,11 @@ Constraint: Each <deferred-proc> that appears in a
 
 Constraint: Each <deferred-proc> shall appear in a
             <deferred-arg-decl-stmt> or as a <function-name> or
-            <subroutine-name> within an <interface-body> or a
-            <deferred-interface-body>.
+            <subroutine-name> within an <interface-body>.
 
 A <deferred-proc> is a deferred procedure.  A <deferred-arg> that
 appears as the <function-name> or <subroutine-name> in an
-<interface-body> or a <deferred-interface-body> is a deferred
-procedure.
+<interface-body> is a deferred procedure.
 
 3.1.1.3 Syntax for deferred types
 
@@ -323,71 +315,6 @@ Note: The actual type-spec passed to a <deferred-class> deferred
       sequence, etc.
 
 
-3.1.2 Deferred interface body
------------------------------
-
-A <deferred-interface-body> is a deferred interface body and declares
-a <deferred-arg-name> as a deferred procedure as well as defining the
-interface of that deferred procedure.
-
-
-<deferred-interface-body>
-      <<is>> <function-stmt>
-                [ <deferred-interface-specification-part> ]
-                <end-function-stmt>
-      <<or>> <subroutine-stmt>
-                [ <deferred-interface-specification-part> ]
-                <end-subroutine-stmt>
-
-Constraint: Each <function-name> and <subroutine-name> in a
-            <deferred-interface-body> shall be a
-            <deferred-arg-name> in the innermost scope.
-
-<deferred-interface-specification-part>
-          <<is>> [ <use-stmt> ] ...
-                 [ <deferred-interface-declaration-stmt> ] ...
-
-<deferred-interface-declaration-stmt>
-          <<is>> <deferred-proc-declaration-stmt>
-          <<or>> <deferred-interface-type-declaration-stmt>
-          <<or>> <deferred-other-specification-stmt>
-
-<deferred-other-specification-stmt>
-        <<is>> <allocatable-stmt>
-        <<or>> <asynchronous-stmt>
-        <<or>> <codimension-stmt>
-        <<or>> <contiguous-stmt>
-        <<or>> <dimension-stmt>
-        <<or>> <intent-stmt>
-        <<or>> <optional-stmt>
-        <<or>> <parameter-stmt>
-        <<or>> <pointer-stmt>
-        <<or>> <target-stmt>
-        <<or>> <value-stmt>
-        <<or>> <volatile-stmt>
-
-<deferred-interface-type-declaration-stmt>
-          <<is>> <declaration-type-spec>
-                 [ [ , <deferred-interface-attr-spec> ] ... :: ]
-                 <entity-decl-list>
-
-<deferred-interface-attr-spec>
-        <<is>> ALLOCATABLE
-        <<or>> ASYNCHRONOUS
-        <<or>> CODIMENSION <lbracket> <coarray-spec> <rbracket>
-        <<or>> CONTIGUOUS
-        <<or>> DIMENSION ( <array-spec> )
-        <<or>> INTENT ( <intent-spec> )
-        <<or>> OPTIONAL
-        <<or>> PARAMETER
-        <<or>> POINTER
-        <<or>> <rank-clause>
-        <<or>> TARGET
-        <<or>> VALUE
-        <<or>> VOLATILE
-
-A <deferred-interface-body> is a scoping unit that has use and host
-association.
 
 
 3.1.3 Specification of deferred arguments
@@ -432,12 +359,6 @@ rank.
 If any ultimate specification of a deferred constant has an explicit
 shape S, then the active specification of that deferred argument has
 shape S.  Otherwise the active specification is implied shape.
-
-UTI-1:  Brad suggests the following can/should be deleted:
-
-If a deferred constant has an explicit specification, then the active
-specification has the lower bounds of the explicit
-specification. Otherwise it has lower bounds of 1.
 
 3.1.3.2 Active specification of deferred procedures
 
@@ -578,12 +499,13 @@ have the same characteristics for their results then the active
 specification has the same characteristics of its result.  Otherwise
 it is inconsistent.
 
-The active specification of a <deferred-proc> does not define the
-names of its dummy arguments.
+Only an explicit specification of a <deferred-proc> defines the names
+of its dummy arguments.
 
-Note: The names of dummy arguments of a <deferred-proc> are
-      processor-dependent.  The intent is that users be unable to
-      access the arguments via keywords.
+Note: Unless a <deferred-proc> has an explicit specification, the
+      names of its dummy arguments are processor-dependent.  The
+      intent is that users be unable to access the arguments via
+      keywords.
 
 3.1.5 Deferred argument association
 -----------------------------------
@@ -716,12 +638,9 @@ other requirements.
                 <requirement-specification-construct> ...
              END [REQUIREMENT [<requirement-name>]]
 
-UTI-2: Brad said make <deferred-interface-body> should be
-<deferred-interface-block>
-
 <requirement-specification-construct>
         <<is>> <deferred-arg-decl-stmt>
-        <<or>> <deferred-interface-body>
+        <<or>> <interface-block>
 
 Constraint: Each <deferred-arg> shall appear in a
             <requirement-specification-construct>.
@@ -1056,6 +975,27 @@ would make constraint for deferred constants clearer.
      An entity declared with a rank-clause shall be a named constant,
      dummy data object or have the ALLOCATABLE or POINTER attribute.
 
+*8.7 IMPLICIT Statement
+
+Modify last sentence in para 3 on page 127 from:
+
+If a mapping is not specified for a letter, the default
+for a program unit or an interface body is default integer if the
+letter is I, J, ..., or N and default real otherwise, and the default
+for a BLOCK construct, internal subprogram, or module subprogram is
+the mapping in the host scoping unit.
+
+To:
+
+If a mapping is not specified for a letter, the default for a program
+unit or an interface body that does not appear in a template or a
+requirement is default integer if the letter is I, J, ..., or N and
+default real otherwise.  The default for a BLOCK construct, internal
+subprogram, or module subprogram is the mapping in the host scoping
+unit.  The default for an interface body inside of a template or
+requirement is as if IMPLICIT NONE(TYPE, EXTERNAL) appeared.
+
+
 * 8.8p2 IMPORT Statement
 
   Modify sentence 2 in p2 from:
@@ -1066,7 +1006,8 @@ would make constraint for deferred constants clearer.
      To:
 
      This is the default for an interface body that is not a module
-     procedure interface body or a deferred interface body.
+     procedure interface body or an interface body that appears in a
+     template or a requirement.
 
   Modify sentence 2 in p4 from:
 
@@ -1077,46 +1018,14 @@ would make constraint for deferred constants clearer.
   To:
 
      This is the default for a derived-type definition, internal
-     subprogram, module procedure interface body, deferred interface
-     body, module subprogram, or submodule.
+     subprogram, module procedure interface body, module subprogram,
+     submodule, or an interface body that appears in a template or a
+     requirement.
 
 * 10.1.12 Constant expression
 
   Extend list in normative text for "constant expression":
   "deferred constant"
-
-* 15.4.3.2 Interface block
-
-  Extend rule R1502 <interface-specification> to include
-  <deferred-interface-body>.
-
- From:
-
- <interface-specification> <<is>> <interface-body>
-                           <<or>> <procedure-stmt>
-
- To:
-
- <interface-specification> <<is>> <deferred-interface-body>
-                           <<or>> <interface-body>
-                           <<or>> <procedure-stmt>
-
-Modify C1503 to prevent use of deferred arguments:
-
-  From:
-
-    C1503 (R1503) If the interface-stmt is ABSTRACT INTERFACE, then the
-    function-name in the function-stmt or the subroutine-name in the
-    subroutine-stmt shall not be the same as a keyword that specifies
-    an intrinsic type.
-
-  To:
-
-    C1503 (R1503) If the interface-stmt is ABSTRACT INTERFACE, then
-    the function-name in the function-stmt or the subroutine-name in
-    the subroutine-stmt shall not be the same as a keyword that
-    specifies an intrinsic type, or a <deferred-arg-name>.
-
 
 * 15.5.1 Syntax of a procedure reference
 
@@ -1147,5 +1056,4 @@ Modify C1503 to prevent use of deferred arguments:
 
   Extend R1522 <procedure-designator> to include
   <inline-instantiate>
-
 ===END===
