@@ -78,7 +78,7 @@ MODULE B
   INSTANTIATE B{REAL, OPERATOR(*), [3,4]}, ONLY: &
               & tot_sub1 => sub1
   INSTANTIATE B{REAL, OPERATOR(+), [3,4]}, ONLY: & ! different instance
-              & max_sub1 => sub2
+              & max_sub2 => sub2
 
 CONTAINS
 
@@ -86,11 +86,11 @@ CONTAINS
       REAL, INTENT(INOUT) :: x
 
       x = 2.
-      CALL tot_sub(x)
+      CALL tot_sub1(x)
       PRINT*,'TOT: ', x ! expect 2. * (3+4) = 14.
 
       x = 3.
-      CALL max_sub(x)
+      CALL max_sub2(x)
       PRINT*,'MAX: ', x ! expect 3. + max(3,4) = 7.
 
    END SUBROUTINE DO_SOMETHING
@@ -330,7 +330,7 @@ Constraint: If any ultimate specification of a deferred argument is a
             argument shall be a function.
 
 Constraint: A deferred procedure shall only be referenced with keyword
-            arguments if its specification is explicit.
+            arguments if it has an explicit specification.
 
 Constraint: Except for PURE, SIMPLE, and ELEMENTAL
             attributes, the characteristics of all specifications of a
@@ -478,11 +478,6 @@ Constraint: An <instantiation-arg> that is a <type-spec> shall not be
 Constraint: If an <instantiation-arg> is associated with a
             <deferred-type>, a variable of that type shall be
             permitted in a variable definition context.
-
-Note: The preceding constraint prevents passing abstract derived types
-      as instantiation arguments unless the corresponding deferred
-      argument is polymorphic.
-
 
 Constraint: If an <instantiation-arg> is a <type-spec>, it shall not
             specify a type that has a coarray potential subobject
@@ -737,7 +732,7 @@ These identifiers are
      instantiation,
    - each of the <local-names> or <local-defined-operators> that the
      entity is given in any <rename> for that instantiation, and
-   - the identifier of the entity if in that referenced template if
+   - the identifier of the entity in that referenced template if
      that identifier does not appear as a <use-name> or
      <use-defined-operator> in any <rename> for that instantiation.
 
