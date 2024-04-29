@@ -1,0 +1,394 @@
+To: J3                                                     J3/24-107r1
+From: generics
+Subject: Formal syntax for templates and instantiation
+Date: 2024-February-28
+
+Reference: 
+
+1. Introduction
+===============
+
+This paper defines the syntax for the TEMPLATE construct, the
+INSTANTIATE statement, simple template procedures, and inline
+instantiation.
+
+An example template is shown below.
+
+   TEMPLATE TMPL(T, F)
+      TYPE, DEFERRED :: T
+      INTERFACE
+         FUNCTION F(X)
+            TYPE(T), INTENT(IN) :: X
+            TYPE(T) :: F
+         END FUNCTION
+      END INTERFACE
+   CONTAINS
+      SUBROUTINE S(Y)
+         TYPE(T), INTENT(INOUT) :: Y
+         Y = F(Y)
+      END SUBROUTINE
+   END TEMPLATE
+
+An example simple template procedure, equivalent to the above
+template is shown below.
+
+   SUBROUTINE S{T, F}(Y)
+      TYPE, DEFERRED :: T
+      INTERFACE
+         FUNCTION F(X)
+            TYPE(T), INTENT(IN) :: X
+            TYPE(T) :: F
+         END FUNCTION
+      END INTERFACE
+      TYPE(T), INTENT(INOUT) :: Y
+      Y = F(Y)
+   END SUBROUTINE
+
+Example instantiate statements of TMPL are:
+
+   INSTANTIATE TMPL(integer, operator(-)), only: negate => S
+   INSTANTIATE TMPL(real, sin)
+
+An example of an inline instantiation of the simple template
+procedure would be as follows.
+
+   CALL S{integer, operator(-)}(i)
+   CALL S{real, sin}(x)
+
+2. Syntax for templates
+=======================
+
+2.1 Syntax for the TEMPLATE construct
+-------------------------------------
+
+A template is a set of declarations, specifications and definitions
+that are enabled by instantiation.  A TEMPLATE construct defines a
+template.  A template is a scoping unit to which use and host
+association and template argument association can be applied.  A
+template can be defined in the specification section of a program unit
+other than a block data program unit.
+
+<template> <<is>> <template-stmt>
+                      [ <template-specification-part> ]
+                      [ <template-subprogram-part> ]
+                      <end-template-stmt>
+
+<template-stmt> <<is>> TEMPLATE <template-name> {[<deferred-arg-list>]}
+
+<end-template-stmt> <<is>>  END [TEMPLATE [<template-name>]]
+
+Constraint: If a <template-name> appears in the <end-template-stmt>,
+            it shall be identical to the <template-name>
+            specified in the <template-stmt>.
+
+2.1.1 Template specification part
+---------------------------------
+
+<template-specification-part> <<is>>
+            [ use-stmt ] ...
+            [ <template-declaration-construct> ] ...
+
+The implicit mapping within <template> is as if
+       IMPLICIT NONE(TYPE,EXTERNAL)
+is in place.
+
+<template-declaration-construct> <<is>> <template-specification-construct>
+                                 <<or>> <deferred-arg-decl-stmt>
+                                 <<or>> <requirement>
+                                 <<or>> <template>
+                                 <<or>> <interface-block>
+
+<template-specification-construct>
+                      <<is>> <access-stmt>
+                      <<or>> <derived-type-def>
+                      <<or>> <dimension-stmt>
+                      <<or>> <enum-def>
+                      <<or>> <enumeration-type-def>
+                      <<or>> <generic-stmt>
+                      <<or>> <instantiate-stmt>
+                      <<or>> <intrinsic-stmt>
+                      <<or>> <parameter-stmt>
+                      <<or>> <type-declaration-stmt>
+
+Note: The analogous construct for MODULE is divided into two separate
+      constructs: <specific-construct> and
+      <other-specification-construct>.  However, subgroup does not see
+      the criteria by which items were assigned to either construct.
+      Further since TEMPLATE admits fewer items, we have decided to
+      merge these two constructs.
+
+Note: A DATA, FORMAT, ENTRY or statement function statement shall not
+      appear in the template specification part.
+
+Note: An ALLOCATABLE, ASYNCHRONOUS, BIND, CODIMENSION, CONTIGUOUS,
+      EXTERNAL, INTENT, NAMELIST, OPTIONAL, POINTER, PROTECTED, SAVE,
+      TARGET, VOLATILE, VALUE, COMMON, or EQUIVALENCE statement shall
+      not appear in the template specification part.
+
+Constraint: An entity declared by <type-declaration-stmt> shall have
+            the PARAMETER attribute.
+
+Note: This is to say, the template specification section cannot
+      declare variables.
+
+
+2.1.2 Template subprogram part
+------------------------------
+
+<template-subprogram-part> <<is>> <contains-stmt>
+                                     [ <template-subprogram> ] ...
+
+<template-subprogram> <<is>> <function-subprogram>
+                      <<or>> <subroutine-subprogram>
+
+
+2.2 Simple template procedures
+------------------------------
+
+A simple template procedure is a template whose only public entity is
+a procedure.  This allows brevity in declaring and instantiation as
+compared to more general templates as described above.
+
+
+<simple-template-function-subprogram> <<is>>
+       <simple-template-function-stmt>
+         <simple-template-subprogram-specification-part>
+         [<execution-part>]
+         [<internal-subprogram-part>]
+         <end-function-stmt>
+
+<simple-template-subroutine-subprogram> <<is>>
+       <simple-template-subroutine-stmt>
+         <simple-template-subprogram-specification-part>
+         [<execution-part>]
+         [<internal-subprogram-part>]
+         <end-subroutine-stmt>
+
+<simple-template-subprogram-specification-part> <<is>>
+     [ <use-stmt> ] ...
+     [ <import-stmt> ] ...
+     [ <simple-template-subprogram-declaration-construct> ] ...
+
+<simple-template-subprogram-declaration-construct> <<is>>
+     <specification-construct>
+     <<or>> <template-specification-construct>
+     <<or>> <format-stmt>
+
+<simple-template-function-stmt> <<is>>
+     [ <prefix> ] FUNCTION <template-name>
+         { <deferred-arg-list> } ([<dummy-name-arg-list>])
+	 [<suffix>]
+
+<simple-template-subroutine-stmt> <<is>>
+     [ <prefix> ] SUBROUTINE <template-name>
+         { <deferred-arg-list> } ([<dummy-name-arg-list>])
+	 [<proc-language-binding-spec>]
+
+Constraint: If a <function-name> appears in the <end-function-stmt>,
+            it shall be identical to the <template-name>
+            specified in the <simple-template-function-stmt>.
+
+Constraint: If a <subroutine-name> appears in the <end-subroutine-stmt>,
+            it shall be identical to the <template-name>
+            specified in the <simple-template-subroutine-stmt>.
+
+2.3 Additional constraints
+--------------------------
+
+Constraint: A variable or procedure pointer declared in either a
+	    <template-subprogram-part> or a
+	    <simple-template-subprogram-declaration-construct> shall
+	    not have the SAVE attribute.
+
+Note: If variables were permitted to have the SAVE attribute then
+      instantiations of the template with the same instantiation
+      arguments could unintentionally modify each other's values.
+
+Constraint: EQUIVALENCE and COMMON shall not appear in a
+            <template-subprogram-part> or a
+            <simple-template-subprogram-declaration-construct>.
+
+
+Note: Allowing COMMON statements within a template is a concern even
+      when they lack the SAVE attribute.  Namely, if any elements of a
+      common block are of deferred type then the memory footprint of a
+      common cannot be determined at compilation.
+
+Note: Allowing EQUIVALENCE statements inside a template seems to be ok,
+      but subgroup is concerned that there may be corner cases that we are
+      not realizing, and would prefer to disallow.
+
+Constraint: <template>, <simple-template-function-subprogram> and
+       <simple-template-subroutine-subprogram> shall only reference
+       intrinsic procedures, procedures with explicit interfaces, and
+       operators.
+
+Note: This constraint expresses the notion of type-safety.  In
+      particular, this allows a template implementation to be verified
+      to be internally consistent.
+
+
+3. Syntax for instantiation
+===========================
+
+3.1 Syntax for the INSTANTIATE statement
+----------------------------------------
+
+The INSTANTIATE statement specifies an instance of a template and
+instantiation arguments that become associated with the deferred
+arguments of that template.
+
+The INSTANTIATE statement without the ONLY option provides access to
+all public entities of the instantiated template.  The INSTANTIATE
+statement with the ONLY option provides access only to those entities
+that appear as <generic-specs>, <use-names>, or
+<use-defined-operators> in the only list.  If <template-name> is the
+name of a simplified template procedure, then the only public entity
+of the instantiation has the name <template-name>.
+
+An accessible entity of the referenced instantiation is associated
+with one or more accessed entities, each with its own identifier.
+These identifiers are
+
+   - the identifier of the entity in the referenced template if that
+     identifier appears as an <only-use-name> or as the
+     <defined-operator> of a <generic-spec> in any <only> for that
+     instantiation,
+   - each of the <local-names> or <local-defined-operators> that the
+     entity is given in any <rename> for that instantiation, and
+   - the identifier of the entity in that referenced template if
+     that identifier does not appear as a <use-name> or
+     <use-defined-operator> in any <rename> for that instantiation.
+
+<instantiate-stmt>
+     <<is>> INSTANTIATE [::] <template-name> {
+            [ <instantiation-arg-spec-list> ] } [, <rename-list> ]
+     <<or>> INSTANTIATE [::] <template-name> {
+            [ <instantiation-arg-spec-list> ] }, ONLY : [ <only-list> ]
+
+Constraint: Within an <instantiate-stmt>, <instantiation-arg> shall
+            not depend on any entity defined within the referenced
+            template.
+
+Note: <generic-spec> includes operators, defined assignment and
+      defined I/O.  The last may be somewhat awkward to use within a
+      template without re-expressing as defined I/O again.
+
+3.2 Syntax for inline instantiation of simple template procedures
+-----------------------------------------------------------------
+
+A simple template procedure can be instantiated and referenced in
+an expression or the <procedure-designator> in a <call-stmt>.
+
+<inline-instantiate> <<is>>
+    <template-name> { <instantiation-arg-spec-list> }
+
+Constraint: <template-name> shall be the name of a
+            <simple-template-function-subprogram> or a
+            <simple-template-subroutine-subprogram>
+
+The procedure designated by <inline-instantiate> is the procedure
+produced from instantiating the simplified template procedure.
+
+3.3 Deferred argument association
+---------------------------------
+
+Instantiation arguments are specified by an INSTANTIATE statement, a
+REQUIRES statement, or by inline instantiation.
+
+<instantiation-arg-spec> <<is>>
+        [ <keyword> = ] <instantiation-arg>
+
+Constraint: Each <keyword> shall be the name of a <deferred-arg> in
+            the referenced requirement or template.
+
+In the absence of an argument keyword, an instantiation argument
+corresponds to the deferred argument occupying the corresponding
+position in <deferred-arg-list>; that is, the first instantiation
+argument corresponds to the first deferred argument in the
+reduced list, the second instantiation argument corresponds to the
+second deferred argument in the reduced list, etc.
+
+<instantiation-arg> <<is>> <constant-expr>
+                    <<or>> <type-spec>
+                    <<or>> <generic-spec>
+                    <<or>> <procedure-name>
+
+
+3.3.1 Deferred constant association
+
+Constraint: <constant-expr> shall be type INTEGER, LOGICAL or
+            CHARACTER.
+
+Constraint: An <instantiation-arg> that is a <constant-expr> shall
+            correspond to a <deferred-arg> that is a <deferred-const>
+            in the referenced template or requirement.
+
+Constraint: The type and kind of an <instantiation-arg> that is a
+            <constant-expr> shall have the same type and kind as the
+            corresponding <deferred-const> in the referenced template
+            or requirement.
+
+Constraint: If the shape of the corresponding <deferred-const> in the
+            referenced template or requirement is not implied, then
+            <constant-expr> shall have the same shape.
+
+Constraint: If the rank of the corresponding <deferred-const> in the
+            referenced template or requirement is not deferred, then
+            <constant-expr> shall have the same rank.
+
+
+3.3.2 Deferred procedure association
+
+Constraint: An <instantiation-arg> that is a <generic-spec> or
+            <procedure-name> shall correspond to a <deferred-arg> that
+            is a <deferred-proc> in the referenced template or
+            requirement.
+
+Constraint: An <instantiation-arg> that is a <procedure-name> shall
+            have the same characteristics as the corresponding
+            <deferred-proc> in the referenced template or requirement,
+            except that a pure instantiation argument may be
+            associated with a deferred argument that is not pure, a
+            simple instantiation argument may be associated with a
+            deferred argument that is not simple, and an elemental
+            instantiation argument may be associated with a deferred
+            procedure that is not elemental.
+
+Constraint: An <instantiation-arg> that is a <generic-spec> shall have
+            one specific procedure that has the same characteristics
+            as the corresponding <deferred-proc> in the referenced
+            template or requirement, except that a pure instantiation
+            argument may be associated with a deferred argument that
+            is not pure, a simple instantiation argument may be
+            associated with a deferred argument that is not simple,
+            and an elemental instantiation argument may be associated
+            with a deferred procedure that is not elemental.
+
+The <deferred-proc> is associated with the specific procedure that is
+consistent with the characteristics.
+
+Note: The previous two constraints constitute what is referred to as
+      "weak constraints" in other languages.
+
+
+3.3.3 Deferred type association
+
+Constraint: An <instantiation-arg> that is a <type-spec> shall
+            correspond to a <deferred-arg> that is a <deferred-type>
+            or <deferred-class> in the referenced template or
+            requirement.
+
+Constraint: An <instantiation-arg> that is a <type-spec> shall not be
+            abstract.
+
+Constraint: If an <instantiation-arg> is associated with a
+            <deferred-type>, a variable of that type shall be
+            permitted in a variable definition context.
+
+Constraint: If an <instantiation-arg> is a <type-spec>, it shall not
+            specify a type that has a coarray potential subobject
+            component.
+
+Constraint: If an <instantiation-arg> corresponds to <deferred-class>,
+            it shall be extensible.
