@@ -1,0 +1,80 @@
+To: J3                                                     J3/24-107r1
+From: generics
+Subject: Formal syntax for REQUIREMENT and REQUIRES
+Date: 2024-February-28
+
+Reference: 
+
+1. Introduction
+===============
+
+This paper defines the syntax for the REQUIREMENT construct, and the
+REQUIRES statement. Examples of REQUIREMENT blocks are shown below.
+
+   REQUIREMENT R1{U, V, G}
+      TYPE, DEFERRED :: U, V
+      INTERFACE
+         FUNCTION G(X)
+            TYPE(U), INTENT(IN) :: X
+            TYPE(V) :: G
+         END FUNCTION
+      END INTERFACE
+   END REQUIREMENT
+
+   REQUIREMENT R2{U, G}
+      REQUIRES R1{U, U, G}
+   END REQUIREMENT
+
+Example REQUIRES statements for the above requirements are shown below,
+which could appear together in the same template, although they are
+redundant in this case.
+
+   REQUIRES R1{T, T, F}
+   REQUIRES R2{T, F}
+
+The semantics of redundant specifications of deferred arguments in the
+context of REQUIREMENT blocks and REQUIRES statements are described in
+the paper describing deferred arguments [###], Sec. 3.2.
+
+2. Syntax for the REQUIREMENT construct
+=======================================
+
+A REQUIREMENT is a named collection of deferred argument declarations
+intended to facilitate reuse of common patterns within templates and
+other requirements.
+
+<requirement>
+      <<is>> REQUIREMENT <requirement-name> { [<deferred-arg-list>] }
+                [ <use-stmt> ] ...
+                <requirement-specification-construct> ...
+             END [REQUIREMENT [<requirement-name>]]
+
+<requirement-specification-construct>
+        <<is>> <deferred-arg-decl-stmt>
+        <<or>> <interface-block>
+
+Constraint: Each <deferred-arg> shall appear in a
+            <requirement-specification-construct>.
+
+Constraint: If a <requirement-name> appears in the <end-requirement-stmt>,
+            it shall be identical to the <requirement-name>
+            specified in the <requirement-stmt>.
+
+Note: A <requirement> is a scoping unit that allows use and host
+      association.
+
+Note: Each <deferred-arg> is local to the REQUIREMENT construct.
+
+
+3. Syntax for the REQUIRES statement
+====================================
+
+A REQUIRES statement provides specifications of deferred arguments by
+associating them with the deferred arguments of a REQUIREMENT.
+
+<requires-stmt> <<is>>
+      REQUIRES [::] <requirement-name>
+            { [<instantiation-arg-spec-list>] }
+
+Constraint: <requirement-name> shall be the name of a previously
+            defined <requirement>.

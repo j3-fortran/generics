@@ -1,0 +1,183 @@
+To: J3                                                     J3/24-107r1
+From: generics
+Subject: Miscellaneous edits to incorporate templates
+Date: 2024-February-28
+
+Reference:
+
+1. Introduction
+===============
+
+This paper describes many edits to the standard that will be required
+in order to incorporate the syntax and semantics for templates. this is
+not intended to be an exhaustive listing, but describes those that have
+been identified so far.
+
+2. Edits required for deferred arguments
+========================================
+
+* Insert new glossary term after 3.38.2
+
+  [named deferred constant]
+  named data object with the CONSTANT attribute (????)
+
+* 7.3.2.1 Type specifier syntax
+
+  Extend R702 <type-spec>:
+  " <<or>> <deferred-type>"
+
+  Extend R703 <declaration-type-spec>:
+  "TYPE(<deferred-type>)"
+
+  Extend R703 <declaration-type-spec>:
+  "CLASS(<deferred-class>)"
+
+* 7.5.2.1 Syntax of a derived-type definition
+
+  New constraint or R728:
+  "<parent-type-name> shall not be a <deferred-type>.
+
+* 8.5.8.1 General
+
+  Change last entry for <array-spec>
+
+  From:
+      <<or>>   <assumed-rank-spec>
+
+  To:
+      <<or>>   <assumed-or-deferred-rank-spec>
+
+* 8.5.8.2 Explicit-shape array
+
+Note:
+
+It may be better to modify <explicit-shape-bounds-spec> to
+disambiguate <explicit-bounds-expr> for lower and upper bounds.  This
+would make constraint for deferred constants clearer.
+
+
+* 8.5.8.7 Assumed-rank entity
+
+  Changes title of section to "Assumed-rank or deferred-rank entity."
+
+  Delete <assumed-rank-spec> and add
+  <assumed-or-deferred-rank-spec>  <<is>> ..
+
+  (Change all <assumed-rank-spec> throughout the document.)
+
+  Add new constraint:
+
+  Constraint:  A deferred-rank entity shall be a <deferred-const>.
+
+* 8.5.17  RANK clause
+
+  Replace constraint C864 which states:
+
+     An entity declared with a rank-clause shall be a dummy data
+     object or have the ALLOCATABLE or POINTER attribute.
+
+  With:
+
+     An entity declared with a rank-clause shall be a named constant,
+     dummy data object or have the ALLOCATABLE or POINTER attribute.
+
+* 10.1.12 Constant expression
+
+  Extend list in normative text for "constant expression":
+  "deferred constant"
+
+* 10.1 Expressions and Assignment
+
+  New section 10.1.13 Deferred constant expressions
+
+  <deferred-const-expr> <<is>> <constant-expr>
+
+  An expression is a <deferred-const-expr> if one of its primaries is
+  a named deferred constant.
+
+  A <deferred-const-expr> is not equal to any other <expr> unless
+  <expr> is syntactically equivalent.
+
+* 15.5.1 Syntax of a procedure reference
+
+  Extend R1522 <procedure-designator>:
+  " <<or>> <deferred-proc>"
+  " <<or>> <inline-instantiate>"
+
+  Extend R1524 <actual-arg>:
+  " <<or>> <deferred-proc> "
+
+3. Edits required for templates and instantiation
+=================================================
+
+* 5.1 High level syntax
+
+  Extend R508 <specification-construct> to include:
+        <<or>> <template>
+        <<or>> <requirement>
+        <<or>> <instantiate-stmt>
+
+  Extend R512 to be:
+     R512 <internal-subprogram>
+         <<is>> <function-subprogram>
+         <<or>> <subroutine-subprogram>
+         <<or>> <simple-template-subroutine-subprogram>
+         <<or>> <simple-template-function-subprogram>
+
+*8.7 IMPLICIT Statement
+
+Modify last sentence in para 3 on page 127 from:
+
+If a mapping is not specified for a letter, the default
+for a program unit or an interface body is default integer if the
+letter is I, J, ..., or N and default real otherwise, and the default
+for a BLOCK construct, internal subprogram, or module subprogram is
+the mapping in the host scoping unit.
+
+To:
+
+If a mapping is not specified for a letter, the default for a program
+unit or an interface body that does not appear in a template or a
+requirement is default integer if the letter is I, J, ..., or N and
+default real otherwise.  The default for a BLOCK construct, internal
+subprogram, or module subprogram is the mapping in the host scoping
+unit.  The default for an interface body inside of a template or
+requirement is as if IMPLICIT NONE(TYPE, EXTERNAL) appeared.
+
+
+* 8.8p2 IMPORT Statement
+
+  Modify sentence 2 in p2 from:
+
+     This is the default for an interface body that is not a module
+     procedure interface body.
+
+     To:
+
+     This is the default for an interface body that is not a module
+     procedure interface body or an interface body that appears in a
+     template or a requirement.
+
+  Modify sentence 2 in p4 from:
+
+     This is the default for a derived-type definition, internal
+     subprogram, module procedure interface body, module subprogram,
+     or submodule.
+
+  To:
+
+     This is the default for a derived-type definition, internal
+     subprogram, module procedure interface body, module subprogram,
+     submodule, or an interface body that appears in a template or a
+     requirement.
+
+* 14.2.1 Module syntax and semantics
+
+Rule 1408 becomes
+
+R1408 <module-subprogram>
+    <<is>> <function-subprogram>
+    <<or>> <subroutine-subprogram>
+    <<or>> <separate-module-subprogram>
+    <<or>> <simple-template-subroutine-subprogram>
+    <<or>> <simple-template-function-subprogram>
