@@ -1,7 +1,7 @@
-To: J3                                                     J3/24-107r1
+To: J3                                                     
 From: generics
 Subject: Formal syntax for deferred arguments
-Date: 2024-February-28
+Date: 2024-May-06
 
 Reference:
 
@@ -248,6 +248,39 @@ appears as the <function-name> or <subroutine-name> in an
 
 3.1.3 Syntax for deferred types
 
+# Intrinsic types
+    - type, deferred :: T
+      - type(T) :: local
+    X - class(T) :: local
+  X - class, deferred :: T
+    X - type(T) :: local
+    X - class(T) :: local
+    
+# Non-extensible derived types
+    - type, deferred :: T
+      - type(T) :: local
+    X - class(T) :: local
+  X  - class, deferred :: T
+    X - type(T) :: local
+    X - class(T) :: local
+
+# Extensible derived types
+    - type, deferred :: T
+      - type(T) :: local
+    X - class(T) :: local
+    - class, deferred :: T
+    X - type(T) :: local
+      - class(T) :: local
+
+# Abstract extensible derived types
+  X - type, deferred :: T
+    X - type(T) :: local
+    X - class(T) :: local
+    - class, deferred :: T
+    X - type(T) :: local
+      - class(T) :: local
+
+
 <deferred-type-declaration-stmt>
        <<is>>  TYPE, DEFERRED :: <deferred-type-list>
        <<or>>  CLASS, DEFERRED :: <deferred-class-list>
@@ -259,19 +292,34 @@ appears as the <function-name> or <subroutine-name> in an
 Constraint: A <deferred-type> or <deferred-class> entity shall not
             appear as <parent-type-name> in an EXTENDS attribute.
 
-Note: Possibly an analogous constraint is needed for CLASS(T), but
-      current reading of the standard requires
-      CLASS(<derived-type-spec>), and a <deferred-type> is not a
-      <derived-type-spec>.
-
 Constraint: Each <deferred-type> shall appear in
             <deferred-arg-list> of the innermost scoping unit.
 
-A <deferred-type> is a deferred type.
+Constraint: Each <deferred-class> shall appear in
+            <deferred-arg-list> of the innermost scoping unit.
 
-Note: The actual type-spec passed to a <deferred-class> deferred
-      argument must be extensible.  Thus it may not be intrinsic,
-      sequence, etc.
+A <deferred-type> is a deferred type. A <deferred-class> is an
+abstract derived type.
+
+Note: <deferred-type> will not be allowed in a CLASS declaration, and
+      a <deferred-class> will not be allowed in a TYPE declaration.
+      These are implied by extensions planned for section 7.3.2.1 Type
+      specifier syntax.
+
+      Simple example illustrating the above.
+
+      TEMPLATE TMPL(T, U)
+         TYPE, DEFERRED :: T
+         CLASS, DEFERRED :: U
+      CONTAINS
+         SUBROUTINE S(X, Y, Z, W)
+            TYPE(T) :: X ! ok
+            CLASS(T) :: Y ! invalid
+            TYPE(U) :: Z ! invalid
+            CLASS(U) :: W ! ok
+         END SUBROUTINE S
+      END TEMPLATE TMPL
+
 
 3.2 Specification of deferred arguments
 ---------------------------------------

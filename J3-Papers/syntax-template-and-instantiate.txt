@@ -379,8 +379,8 @@ Constraint: An <instantiation-arg> that is a <type-spec> shall
             or <deferred-class> in the referenced template or
             requirement.
 
-Constraint: An <instantiation-arg> that is a <type-spec> shall not be
-            abstract.
+Constraint: An <instantiation-arg> that corresponds to a
+            <deferred-type> shall not be abstract.
 
 Constraint: If an <instantiation-arg> is associated with a
             <deferred-type>, a variable of that type shall be
@@ -392,3 +392,29 @@ Constraint: If an <instantiation-arg> is a <type-spec>, it shall not
 
 Constraint: If an <instantiation-arg> corresponds to <deferred-class>,
             it shall be extensible.
+
+Note: Non-abstract, extensible derived types can be associated with
+      both <deferred-class> and <deferred-type>.
+
+      Simple example illustrating the above.
+
+      TYPE :: MY_T1
+      END TYPE
+      TYPE, ABSTRACT :: MY_T2
+      END TYPE
+
+      TEMPLATE TMPL1(T)
+         TYPE, DEFERRED :: T
+      END TEMPLATE TMPL
+
+      TEMPLATE TMPL2(U)
+         CLASS, DEFERRED :: U
+      END TEMPLATE TMPL
+
+      INSTANTIATE TMPL1(INTEGER) ! ok
+      INSTANTIATE TMPL1(MY_T1)   ! ok
+      INSTANTIATE TMPL1(MY_T2)   ! invalid
+      
+      INSTANTIATE TMPL2(INTEGER) ! invalid
+      INSTANTIATE TMPL2(MY_T1)   ! ok
+      INSTANTIATE TMPL2(MY_T2)   ! ok

@@ -1,7 +1,7 @@
-To: J3                                                     J3/24-107r1
+To: J3                                                     
 From: generics
 Subject: Miscellaneous edits to incorporate templates
-Date: 2024-February-28
+Date: 2024-May-06
 
 Reference:
 
@@ -97,6 +97,15 @@ would make constraint for deferred constants clearer.
 
   A <deferred-const-expr> is not equal to any other <expr> unless
   <expr> is syntactically equivalent.
+
+* 11.1.11.1 Purpose and form of the SELECT TYPE construct
+
+  Extend R1156 to 
+  R1156 <type-guard-stmt>
+      <<is>> TYPE IS ( <type-spec> ) [ <select-construct-name> ]
+      <<or>> CLASS IS ( <derived-type-spec> ) [ <select-construct-name> ]
+      <<or>> CLASS IS ( <deferred-class> ) [ <select-construct-name> ]
+      <<or>> CLASS DEFAULT [ <select-construct-name> ]
 
 * 15.5.1 Syntax of a procedure reference
 
