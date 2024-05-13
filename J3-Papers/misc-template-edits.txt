@@ -133,7 +133,24 @@ would make constraint for deferred constants clearer.
          <<or>> <simple-template-subroutine-subprogram>
          <<or>> <simple-template-function-subprogram>
 
-*8.7 IMPLICIT Statement
+* 8.5.8.6 Implied-shape array
+
+UTI: need to update paragraph 3 to allow deferred const which does not have
+initialization expression.
+
+  The extent of each dimension of an implied-shape array is the same
+  as the extent of the corresponding dimension of the
+  constant-expr. The lower bound of each dimension is lower-bound, if
+  it appears, and 1 otherwise; the upper bound is one less than the
+  sum of the lower bound and the extent.
+
+* 8.5.17 RANK clause
+
+UTI - needs to allow deferred shape for deferred constant
+
+Assuming that Malcolm is generalizing this for Japanese papers.
+
+* 8.7 IMPLICIT Statement
 
 Modify last sentence in para 3 on page 127 from:
 

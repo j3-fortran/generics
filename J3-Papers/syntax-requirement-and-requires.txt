@@ -1,15 +1,29 @@
 To: J3                                                     J3/24-107r1
 From: generics
-Subject: Formal syntax for REQUIREMENT and REQUIRES
+Subject: Formal syntax (3 of 3): REQUIREMENT and REQUIRES
 Date: 2024-February-28
 
 Reference: 
+
+This paper is the third of three that comprise the formal syntax for
+generic programming features in Fortran, aka templates.
 
 1. Introduction
 ===============
 
 This paper defines the syntax for the REQUIREMENT construct, and the
-REQUIRES statement. Examples of REQUIREMENT blocks are shown below.
+REQUIRES statement.  Paper 1 covers the syntax for deferred arguments,
+and paper 2 covers the syntax related to the TEMPLATE construct and
+INSTANTIATION statement
+
+Section 2 provides an example exercising the proposed syntax.  Section
+3 covers the REQUIREMENT construct, and section 4 covers the REQUIRES
+statement.
+
+2. Example
+==========
+
+Examples of REQUIREMENT blocks are shown below.
 
    REQUIREMENT R1{U, V, G}
       TYPE, DEFERRED :: U, V
@@ -36,7 +50,7 @@ The semantics of redundant specifications of deferred arguments in the
 context of REQUIREMENT blocks and REQUIRES statements are described in
 the paper describing deferred arguments [###], Sec. 3.2.
 
-2. Syntax for the REQUIREMENT construct
+3. Syntax for the REQUIREMENT construct
 =======================================
 
 A REQUIREMENT is a named collection of deferred argument declarations
@@ -66,7 +80,7 @@ Note: A <requirement> is a scoping unit that allows use and host
 Note: Each <deferred-arg> is local to the REQUIREMENT construct.
 
 
-3. Syntax for the REQUIRES statement
+4. Syntax for the REQUIRES statement
 ====================================
 
 A REQUIRES statement provides specifications of deferred arguments by
@@ -78,3 +92,5 @@ associating them with the deferred arguments of a REQUIREMENT.
 
 Constraint: <requirement-name> shall be the name of a previously
             defined <requirement>.
+
+===END===

@@ -1,19 +1,28 @@
 To: J3                                                     
 From: generics
-Subject: Formal syntax for deferred arguments
+Subject: Formal syntax (1 of 3): deferred arguments
 Date: 2024-May-06
 
 Reference:
 
+This paper is the first of three that comprise the formal syntax for
+generic programming features in Fortran, aka templates.
+
 1. Introduction
 ===============
 
-This paper introduces a non-pedagogical example that demonstrates
-most of the proposed syntax for the template features. This paper
-then defines and explains the semantics for the syntax of the
-deferred arguments portion of the templates feature. The syntax
-for the TEMPLATE block, REQUIREMENT block, REQUIRES statement,
-and template instantiation are described in subsequent papers.
+This paper defines the formal syntax for deferred arguments.  Paper 2
+covers the syntax related to the TEMPLATE construct and INSTANTIATION
+statement, while paper 3 provides the syntax for the REQUIREMEMT
+construct and the REQUIRES statement.
+
+Deferred arguments are template "dummy" arguments that are given their
+"values" when the template is instantiated.  Deferred arguments can be
+constants, procedures, or types.
+
+Section 2 provides a non-pedagogical example that exercises most of the
+proposed syntax.  Section 3 defines the formal syntax for deferred
+entities.
 
 2. Example
 ==========
@@ -93,35 +102,44 @@ END MODULE C
 A deferred argument is an entity that takes some of its
 characteristics from its ultimate instantiation argument.  A deferred
 argument can be a constant, type, or procedure and can appear in a
-REQUIREMENT, TEMPLATE construct, or simple template procedure.
-Association with instantiation arguments occurs in the REQUIRES
-and INSTANTIATE statements.
+REQUIREMENT construct, TEMPLATE construct, or simple template
+procedure (STP).  Association with instantiation arguments occurs in the
+REQUIRES and INSTANTIATE statements.
 
 A deferred constant is a deferred argument that can appear in constant
-expressions within a REQUIREMENT or TEMPLATE construct.
+expressions within a REQUIREMENT construct, TEMPLATE construct, or STP.
 
-A deferred type is a deferred argument that can appear as a <type-spec>
-within a REQUIREMENT or TEMPLATE construct.
+A deferred type is a deferred argument that can appear as a
+<type-spec> within a REQUIREMENT construct, TEMPLATE construct, or
+STP.
 
 A deferred procedure is a deferred argument that can appear in
-procedure references within a REQUIREMENT or TEMPLATE construct.  A
-deferred procedure's interface shall be established in that
-REQUIREMENT or TEMPLATE construct, possibly in terms of deferred types
-and constants.
+procedure references within a REQUIREMENT construct, TEMPLATE
+construct, or STP.  A deferred procedure's interface shall be
+established in that construct, possibly in terms of other deferred
+arguments.
 
 Within a construct with a <deferred-arg>, an explicit specification of
 that <deferred-arg> is either <deferred-arg-explicit-stmt> or
 <interface-body>.
 
-A <deferred-arg> shall have one or more ultimate specifications.  An
-ultimate specification for a <deferred-arg> is either an explicit
-specification or the ultimate specification of a requirement
-referenced in a REQUIRES statement.
+A <deferred-arg> shall have one or more ultimate specifications.  The
+ultimate specifications of a <deferred-arg> are:
+    - an explicit specification, if present, and
+    - its ultimate specifications as instantiation arguments in
+      REQUIRES statements, if any.
+The ultimate specifications of an instantiation argument in a REQUIRES
+statement are the ultimate specifications of the corresponding
+deferred argument in the referenced requirement construct.
 
 Note: The approach here is that a deferred argument is always
       eventually explicitly declared at some level of nesting of
       requirements.  A deferred argument must have at least one
       ultimate specification and may have multiple.
+
+Note: If a deferred argument has multiple ultimate specifications,
+      they must be consistent.  Constraints on consistency are
+      defined in section 3.2.
 
 Some examples of declarations of deferred arguments are shown below.
 
@@ -141,20 +159,22 @@ Some examples of declarations of deferred arguments are shown below.
 3.1 Syntax for deferred arguments
 ---------------------------------
 
-A deferred argument declaration construct is used to declare
-REQUIREMENT or TEMPLATE arguments.
+A deferred argument declaration statement is used to declare
+deferred arguments.
 
-<deferred-arg> <<is>> <deferred-arg-name>
+<deferred-arg> <<is>> <deferred-const>
+               <<or>> <deferred-proc>
+	       <<or>> <deferred-type>
+	       <<or>> <deferred-class>
 
 Constraint: A <deferred-arg> shall have at most one explicit
             specification in a given scoping unit.
 
 Constraint: A <deferred-arg> declaration shall not have an
-            <access-spec> nor shall it appear in a PUBLIC statement.
+            <access-spec> nor shall it appear in an <access-stmt>.
 
 Note: Deferred arguments are local identifiers and are not externally
-      accessible.`
-
+      accessible.
 
 <deferred-arg-decl-stmt> <<is>> <deferred-arg-explicit-stmt>
                          <<or>> <requires-stmt>
@@ -162,9 +182,6 @@ Note: Deferred arguments are local identifiers and are not externally
 <deferred-arg-explicit-stmt> <<is>> <deferred-const-declaration-stmt>
                              <<or>> <deferred-proc-declaration-stmt>
                              <<or>> <deferred-type-declaration-stmt>
-
-Constraint: Each <deferred-arg> shall appear in at most one
-            <deferred-arg-explicit-stmt>.
 
 3.1.1 Syntax for deferred constants
 
@@ -435,3 +452,5 @@ deferred class.
 ---------------------------------
 
 This will be discussed in a subsequent paper.
+
+===END===

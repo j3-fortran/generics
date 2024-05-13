@@ -1,16 +1,29 @@
 To: J3                                                     J3/24-107r1
 From: generics
-Subject: Formal syntax for templates and instantiation
+Subject: Formal syntax (2 of 3): templates and instantiation
 Date: 2024-February-28
 
 Reference: 
+
+This paper is the second of three that comprise the formal syntax for
+generic programming features in Fortran, aka templates.
 
 1. Introduction
 ===============
 
 This paper defines the syntax for the TEMPLATE construct, the
 INSTANTIATE statement, simple template procedures, and inline
-instantiation.
+instantiation.  Paper 1 covers the syntax for deferred arguments, and
+paper 3 covers the syntax for the REQUIREMENT construct and REQUIRES
+statement.
+
+Section 2 provides examples exercising the proposed syntax.  Section 3
+provides the syntax for the TEMPLATE construct and simple template
+procedures.  Section 4 provides syntax for the INSTANTIATE statement
+and inline instatition of simple template procedures.
+
+2. Illustrative examples
+========================
 
 An example template is shown below.
 
@@ -55,10 +68,10 @@ procedure would be as follows.
    CALL S{integer, operator(-)}(i)
    CALL S{real, sin}(x)
 
-2. Syntax for templates
-=======================
+3. Syntax for templates and simple template procedures
+======================================================
 
-2.1 Syntax for the TEMPLATE construct
+3.1 Syntax for the TEMPLATE construct
 -------------------------------------
 
 A template is a set of declarations, specifications and definitions
@@ -81,7 +94,7 @@ Constraint: If a <template-name> appears in the <end-template-stmt>,
             it shall be identical to the <template-name>
             specified in the <template-stmt>.
 
-2.1.1 Template specification part
+3.1.1 Template specification part
 ---------------------------------
 
 <template-specification-part> <<is>>
@@ -132,7 +145,7 @@ Note: This is to say, the template specification section cannot
       declare variables.
 
 
-2.1.2 Template subprogram part
+3.1.2 Template subprogram part
 ------------------------------
 
 <template-subprogram-part> <<is>> <contains-stmt>
@@ -142,7 +155,7 @@ Note: This is to say, the template specification section cannot
                       <<or>> <subroutine-subprogram>
 
 
-2.2 Simple template procedures
+3.2 Simple template procedures
 ------------------------------
 
 A simple template procedure is a template whose only public entity is
@@ -192,7 +205,7 @@ Constraint: If a <subroutine-name> appears in the <end-subroutine-stmt>,
             it shall be identical to the <template-name>
             specified in the <simple-template-subroutine-stmt>.
 
-2.3 Additional constraints
+3.3 Additional constraints
 --------------------------
 
 Constraint: A variable or procedure pointer declared in either a
@@ -228,10 +241,10 @@ Note: This constraint expresses the notion of type-safety.  In
       to be internally consistent.
 
 
-3. Syntax for instantiation
+4. Syntax for instantiation
 ===========================
 
-3.1 Syntax for the INSTANTIATE statement
+4.1 Syntax for the INSTANTIATE statement
 ----------------------------------------
 
 The INSTANTIATE statement specifies an instance of a template and
@@ -274,7 +287,7 @@ Note: <generic-spec> includes operators, defined assignment and
       defined I/O.  The last may be somewhat awkward to use within a
       template without re-expressing as defined I/O again.
 
-3.2 Syntax for inline instantiation of simple template procedures
+4.2 Syntax for inline instantiation of simple template procedures
 -----------------------------------------------------------------
 
 A simple template procedure can be instantiated and referenced in
@@ -290,7 +303,7 @@ Constraint: <template-name> shall be the name of a
 The procedure designated by <inline-instantiate> is the procedure
 produced from instantiating the simplified template procedure.
 
-3.3 Deferred argument association
+4.3 Deferred argument association
 ---------------------------------
 
 Instantiation arguments are specified by an INSTANTIATE statement, a
@@ -315,7 +328,7 @@ second deferred argument in the reduced list, etc.
                     <<or>> <procedure-name>
 
 
-3.3.1 Deferred constant association
+4.3.1 Deferred constant association
 
 Constraint: <constant-expr> shall be type INTEGER, LOGICAL or
             CHARACTER.
@@ -338,7 +351,7 @@ Constraint: If the rank of the corresponding <deferred-const> in the
             <constant-expr> shall have the same rank.
 
 
-3.3.2 Deferred procedure association
+4.3.2 Deferred procedure association
 
 Constraint: An <instantiation-arg> that is a <generic-spec> or
             <procedure-name> shall correspond to a <deferred-arg> that
@@ -372,7 +385,7 @@ Note: The previous two constraints constitute what is referred to as
       "weak constraints" in other languages.
 
 
-3.3.3 Deferred type association
+4.3.3 Deferred type association
 
 Constraint: An <instantiation-arg> that is a <type-spec> shall
             correspond to a <deferred-arg> that is a <deferred-type>
@@ -418,3 +431,5 @@ Note: Non-abstract, extensible derived types can be associated with
       INSTANTIATE TMPL2(INTEGER) ! invalid
       INSTANTIATE TMPL2(MY_T1)   ! ok
       INSTANTIATE TMPL2(MY_T2)   ! ok
+
+===END===
