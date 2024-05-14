@@ -13,7 +13,7 @@ generic programming features in Fortran, aka templates.
 
 This paper defines the formal syntax for deferred arguments.  Paper 2
 covers the syntax related to the TEMPLATE construct and INSTANTIATION
-statement, while paper 3 provides the syntax for the REQUIREMEMT
+statement, while paper 3 provides the syntax for the REQUIREMENT
 construct and the REQUIRES statement.
 
 Deferred arguments are template "dummy" arguments that are given their
@@ -164,8 +164,8 @@ deferred arguments.
 
 <deferred-arg> <<is>> <deferred-const>
                <<or>> <deferred-proc>
-	       <<or>> <deferred-type>
-	       <<or>> <deferred-class>
+               <<or>> <deferred-type>
+               <<or>> <deferred-class>
 
 Constraint: A <deferred-arg> shall have at most one explicit
             specification in a given scoping unit.
