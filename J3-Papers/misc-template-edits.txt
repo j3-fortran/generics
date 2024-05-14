@@ -26,11 +26,18 @@ been identified so far.
   Extend R702 <type-spec>:
   " <<or>> <deferred-type>"
 
+  Extend C703 from:
+    (R702) The <derived-type-spec> shall not specify an abstract
+    type (7.5.7)
+  To:
+    (R702) The <derived-type-spec> or <deferred-type> shall not specify
+    an abstract type (7.5.7) except when used as an <instantiation-arg> (????)
+
   Extend R703 <declaration-type-spec>:
   "TYPE(<deferred-type>)"
 
   Extend R703 <declaration-type-spec>:
-  "CLASS(<deferred-class>)"
+  "CLASS(<deferred-type>)"
 
 * 7.5.2.1 Syntax of a derived-type definition
 
@@ -104,7 +111,7 @@ would make constraint for deferred constants clearer.
   R1156 <type-guard-stmt>
       <<is>> TYPE IS ( <type-spec> ) [ <select-construct-name> ]
       <<or>> CLASS IS ( <derived-type-spec> ) [ <select-construct-name> ]
-      <<or>> CLASS IS ( <deferred-class> ) [ <select-construct-name> ]
+      <<or>> CLASS IS ( <deferred-type> ) [ <select-construct-name> ]
       <<or>> CLASS DEFAULT [ <select-construct-name> ]
 
 * 15.5.1 Syntax of a procedure reference

@@ -389,25 +389,23 @@ Note: The previous two constraints constitute what is referred to as
 
 Constraint: An <instantiation-arg> that is a <type-spec> shall
             correspond to a <deferred-arg> that is a <deferred-type>
-            or <deferred-class> in the referenced template or
-            requirement.
+            in the referenced template or requirement.
 
-Constraint: An <instantiation-arg> that corresponds to a
-            <deferred-type> shall not be abstract.
+Constraint: An <instantiation-arg> that corresponds to a non-abstract
+            deferred type shall not be abstract.
 
-Constraint: If an <instantiation-arg> is associated with a
-            <deferred-type>, a variable of that type shall be
-            permitted in a variable definition context.
+Constraint: An <instantiation-arg> that corresponds to an abstract
+            deferred type shall be an extensible derived type.
 
-Constraint: If an <instantiation-arg> is a <type-spec>, it shall not
-            specify a type that has a coarray potential subobject
+Constraint: An <instantiation-arg> that corresponds to a deferred
+            type shall be permitted in a variable definition context.
+
+Constraint: An <instantiation-arg> that corresponds to a deferred
+            type shall not have a coarray potential subobject
             component.
 
-Constraint: If an <instantiation-arg> corresponds to <deferred-class>,
-            it shall be extensible.
-
 Note: Non-abstract, extensible derived types can be associated with
-      both <deferred-class> and <deferred-type>.
+      both abstract and non-abstract deferred type arguments.
 
       Simple example illustrating the above.
 
@@ -421,7 +419,7 @@ Note: Non-abstract, extensible derived types can be associated with
       END TEMPLATE TMPL
 
       TEMPLATE TMPL2(U)
-         CLASS, DEFERRED :: U
+         TYPE, ABSTRACT, DEFERRED :: U
       END TEMPLATE TMPL
 
       INSTANTIATE TMPL1(INTEGER) ! ok

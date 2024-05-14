@@ -109,15 +109,19 @@ REQUIRES and INSTANTIATE statements.
 A deferred constant is a deferred argument that can appear in constant
 expressions within a REQUIREMENT construct, TEMPLATE construct, or STP.
 
-A deferred type is a deferred argument that can appear as a
-<type-spec> within a REQUIREMENT construct, TEMPLATE construct, or
-STP.
-
 A deferred procedure is a deferred argument that can appear in
 procedure references within a REQUIREMENT construct, TEMPLATE
 construct, or STP.  A deferred procedure's interface shall be
 established in that construct, possibly in terms of other deferred
 arguments.
+
+A deferred type is a deferred argument that can appear as a
+<type-spec>, or in a <declaration-type-spec> or <type-guard-stmt>,
+within a REQUIREMENT construct, TEMPLATE construct, or STP.
+
+Note: A deferred type is not a <type-name> and cannot not appear
+      in a <derived-type-spec>. Consequently a deferred type may
+      not be used in a <structure-constructor>.
 
 Within a construct with a <deferred-arg>, an explicit specification of
 that <deferred-arg> is either <deferred-arg-explicit-stmt> or
@@ -299,40 +303,52 @@ appears as the <function-name> or <subroutine-name> in an
 
 
 <deferred-type-declaration-stmt>
-       <<is>>  TYPE, DEFERRED :: <deferred-type-list>
-       <<or>>  CLASS, DEFERRED :: <deferred-class-list>
+       <<is>>  TYPE, DEFERRED [, ABSTRACT] :: <deferred-type-list>
+       <<or>>  TYPE, ABSTRACT, DEFERRED :: <deferred-type-list>
 
 <deferred-type> <<is>> <name>
 
-<deferred-class> <<is>> <name>
+Constraint: A <deferred-type> entity shall not appear as
+            <parent-type-name> in an EXTENDS attribute.
 
-Constraint: A <deferred-type> or <deferred-class> entity shall not
-            appear as <parent-type-name> in an EXTENDS attribute.
+Constraint: Each <deferred-type> shall appear in <deferred-arg-list>
+            of the innermost scoping unit.
 
-Constraint: Each <deferred-type> shall appear in
-            <deferred-arg-list> of the innermost scoping unit.
+A <deferred-type> is a type that is a deferred argument.
 
-Constraint: Each <deferred-class> shall appear in
-            <deferred-arg-list> of the innermost scoping unit.
+If ABSTRACT appears in <deferred-type-declaration-stmt>, the
+declaration specifies the ABSTRACT attribute for the deferred types.
 
-A <deferred-type> is a deferred type. A <deferred-class> is an
-abstract derived type.
+Note: If a deferred type has the ABSTRACT attribute, its corresponding
+      instantiation argument must be an extensible derived type. 
+      This note is formally specified by a constraint in the 2nd paper.
 
-Note: <deferred-type> will not be allowed in a CLASS declaration, and
-      a <deferred-class> will not be allowed in a TYPE declaration.
-      These are implied by extensions planned for section 7.3.2.1 Type
-      specifier syntax.
+If a deferred type does not have the ABSTRACT attribute, it acts as
+if its instantiation argument were non-extensible.
 
-      Simple example illustrating the above.
+Note: The distinction between abstract and non-abstract deferred types
+      is to ensure a processor can verify the usages of deferred types
+      within a template or requirement are compatible with any
+      instantiation arguments they may have.
+
+      The instantiation argument for an abstract deferred type does
+      not need to itself be abstract, but usage of that deferred type
+      within the template or requirement will act as if the
+      instantiation type were abstract.
+
+      The result is that an abstract deferred type may appear in a
+      CLASS declaration but not a TYPE declaration, and a non-abstract
+      deferred type may appear in a TYPE declaration but not a CLASS
+      declaration. An example:
 
       TEMPLATE TMPL(T, U)
          TYPE, DEFERRED :: T
-         CLASS, DEFERRED :: U
+         TYPE, ABSTRACT, DEFERRED :: U
       CONTAINS
          SUBROUTINE S(X, Y, Z, W)
-            TYPE(T) :: X ! ok
+            TYPE(T) :: X  ! ok
             CLASS(T) :: Y ! invalid
-            TYPE(U) :: Z ! invalid
+            TYPE(U) :: Z  ! invalid
             CLASS(U) :: W ! ok
          END SUBROUTINE S
       END TEMPLATE TMPL
@@ -438,15 +454,14 @@ Constraint: If any ultimate specification of a deferred argument is a
             deferred type, then all ultimate specifications of that
             deferred argument shall be deferred type.
 
-Constraint: If any ultimate specification of a deferred argument is a
-            deferred class, then all ultimate specifications of that
-            deferred argument shall be deferred class.
+Constraint: If any ultimate specification of a deferred type is
+            abstract, then all ultimate specifications of that
+            deferred type shall be abstract.
 
-If any ultimate specification is deferred type, then that argument is
-deferred type.
-
-If any ultimate specification is deferred class, then that argument is
-deferred class.
+If any ultimate specification of a deferred argument is deferred type,
+then that argument is deferred type. If any ultimate specification of
+a deferred type has the ABSTRACT attribute, then that argument has the
+ABSTRACT attribute.
 
 3.3 Deferred argument association
 ---------------------------------
