@@ -316,30 +316,15 @@ Constraint: Each <deferred-type> shall appear in <deferred-arg-list>
 
 A <deferred-type> is a type that is a deferred argument.
 
-If ABSTRACT appears in <deferred-type-declaration-stmt>, the
-declaration specifies the ABSTRACT attribute for the deferred types.
-
-Note: If a deferred type has the ABSTRACT attribute, its corresponding
-      instantiation argument must be an extensible derived type. 
-      This note is formally specified by a constraint in the 2nd paper.
-
-If a deferred type does not have the ABSTRACT attribute, it acts as
-if its instantiation argument were non-extensible.
+If ABSTRACT appears in <deferred-type-declaration-stmt>, the declared
+deferred types act as if they were abstract extensible derived types.
+Otherwise, they act as if they were non-extensible types.
 
 Note: The distinction between abstract and non-abstract deferred types
-      is to ensure a processor can verify the usages of deferred types
-      within a template or requirement are compatible with any
-      instantiation arguments they may have.
-
-      The instantiation argument for an abstract deferred type does
-      not need to itself be abstract, but usage of that deferred type
-      within the template or requirement will act as if the
-      instantiation type were abstract.
-
-      The result is that an abstract deferred type may appear in a
-      CLASS declaration but not a TYPE declaration, and a non-abstract
-      deferred type may appear in a TYPE declaration but not a CLASS
-      declaration. An example:
+      helps to ensure a processor can verify a template is internally
+      consistent.  For example, a deferred type must not be permitted
+      in a CLASS declaration if it might be instantiated as INTEGER.
+      The following is a simple usage example:
 
       TEMPLATE TMPL(T, U)
          TYPE, DEFERRED :: T
@@ -352,6 +337,9 @@ Note: The distinction between abstract and non-abstract deferred types
             CLASS(U) :: W ! ok
          END SUBROUTINE S
       END TEMPLATE TMPL
+
+      INSTANTIATE TMPL{INTEGER, MYTYPE} ! both args ok
+      INSTANTIATE TMPL{MYTYPE, INTEGER} ! both args invalid
 
 
 3.2 Specification of deferred arguments
