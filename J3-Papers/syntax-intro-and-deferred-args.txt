@@ -314,7 +314,7 @@ Constraint: A <deferred-type> entity shall not appear as
 Constraint: Each <deferred-type> shall appear in <deferred-arg-list>
             of the innermost scoping unit.
 
-A <deferred-type> is a type that is a deferred argument.
+A <deferred-type> is a deferred type.
 
 If ABSTRACT appears in <deferred-type-declaration-stmt>, the declared
 deferred types act as if they were abstract extensible derived types.
