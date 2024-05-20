@@ -13,7 +13,7 @@ generic programming features in Fortran, aka templates.
 
 This paper defines the formal syntax for deferred arguments.  Paper 2
 covers the syntax related to the TEMPLATE construct and INSTANTIATION
-statement, while paper 3 provides the syntax for the REQUIREMEMT
+statement, while paper 3 provides the syntax for the REQUIREMENT
 construct and the REQUIRES statement.
 
 Deferred arguments are template "dummy" arguments that are given their
@@ -168,8 +168,8 @@ deferred arguments.
 
 <deferred-arg> <<is>> <deferred-const>
                <<or>> <deferred-proc>
-	       <<or>> <deferred-type>
-	       <<or>> <deferred-class>
+               <<or>> <deferred-type>
+               <<or>> <deferred-class>
 
 Constraint: A <deferred-arg> shall have at most one explicit
             specification in a given scoping unit.
@@ -351,58 +351,41 @@ the outermost scope in which it is a deferred argument.
 3.2.1 Specification of deferred constants
 
 Constraint: If any ultimate specification of a deferred argument is a
-            deferred constant, then all specifications of that deferred
-            argument shall be deferred constant.
+            deferred constant, then all ultimate specifications of
+            that deferred argument shall be deferred constant.
 
-Constraint: All specifications of a deferred constant shall specify
-            the same type and kind-type parameters.
-
-Constraint: If any ultimate specification of a deferred constant is of
-            a non-deferred rank, R, then an explicit specification of
-            that deferred constant shall have rank R.
+Constraint: All ultimate specifications of a deferred constant shall
+            specify the same type and kind-type parameters.
 
 Constraint: If any ultimate specification of a deferred constant is of
-            a non-deferred rank, R, then all other specifications of
-            that deferred constant shall either have deferred rank or
-            have rank R.
+            a non-deferred rank R, then an explicit specification of
+            that deferred constant shall have rank R, and all other
+            ultimate specifications of that deferred constant shall
+            either have deferred rank or have rank R.
 
 Constraint: If any ultimate specification of a deferred constant has
             explicit shape S, then an explicit specification of that
-            deferred constant shall have shape S.
-
-Constraint: If any ultimate specification of a deferred constant has
-	    explicit shape S, then all other specifications of that
-	    deferred constant shall either have deferred rank or
-	    implied shape, or the same shape S.
-
-
-If any ultimate specification of a deferred constant has a
-non-deferred rank, R, then that deferred constant has rank
-R.  Otherwise it has deferred rank.
+            deferred constant shall have shape S, and all other
+            ultimate specifications of that deferred constant shall
+            have deferred rank, implied shape, or shape S.
 
 If any ultimate specification of a deferred constant has an explicit
-shape S, then that deferred constant has shape S.  Otherwise the it
-has implied shape.
+shape S, then that deferred constant has shape S.  Otherwise, if any
+ultimate specification of that deferred constant has implied shape,
+then it has implied shape with the same rank.  Otherwise it has
+deferred rank.
 
 3.2.2 Specification of deferred procedures
 
 Constraint: If any ultimate specification of a deferred argument is a
-            deferred procedure, then all specifications of that
-            deferred argument shall be deferred procedure.
-
-Constraint: If any ultimate specification of a deferred argument is a
-            subroutine, then all specifications of that deferred
-            argument shall be a subroutine.
-
-Constraint: If any ultimate specification of a deferred argument is a
-            function, then all specifications of that deferred
-            argument shall be a function.
+            deferred procedure, then all ultimate specifications of
+            that deferred argument shall be deferred procedure.
 
 Constraint: A deferred procedure shall only be referenced with keyword
             arguments if it has an explicit specification.
 
-Constraint: Except for PURE, SIMPLE, and ELEMENTAL
-            attributes, the characteristics of all specifications of a
+Constraint: Except for PURE, SIMPLE, and ELEMENTAL attributes, the
+            characteristics of all ultimate specifications of a
             deferred procedure shall be consistent.
 
 Constraint: If any ultimate specification of a deferred procedure is
@@ -417,15 +400,12 @@ Constraint: If any ultimate specification of a deferred procedure is
             ELEMENTAL, then an explicit specification of that deferred
             procedure shall be ELEMENTAL.
 
-If any specification of a deferred procedure is SIMPLE then that
-deferred procedure is SIMPLE.
+If any ultimate specification of a deferred procedure is SIMPLE then
+that deferred procedure is SIMPLE. Otherwise, if any ultimate
+specification of that deferred procedure is PURE, then it is PURE.
 
-If any specification of a deferred procedure is PURE and none of the
-specifications of that deferred procedure are SIMPLE, then that deferred
-procedure is PURE.
-
-If any specification of a deferred procedure is ELEMENTAL then that
-deferred procedure is ELEMENTAL.
+If any ultimate specification of a deferred procedure is ELEMENTAL then
+that deferred procedure is ELEMENTAL.
 
 Only an explicit specification of a <deferred-proc> defines the names
 of its dummy arguments.
