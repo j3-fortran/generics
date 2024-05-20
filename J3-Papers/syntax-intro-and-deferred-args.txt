@@ -397,6 +397,11 @@ Constraint: If any ultimate specification of a deferred argument is a
 Constraint: A deferred procedure shall not be referenced with keyword
             arguments unless it has an explicit specification.
 
+Note: Although dummy arguments always have names, they are processor-
+      dependent for deferred procedures without an explicit
+      specification. The constraint above ensures such names cannot
+      be used.
+
 Constraint: Except for PURE, SIMPLE, and ELEMENTAL
             attributes, the characteristics of all specifications of a
             deferred procedure shall be consistent.
@@ -425,12 +430,6 @@ deferred procedure is ELEMENTAL.
 
 Only an explicit specification of a <deferred-proc> defines the names
 of its dummy arguments.
-
-Note: Unless a <deferred-proc> has an explicit specification, the
-      names of its dummy arguments are processor-dependent.  The
-      intent is that users be unable to access the arguments via
-      keywords.
-
 
 3.2.3 Specification of deferred types
 
