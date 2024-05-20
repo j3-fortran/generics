@@ -184,7 +184,7 @@ Note: Deferred arguments are local identifiers and are not externally
                              <<or>> <deferred-type-declaration-stmt>
 
 Constraint: A <deferred-arg> that appears in a <deferred-arg-decl-stmt>
-            shall be in the <deferred-arg-list> of the innermost
+            shall be included in the <deferred-arg-list> of the 
             TEMPLATE, REQUIREMENT, or simple template procedure in
             which it appears.
 
