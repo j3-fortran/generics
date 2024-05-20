@@ -20,7 +20,7 @@ statement.
 Section 2 provides examples exercising the proposed syntax.  Section 3
 provides the syntax for the TEMPLATE construct and simple template
 procedures.  Section 4 provides syntax for the INSTANTIATE statement
-and inline instatition of simple template procedures.
+and inline instantiation of simple template procedures.
 
 2. Illustrative examples
 ========================
