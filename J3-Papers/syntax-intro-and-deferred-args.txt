@@ -377,14 +377,6 @@ Constraint: If any ultimate specification of a deferred argument is a
             deferred procedure, then all ultimate specifications of
             that deferred argument shall be deferred procedure.
 
-Constraint: If any ultimate specification of a deferred argument is a
-            subroutine, then all ultimate specifications of that
-            deferred argument shall be a subroutine.
-
-Constraint: If any ultimate specification of a deferred argument is a
-            function, then all ultimate specifications of that deferred
-            argument shall be a function.
-
 Constraint: A deferred procedure shall only be referenced with keyword
             arguments if it has an explicit specification.
 
@@ -405,11 +397,8 @@ Constraint: If any ultimate specification of a deferred procedure is
             procedure shall be ELEMENTAL.
 
 If any ultimate specification of a deferred procedure is SIMPLE then
-that deferred procedure is SIMPLE.
-
-If any ultimate specification of a deferred procedure is PURE and none
-of the ultimate specifications of that deferred procedure are SIMPLE,
-then that deferred procedure is PURE.
+that deferred procedure is SIMPLE. Otherwise, if any ultimate
+specification of that deferred procedure is PURE, then it is PURE.
 
 If any ultimate specification of a deferred procedure is ELEMENTAL then
 that deferred procedure is ELEMENTAL.
