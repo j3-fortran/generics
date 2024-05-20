@@ -31,7 +31,7 @@ been identified so far.
     type (7.5.7)
   To:
     (R702) The <derived-type-spec> or <deferred-type> shall not specify
-    an abstract type (7.5.7) except when used as an <instantiation-arg> (????)
+    an abstract type (7.5.7) except when used as an <instantiation-arg>.
 
   Extend R703 <declaration-type-spec>:
   "TYPE(<deferred-type>)"
