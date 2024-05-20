@@ -426,6 +426,11 @@ deferred procedure is ELEMENTAL.
 Only an explicit specification of a <deferred-proc> defines the names
 of its dummy arguments.
 
+Note: Unless a <deferred-proc> has an explicit specification, the
+      names of its dummy arguments are processor-dependent.  The
+      intent is that users be unable to access the arguments via
+      keywords.
+
 
 3.2.3 Specification of deferred types
 
