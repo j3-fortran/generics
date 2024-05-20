@@ -394,11 +394,12 @@ Constraint: An <instantiation-arg> that is a <type-spec> shall
 Constraint: An <instantiation-arg> that corresponds to a non-abstract
             deferred type shall not be abstract.
 
+Constraint: An <instantiation-arg> that corresponds to a non-abstract
+            deferred type shall be permitted in a variable definition
+            context.
+
 Constraint: An <instantiation-arg> that corresponds to an abstract
             deferred type shall be an extensible derived type.
-
-Constraint: An <instantiation-arg> that corresponds to a deferred
-            type shall be permitted in a variable definition context.
 
 Constraint: An <instantiation-arg> that corresponds to a deferred
             type shall not have a coarray potential subobject
