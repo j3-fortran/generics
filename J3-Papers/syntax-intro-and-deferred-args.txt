@@ -354,31 +354,22 @@ Constraint: All specifications of a deferred constant shall specify
             the same type and kind-type parameters.
 
 Constraint: If any ultimate specification of a deferred constant is of
-            a non-deferred rank, R, then an explicit specification of
-            that deferred constant shall have rank R.
-
-Constraint: If any ultimate specification of a deferred constant is of
-            a non-deferred rank, R, then all other specifications of
-            that deferred constant shall either have deferred rank or
-            have rank R.
+            a non-deferred rank R, then an explicit specification of
+            that deferred constant shall have rank R, and all other
+            ultimate specifications of that deferred constant shall
+            either have deferred rank or have rank R.
 
 Constraint: If any ultimate specification of a deferred constant has
             explicit shape S, then an explicit specification of that
-            deferred constant shall have shape S.
-
-Constraint: If any ultimate specification of a deferred constant has
-	    explicit shape S, then all other specifications of that
-	    deferred constant shall either have deferred rank or
-	    implied shape, or the same shape S.
-
-
-If any ultimate specification of a deferred constant has a
-non-deferred rank, R, then that deferred constant has rank
-R.  Otherwise it has deferred rank.
+            deferred constant shall have shape S, and all other
+            ultimate specifications of that deferred constant shall
+            have deferred rank, implied shape, or shape S.
 
 If any ultimate specification of a deferred constant has an explicit
-shape S, then that deferred constant has shape S.  Otherwise the it
-has implied shape.
+shape S, then that deferred constant has shape S.  Otherwise, if any
+ultimate specification of that deferred constant has implied shape,
+then it has implied shape with the same rank.  Otherwise it has
+deferred rank.
 
 3.2.2 Specification of deferred procedures
 
