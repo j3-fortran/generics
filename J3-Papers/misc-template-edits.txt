@@ -33,8 +33,9 @@ been identified so far.
     (R702) The <derived-type-spec> or <deferred-type> shall not specify
     an abstract type (7.5.7) except when used as an <instantiation-arg>.
 
-  Extend R703 <declaration-type-spec>:
-  "TYPE(<deferred-type>)"
+  Extend R703 <declaration-type-spec> to include:
+      <<or>> TYPE(<deferred-type>)
+      <<or>> CLASS(<deferred-type>)
 
   Change C706 from:
     (R703) TYPE(<derived-type-spec>) shall not specify an abstract
@@ -43,9 +44,6 @@ been identified so far.
     (R703) In a <declaration-type-spec> that uses the TYPE keyword,
     <derived-type-spec> or <deferred-type> shall not specify an
     abstract type (7.5.7).
-
-  Extend R703 <declaration-type-spec>:
-  "CLASS(<deferred-type>)"
 
   Extend C705 from:
     (R703) In a <declaration-type-spec> that uses the CLASS keyword,
@@ -130,7 +128,7 @@ would make constraint for deferred constants clearer.
       <<or>> CLASS IS ( <deferred-type> ) [ <select-construct-name> ]
       <<or>> CLASS DEFAULT [ <select-construct-name> ]
 
-  Add constraint, or amend C1166 to include:
+  Add constraint:
     (R1156) <deferred-type> shall specify an extensible type.
 
 * 15.5.1 Syntax of a procedure reference

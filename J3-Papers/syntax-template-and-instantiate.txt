@@ -27,7 +27,7 @@ and inline instantiation of simple template procedures.
 
 An example template is shown below.
 
-   TEMPLATE TMPL(T, F)
+   TEMPLATE TMPL{T, F}
       TYPE, DEFERRED :: T
       INTERFACE
          FUNCTION F(X)
@@ -59,8 +59,8 @@ template is shown below.
 
 Example instantiate statements of TMPL are:
 
-   INSTANTIATE TMPL(integer, operator(-)), only: negate => S
-   INSTANTIATE TMPL(real, sin)
+   INSTANTIATE TMPL{integer, operator(-)}, only: negate => S
+   INSTANTIATE TMPL{real, sin}
 
 An example of an inline instantiation of the simple template
 procedure would be as follows.
@@ -391,27 +391,34 @@ Constraint: An <instantiation-arg> that is a <type-spec> shall
             correspond to a <deferred-arg> that is a <deferred-type>
             in the referenced template or requirement.
 
-Constraint: An <instantiation-arg> that corresponds to a non-abstract
-            deferred type shall not be abstract.
+Constraint: An <instantiation-arg> that corresponds to a deferred type
+            that does not have the ABSTRACT attribute shall not be
+            abstract.
 
-Constraint: An <instantiation-arg> that corresponds to a non-abstract
-            deferred type shall be permitted in a variable definition
-            context.
+Constraint: An <instantiation-arg> that corresponds to a deferred type
+            that does not have the abstract attribute shall be permitted
+            in a variable definition context.
 
-Constraint: An <instantiation-arg> that corresponds to an abstract
-            deferred type shall be an extensible derived type.
+Constraint: An <instantiation-arg> that corresponds to a deferred type 
+            that has the EXTENSIBLE attribute shall be an extensible
+            derived type.
 
 Constraint: An <instantiation-arg> that corresponds to a deferred
             type shall not have a coarray potential subobject
             component.
 
 Note: Non-abstract, extensible derived types can be associated with
-      both abstract and non-abstract deferred type arguments.
+      both abstract and non-extensible deferred type arguments.
+
+Note: Intrinsic types, SEQUENCE types, and types with the BIND attribute
+      cannot be associated with deferred type arguments that have the
+      EXTENSIBLE attribute.
 
       Simple example illustrating the above.
 
       TYPE :: MY_T1
       END TYPE
+
       TYPE, ABSTRACT :: MY_T2
       END TYPE
 
