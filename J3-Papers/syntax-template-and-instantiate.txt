@@ -124,8 +124,8 @@ is in place.
                       <<or>> <type-declaration-stmt>
 
 Note: The analogous construct for MODULE is divided into two separate
-      constructs: <specific-construct> and
-      <other-specification-construct>.  However, subgroup does not see
+      constructs: <specification-construct> and
+      <other-specification-stmt>.  However, subgroup does not see
       the criteria by which items were assigned to either construct.
       Further since TEMPLATE admits fewer items, we have decided to
       merge these two constructs.
@@ -398,10 +398,6 @@ Constraint: An <instantiation-arg> that corresponds to a
 Constraint: If an <instantiation-arg> is associated with a
             <deferred-type>, a variable of that type shall be
             permitted in a variable definition context.
-
-Constraint: If an <instantiation-arg> is a <type-spec>, it shall not
-            specify a type that has a coarray potential subobject
-            component.
 
 Constraint: If an <instantiation-arg> corresponds to <deferred-class>,
             it shall be extensible.
