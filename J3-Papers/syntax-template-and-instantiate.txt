@@ -396,7 +396,7 @@ Constraint: An <instantiation-arg> that corresponds to a deferred type
             abstract.
 
 Constraint: An <instantiation-arg> that corresponds to a deferred type
-            that does not have the abstract attribute shall be permitted
+            that does not have the ABSTRACT attribute shall be permitted
             in a variable definition context.
 
 Constraint: An <instantiation-arg> that corresponds to a deferred type 
