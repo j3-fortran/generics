@@ -303,7 +303,7 @@ appears as the <function-name> or <subroutine-name> in an
 
 
 <deferred-type-declaration-stmt> <<is>> 
-         TYPE, [<deferred-type-attr-list>] :: <deferred-type-list>
+         TYPE, <deferred-type-attr-list> :: <deferred-type-list>
 
 <deferred-type-attr> <<is>> DEFERRED
                      <<or>> ABSTRACT
