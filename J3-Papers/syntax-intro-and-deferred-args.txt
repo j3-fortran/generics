@@ -303,11 +303,19 @@ appears as the <function-name> or <subroutine-name> in an
 
 
 <deferred-type-declaration-stmt> <<is>> 
-         TYPE, [<deferred-type-attr-list>] DEFERRED 
-         [, <deferred-type-attr-list>] :: <deferred-type-list>
+         TYPE, [<deferred-type-attr-list>] :: <deferred-type-list>
 
-<deferred-type-attr> <<is>> ABSTRACT
+<deferred-type-attr> <<is>> DEFERRED
+                     <<or>> ABSTRACT
                      <<or>> EXTENSIBLE
+
+Constraint: DEFERRED shall appear in each <deferred-type-attr-list>.
+
+Constraint: The same <deferred-type-attr> shall not appear more than
+            once in a given <deferred-type-attr-list>.
+
+Constraint: ABSTRACT and EXTENSIBLE shall not both appear in the same
+            <deferred-type-attr-list>.
 
 <deferred-type> <<is>> <name>
 
