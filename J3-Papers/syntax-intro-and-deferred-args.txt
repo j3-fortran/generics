@@ -462,8 +462,17 @@ If any ultimate specification of a deferred type has the EXTENSIBLE
 attribute, then the deferred type has the EXTENSIBLE attribute.
 
 If all ultimate specifications of a deferred type have the ABSTRACT
-attribute, then the deferred type has the ABSTRACT attribute. Otherwise
-the deferred type does not have the ABSTRACT attribute.
+attribute, or if the deferred type has an explicit specification
+with the ABSTRACT attribute, then the deferred type has the ABSTRACT
+attribute. Otherwise the deferred type does not have the ABSTRACT
+attribute.
+
+NOTE: A deferred type with the ABSTRACT attribute is considered an
+      abstract derived type, it can only be an instantiation argument
+      when the corresponding deferred argument has the ABSTRACT
+      attribute. Therefore, if a deferred type has an explicit
+      specification with the ABSTRACT attribute, all of its ultimate
+      specifications must have the ABSTRACT attribute.
 
    REQUIREMENT R1{U}
       TYPE, DEFERRED :: U
