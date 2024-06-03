@@ -458,10 +458,12 @@ Constraint: If any ultimate specification of a deferred argument is a
             deferred type, then all ultimate specifications of that
             deferred argument shall be deferred type.
 
-UTI: Is this how we want this to work?
-
 If any ultimate specification of a deferred type has the EXTENSIBLE
 attribute, then the deferred type has the EXTENSIBLE attribute.
+
+If all ultimate specifications of a deferred type have the ABSTRACT
+attribute, then the deferred type has the ABSTRACT attribute. Otherwise
+the deferred type does not have the ABSTRACT attribute.
 
    REQUIREMENT R1{U}
       TYPE, DEFERRED :: U
@@ -484,7 +486,7 @@ attribute, then the deferred type has the EXTENSIBLE attribute.
    END TEMPLATE
 
    TEMPLATE T3{T}
-      REQUIRES R3{T} ! valid, but T is just extensible
+      REQUIRES R3{T} ! valid, abstract
    END TEMPLATE
 
    TEMPLATE T4{T}
