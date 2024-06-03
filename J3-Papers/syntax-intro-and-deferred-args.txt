@@ -328,8 +328,8 @@ Constraint: Each <deferred-type> shall appear in <deferred-arg-list>
 A <deferred-type> is a deferred type.
 
 A deferred type with the EXTENSIBLE attribute is an extensible derived
-type.A deferred type with the ABSTRACT is an abstract derived type. A
-deferred type with the ABSTRACT attribute implicitly has the
+type.A deferred type with the ABSTRACT attribute is an abstract derived
+type. A deferred type with the ABSTRACT attribute implicitly has the
 EXTENSIBLE attribute.
 
 Note: The distinction between deferred types that are extensible or not,
