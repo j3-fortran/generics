@@ -402,6 +402,7 @@ Constraint: If an <instantiation-arg> is associated with a
 Constraint: If an <instantiation-arg> is a <type-spec>, it shall not
             specify a type that has a coarray potential subobject
             component.
+
 Constraint: If an <instantiation-arg> corresponds to <deferred-class>,
             it shall be extensible.
 
