@@ -319,7 +319,6 @@ Constraint: The same <deferred-type-attr> shall not appear more than
 Constraint: Each <deferred-type> shall appear in <deferred-arg-list>
             of the TEMPLATE, REQUIREMENT or STP in which it appears.
 
-
 <deferred-type> <<is>> <name>
 
 Constraint: A <deferred-type> entity shall not appear as
