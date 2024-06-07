@@ -77,7 +77,7 @@ procedure would be as follows.
 A template is a set of declarations, specifications and definitions
 that are enabled by instantiation.  A TEMPLATE construct defines a
 template.  A template is a scoping unit to which use, host, and
-instantiation argument association can be applied.  A template can
+deferred argument association can be applied.  A template can
 be defined in the specification section of a program unit other than
 a block data program unit.
 
