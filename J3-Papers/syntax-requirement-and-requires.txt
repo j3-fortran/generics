@@ -75,7 +75,7 @@ Constraint: If a <requirement-name> appears in the <end-requirement-stmt>,
             specified in the <requirement-stmt>.
 
 Note: A <requirement> is a scoping unit that allows use, host, and
-      instantiation argument association.
+      deferred argument association.
 
 Note: Each <deferred-arg> is local to the REQUIREMENT construct.
 
