@@ -187,10 +187,6 @@ Note: Deferred arguments are local identifiers and are not externally
                              <<or>> <deferred-proc-declaration-stmt>
                              <<or>> <deferred-type-declaration-stmt>
 
-Note: <deferred-arg-list> is part of the TEMPLATE, REQUIREMENT, and
-      STP constructs, and is defined in the other generics syntax
-      papers.
-
 3.1.1 Syntax for deferred constants
 
 <deferred-const-declaration-stmt> <<is>>
@@ -230,6 +226,10 @@ Constraint: If <explicit-shape-bounds-spec> appears in
 
 Constraint: Each <deferred-const> shall appear in <deferred-arg-list>
             of the TEMPLATE, REQUIREMENT or STP in which it appears.
+
+Note: <deferred-arg-list> is part of the TEMPLATE, REQUIREMENT, and
+      STP constructs, and is defined in the other generics syntax
+      papers.
 
 <deferred-const> <<is>> <name>
 
