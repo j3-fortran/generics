@@ -128,10 +128,6 @@ would make constraint for deferred constants clearer.
     bounds equal to one; otherwise, it specifies that it is an
     assumed-shape array with all the lower bounds equal to one.
 
-Note: The change to C864 above, along with the normative text change,
-      also allow RANK to work with a PARAMETER constant, not only a
-      deferred constant, because they say "named constant" instead
-      of "deferred constant". I think that's fine!
 
 * 10.1.12 Constant expression
 
