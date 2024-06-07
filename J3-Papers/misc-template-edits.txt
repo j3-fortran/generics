@@ -21,6 +21,11 @@ been identified so far.
   [named deferred constant]
   named data object with the CONSTANT attribute (????)
 
+* Insert new glossary term
+
+  [deferred argument]
+  named entity that appears in a <deferred-arg-list> (????)
+
 * 7.3.2.1 Type specifier syntax
 
   Extend R702 <type-spec>:
