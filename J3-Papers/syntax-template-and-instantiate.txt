@@ -399,6 +399,9 @@ Constraint: If an <instantiation-arg> is associated with a
             <deferred-type>, a variable of that type shall be
             permitted in a variable definition context.
 
+Constraint: If an <instantiation-arg> is a <type-spec>, it shall not
+            specify a type that has a coarray potential subobject
+            component.
 Constraint: If an <instantiation-arg> corresponds to <deferred-class>,
             it shall be extensible.
 
