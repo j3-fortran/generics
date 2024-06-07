@@ -109,15 +109,19 @@ REQUIRES and INSTANTIATE statements.
 A deferred constant is a deferred argument that can appear in constant
 expressions within a REQUIREMENT construct, TEMPLATE construct, or STP.
 
-A deferred type is a deferred argument that can appear as a
-<type-spec> within a REQUIREMENT construct, TEMPLATE construct, or
-STP.
-
 A deferred procedure is a deferred argument that can appear in
 procedure references within a REQUIREMENT construct, TEMPLATE
 construct, or STP.  A deferred procedure's interface shall be
 established in that construct, possibly in terms of other deferred
 arguments.
+
+A deferred type is a deferred argument that can appear as a
+<type-spec>, or in a <declaration-type-spec> or <type-guard-stmt>,
+within a REQUIREMENT construct, TEMPLATE construct, or STP.
+
+Note: A deferred type is not a <type-name> and cannot not appear
+      in a <derived-type-spec>. Consequently a deferred type may
+      not be used in a <structure-constructor>.
 
 Within a construct with a <deferred-arg>, an explicit specification of
 that <deferred-arg> is either <deferred-arg-explicit-stmt> or
@@ -300,41 +304,78 @@ appears as the <function-name> or <subroutine-name> in an
       - class(T) :: local
 
 
-<deferred-type-declaration-stmt>
-       <<is>>  TYPE, DEFERRED :: <deferred-type-list>
-       <<or>>  CLASS, DEFERRED :: <deferred-class-list>
+<deferred-type-declaration-stmt> <<is>> 
+         TYPE, <deferred-type-attr-list> :: <deferred-type-list>
+
+<deferred-type-attr> <<is>> DEFERRED
+                     <<or>> ABSTRACT
+                     <<or>> EXTENSIBLE
+
+Constraint: DEFERRED shall appear in each <deferred-type-attr-list>.
+
+Constraint: The same <deferred-type-attr> shall not appear more than
+            once in a given <deferred-type-attr-list>.
 
 Constraint: Each <deferred-type> shall appear in <deferred-arg-list>
             of the TEMPLATE, REQUIREMENT or STP in which it appears.
 
 <deferred-type> <<is>> <name>
 
-<deferred-class> <<is>> <name>
+Constraint: A <deferred-type> entity shall not appear as
+            <parent-type-name> in an EXTENDS attribute.
 
-Constraint: A <deferred-type> or <deferred-class> entity shall not
-            appear as <parent-type-name> in an EXTENDS attribute.
+A <deferred-type> is a deferred type.
 
-A <deferred-type> is a deferred type. A <deferred-class> is an
-abstract derived type.
+A deferred type with the EXTENSIBLE attribute is an extensible derived
+type.A deferred type with the ABSTRACT attribute is an abstract derived
+type. A deferred type with the ABSTRACT attribute implicitly has the
+EXTENSIBLE attribute, which can be confirmed with an explicit inclusion
+of the EXTENSIBLE keyword in the <deferred-type-attr-list>.
 
-Note: <deferred-type> will not be allowed in a CLASS declaration, and
-      a <deferred-class> will not be allowed in a TYPE declaration.
-      These are implied by extensions planned for section 7.3.2.1 Type
-      specifier syntax.
+Note: The distinction between deferred types that are extensible or not,
+      and deferred types which are abstract or not, helps to ensure a
+      processor can verify a template is internally consistent.  For
+      example, a deferred type must not be permitted in a CLASS
+      declaration if it might be instantiated as INTEGER. Additionally,
+      a deferred type must not be permitted in a TYPE declaration if it
+      might be instantiated with an abstract derived type. The following
+      examples illustrate this point:
 
-      Simple example illustrating the above.
-
-      TEMPLATE TMPL(T, U)
+      SUBROUTINE S1{T}(X, Y)
          TYPE, DEFERRED :: T
-         CLASS, DEFERRED :: U
-      CONTAINS
-         SUBROUTINE S(X, Y, Z, W)
-            TYPE(T) :: X ! ok
-            CLASS(T) :: Y ! invalid
-            TYPE(U) :: Z ! invalid
-            CLASS(U) :: W ! ok
-         END SUBROUTINE S
-      END TEMPLATE TMPL
+         TYPE(T)  :: X ! ok
+         CLASS(T) :: Y ! invalid
+      END SUBROUTINE
+
+      SUBROUTINE S2{T}(X, Y)
+         TYPE, DEFERRED, EXTENSIBLE :: T
+         TYPE(T)  :: X ! ok
+         CLASS(T) :: Y ! ok
+      END SUBROUTINE
+
+      SUBROUTINE S3{T}(X, Y)
+         TYPE, DEFERRED, ABSTRACT :: T
+         TYPE(T)  :: X ! invalid
+         CLASS(T) :: Y ! ok
+      END SUBROUTINE
+
+      TYPE :: EXT_TYPE
+      END TYPE
+
+      TYPE, ABSTRACT :: ABS_TYPE
+      END ABSTRACT
+
+      INSTANTIATE S1{INTEGER}  ! ok
+      INSTANTIATE S1{EXT_TYPE} ! ok
+      INSTANTIATE S1{ABS_TYPE} ! invalid
+
+      INSTANTIATE S2{INTEGER}  ! invalid
+      INSTANTIATE S2{EXT_TYPE} ! ok
+      INSTANTIATE S2{ABS_TYPE} ! invalid
+
+      INSTANTIATE S3{INTEGER}  ! invalid
+      INSTANTIATE S3{EXT_TYPE} ! ok
+      INSTANTIATE S3{ABS_TYPE} ! ok
 
 
 3.2 Specification of deferred arguments
@@ -416,15 +457,105 @@ Constraint: If any ultimate specification of a deferred argument is a
             deferred type, then all ultimate specifications of that
             deferred argument shall be deferred type.
 
-Constraint: If any ultimate specification of a deferred argument is a
-            deferred class, then all ultimate specifications of that
-            deferred argument shall be deferred class.
+If any ultimate specification of a deferred type has the EXTENSIBLE
+attribute, then the deferred type has the EXTENSIBLE attribute.
 
-If any ultimate specification is deferred type, then that argument is
-deferred type.
+If all ultimate specifications of a deferred type have the ABSTRACT
+attribute, or if the deferred type has an explicit specification
+with the ABSTRACT attribute, then the deferred type has the ABSTRACT
+attribute. Otherwise the deferred type does not have the ABSTRACT
+attribute.
 
-If any ultimate specification is deferred class, then that argument is
-deferred class.
+NOTE: A deferred type with the ABSTRACT attribute is considered an
+      abstract derived type, it can only be an instantiation argument
+      when the corresponding deferred argument has the ABSTRACT
+      attribute. Therefore, if a deferred type has an explicit
+      specification with the ABSTRACT attribute, all of its ultimate
+      specifications must have the ABSTRACT attribute.
+
+   REQUIREMENT R1{U}
+      TYPE, DEFERRED :: U
+   END REQUIREMENT
+
+   REQUIREMENT R2{U}
+      TYPE, DEFERRED, EXTENSIBLE :: U
+   END REQUIREMENT
+
+   REQUIREMENT R3{U}
+      TYPE, DEFERRED, ABSTRACT :: U
+   END REQUIREMENT
+
+   TEMPLATE T1{T}
+      REQUIRES R1{T} ! valid, non-extensible
+   END TEMPLATE
+
+   TEMPLATE T2{T}
+      REQUIRES R2{T} ! valid, extensible
+   END TEMPLATE
+
+   TEMPLATE T3{T}
+      REQUIRES R3{T} ! valid, abstract
+   END TEMPLATE
+
+   TEMPLATE T4{T}
+      TYPE, DEFERRED :: T
+      REQUIRES R1{T} ! valid, non-extensible
+   END TEMPLATE
+
+   TEMPLATE T5{T}
+      TYPE, DEFERRED :: T
+      REQUIRES R2{T} ! invalid, explicit decl is not extensible
+   END TEMPLATE
+
+   TEMPLATE T6{T}
+      TYPE, DEFERRED :: T
+      REQUIRES R3{T} ! invalid, explicit decl is not extensible
+   END TEMPLATE
+
+   TEMPLATE T7{T}
+      TYPE, DEFERRED, EXTENSIBLE :: T
+      REQUIRES R1{T} ! valid, T is not abstract
+   END TEMPLATE
+
+   TEMPLATE T8{T}
+      TYPE, DEFERRED, EXTENSIBLE :: T
+      REQUIRES R2{T} ! valid, decls match
+   END TEMPLATE
+
+   TEMPLATE T9{T}
+      TYPE, DEFERRED, EXTENSIBLE :: T
+      REQUIRES R3{T} ! valid, T is just extensible
+   END TEMPLATE
+
+   TEMPLATE T10{T}
+      TYPE, DEFERRED, ABSTRACT :: T
+      REQUIRES R1{T} ! invalid, T is abstract
+   END TEMPLATE
+
+   TEMPLATE T11{T}
+      TYPE, DEFERRED, ABSTRACT :: T
+      REQUIRES R2{T} ! invalid, T is abstract
+   END TEMPLATE
+
+   TEMPLATE T12{T}
+      TYPE, DEFERRED, ABSTRACT :: T
+      REQUIRES R3{T} ! valid, decls match
+   END TEMPLATE
+
+   TEMPLATE T13{T}
+      REQUIRES R1{T}
+      REQUIRES R2{T} ! valid, T is extensible
+   END TEMPLATE
+
+   TEMPLATE T14{T}
+      REQUIRES R1{T}
+      REQUIRES R3{T} ! valid, T is just extensible
+   END TEMPLATE
+
+   TEMPLATE T15{T}
+      REQUIRES R2{T}
+      REQUIRES R3{T} ! valid, T is just extensible
+   END TEMPLATE
 
 3.3 Deferred argument association
 ---------------------------------
