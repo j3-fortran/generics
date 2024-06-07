@@ -27,7 +27,7 @@ and inline instantiation of simple template procedures.
 
 An example template is shown below.
 
-   TEMPLATE TMPL(T, F)
+   TEMPLATE TMPL{T, F}
       TYPE, DEFERRED :: T
       INTERFACE
          FUNCTION F(X)
@@ -59,8 +59,8 @@ template is shown below.
 
 Example instantiate statements of TMPL are:
 
-   INSTANTIATE TMPL(integer, operator(-)), only: negate => S
-   INSTANTIATE TMPL(real, sin)
+   INSTANTIATE TMPL{integer, operator(-)}, only: negate => S
+   INSTANTIATE TMPL{real, sin}
 
 An example of an inline instantiation of the simple template
 procedure would be as follows.
@@ -76,10 +76,10 @@ procedure would be as follows.
 
 A template is a set of declarations, specifications and definitions
 that are enabled by instantiation.  A TEMPLATE construct defines a
-template.  A template is a scoping unit to which use and host
-association and template argument association can be applied.  A
-template can be defined in the specification section of a program unit
-other than a block data program unit.
+template.  A template is a scoping unit to which use, host, and
+deferred argument association can be applied.  A template can
+be defined in the specification section of a program unit other than
+a block data program unit.
 
 <template> <<is>> <template-stmt>
                       [ <template-specification-part> ]
@@ -389,34 +389,40 @@ Note: The previous two constraints constitute what is referred to as
 
 Constraint: An <instantiation-arg> that is a <type-spec> shall
             correspond to a <deferred-arg> that is a <deferred-type>
-            or <deferred-class> in the referenced template or
-            requirement.
+            in the referenced template or requirement.
 
-Constraint: An <instantiation-arg> that corresponds to a
-            <deferred-type> shall not be abstract.
+Constraint: An <instantiation-arg> that corresponds to a deferred type
+            that does not have the ABSTRACT attribute shall not be
+            abstract.
 
-Constraint: If an <instantiation-arg> is associated with a
-            <deferred-type>, a variable of that type shall be
-            permitted in a variable definition context.
+Constraint: An <instantiation-arg> that corresponds to a deferred type
+            that does not have the ABSTRACT attribute shall be permitted
+            in a variable definition context.
 
-Constraint: If an <instantiation-arg> is a <type-spec>, it shall not
-            specify a type that has a coarray potential subobject
+Constraint: An <instantiation-arg> that corresponds to a deferred type 
+            that has the EXTENSIBLE attribute shall be an extensible
+            derived type.
+
+Constraint: An <instantiation-arg> that corresponds to a deferred
+            type shall not have a coarray potential subobject
             component.
 
 Note: The above constraint avoids the possibility of assignment
       being invalid where the variable and expr do not agree on
       the allocation status of a coarray component.
 
-Constraint: If an <instantiation-arg> corresponds to <deferred-class>,
-            it shall be extensible.
-
 Note: Non-abstract, extensible derived types can be associated with
-      both <deferred-class> and <deferred-type>.
+      both abstract and non-extensible deferred type arguments.
+
+Note: Intrinsic types, SEQUENCE types, and types with the BIND attribute
+      cannot be associated with deferred type arguments that have the
+      EXTENSIBLE attribute.
 
       Simple example illustrating the above.
 
       TYPE :: MY_T1
       END TYPE
+
       TYPE, ABSTRACT :: MY_T2
       END TYPE
 
@@ -425,7 +431,7 @@ Note: Non-abstract, extensible derived types can be associated with
       END TEMPLATE TMPL
 
       TEMPLATE TMPL2(U)
-         CLASS, DEFERRED :: U
+         TYPE, ABSTRACT, DEFERRED :: U
       END TEMPLATE TMPL
 
       INSTANTIATE TMPL1(INTEGER) ! ok
