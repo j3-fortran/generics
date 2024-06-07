@@ -314,8 +314,6 @@ Constraint: DEFERRED shall appear in each <deferred-type-attr-list>.
 Constraint: The same <deferred-type-attr> shall not appear more than
             once in a given <deferred-type-attr-list>.
 
-Constraint: ABSTRACT and EXTENSIBLE shall not both appear in the same
-            <deferred-type-attr-list>.
 
 <deferred-type> <<is>> <name>
 
@@ -330,7 +328,8 @@ A <deferred-type> is a deferred type.
 A deferred type with the EXTENSIBLE attribute is an extensible derived
 type.A deferred type with the ABSTRACT attribute is an abstract derived
 type. A deferred type with the ABSTRACT attribute implicitly has the
-EXTENSIBLE attribute.
+EXTENSIBLE attribute, which can be confirmed with an explicit inclusion
+of the EXTENSIBLE keyword in the <deferred-type-attr-list>.
 
 Note: The distinction between deferred types that are extensible or not,
       and deferred types which are abstract or not, helps to ensure a
