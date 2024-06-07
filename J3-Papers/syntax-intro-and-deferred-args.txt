@@ -167,6 +167,10 @@ deferred arguments.
                <<or>> <deferred-type>
                <<or>> <deferred-class>
 
+Constraint: A <deferred-arg> shall appear in a <deferred-arg-decl-stmt>
+            or as the <function-name> or <subroutine-name> of an
+            <interface-body>.
+
 Constraint: A <deferred-arg> shall have at most one explicit
             specification in a given scoping unit.
 
@@ -220,11 +224,14 @@ Constraint: If <explicit-shape-bounds-spec> appears in
             <deferred-const-declaration-stmt>, then
             <explicit-bounds-expr> shall not appear as a lower bound.
 
+Constraint: Each <deferred-const> shall appear in <deferred-arg-list>
+            of the TEMPLATE, REQUIREMENT or STP in which it appears.
+
+Note: <deferred-arg-list> is part of the TEMPLATE, REQUIREMENT, and
+      STP constructs, and is defined in the other generics syntax
+      papers.
 
 <deferred-const> <<is>> <name>
-
-Constraint: Each <deferred-const> shall appear in <deferred-arg-list>
-            of the innermost scoping unit.
 
 A <deferred-const> is a deferred constant.
 
@@ -249,15 +256,10 @@ Some examples of declaring deferred constants are as follows.
 <deferred-proc-declaration-stmt> <<is>>
      PROCEDURE(<interface>) [ :: ] <deferred-proc-list>
 
+Constraint: Each <deferred-proc> shall appear in <deferred-arg-list>
+            of the TEMPLATE, REQUIREMENT or STP in which it appears.
+
 <deferred-proc> <<is>> <name>
-
-Constraint: Each <deferred-proc> that appears in a
-            <deferred-proc-declaration-stmt> shall appear in
-            <deferred-arg-list> of the innermost scoping unit.
-
-Constraint: Each <deferred-proc> shall appear in a
-            <deferred-arg-decl-stmt> or as a <function-name> or
-            <subroutine-name> within an <interface-body>.
 
 A <deferred-proc> is a deferred procedure.  A <deferred-arg> that
 appears as the <function-name> or <subroutine-name> in an
@@ -302,18 +304,15 @@ appears as the <function-name> or <subroutine-name> in an
        <<is>>  TYPE, DEFERRED :: <deferred-type-list>
        <<or>>  CLASS, DEFERRED :: <deferred-class-list>
 
+Constraint: Each <deferred-type> shall appear in <deferred-arg-list>
+            of the TEMPLATE, REQUIREMENT or STP in which it appears.
+
 <deferred-type> <<is>> <name>
 
 <deferred-class> <<is>> <name>
 
 Constraint: A <deferred-type> or <deferred-class> entity shall not
             appear as <parent-type-name> in an EXTENDS attribute.
-
-Constraint: Each <deferred-type> shall appear in
-            <deferred-arg-list> of the innermost scoping unit.
-
-Constraint: Each <deferred-class> shall appear in
-            <deferred-arg-list> of the innermost scoping unit.
 
 A <deferred-type> is a deferred type. A <deferred-class> is an
 abstract derived type.

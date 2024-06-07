@@ -16,6 +16,11 @@ been identified so far.
 2. Edits required for deferred arguments
 ========================================
 
+* Insert new glossary term
+
+  [deferred argument]
+  named entity that appears in a <deferred-arg-list> (????)
+
 * Insert new glossary term 3.34.x
 
   [deferred constant]
