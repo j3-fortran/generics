@@ -16,10 +16,15 @@ been identified so far.
 2. Edits required for deferred arguments
 ========================================
 
-* Insert new glossary term after 3.38.2
+* Insert new glossary term 3.34.x
 
-  [named deferred constant]
+  [deferred constant]
   named data object with the CONSTANT attribute (????)
+
+* Modify glossary term 3.34.2 "named constant" to
+
+  [named constant]
+  named data object (3.42) with the PARAMETER attribute, or a deferred constant
 
 * 7.3.2.1 Type specifier syntax
 
@@ -55,6 +60,32 @@ It may be better to modify <explicit-shape-bounds-spec> to
 disambiguate <explicit-bounds-expr> for lower and upper bounds.  This
 would make constraint for deferred constants clearer.
 
+* 8.5.8.6 Implied-shape array
+
+  Modify the first sentence from:
+
+    An implied-shape array is a named constant that takes its shape
+    from the constant-expr in its declaration.
+
+  To:
+
+    An implied-shape array is a named constant that takes its shape
+    from a constant expression. If the named constant has the
+    PARAMETER attribute, it takes its shape from the constant-expr in
+    its declaration. Otherwise, if the named constant is a deferred
+    argument, it takes its shape from its corresponding instantiation
+    argument.
+
+  Modify the first sentence in the last paragraph from:
+
+    The extent of each dimension of an implied-shape array is the same
+    as the extent of the corresponding dimension of the constant-expr.
+
+  To:
+
+    The extent of each dimension of an implied-shape array is the same
+    as the extent of the corresponding dimension of the constant-expr
+    or instantiation argument.
 
 * 8.5.8.7 Assumed-rank entity
 
@@ -81,6 +112,23 @@ would make constraint for deferred constants clearer.
      An entity declared with a rank-clause shall be a named constant,
      dummy data object or have the ALLOCATABLE or POINTER attribute.
 
+  Replace the last paragraph:
+
+    If the rank is zero the entity is scalar; otherwise, if it has
+    the ALLOCATABLE or POINTER attribute, it specifies that it is a
+    deferred-shape array; otherwise, it specifies that it is an
+    assumed-shape array with all the lower bounds equal to one.
+
+  With:
+
+    If the rank is zero the entity is scalar; otherwise, if it has
+    the ALLOCATABLE or POINTER attribute, it specifies that it is a
+    deferred-shape array; otherwise, if it is a named constant, it
+    specifies that it is an implied-shape array with all lower
+    bounds equal to one; otherwise, it specifies that it is an
+    assumed-shape array with all the lower bounds equal to one.
+
+
 * 10.1.12 Constant expression
 
   Extend list in normative text for "constant expression":
@@ -92,8 +140,8 @@ would make constraint for deferred constants clearer.
 
   <deferred-const-expr> <<is>> <constant-expr>
 
-  An expression is a <deferred-const-expr> if one of its primaries is
-  a named deferred constant.
+  An expression is a <deferred-const-expr> if one or more of its
+  primaries is a deferred constant.
 
   A <deferred-const-expr> is not equal to any other <expr> unless
   <expr> is syntactically equivalent.
@@ -132,23 +180,6 @@ would make constraint for deferred constants clearer.
          <<or>> <subroutine-subprogram>
          <<or>> <simple-template-subroutine-subprogram>
          <<or>> <simple-template-function-subprogram>
-
-* 8.5.8.6 Implied-shape array
-
-UTI: need to update paragraph 3 to allow deferred const which does not have
-initialization expression.
-
-  The extent of each dimension of an implied-shape array is the same
-  as the extent of the corresponding dimension of the
-  constant-expr. The lower bound of each dimension is lower-bound, if
-  it appears, and 1 otherwise; the upper bound is one less than the
-  sum of the lower bound and the extent.
-
-* 8.5.17 RANK clause
-
-UTI - needs to allow deferred shape for deferred constant
-
-Assuming that Malcolm is generalizing this for Japanese papers.
 
 * 8.7 IMPLICIT Statement
 
