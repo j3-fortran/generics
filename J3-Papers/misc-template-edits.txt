@@ -16,6 +16,12 @@ been identified so far.
 2. Edits required for deferred arguments
 ========================================
 
+* Insert new glossary term in 3.7
+
+  [deferred argument association]
+  association between an instantiation argument and a deferred
+  argument (????)
+
 * Insert new glossary term
 
   [deferred argument]
