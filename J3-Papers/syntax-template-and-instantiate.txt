@@ -403,6 +403,10 @@ Constraint: If an <instantiation-arg> is a <type-spec>, it shall not
             specify a type that has a coarray potential subobject
             component.
 
+Note: The above constraint avoids the possibility of assignment
+      being invalid where the variable and expr do not agree on
+      the allocation status of a coarray component.
+
 Constraint: If an <instantiation-arg> corresponds to <deferred-class>,
             it shall be extensible.
 
