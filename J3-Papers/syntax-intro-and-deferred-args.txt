@@ -204,6 +204,7 @@ Note: Deferred arguments are local identifiers and are not externally
 <deferred-attr-spec> <<is>> <dimension-spec>
                      <<or>> <rank-clause>
 
+!!! Why not REAL or COMPLEX? Or derived type, for that matter?
 Constraint: An entity declared in <deferred-const-declaration-stmt>
             shall be INTEGER, LOGICAL, or assumed-length CHARACTER.
 

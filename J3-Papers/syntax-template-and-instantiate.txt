@@ -99,6 +99,7 @@ Constraint: If a <template-name> appears in the <end-template-stmt>,
 
 <template-specification-part> <<is>>
             [ use-stmt ] ...
+!!! import statement missing from <template-specification-part> ?
             [ <template-declaration-construct> ] ...
 
 The implicit mapping within <template> is as if
@@ -112,6 +113,10 @@ is in place.
                                  <<or>> <interface-block>
 
 <template-specification-construct>
+!!! What does it mean for an <access-stmt> to appear in a template, as
+!!! <template-specification-construct> currently allows? If we allow it,
+!!! then the misc edits paper needs to include an update to constraint
+!!! F2023 C873. Also consider the <access-spec> in <type-declaration-stmt>.
                       <<is>> <access-stmt>
                       <<or>> <derived-type-def>
                       <<or>> <dimension-stmt>
@@ -130,13 +135,11 @@ Note: The analogous construct for MODULE is divided into two separate
       Further since TEMPLATE admits fewer items, we have decided to
       merge these two constructs.
 
-Note: A DATA, FORMAT, ENTRY or statement function statement shall not
-      appear in the template specification part.
-
-Note: An ALLOCATABLE, ASYNCHRONOUS, BIND, CODIMENSION, CONTIGUOUS,
-      EXTERNAL, INTENT, NAMELIST, OPTIONAL, POINTER, PROTECTED, SAVE,
-      TARGET, VOLATILE, VALUE, COMMON, or EQUIVALENCE statement shall
-      not appear in the template specification part.
+Note: The ALLOCATABLE, ASYNCHRONOUS, BIND, CODIMENSION, COMMON,
+      CONTIGUOUS, DATA, ENTRY, EQUIVALENCE, EXTERNAL, FORMAT, INTENT,
+      NAMELIST, OPTIONAL, POINTER, PROTECTED, SAVE, TARGET, VOLATILE,
+      VALUE, or statement function statements are not permitted in a
+      template specification section.
 
 Constraint: An entity declared by <type-declaration-stmt> shall have
             the PARAMETER attribute.
@@ -183,17 +186,38 @@ compared to more general templates as described above.
      [ <simple-template-subprogram-declaration-construct> ] ...
 
 <simple-template-subprogram-declaration-construct> <<is>>
+!!! I think <template-specification-construct> here is supposed to be
+!!! <template-declaration-construct>. As it is right now, TEMPLATE,
+!!! REQUIREMENT, and <deferred-arg-decl-statement> aren't allowed in
+!!! an STP!
+!!!
+!!! But also, with either <template-specification-construct> or
+!!! <template-declaration-construct>, there is the issue that they have
+!!! overlapping rules with <specification-construct>. It's not really
+!!! an issue since the rules do the same thing in both. With the sort-of
+!!! exception of <type-declaration-statement>, which has an extra
+!!! constraint for <template-specification-construct> saying that it
+!!! must have PARAMETER. But that constraint shouldn't apply here.
+!!!
+!!! The solution might be to split up <template-specification-construct>
+!!! and <template-declaration-construct> by whether they overlap with
+!!! <specification-construct> or not. So we'd have a "list of new things
+!!! which aren't in <specification-construct>" and "list of some of the
+!!! things in <specification-construct> which are permitted in a
+!!! TEMPLATE construct".
      <specification-construct>
      <<or>> <template-specification-construct>
      <<or>> <format-stmt>
 
 <simple-template-function-stmt> <<is>>
      [ <prefix> ] FUNCTION <template-name>
+!!!! <dummy-name-arg-list> should just be <dummy-arg-list> to match the standard
          { <deferred-arg-list> } ([<dummy-name-arg-list>])
 	 [<suffix>]
 
 <simple-template-subroutine-stmt> <<is>>
      [ <prefix> ] SUBROUTINE <template-name>
+!!! And here too.
          { <deferred-arg-list> } ([<dummy-name-arg-list>])
 	 [<proc-language-binding-spec>]
 
@@ -221,7 +245,6 @@ Constraint: EQUIVALENCE and COMMON shall not appear in a
             <template-subprogram-part> or a
             <simple-template-subprogram-declaration-construct>.
 
-
 Note: Allowing COMMON statements within a template is a concern even
       when they lack the SAVE attribute.  Namely, if any elements of a
       common block are of deferred type then the memory footprint of a
@@ -239,6 +262,10 @@ Constraint: <template>, <simple-template-function-subprogram> and
 Note: This constraint expresses the notion of type-safety.  In
       particular, this allows a template implementation to be verified
       to be internally consistent.
+
+!!! We've mentioned that the only operator implicitly defined for
+!!! deferred args is the assignment statement. Where is that said
+!!! in these papers?
 
 
 4. Syntax for instantiation
@@ -279,9 +306,17 @@ These identifiers are
      <<or>> INSTANTIATE [::] <template-name> {
             [ <instantiation-arg-spec-list> ] }, ONLY : [ <only-list> ]
 
+!!! I don't understand this constraint. Was it intended to prevent that
+!!! circular reference issue with contained procedures..? But I think
+!!! that was just for separate-template-procedures, which we're not
+!!! doing anymore.
 Constraint: Within an <instantiate-stmt>, <instantiation-arg> shall
             not depend on any entity defined within the referenced
             template.
+
+!!! Should there be a constraint like "<template-name> in an
+!!! <instantiate-stmt> shall not be the name of a template containing
+!!! the <instantiate-stmt>." or something like that?
 
 Note: <generic-spec> includes operators, defined assignment and
       defined I/O.  The last may be somewhat awkward to use within a
@@ -393,11 +428,8 @@ Constraint: An <instantiation-arg> that is a <type-spec> shall
 
 Constraint: An <instantiation-arg> that corresponds to a deferred type
             that does not have the ABSTRACT attribute shall not be
-            abstract.
-
-Constraint: An <instantiation-arg> that corresponds to a deferred type
-            that does not have the ABSTRACT attribute shall be permitted
-            in a variable definition context.
+            abstract and shall be permitted in a variable definition
+            context.
 
 Constraint: An <instantiation-arg> that corresponds to a deferred type 
             that has the EXTENSIBLE attribute shall be an extensible
