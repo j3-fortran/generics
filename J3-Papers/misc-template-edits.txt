@@ -74,6 +74,13 @@ been identified so far.
   New constraint or R728:
   "<parent-type-name> shall not be a <deferred-type>.
 
+* 8.5.2 Accessibility attribute
+
+  Change C817 to read as
+
+  An access-spec shall appear only in the specification-part of a
+  module or template construct.
+
 * 8.5.8.1 General
 
   Change last entry for <array-spec>
@@ -160,6 +167,14 @@ would make constraint for deferred constants clearer.
     bounds equal to one; otherwise, it specifies that it is an
     assumed-shape array with all the lower bounds equal to one.
 
+* 8.6.1 Accessibility statement
+
+Modify C873 to read as
+
+  An <access-stmt> shall appear only in the <specification-part> of a
+  module or template construct. Only one accessibility statement with
+  an omitted <access-id-list> is permitted in the <specification-part>
+  of a module or template construct.
 
 * 10.1.12 Constant expression
 
