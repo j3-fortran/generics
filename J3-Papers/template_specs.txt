@@ -1,0 +1,304 @@
+To: J3                                                     J3/###
+From: Tom Clune & generics
+Subject: Formal specs for TEMPLATE
+Date: 2024-June-17
+
+References: 22-104r1
+
+1. Introduction
+===============
+
+This paper revises 22-104r1, Formal specs for TEMPLATE to reflect
+improvements based upon further work on the corresponding syntax
+paper.  The changes are relatively small:
+
+   - Including specifications for standalone template procedures.
+   - Template parameters are now referred to as deferred arguments.
+   - IMPORT statement now permitted in templates
+   - Updated examples to latest proposed syntax
+     - Deferred/instantiate arguments now use curly braces: "()"=>"{}"
+
+Section 2 contains the formal specs.  Section 3 provides a
+counterexample that shows a nontrivial case where an INSTANTIATE
+statement is essential, as the procedure interface does not have
+access to all necessary deferred parameter types.
+
+
+2. Formal specs
+===============
+
+A. TEMPLATE is a named scoping unit.
+
+A2. A standalone template procedure is a procedure with deferred arguments.
+
+B. A TEMPLATE can be defined in the specification section of a program
+   unit other than a block data program unit.
+
+B2. A standalone template procedure may be defined in the CONTAINS section of
+    a program, module, module procedure, or external procedure.
+
+C. A TEMPLATE definition has the following elements:
+   - template name
+   - list of deferred arguments
+   - specification section
+   - optional procedure section beginning with a CONTAINS statement
+
+C2. A standalone template procedure has the following elements:
+   - template name (same as procedure name)
+   - list of deferred arguments
+   - list of procedure arguments
+   - specification section
+   - procedure implementation
+
+   Notional syntax:
+
+      ! Canonical template
+      TEMPLATE T{[param1[, param2[, ...]]]}
+      ! specification section
+      [CONTAINS
+        [! procedure definitions]]
+      END TEMPLATE T
+
+      ! Standalone template procedure
+      SUBROUTINE S{[param1[, param2[, ...]]]}([arg1[, arg2[, ...]]])
+      ! specification section
+      END SUBROUTINE S
+
+
+D1. The permitted order of statements within a TEMPLATE construct is
+    the following.
+
+    - TEMPLATE statement
+    - USE statements
+    - IMPORT statement
+    - Misc. specifications in any order:
+      * REQUIRES statements
+      * REQUIREMENT definitions
+      * Derived type definitions
+      * INTERFACE blocks
+      * specification statements
+      * enumeration definitions
+      * TEMPLATE definitions
+    - CONTAINS statement
+    - subprograms in any order:
+      * TEMPLATE subprograms
+      * standalone template procedures
+    - END TEMPLATE statement
+
+    Note: The order of statements within a MODULE will need
+          modification to permit TEMPLATE and REQUIREMENT definitions.
+
+    Example: The following shows nested templates enable conditional
+             functionality.  I.e., a user that wants to only use some
+             subset of a template is not then forced to define
+             arbitrary extra parameters to satisfy requirements of
+             other portions of the template.
+
+        TEMPLATE T_outer{U}
+           TYPE, DEFERRED :: U
+           TYPE :: LIST
+              TYPE(U), allocatable :: elements(:)
+           END TYPE
+
+           TEMPLATE T_inner{F}
+              INTERFACE
+                 LOGICAL FUNCTION F(x,y)
+                   IMPORT U
+                   TYPE(U), INTENT(IN) :: x, y
+                 END FUNCTION
+              END INTERFACE
+           CONTAINS
+              SUBROUTINE sort(x)
+                 TYPE(LIST), INTENT(INOUT) :: x
+                 ...
+                 IF (F(x(i),x(j)) THEN ...
+
+              END SUBROUTINE sort
+           END TEMPLATE
+        CONTAINS
+           ...
+        END TEMPLATE
+
+        INSTANTIATE T_outer{REAL} ! makes T_INNER accessible
+        INSTANTIATE T_INNER{my_less}, sort_ascending => sort
+        INSTANTIATE T_INNER{my_greater}, sort_descending => sort
+
+        ! Another type that does not need sorting
+        INSTANTIATE T_outer{my_other_type}, only: unsortable_list => LIST
+
+        TYPE(List) :: my_list ! list of REALs
+        CALL sort_descending(my_list)
+
+D2. A template construct has no implicit typing.
+
+D3. A deferred argument declaration shall appear before any reference
+    to that argument and shall appear after any USE and IMPORT in the
+    TEMPLATE.
+
+    Example:
+
+       TEMPLATE TMPL{T, FLAG, sub}
+          TYPE, DEFERRED :: T          ! type parameter
+          LOGICAL, CONSTANT :: FLAG    ! logical parameter
+          INTERFACE
+             SUBROUTINE sub(x, y)    ! subroutine parameter
+                IMPORT T
+	        TYPE(T), INTENT(IN) :: x
+	        TYPE(T), INTENT(OUT) :: y
+             END SUBROUTINE
+          END INTERFACE
+       END TEMPLATE
+
+E1. A deferred argument shall be one of: 
+    - a type,
+    - a constant, or
+    - a procedure
+
+E2. A deferred argument declaration that is a type may not contain
+    any components, type-bound procedures, or KIND or LEN type
+    parameters.   It may be extensible or abstract.
+
+E3. A deferred argument that is a constant shall be of type
+    integer, logical, or assumed length character.
+
+    An array constant deferred argument can either have explicit shape,
+    implied shape, or deferred rank.
+
+    Example using notional syntax:
+
+         TEMPLATE tmpl1{T, flags, n, pet_type}
+            TYPE, DEFERRED :: T
+            LOGICAL, CONSTANT, RANK(..) :: flags
+            INTEGER, CONSTANT :: n
+            CHARACTER(LEN=*), CONSTANT :: pet_type
+         END TEMPLATE tmpl1
+
+E4. A procedure deferred argument shall have an explicit interface.
+
+    Notional syntax for declaring a procedure deferred argument F
+    involving deferred types T and U (and intrinsic INTEGER).
+
+       INTERFACE
+          FUNCTION F(x,y,c) RESULT(z)
+              TYPE(U) :: z
+              TYPE(T), INTENT(IN) :: x, y
+              INTEGER, INTENT(IN) :: c
+          END FUNCTION
+       END INTERFACE
+
+
+F1. Any procedure invoked within a template shall have an explicit
+    interface.
+
+    Entities of a type that is deferred may only be associated with
+    procedure arguments whose declared type is the same deferred type.
+
+    Intrinsic assignment is only defined for entities of deferred
+    type with other entities of the same deferred type.
+
+    Note 1: An explicit interface may be provided by a REQUIRES
+            statement.
+
+    Note 2: Intrinsic operators on operands of intrinsic type are
+            allowed within a template definition.
+
+    Example:
+
+        TYPE :: U
+           ...
+        END TYPE
+
+        TEMPLATE tmpl{T}
+           TYPE, DEFERRED :: T
+        CONTAINS
+           SUBROUTINE s(x, y)
+              TYPE(T) :: x, y
+              ...
+           END SUBROUTINE s
+           FUNCTION f(x, i)
+              TYPE(T) :: f
+              TYPE(T), INTENT(IN) :: x
+              TYPE(U), INTENT(IN) :: i
+              ...
+           END FUNCTION f
+           SUBROUTINE run(x, u1)
+              REAL, INTENT(INOUT) :: x
+              TYPE(U), INTENT(IN) :: u1
+              TYPE(T) :: t1, t2
+
+              CALL s(t1,t2) ! Valid
+              CALL s(t1,x)  ! Invalid; x not declared to be of type T
+              t1 = f(t2,u1) ! Valid
+
+              ! The following statement is non-conforming because the
+              ! return value of f is of type T and x is not of
+              ! declared type T.
+              x = f(t1,u1)
+           END SUBROUTINE
+
+        END TEMPLATE tmpl
+
+3. "Implicit" INSTANTIATE counterexample
+========================================
+
+The following code implements a "maximal" template for generating a
+matmul() procedure.  The procedure involves arguments of types T, U,
+and V, but the implementation involves an intermediate type W.
+Without an explicit INSTANTIATE statement, the processor would have
+great difficulty in discerning both the intermediate type as well as
+the operation to apply.
+
+We recognize that simpler examples do not have this issue, and
+providing streamlined support for such simpler examples will be
+examined for further generic programming capabilities.
+
+   MODULE MATMUL_M
+
+   TEMPLATE MATMUL_TMPL{T, U, V, W, sum, times}
+      TYPE, DEFERRED :: T, U, V, W
+      INTERFACE
+         FUNCTION sum(x) RESULT(y)
+            IMPORT V, W
+            TYPE(V) :: y
+            TYPE(W), INTENT(IN) :: x(:)
+         END FUNCTION
+      END INTERFACE
+
+      INTERFACE
+         ELEMENTAL FUNCTION times(x, y) RESULT(z)
+            IMPORT T, U, W
+            TYPE(T), INTENT(IN) :: x
+            TYPE(U), INTENT(IN) :: y
+            TYPE(W) :: z
+         END FUNCTION
+      END INTERFACE
+
+   CONTAINS
+      SUBROUTINE MATMUL(a, b, c)
+          TYPE(T), INTENT(IN) :: a(:,:)
+          TYPE(U), INTENT(IN) :: b(:,:)
+          TYPE(V), INTENT(INOUT) :: c(:,:)
+
+          INTEGER :: i, j
+          DO CONCURRENT (i=1:size(a,1), j=1:size(b,2))
+             c(i,j) = sum(times(a(i,:),b(:,j)))
+          END DO
+      END SUBROUTINE
+   END TEMPLATE
+   END MODULE
+
+   ...
+   SUBROUTINE SUB(a, b, c)
+     USE MATMUL_M, ONLY: MATMUL_TMPL
+     real :: a(:,:), b(:,:), c(:,:)
+
+     INSTANTIATE MATMUL_TMPL[real,real,real,real,sum,operator(*)}, &
+         ordinary_matmul => matmul
+     INSTANTIATE MATMUL_TMPL{real,real,real,real,minval,operator(+)}, &
+         graph_flow => matmul
+
+     call ordinary_matmul(a, b, c)
+     call graph_flow(a, b, c)
+   END SUBROUTINE
+
+===END===
