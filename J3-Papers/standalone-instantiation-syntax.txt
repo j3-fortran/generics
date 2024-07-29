@@ -1,0 +1,44 @@
+To: J3                                                     J3/##-###
+From: Brad Richardson
+Subject: Syntax for Instantiation of Standalone Template Procedure
+Date: 
+
+Reference: 24-126r4
+
+1. Introduction
+===============
+
+The current syntax for instantiation of a standalone template
+procedure when not using the inline instantiation syntax makes use
+of the INSTANTIATE statement and requires that the procedure be
+renamed so that it does not have the same name as the template.
+This assumes that not only does the instantiated procedure have a
+name, but that it is the same as the template name. It also results
+in a syntax for the statement that appears redundant. For example
+
+INSTANTIATE tmpl_proc(...), new_name => tmpl_proc
+
+This paper presents some alternatives for the above syntax.
+
+2. Syntax Options
+=================
+
+The following are some possibilities for alternative syntax for advance
+instantiation of standalone template procedures. These alternatives do
+not imply that the instantiated procedure has a name, let alone what
+that name is.
+
+A. INSTANTIATE tmpl_proc(...) => new_name
+B. INSTANTIATE tmpl_proc(...) <= new_name
+C. new_name => INSTANTIATE tmpl_proc(...)
+D. procedure(), parameter :: new_name = tmpl_proc^(...)
+
+It is noted that option A, while concise, clear and somewhat intuitive,
+has the order of entities reversed from the usual rename syntax. Option
+B corrects that defect to a degree, but uses the less than or equal to
+operator. Option C is likely to be indistinguishable syntactically from
+a pointer assignment statement in some contexts. Option D expands on
+the procedure declaration statement in a new way, but the use of the
+parameter keyword (implying named constant) may be inappropriate in
+this context. Variations on the above examples are certainly also
+possible and worth considering.
