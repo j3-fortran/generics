@@ -1,0 +1,118 @@
+To: J3                                                     J3/24-133
+From: Tom Clune and generics
+Subject: Formal specs for REQUIREMENT and REQUIRES
+Date: 2024-June-18
+
+Reference: 22-178r1
+
+1. Introduction
+===============
+
+The purpose of this paper is to establish the formal specs for
+the REQUIREMENT construct and REQUIRES statement.  The changes against
+22-178r1 are relatively minor:
+
+   - RESTRICTION is now REQUIREMENT
+   - Updated examples to latest proposed syntax
+     - Deferred/instantiate arguments with curly braces: "( )" ==> "{ }"
+
+
+2 . Formal specs
+================
+
+A1. A REQUIREMENT is a named construct for encapsulating a
+    set of interfaces involving deferred types.
+
+A2. A REQUIREMENT may appear in any specification section.
+
+B1. A REQUIREMENT has a list of named deferred arguments that have the
+    same characteristics as those of template deferred arguments.
+
+    Example using notional syntax:
+
+    REQUIREMENT binary_op{op, T, U, V}
+       type, deferred :: T
+       type, deferred :: U
+       type, deferred :: V
+       interface
+          function op(x, y) result(z)
+             type(V) :: z
+             type(T), intent(in) :: x
+             type(U), intent(in) :: y
+          end function
+       end interface
+    END REQUIREMENT
+
+
+C. A REQUIRES statement specifies the name of a REQUIREMENT and
+   provides instantiation arguments corresponding to the requirement
+   construct's deferred arguments.
+
+   Example using notional syntax:
+
+      TEMPLATE metric_t{T, binop}
+         REQUIRES binary_op{binop, T, T, real}
+      CONTAINS
+         function path_length(arr) result(x)
+            type(T), intent(in) :: arr(:)
+            real :: x
+
+            integer :: i
+
+            x = 0
+            do i = 1, size(arr)-1
+               x = x + binop(arr(i), arr(i+1))
+            end do
+
+         end function
+      END TEMPLATE
+
+
+D1. A REQUIRES statement is valid if its instantiation arguments
+    conform to the corresponding deferred arguments of the referenced
+    REQUIREMENT.
+
+   Note: A given deferred argument may be used in multiple requires
+         statements.
+
+   Example using notional syntax:
+
+      TEMPLATE saxpy_{T, U, V, times, plus}
+         REQUIRES binary_op{times, T, U, V}
+         REQUIRES binary_op{plus, V, V, V}
+
+      CONTAINS
+
+         subroutine saxpy(x, y, z)
+           type(T), intent(in) :: x
+           type(U), intent(in) :: y
+           type(V), intent(inout) :: z
+
+           z = plus(z, times(x,y))
+
+        end subroutine
+     END TEMPLATE saxpy_t
+
+     ! The following instantiate statement is valid
+     INSTANTIATE saxpy_t{real, real, real, operator(*), operator(+)}
+
+     ! The following instantiate statement is invalid, because there
+     ! is no "*" operator between real and logical that returns a
+     ! real.  INSTANTIATE saxpy_t{real, logical, real, operator(*),
+     ! operator(+)}
+
+D2. A REQUIRES statement may appear within the specification section
+    of a template or a REQUIREMENT construct.
+
+D3. A REQUIRES statement behaves as if the declarations within the
+    referenced REQUIREMENT are replicated at that location.
+
+E. If a deferred argument appears in a REQUIRES statement it does not
+   need to be separately declared in the template specification
+   section.
+
+   Note: It may still be advisable to explicitly declare at least the
+         type deferred arguments independent of any REQUIRES statements to
+         provide some clarity to readers.
+
+===END===

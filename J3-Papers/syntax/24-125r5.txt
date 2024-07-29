@@ -1,0 +1,608 @@
+To: J3                                                     J3/24-125r5
+From: generics
+Subject: Formal syntax (1 of 3): deferred arguments
+Date: 2024-June-26
+
+Reference: 24-107r1, 24-126, 24-127
+
+This paper is the first of three that comprise the formal syntax for
+generic programming features in Fortran, aka templates.
+
+1. Introduction
+===============
+
+This paper defines the formal syntax for deferred arguments.  Paper 2
+covers the syntax related to the TEMPLATE construct and INSTANTIATION
+statement, while paper 3 provides the syntax for the REQUIREMENT
+construct and the REQUIRES statement.
+
+Deferred arguments are template "dummy" arguments that are given their
+"values" when the template is instantiated.  Deferred arguments can be
+constants, procedures, or types.
+
+Section 2 provides a non-pedagogical example that exercises most of the
+proposed syntax.  Section 3 defines the formal syntax for deferred
+entities.
+
+2. Example
+==========
+
+MODULE A
+
+   REQUIREMENT R(U,G)
+      TYPE, DEFERRED :: U
+      DEFERRED INTERFACE
+         FUNCTION G(x, i) RESULT(y)
+            TYPE(U) :: y
+            TYPE(U), INTENT(IN) :: x
+            INTEGER, INTENT(IN) :: i
+         END FUNCTION G
+      END INTERFACE
+   END REQUIREMENT R
+
+   TEMPLATE B(T,F,C)
+      REQUIRES R(T,F)            ! provides interface for deferred F
+      TYPE, DEFERRED :: T        ! redundant decl of deferred type T
+      INTEGER, DEFERRED, PARAMETER :: C(..) ! implied rank named-constant
+   CONTAINS
+      SUBROUTINE SUB1(x)
+         TYPE(T), INTENT(INOUT) :: x
+         x = F(x, SUM(C))
+      END SUBROUTINE SUB1
+      SUBROUTINE SUB2(x)
+         TYPE(T), INTENT(INOUT) :: x
+         x = F(x, MAXVAL(C))
+      END SUBROUTINE SUB2
+   END TEMPLATE B
+
+CONTAINS
+
+   SUBROUTINE SUB3(V,D)(x)
+      TYPE, DEFERRED :: V
+      INTEGER, DEFERRED, PARAMETER :: D
+      TYPE(V), INTENT(INOUT) :: x(D)
+      x(D) = x(1)
+   END SUBROUTINE
+
+END MODULE A
+
+MODULE C
+  USE MODULE A
+
+  INSTANTIATE B(REAL, OPERATOR(*), [3,4]), ONLY: &
+              & tot_sub1 => sub1
+  INSTANTIATE B(REAL, OPERATOR(+), [3,4]), ONLY: & ! different instance
+              & max_sub2 => sub2
+
+CONTAINS
+
+   SUBROUTINE DO_SOMETHING(x)
+      REAL, INTENT(INOUT) :: x
+      INTEGER :: y(3)
+
+      x = 2.
+      CALL tot_sub1(x)
+      PRINT*,'TOT: ', x ! expect 2. * (3+4) = 14.
+
+      x = 3.
+      CALL max_sub2(x)
+      PRINT*,'MAX: ', x ! expect 3. + max(3,4) = 7.
+
+      y(1) = 4
+      CALL sub3^(INTEGER, 3)(y)
+      PRINT*, y(3) ! expect 4
+   END SUBROUTINE DO_SOMETHING
+
+END MODULE C
+
+
+3. Syntax for Deferred entities
+===============================
+
+A deferred argument is an entity that takes some of its
+characteristics from its ultimate instantiation argument.  A deferred
+argument can be a constant, type, or procedure and can appear in a
+REQUIREMENT construct, TEMPLATE construct, or standalone template
+procedure.  Association with instantiation arguments occurs in the
+REQUIRES and INSTANTIATE statements.
+
+A deferred constant is a deferred argument that can appear in constant
+expressions within a REQUIREMENT construct, TEMPLATE construct, or
+standalone template procedure.
+
+A deferred procedure is a deferred argument that can appear in
+procedure references within a REQUIREMENT construct, TEMPLATE
+construct, or standalone template procedure.  A deferred procedure's
+interface shall be established in that construct, possibly in terms of
+other deferred arguments.
+
+A deferred type is a deferred argument that can appear as a
+<type-spec>, or in a <declaration-type-spec> or <type-guard-stmt>,
+within a REQUIREMENT construct, TEMPLATE construct, or standalone
+template procedure.
+
+Note: A deferred type is not a <type-name> and cannot not appear
+      in a <derived-type-spec>. Consequently a deferred type may
+      not be used in a <structure-constructor>.
+
+Within a construct with a <deferred-arg>, an explicit specification of
+that <deferred-arg> is either <deferred-arg-explicit-stmt> or
+<interface-body> in a deferred interface block.
+
+A <deferred-arg> shall have one or more ultimate specifications.  The
+ultimate specifications of a <deferred-arg> are:
+    - an explicit specification, if present, and
+    - its ultimate specifications as instantiation arguments in
+      REQUIRES statements, if any.
+The ultimate specifications of an instantiation argument in a REQUIRES
+statement are the ultimate specifications of the corresponding
+deferred argument in the referenced requirement construct.
+
+Note: The approach here is that a deferred argument is always
+      eventually explicitly declared within the template itself or
+      directly or indirectly via a referenced requirement.  A deferred
+      argument must have at least one ultimate specification and may
+      have multiple.
+
+Note: If a deferred argument has multiple ultimate specifications,
+      they must be consistent.  Constraints on consistency are
+      defined in section 3.2.
+
+Some examples of declarations of deferred arguments (C, T, F, S, and
+G) are shown below.
+
+   INTEGER, DEFERRED, PARAMETER :: C(..) ! Sec. 3.1.1
+   TYPE, DEFERRED :: T ! Sec. 3.1.3
+   DEFERRED INTERFACE ! Sec. 3.1.2
+      FUNCTION F(X)
+         TYPE(T), INTENT(IN) :: X
+         TYPE(T) :: F
+      END FUNCTION
+      SUBROUTINE S(Y)
+         TYPE(T), INTENT(INOUT) :: Y
+      END SUBROUTINE
+   END INTERFACE
+   PROCEDURE(F_I), DEFERRED :: G  ! Sec. 3.1.2
+
+3.1 Syntax for deferred arguments
+---------------------------------
+
+A deferred argument declaration statement is used to declare
+deferred arguments.
+
+<deferred-arg> <<is>> <deferred-const>
+               <<or>> <deferred-proc>
+               <<or>> <deferred-type>
+
+Constraint: A <deferred-arg> shall appear in a <deferred-arg-decl-stmt>
+            or as the <function-name> or <subroutine-name> of an
+            <interface-body>.
+
+Constraint: A <deferred-arg> shall have at most one explicit
+            specification in a given scoping unit.
+
+Constraint: A <deferred-arg> declaration shall not have an
+            <access-spec> nor shall it appear in an <access-stmt>.
+
+Note: Deferred arguments are local identifiers and are not externally
+      accessible.
+
+<deferred-arg-decl-stmt> <<is>> <deferred-arg-explicit-stmt>
+                         <<or>> <requires-stmt>
+
+<deferred-arg-explicit-stmt> <<is>> <deferred-const-declaration-stmt>
+                             <<or>> <deferred-proc-declaration-stmt>
+                             <<or>> <deferred-type-declaration-stmt>
+
+3.1.1 Syntax for deferred constants
+
+<deferred-const-declaration-stmt> <<is>>
+           <declaration-type-spec>, <deferred-const-attr-spec-list> ::
+           <deferred-const-entity-decl-list>
+
+<deferred-const-attr-spec> <<is>> <dimension-spec>
+                           <<or>> DEFERRED
+                           <<or>> PARAMETER
+                           <<or>> <rank-clause>
+
+Constraint: A <deferred-const-attr-spec-list> shall include both
+            the DEFERRED and PARAMETER keywords.
+
+Note: Both are required, because if we ever decide to allow deferred
+      _variables_ the obvious syntax would be to keep DEFERRED and drop
+      the PARAMETER in their declaration.
+
+Constraint: An entity declared in <deferred-const-declaration-stmt>
+            shall be INTEGER, LOGICAL, or assumed-length CHARACTER.
+
+Note: For now, we explicitly disallow fixed-length character deferred
+      arguments.  Partly this is to not prejudice further work on
+      deferred arguments with length type parameters.
+
+<deferred-const-entity-decl> <<is>> <deferred-const> [ ( <array-spec> ) ]
+
+Constraint: Each <deferred-const> shall appear in <deferred-arg-list>
+            of the TEMPLATE, REQUIREMENT or standalone template
+            procedure in which it appears.
+
+Constraint: If <array-spec> appears in
+            <deferred-const-declaration-stmt>, it shall be
+            <implied-shape-spec>, <assumed-or-implied-rank-spec>,
+            <explicit-shape-spec-list>, or
+            <explicit-shape-bounds-spec>.
+
+Constraint: If <implied-shape-spec>, <explicit-shape-spec> or
+            <explicit-shape-bounds-spec> appears in
+            <deferred-const-declaration-stmt>, then <lower-bound>
+            shall not be specified.
+
+Constraint: If <explicit-shape-bounds-spec> appears in
+            <deferred-const-declaration-stmt>, then
+            <explicit-bounds-expr> shall not appear as a lower bound.
+
+Note: This prevents non-default lower bounds, and leaves open an avenue
+      for backwards compatible extensions for non-default lower bounds
+      in the future.
+
+Note: <deferred-arg-list> is part of the TEMPLATE, REQUIREMENT, and
+      standalone template procedure constructs, and is defined in the
+      other generics syntax papers.
+
+<deferred-const> <<is>> <name>
+
+A <deferred-const> is a deferred constant.
+
+Some examples of declaring deferred constants are as follows.
+
+    ! explicit shape
+    integer, deferred, parameter  :: x1
+    integer, deferred, parameter  :: x2(3)
+    integer, parameter :: v1(2) = [5,15] ! not a deferred constant
+    integer, deferred, parameter  :: x3(v1)
+
+    ! implied shape
+    integer, deferred, parameter :: x4(*)
+    integer, deferred, parameter :: x5(*,*)
+    integer, deferred, parameter, rank(2) :: x6
+
+    ! assumed-or-implied-rank-spec
+    integer, deferred, parameter :: x7(..)
+
+3.1.2 Syntax for deferred procedures
+
+<deferred-proc-declaration-stmt> <<is>>
+     PROCEDURE(<interface>), DEFERRED :: <deferred-proc-list>
+
+Constraint: Each <deferred-proc> shall appear in the
+            <deferred-arg-list> of the TEMPLATE, REQUIREMENT or
+            standalone template procedure in which it appears.
+
+Constraint: Each <subroutine-name> or <function-name> of an
+            <interface-body> that appears in a deferred interface
+            block shall appear in the <deferred-arg-list> of the
+            TEMPLATE, REQUIREMENT or standalone template procedure in
+            which it appears.
+
+<deferred-proc> <<is>> <name>
+
+A deferred procedure is a <deferred-proc> or a <deferred-arg> that
+appears as the <function-name> or <subroutine-name> of an interface
+body in a deferred interface block.
+
+3.1.3 Syntax for deferred types
+
+<deferred-type-declaration-stmt> <<is>>
+         TYPE, <deferred-type-attr-list> :: <deferred-type-list>
+
+Constraint: Each <deferred-type> shall appear in <deferred-arg-list>
+            of the TEMPLATE, REQUIREMENT or standalone template
+            procedure in which it appears.
+
+<deferred-type-attr> <<is>> DEFERRED
+                     <<or>> ABSTRACT
+                     <<or>> EXTENSIBLE
+
+Constraint: DEFERRED shall appear in each <deferred-type-attr-list>.
+
+Constraint: The same <deferred-type-attr> shall not appear more than
+            once in a given <deferred-type-attr-list>.
+
+<deferred-type> <<is>> <name>
+
+Constraint: A <deferred-type> entity shall not appear as
+            <parent-type-name> in an EXTENDS attribute.
+
+A <deferred-type> is a deferred type.
+
+A deferred type with the EXTENSIBLE attribute is an extensible derived
+type.A deferred type with the ABSTRACT attribute is an abstract derived
+type. A deferred type with the ABSTRACT attribute implicitly has the
+EXTENSIBLE attribute, which can be confirmed with an explicit inclusion
+of the EXTENSIBLE keyword in the <deferred-type-attr-list>.
+
+Note: The distinction between deferred types that are extensible or not,
+      and deferred types which are abstract or not, helps to ensure a
+      processor can verify a template is internally consistent.  For
+      example, a deferred type must not be permitted in a CLASS
+      declaration if it might be instantiated as INTEGER. Additionally,
+      a deferred type must not be permitted in a TYPE declaration if it
+      might be instantiated with an abstract derived type. The following
+      examples illustrate this point:
+
+      SUBROUTINE S1_bad(T)(X, Y)
+         TYPE, DEFERRED :: T
+         TYPE(T)  :: X ! ok
+         CLASS(T) :: Y ! invalid
+      END SUBROUTINE
+
+      SUBROUTINE S1(T)(X, Y)
+         TYPE, DEFERRED :: T
+         TYPE(T)  :: X ! ok
+         TYPE(T)  :: Y ! ok
+      END SUBROUTINE
+
+      SUBROUTINE S2(T)(X, Y)
+         TYPE, DEFERRED, EXTENSIBLE :: T
+         TYPE(T)  :: X ! ok
+         CLASS(T) :: Y ! ok
+      END SUBROUTINE
+
+      SUBROUTINE S3_bad(T)(X, Y)
+         TYPE, DEFERRED, ABSTRACT :: T
+         TYPE(T)  :: X ! invalid
+         CLASS(T) :: Y ! ok
+      END SUBROUTINE
+
+      SUBROUTINE S3(T)(X, Y)
+         TYPE, DEFERRED, ABSTRACT :: T
+         CLASS(T) :: X ! ok
+         CLASS(T) :: Y ! ok
+      END SUBROUTINE
+
+      TYPE :: EXT_TYPE
+      END TYPE
+
+      TYPE, ABSTRACT :: ABS_TYPE
+      END ABSTRACT
+
+      INSTANTIATE S1(INTEGER)  ! ok
+      INSTANTIATE S1(EXT_TYPE) ! ok
+      INSTANTIATE S1(ABS_TYPE) ! invalid
+
+      INSTANTIATE S2(INTEGER)  ! invalid
+      INSTANTIATE S2(EXT_TYPE) ! ok
+      INSTANTIATE S2(ABS_TYPE) ! invalid
+
+      INSTANTIATE S3(INTEGER)  ! invalid
+      INSTANTIATE S3(EXT_TYPE) ! ok
+      INSTANTIATE S3(ABS_TYPE) ! ok
+
+
+3.2 Specification of deferred arguments
+---------------------------------------
+
+The specification of a deferred argument is explicit if it appears in
+the outermost scope in which it is a deferred argument.
+
+3.2.1 Specification of deferred constants
+
+Constraint: If any ultimate specification of a deferred argument is a
+            deferred constant, then all ultimate specifications of
+            that deferred argument shall be deferred constant.
+
+Constraint: All ultimate specifications of a deferred constant shall
+            specify the same type and kind-type parameters.
+
+Constraint: If any ultimate specification of a deferred constant is of
+            a non-implied rank R, then an explicit specification of
+            that deferred constant shall have rank R, and all other
+            ultimate specifications of that deferred constant shall
+            either have implied rank or have rank R.
+
+Constraint: If any ultimate specification of a deferred constant has
+            explicit shape S, then an explicit specification of that
+            deferred constant shall have shape S, and all other
+            ultimate specifications of that deferred constant shall
+            have implied rank, implied shape, or shape S.
+
+If any ultimate specification of a deferred constant has an explicit
+shape S, then that deferred constant has shape S.  Otherwise, if any
+ultimate specification of that deferred constant has implied shape,
+then it has implied shape with the same rank.  Otherwise it has
+implied rank.
+
+3.2.2 Specification of deferred procedures
+
+Constraint: If any ultimate specification of a deferred argument is a
+            deferred procedure, then all ultimate specifications of
+            that deferred argument shall be deferred procedure.
+
+Constraint: A deferred procedure shall not be referenced with keyword
+            arguments unless it has an explicit specification.
+
+Note: Although dummy arguments always have names, they are processor-
+      dependent for deferred procedures without an explicit
+      specification. The constraint above ensures such names cannot
+      be used.
+
+Constraint: Except for PURE, SIMPLE, and ELEMENTAL attributes, the
+            characteristics of all ultimate specifications of a
+            deferred procedure shall be consistent.
+
+Note: The characteristics of a procedure do not include the names
+      of the dummy arguments, so they need not be the same.
+
+Constraint: If any ultimate specification of a deferred procedure is
+            SIMPLE, then an explicit specification of that deferred
+            procedure shall be SIMPLE.
+
+Constraint: If any ultimate specification of a deferred procedure is
+            PURE, then an explicit specification of that deferred
+            procedure shall be PURE or SIMPLE.
+
+Constraint: If any ultimate specification of a deferred procedure is
+            ELEMENTAL, then an explicit specification of that deferred
+            procedure shall be ELEMENTAL.
+
+If any ultimate specification of a deferred procedure is SIMPLE then
+that deferred procedure is SIMPLE. Otherwise, if any ultimate
+specification of that deferred procedure is PURE, then it is PURE.
+
+If any ultimate specification of a deferred procedure is ELEMENTAL then
+that deferred procedure is ELEMENTAL.
+
+Only an explicit specification of a deferred procedure defines the names
+of its dummy arguments.
+
+3.2.3 Specification of deferred types
+
+Constraint: If any ultimate specification of a deferred argument is a
+            deferred type, then all ultimate specifications of that
+            deferred argument shall be deferred type.
+
+If any ultimate specification of a deferred type has the EXTENSIBLE
+attribute, then the deferred type has the EXTENSIBLE attribute.
+
+If all ultimate specifications of a deferred type have the ABSTRACT
+attribute, or if the deferred type has an explicit specification
+with the ABSTRACT attribute, then the deferred type has the ABSTRACT
+attribute. Otherwise the deferred type does not have the ABSTRACT
+attribute.
+
+NOTE: A deferred type with the ABSTRACT attribute is considered an
+      abstract derived type, it can only be an instantiation argument
+      when the corresponding deferred argument has the ABSTRACT
+      attribute. Therefore, if a deferred type has an explicit
+      specification with the ABSTRACT attribute, all of its ultimate
+      specifications must have the ABSTRACT attribute.
+
+   REQUIREMENT R_REGULAR(U)
+      TYPE, DEFERRED :: U
+   END REQUIREMENT
+
+   REQUIREMENT R_EXTENSIBLE(U)
+      TYPE, DEFERRED, EXTENSIBLE :: U
+   END REQUIREMENT
+
+   REQUIREMENT R_ABSTRACT(U)
+      TYPE, DEFERRED, ABSTRACT :: U
+   END REQUIREMENT
+
+   TEMPLATE T1(T)
+      REQUIRES R_REGULAR(T) ! valid, non-extensible
+   END TEMPLATE
+
+   TEMPLATE T2(T)
+      REQUIRES R_EXTENSIBLE(T) ! valid, extensible
+   END TEMPLATE
+
+   TEMPLATE T3(T)
+      REQUIRES R_ABSTRACT(T) ! valid, abstract
+   END TEMPLATE
+
+   TEMPLATE T4(T)
+      TYPE, DEFERRED :: T
+      REQUIRES R_REGULAR(T) ! valid, non-extensible
+   END TEMPLATE
+
+   TEMPLATE T5(T)
+      TYPE, DEFERRED :: T
+      REQUIRES R_EXTENSIBLE(T) ! invalid, explicit decl is not extensible
+   END TEMPLATE
+
+   TEMPLATE T6(T)
+      TYPE, DEFERRED :: T
+      REQUIRES R_ABSTRACT(T) ! invalid, explicit decl is not extensible
+   END TEMPLATE
+
+   TEMPLATE T7(T)
+      TYPE, DEFERRED, EXTENSIBLE :: T
+      REQUIRES R_REGULAR(T) ! valid, T is not abstract
+   END TEMPLATE
+
+   TEMPLATE T8(T)
+      TYPE, DEFERRED, EXTENSIBLE :: T
+      REQUIRES R_EXTENSIBLE(T) ! valid, decls match
+   END TEMPLATE
+
+   TEMPLATE T9(T)
+      TYPE, DEFERRED, EXTENSIBLE :: T
+      REQUIRES R_ABSTRACT(T) ! valid, T is just extensible
+   END TEMPLATE
+
+   TEMPLATE T10(T)
+      TYPE, DEFERRED, ABSTRACT :: T
+      REQUIRES R_REGULAR(T) ! invalid, T is abstract
+   END TEMPLATE
+
+   TEMPLATE T11(T)
+      TYPE, DEFERRED, ABSTRACT :: T
+      REQUIRES R_EXTENSIBLE(T) ! invalid, T is abstract
+   END TEMPLATE
+
+   TEMPLATE T12(T)
+      TYPE, DEFERRED, ABSTRACT :: T
+      REQUIRES R_ABSTRACT(T) ! valid, decls match
+   END TEMPLATE
+
+   TEMPLATE T13(T)
+      REQUIRES R_REGULAR(T)
+      REQUIRES R_EXTENSIBLE(T) ! valid, T is extensible
+   END TEMPLATE
+
+   TEMPLATE T14(T)
+      REQUIRES R_REGULAR(T)
+      REQUIRES R_ABSTRACT(T) ! valid, T is just extensible
+   END TEMPLATE
+
+   TEMPLATE T15(T)
+      REQUIRES R_EXTENSIBLE(T)
+      REQUIRES R_ABSTRACT(T) ! valid, T is just extensible
+   END TEMPLATE
+
+3.3 Deferred argument association
+---------------------------------
+
+This will be discussed in a subsequent paper.
+
+4. Straw Vote on Deferred/Instantiate Argument Delimiters
+=========================================================
+
+What symbol(s) should be used to delimit deferred and
+instantiation argument lists?
+
+A. Parenthesis with ^ added for inline instantiation: ^()
+B. Curly Braces: {}
+C. Square Brackets: []
+D. Parenthesis: ()
+E. Undecided
+
+Examples:
+
+A.  13-1-7 (acceptable-unacceptable-undecided)
+
+   subroutine swap(T)(a, b)
+   call swap^(T)(a, b)
+   call P1^(P2^(x))(a, b)
+
+B. 13-5-4 (acceptable-unacceptable-undecided)
+
+   subroutine swap{T}(a, b)
+   call swap{T}(a, b)
+   call P1{P2{x}}(a, b)
+
+C. 11-6-5 (acceptable-unacceptable-undecided)
+
+   subroutine swap[T](a, b)
+   call swap[T](a, b)
+   call P1[P2[x]](a, b)
+
+D. 7-7-8 (acceptable-unacceptable-undecided)
+
+   subroutine swap(T)(a, b)
+   call swap(T)(a, b)
+   call P1(P2(x))(a, b)
+
+Choice A was selected.
+
+===END===

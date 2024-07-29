@@ -1,0 +1,238 @@
+To: J3                                                     J3/24-131
+From: Tom Clune & subgroup generics
+Subject: Generics formal specs: semantics of instantiating templates
+Date: 2024-June-18
+
+References: 22-154r4
+
+1. Introduction
+===============
+
+This paper is intended to establish the formal specs of generic
+programming with respect to the semantics of instantiating templates.
+The changes are just updates to 22-154r4.
+
+
+2. Formal specs
+===============
+
+A1. The INSTANTIATE statement names a template and provides a list of
+    instantiation arguments corresponding to the deferred arguments
+    of the referenced template.
+
+A2. Keyword association may be used to identify the corresponding
+    deferred argument in an instantiation argument list.
+
+A3. The INSTANTIATE statement identifies a template instance, that is
+    similar to a module that contains concrete instances of the
+    entities defined in the referenced template.
+
+B1. The INSTANTIATE statement can appear in any specification section.
+
+B2. The INSTANTIATE statement cannot appear before any of the
+    following statements in the same program unit:
+      - USE statements
+      - IMPORT statements
+      - IMPLICIT statements
+
+B3. References to instance entities accessed by an INSTANTIATE
+    statement shall appear after that INSTANTIATE statement, except
+    for PUBLIC/PRIVATE statements.
+
+C1. The INSTANTIATE statement provides an optional ONLY clause that
+    enables fine-grained access to individual template instance
+    entities.
+
+C2. The INSTANTIATE statement provides rename capabilities analogous
+    to those of the USE statement for modules.
+
+2.1 Association of instantiation arguments in INSTANTIATE
+---------------------------------------------------------
+
+D1. The corresponding instantiation argument for a deferred type
+    parameter shall be a type-spec with constant specification
+    expressions.
+
+    Example:
+
+         TEMPLATE tmpl{T}
+             TYPE, DEFERRED :: T
+             ...
+         END TEMPLATE tmpl
+
+         TYPE :: my_pdt(len, n)
+            INTEGER, LEN :: len
+            INTEGER, KIND :: n
+            INTEGER :: B(len)
+            REAL, RANK(n), ALLOCATABLE :: A
+            INTEGER :: data
+         END TYPE
+
+         INSTANTIATE tmpl{REAL}
+         INSTANTIATE tmpl{INTEGER(KIND=INT64)}
+         INSTANTIATE tmpl{my_pdt(len=5, n=3)} ! ok
+         INSTANTIATE tmpl{my_pdt(len=:, n=3)} ! illegal; no deferred
+
+
+D2. The corresponding instantiation argument for a constant deferred
+    argument shall be a constant expression of the same type, kind,
+    and rank.
+
+    If the shape of a constant deferred argument is explicit then the
+    corresponding instantiation argument shall have the same shape.
+    If the shape of a constant deferred argument is assumed, then the
+    corresponding instantiation argument shall have the same rank.
+    For a deferred rank deferred argument the corresponding
+    instantiation argument can have any rank or shape.
+
+    NOTE: To avoid complexities about what "same" means for
+          user-defined types as well as round-off issues with
+          expressions involving numeric types, subgroup has decided to
+          restrict constant deferred arguments to be logical, integer,
+          or assumed-length character.
+
+    Example using notional syntax:
+
+         TEMPLATE tmpl1{T, flag, n, pet_type}
+            TYPE, DEFERRED :: T
+            LOGICAL, CONSTANT :: flag
+            INTEGER, CONSTANT :: n
+            CHARACTER(LEN=*), CONSTANT :: pet_type
+
+            TYPE(T), RANK(n), ALLOCATABLE :: data
+
+         END TEMPLATE tmpl1
+
+         ! Legal instantiations
+         INSTANTIATE tmpl1{REAL,    .true.,  0, 'cat'}
+         INSTANTIATE tmpl1{INTEGER, .false., 1, 'doggy'}
+
+         ! The following are invalid.
+         INSTANTIATE tmpl1{REAL, 1, 1, 'cat'} ! wrong type expr for 'flag'
+         INSTANTIATE tmpl2{REAL, .true., 0, &
+              [character(len=5)::'cat','doggy']} ! wrong rank for pet_type
+
+    Another example using deferred rank:
+
+         TEMPLATE tmpl2{C}
+            INTEGER, CONSTANT :: C(..)
+
+         CONTAINS
+
+            SUBROUTINE ACCUM(x y)
+               INTEGER, INTENT(IN),  RANK(RANK(C)) :: x
+               INTEGER, INTENT(OUT), RANK(RANK(C)) :: y
+               y = x + C
+            END SUBROUTINE
+
+         END TEMPLATE tmpl2
+
+
+D3. A generic name may be used as an instantiation argument provided
+    one of its specific procedures matches the required interface of
+    the corresponding deferred argument.  The matching
+    specific procedure is then treated as the effective instantiation
+    argument.
+
+    Note: Procedure deferred arguments are not permitted to
+          have an implicit interface.  Thus, there can never be any
+          ambiguity in the generic resolution in this context.
+
+    Example:
+
+        TEMPLATE mytmpl{T, F}
+           TYPE, DEFERRED :: T
+           INTERFACE
+              FUNCTION F(x)
+                 TYPE(T), INTENT(IN) :: x
+                 TYPE(T) :: F
+              END FUNCTION
+           END INTERFACE
+           ...
+        END TEMPLATE mytmpl
+
+        ...
+
+        INSTANTIATE mytmpl{REAL, sin}
+        INSTANTIATE mytmpl{DOUBLE PRECISION, sin}
+
+D4. An operator may be used as an instantiation argument
+    provided one of its specific procedures matches
+    the required interface of the corresponding procedure
+    deferred argument.  The matching specific procedure is then
+    treated as the effective instantiation argument.
+
+    NOTE: This approach is arguably a bit klunky but it sidesteps
+          thorny issues related to how operator argumments could
+          be declared, and allows template authors to define useful
+          operators inside the template.
+
+    Example:
+
+        TEMPLATE mytmpl{T, F}
+           TYPE, DEFERRED :: T
+           INTERFACE
+              FUNCTION F(x, y)
+                 TYPE(T), INTENT(IN) :: x, y
+                 TYPE(T) :: F
+              END FUNCTION
+           END INTERFACE
+           ...
+        END TEMPLATE mytmpl
+
+        ...
+
+        INSTANTIATE mytmpl{REAL, OPERATOR(+)}
+        INSTANTIATE mytmpl{INTEGER, OPERATOR(*)}
+
+
+2.2 Identical instantiations
+----------------------------
+
+E1. By default, instantiations of a given template with the same
+    instantiation arguments identify the same template instance.
+
+E2. Two constant instantiation arguments are the same if:
+    - both are logical and are equivalent.
+    - both are integer and equal.
+    - both are character constants of the same length and equal.
+
+E3. Two corresponding type-spec instantiation arguments are the
+    same if they have the same type and have the same kind and
+    length-type parameters.  Note that assumed-length type parameters
+    are not permitted for type-spec actual template parameters.
+
+E4. Two corresponding procedure instantiation arguments are the
+    same if they resolve to the same specific procedure.
+
+    Example:
+
+        INTERFACE A
+            MODULE PROCEDURE F1  ! operates on MY_T
+            MODULE PROCEDURE F2  ! operates on MY_U
+        END INTERFACE A
+
+        INTERFACE B
+            MODULE PROCEDURE F1  ! operates on MY_T
+            MODULE PROCEDURE F3  ! operates on MY_U
+        END INTERFACE B
+
+        TEMPLATE TMPL{T, F}
+            TYPE, DEFERRED :: T
+            INTERFACE
+               SUBROUTINE f(x)
+                  TYPE(T), INTENT(INOUT) :: x
+               END SUBROUTINE f(x)
+            END INTERFACE
+        END TEMPLATE
+
+        INSTANTIATE TMPL{MY_T, A} ! Resolves to F1
+        INSTANTIATE TMPL{MY_T, A} ! Resolves to F1 ==> same
+
+        INSTANTIATE TMPL{MY_T, A} ! Resolves to F1
+        INSTANTIATE TMPL{MY_T, B} ! Resolves to F1 ==> same
+
+        INSTANTIATE TMPL{MY_U, A} ! Resolves to F2
+        INSTANTIATE TMPL{MY_U, B} ! Resolves to F3 ==> different
+
+===END===

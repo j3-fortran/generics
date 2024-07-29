@@ -1,0 +1,107 @@
+To: J3                                                     J3/24-127r4
+From: generics
+Subject: Formal syntax (3 of 3): REQUIREMENT and REQUIRES
+Date: 2024-June-26
+
+Reference: 24-125.txt, 24-126.txt
+
+This paper is the third of three that comprise the formal syntax for
+generic programming features in Fortran, aka templates.
+
+1. Introduction
+===============
+
+This paper defines the syntax for the REQUIREMENT construct, and the
+REQUIRES statement.  Paper 1 covers the syntax for deferred arguments,
+and paper 2 covers the syntax related to the TEMPLATE construct and
+INSTANTIATION statement
+
+Section 2 provides an example exercising the proposed syntax.  Section
+3 covers the REQUIREMENT construct, and section 4 covers the REQUIRES
+statement.
+
+2. Example
+==========
+
+Examples of REQUIREMENT blocks are shown below.
+
+   REQUIREMENT R1(U, V, G)
+      TYPE, DEFERRED :: U, V
+      DEFERRED INTERFACE
+         FUNCTION G(X)
+            TYPE(U), INTENT(IN) :: X
+            TYPE(V) :: G
+         END FUNCTION
+      END INTERFACE
+   END REQUIREMENT
+
+   REQUIREMENT R2(U, G)
+      REQUIRES R1(U, U, G)
+   END REQUIREMENT
+
+Example REQUIRES statements for the above requirements are shown below,
+which could appear together in the same template, although they are
+redundant in this case.
+
+   REQUIRES R1(T, T, F)
+   REQUIRES R2(T, F)
+
+The semantics of redundant specifications of deferred arguments in the
+context of REQUIREMENT blocks and REQUIRES statements are described in
+the paper describing deferred arguments [24-125], Sec. 3.2.
+
+3. Syntax for the REQUIREMENT construct
+=======================================
+
+A REQUIREMENT is a named collection of deferred argument declarations
+intended to facilitate reuse of common patterns within templates and
+other requirements. A REQUIREMENT construct is a specification construct.
+
+<requirement>
+      <<is>> REQUIREMENT <requirement-name> ( [<deferred-arg-list>] )
+                [ <use-stmt> ] ...
+                <requirement-specification-construct> ...
+             END [REQUIREMENT [<requirement-name>]]
+
+Constraint: Each <deferred-arg> shall appear in a
+            <requirement-specification-construct>.
+
+Constraint: If a <requirement-name> appears in the <end-requirement-stmt>,
+            it shall be identical to the <requirement-name>
+            specified in the <requirement-stmt>.
+
+Note: A <requirement> is a scoping unit that allows use, host, and
+      deferred argument association.
+
+Note: Each <deferred-arg> is local to the REQUIREMENT construct.
+
+<requirement-specification-construct>
+        <<is>> <deferred-arg-decl-stmt>
+        <<or>> <interface-block>
+
+Constraint: <interface-stmt> shall include ABSTRACT or DEFERRED.
+
+
+4. Syntax for the REQUIRES statement
+====================================
+
+A REQUIRES statement provides specifications of deferred arguments by
+associating them with the deferred arguments of a REQUIREMENT. A
+REQUIRES statement is a specification statement.
+
+Note: Instantiation arguments in a REQUIRES statement are not required
+      to be deferred arguments.
+
+<requires-stmt> <<is>>
+      REQUIRES [::] <requirement-name>
+            ( [<instantiation-arg-spec-list>] )
+
+Constraint: <requirement-name> shall be the name of a previously
+            defined <requirement>.
+
+Note: Within a nested template, host associated entities are not
+      deferred arguments, and thus appearing as instantiation
+      arguments in a REQUIRES statement does not give them
+      specifications.
+
+===END===
