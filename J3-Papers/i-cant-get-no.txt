@@ -1,0 +1,141 @@
+To: J3                                                     J3/##-###
+From: Brad Richardson
+Subject: I Can't Get No
+Date: 
+
+#Reference:
+
+1. Introduction
+===============
+
+This paper presents specifications for a feature which alleviates the
+problem that template argument lists often become quite long. It
+proposes a mechanism by which sets of deferred arguments can be given
+a name, and some illustrative syntax to demonstrate how it might work.
+
+2. Specifications
+=================
+
+s01. There shall be a mechanism by which the set of instantiation
+     arguments in a REQUIRES statement can be given a name. Within
+     this paper such an entity referred to by that name will be called
+     a satisfaction.
+
+s02. A satisfaction shall have named components that refer to an
+     instantiation. Note that the names and number of these components
+     need not be or correspond directly to the instantiation arguments
+     listed in the instantiation argument list of the REQUIRES statement,
+     nor the deferred arguments of the referenced REQUIREMENT construct.
+
+s03. It shall be possible to declare a deferred argument to be a
+     satisfaction and which REQUIREMENT it references. An instantiation
+     argument corresponding to such a deferred argument must then be
+     a satisfaction from a REQUIRES statement that references the same
+     REQUIREMENT.
+
+s04. There shall be a method of declaring the components of a
+     satisfaction that will be produced by a REQUIRES statement
+     within a REQUIREMENT construct. By default the components will
+     be and have the names of the deferred arguments of the REQUIREMENT
+     construct.
+
+s05. There shall be a method of referring to a component of a
+     satisfaction.
+
+s06. There shall be a method of declaring that two deferred types shall
+     be the same type.
+
+3. Illustrative Syntax
+======================
+
+The following example illustrates why the feature is desired, how it
+might work, and to give a starting point for work on the syntax.
+
+requirement combinable(t, combine, concat)
+  type, deferred :: t
+  deferred interface
+    simple elemental function combine(x,y) result(combined)
+        type(t), intent(in) :: x, y
+        type(t) :: combined
+    end function
+    simple function concat(a) result(combined)
+        type(t), intent(in) :: a(:)
+        type(t) :: combined
+    end function
+  end interface
+end requirement
+
+requirement combinable_with_empty(combinable_instance, empty_element)
+  satisfaction(combinable) :: combinable_instance
+  deferred interface
+    simple function empty_element()
+      type(combinable_instance%t) :: empty_element
+    end function
+  end interface
+  components
+    t => combinable_instance%t
+    combine => combinable_instance%combine
+    concat => combinable_instance%concat
+    empty_element
+  end components
+end requirement
+
+requirement differently_combinable(addable, multipliable)
+  satisfaction(combinable_with_empty) :: addable, multipliable
+  requires same_type(addable%t, multipliable%t)
+  components
+    t => addable%t
+    add => addable%combine
+    sum => addable%concat
+    zero => addable%empty_element
+    multiply => multipliable%combine
+    product => multipliable%concat
+    one => multipliable%empty_element
+  end components
+end requirement
+
+template matrix_multiplication(semigroup)
+    satisfaction(differently_combinable) :: semigroup
+    type :: matrix
+      type(semigroup%t), allocatable :: elements(:,:)
+    end type
+contains
+    simple function matmul(a, b)
+        type(matrix), intent(in) :: a, b
+        type(matrix) :: matmul
+
+        integer :: m, n
+
+        m = size(a,1)
+        n = size(b,2)
+        allocate(matmul%elements(m, n))
+        do concurrent (integer :: i = 1:m, j = 1:n)
+            matmul%elements(i, j) = &
+                semigroup%sum(semigroup%times( &
+                    a%elements(i,:), b%elements(:,j)))
+        end do
+    end function
+end template
+
+satisfaction :: int_add_monoid = &
+    requires combinable_with_empty(integer, operator(+), sum, int_zero)
+satisfaction :: int_mul_monoid = &
+    requires combinable_with_empty(integer, operator(*), product, int_one)
+satisfaction :: integer_semiring = &
+    requires differently_combinable(int_add_monoid, int_mul_monoid)
+
+instantiate matrix_multiplication(integer_semiring)
+type(matrix) :: m1, m2
+...
+call print_matrix(matmul(m1, m2))
+contains
+  simple function int_zero()
+  ...
+  end function
+  simple function int_one()
+  ...
+  end function
+  subroutine print_matrix(m)
+  ...
+  end subroutine
+end program
