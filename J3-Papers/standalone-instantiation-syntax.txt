@@ -29,15 +29,17 @@ not imply that the instantiated procedure has a name, let alone what
 that name is.
 
 A. INSTANTIATE tmpl_proc(...) => new_name
-B. INSTANTIATE tmpl_proc(...) <= new_name
-C. new_name => INSTANTIATE tmpl_proc(...)
-D. procedure(), parameter :: new_name = tmpl_proc^(...)
+B. INSTANTIATE tmpl_proc(...) as new_name
+C. INSTANTIATE tmpl_proc(...) <= new_name
+D. new_name => INSTANTIATE tmpl_proc(...)
+E. procedure(), parameter :: new_name = tmpl_proc^(...)
 
 It is noted that option A, while concise, clear and somewhat intuitive,
 has the order of entities reversed from the usual rename syntax. Option
-B corrects that defect to a degree, but uses the less than or equal to
-operator. Option C is likely to be indistinguishable syntactically from
-a pointer assignment statement in some contexts. Option D expands on
+B corrects that defect by introducing a new keyword. Option C is
+effectively a variation on B, but using the less than or equal to
+operator. Option D is likely to be indistinguishable syntactically from
+a pointer assignment statement in some contexts. Option E expands on
 the procedure declaration statement in a new way, but the use of the
 parameter keyword (implying named constant) may be inappropriate in
 this context. Variations on the above examples are certainly also
