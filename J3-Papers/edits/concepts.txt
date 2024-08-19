@@ -18,10 +18,7 @@ UTI: Allow template definitions in module procedures?
 UTI: Allow template definitions in external procedures?
 UTI: Allow template definitions in internal procedures?
 UTI: Allow template definitions in a standalone template procedure?
-
-
-
-
+UTI: Add constraint to <access-stmt> that a <deferred-arg> shall not appear?
 
 * Introduce new clause after clause 19: Scope, association, and
   definition
@@ -40,11 +37,9 @@ template.
 
 ##.2 Deferred arguments
 
+##.2.1 Declarations of deferred arguments
 
-
-
-
-##.2.1 Deferred arguments syntax and semantics
+##.2.1.1 General
 
 A deferred argument is an entity whose characteristics are determined
 by its effective instantiation argument.  A deferred argument can be a
@@ -64,35 +59,8 @@ Constraint: A <deferred-arg> shall appear in a <deferred-arg-decl-stmt>
 Constraint: A <deferred-arg> shall have at most one explicit
             specification in a given scoping unit.
 
-Constraint: A <deferred-arg> declaration shall not have an
-            <access-spec> nor shall it appear in an <access-stmt>.
-
 Note: Deferred arguments are local identifiers and are not externally
       accessible.
-
-Within a construct with a <deferred-arg>, an explicit specification of
-that <deferred-arg> is either <deferred-arg-explicit-stmt> or
-<interface-body> in a deferred interface block.
-
-A <deferred-arg> shall have one or more ultimate specifications.  The
-ultimate specifications of a <deferred-arg> are:
-    - an explicit specification, if present, and
-    - its ultimate specifications as instantiation arguments in
-      REQUIRES statements, if any.
-The ultimate specifications of an instantiation argument in a REQUIRES
-statement are the ultimate specifications of the corresponding
-deferred argument in the referenced requirement construct.
-
-Note: A deferred argument is always explicitly declared within the
-      template itself or directly or indirectly via a referenced
-      requirement.  A deferred argument has at least one ultimate
-      specification.
-
-Note: If a deferred argument has multiple ultimate specifications,
-      they must be consistent.  Constraints on consistency are
-      defined in section ???
-
-UTI: What section should the note above reference?
 
 A deferred argument declaration statement is used to declare
 deferred arguments.
@@ -104,30 +72,90 @@ deferred arguments.
                              <<or>> <deferred-const-declaration-stmt>
                              <<or>> <deferred-proc-declaration-stmt>
 
+Constraint: A <deferred-arg-explicit-stmt> shall not have an
+            <access-spec>.
 
-##.2.2 Deferred types
+##.2.1.2 Deferred types
 
 A deferred type is a deferred argument that can appear in a type
 specifier within a REQUIREMENT construct, TEMPLATE construct, or
 standalone template procedure.
 
-A deferred type is a deferred argument that can appear as a
-<type-spec>, or to declare variables or components
-in a <declaration-type-spec> or <type-guard-stmt>,
-within a REQUIREMENT construct, TEMPLATE construct, or standalone
-template procedure.
+<deferred-type-declaration-stmt> <<is>>
+         TYPE, <deferred-type-attr-list> :: <deferred-type-name-list>
+
+Constraint: Each <deferred-type-name> shall appear in <deferred-arg-list>
+            of the TEMPLATE, REQUIREMENT or standalone template
+            procedure in which it appears.
+
+<deferred-type-attr> <<is>> DEFERRED
+                     <<or>> ABSTRACT
+                     <<or>> EXTENSIBLE
+
+Constraint: DEFERRED shall appear in each <deferred-type-attr-list>.
+
+Constraint: The same <deferred-type-attr> shall not appear more than
+            once in a given <deferred-type-attr-list>.
+
+Constraint: A <deferred-type> entity shall not appear as
+            <parent-type-name> in an EXTENDS attribute.
 
 Note: A deferred type is not a <type-name>.  Consequently it shall not
       appear as a <derived-type-spec>, and so a deferred type
       may not be used in a <structure-constructor>.
 
-Note: Examples of deferred constant declarations are:
+A deferred type with the EXTENSIBLE attribute is an extensible derived
+type. A deferred type with the ABSTRACT attribute is an abstract derived
+type. A deferred type with the ABSTRACT attribute implicitly has the
+EXTENSIBLE attribute, which can be confirmed with an explicit inclusion
+of the EXTENSIBLE keyword in the <deferred-type-attr-list>.
+
+Note: Examples of deferred type declarations are:
 
     TYPE, DEFERRED :: T1
     TYPE, EXTENSIBLE, DEFERRED :: T2
     TYPE, ABSTRACT, DEFERRED :: T3
 
-##.2.3 Deferred constants
+Note: The distinction between deferred types that are extensible or not,
+      and deferred types which are abstract or not, helps to ensure a
+      processor can verify a template is internally consistent.  For
+      example, a deferred type must not be permitted in a CLASS
+      declaration if it might be instantiated as INTEGER. Additionally,
+      a deferred type must not be permitted in a TYPE declaration if it
+      might be instantiated with an abstract derived type. The following
+      examples illustrate this point:
+
+      SUBROUTINE S1_bad(T)(X, Y)
+         TYPE, DEFERRED :: T
+         TYPE(T)  :: X ! ok
+         CLASS(T) :: Y ! invalid
+      END SUBROUTINE
+
+      SUBROUTINE S1(T)(X, Y)
+         TYPE, DEFERRED :: T
+         TYPE(T)  :: X ! ok
+         TYPE(T)  :: Y ! ok
+      END SUBROUTINE
+
+      SUBROUTINE S2(T)(X, Y)
+         TYPE, DEFERRED, EXTENSIBLE :: T
+         TYPE(T)  :: X ! ok
+         CLASS(T) :: Y ! ok
+      END SUBROUTINE
+
+      SUBROUTINE S3_bad(T)(X, Y)
+         TYPE, DEFERRED, ABSTRACT :: T
+         TYPE(T)  :: X ! invalid
+         CLASS(T) :: Y ! ok
+      END SUBROUTINE
+
+      SUBROUTINE S3(T)(X, Y)
+         TYPE, DEFERRED, ABSTRACT :: T
+         CLASS(T) :: X ! ok
+         CLASS(T) :: Y ! ok
+      END SUBROUTINE
+
+##.2.1.3 Deferred constants
 
 A deferred constant is a deferred argument that can appear in constant
 expressions within a REQUIREMENT construct, TEMPLATE construct, or
@@ -176,7 +204,7 @@ Note: Examples of deferred constant declarations are:
 
     ! explicit shape
     INTEGER, DEFERRED, PARAMETER  :: x1
-    INTEGER, DEFERRED, PARAMETE R :: x2(3)
+    INTEGER, DEFERRED, PARAMETER :: x2(3)
     INTEGER, PARAMETER :: v1(2) = [5,15] ! not a deferred constant
     INTEGER, DEFERRED, PARAMETER  :: x3(v1)
 
@@ -188,12 +216,29 @@ Note: Examples of deferred constant declarations are:
     ! assumed-or-implied-rank-spec
     INTEGER, DEFERRED, PARAMETER :: x7(..)
 
-##.2.4 Deferred procedures
+##.2.1.4 Deferred procedures
 
 A deferred procedure is a deferred argument that can appear in
 procedure references within a REQUIREMENT construct, TEMPLATE
 construct, or standalone template procedure.  A deferred procedure's
-interface shall be established in that construct.
+interface shall be established in that construct. The interface of a
+deferred procedure is established by its appearance in a
+<deferred-proc-declaration-stmt> or as the <subroutine-name> or
+<function-name> of an <interface-body> that appears in a deferred
+interface block.
+
+<deferred-proc-declaration-stmt> <<is>>
+     PROCEDURE(<interface>), DEFERRED :: <deferred-proc-name-list>
+
+Constraint: Each <deferred-proc-name> shall appear in the
+            <deferred-arg-list> of the TEMPLATE, REQUIREMENT or
+            standalone template procedure in which it appears.
+
+Constraint: Each <subroutine-name> or <function-name> of an
+            <interface-body> that appears in a deferred interface
+            block shall appear in the <deferred-arg-list> of the
+            TEMPLATE, REQUIREMENT or standalone template procedure in
+            which it appears.
 
 Note: The interface of a deferred procedure may be defined in terms of
       other deferred arguments.
@@ -212,280 +257,35 @@ Note: The following example declares deferred procedures F, S, and G:
    END INTERFACE
    PROCEDURE(F_I), DEFERRED :: G
 
-
-<<< break for Aug 05 2024 >>>
-<<< Plan to continue reordering below. >>>
-<<< Pulling up BNF ... >>>
-
-3.1 Syntax for deferred arguments
----------------------------------
-
-A deferred argument declaration statement is used to declare
-deferred arguments.
-
-<<< BNF DELETED AND MOVED to TOP of section ##.2 >>>
-
-3.1.1 Syntax for deferred constants
-
-<deferred-const-declaration-stmt> <<is>>
-           <declaration-type-spec>, <deferred-const-attr-spec-list> ::
-           <deferred-const-entity-decl-list>
-
-<deferred-const-attr-spec> <<is>> <dimension-spec>
-                           <<or>> DEFERRED
-                           <<or>> PARAMETER
-                           <<or>> <rank-clause>
-
-Constraint: A <deferred-const-attr-spec-list> shall include both
-            the DEFERRED and PARAMETER keywords.
-
-Note: Both are required, because if we ever decide to allow deferred
-      _variables_ the obvious syntax would be to keep DEFERRED and drop
-      the PARAMETER in their declaration.
-
-Constraint: An entity declared in <deferred-const-declaration-stmt>
-            shall be INTEGER, LOGICAL, or assumed-length CHARACTER.
-
-Note: For now, we explicitly disallow fixed-length character deferred
-      arguments.  Partly this is to not prejudice further work on
-      deferred arguments with length type parameters.
-
-<deferred-const-entity-decl> <<is>> <deferred-const> [ ( <array-spec> ) ]
-
-Constraint: Each <deferred-const> shall appear in <deferred-arg-list>
-            of the TEMPLATE, REQUIREMENT or standalone template
-            procedure in which it appears.
-
-Constraint: If <array-spec> appears in
-            <deferred-const-declaration-stmt>, it shall be
-            <implied-shape-spec>, <assumed-or-implied-rank-spec>,
-            <explicit-shape-spec-list>, or
-            <explicit-shape-bounds-spec>.
-
-Constraint: If <implied-shape-spec>, <explicit-shape-spec> or
-            <explicit-shape-bounds-spec> appears in
-            <deferred-const-declaration-stmt>, then <lower-bound>
-            shall not be specified.
-
-Constraint: If <explicit-shape-bounds-spec> appears in
-            <deferred-const-declaration-stmt>, then
-            <explicit-bounds-expr> shall not appear as a lower bound.
-
-Note: This prevents non-default lower bounds, and leaves open an avenue
-      for backwards compatible extensions for non-default lower bounds
-      in the future.
-
-Note: <deferred-arg-list> is part of the TEMPLATE, REQUIREMENT, and
-      standalone template procedure constructs, and is defined in the
-      other generics syntax papers.
-
-<deferred-const> <<is>> <name>
-
-A <deferred-const> is a deferred constant.
-
-Some examples of declaring deferred constants are as follows.
-
-    ! explicit shape
-    integer, deferred, parameter  :: x1
-    integer, deferred, parameter  :: x2(3)
-    integer, parameter :: v1(2) = [5,15] ! not a deferred constant
-    integer, deferred, parameter  :: x3(v1)
-
-    ! implied shape
-    integer, deferred, parameter :: x4(*)
-    integer, deferred, parameter :: x5(*,*)
-    integer, deferred, parameter, rank(2) :: x6
-
-    ! assumed-or-implied-rank-spec
-    integer, deferred, parameter :: x7(..)
-
-3.1.2 Syntax for deferred procedures
-
-<deferred-proc-declaration-stmt> <<is>>
-     PROCEDURE(<interface>), DEFERRED :: <deferred-proc-list>
-
-Constraint: Each <deferred-proc> shall appear in the
-            <deferred-arg-list> of the TEMPLATE, REQUIREMENT or
-            standalone template procedure in which it appears.
-
-Constraint: Each <subroutine-name> or <function-name> of an
-            <interface-body> that appears in a deferred interface
-            block shall appear in the <deferred-arg-list> of the
-            TEMPLATE, REQUIREMENT or standalone template procedure in
-            which it appears.
-
-<deferred-proc> <<is>> <name>
-
-A deferred procedure is a <deferred-proc> or a <deferred-arg> that
-appears as the <function-name> or <subroutine-name> of an interface
-body in a deferred interface block.
-
-3.1.3 Syntax for deferred types
-
-<deferred-type-declaration-stmt> <<is>>
-         TYPE, <deferred-type-attr-list> :: <deferred-type-list>
-
-Constraint: Each <deferred-type> shall appear in <deferred-arg-list>
-            of the TEMPLATE, REQUIREMENT or standalone template
-            procedure in which it appears.
-
-<deferred-type-attr> <<is>> DEFERRED
-                     <<or>> ABSTRACT
-                     <<or>> EXTENSIBLE
-
-Constraint: DEFERRED shall appear in each <deferred-type-attr-list>.
-
-Constraint: The same <deferred-type-attr> shall not appear more than
-            once in a given <deferred-type-attr-list>.
-
-<deferred-type> <<is>> <name>
-
-Constraint: A <deferred-type> entity shall not appear as
-            <parent-type-name> in an EXTENDS attribute.
-
-A <deferred-type> is a deferred type.
-
-A deferred type with the EXTENSIBLE attribute is an extensible derived
-type.A deferred type with the ABSTRACT attribute is an abstract derived
-type. A deferred type with the ABSTRACT attribute implicitly has the
-EXTENSIBLE attribute, which can be confirmed with an explicit inclusion
-of the EXTENSIBLE keyword in the <deferred-type-attr-list>.
-
-Note: The distinction between deferred types that are extensible or not,
-      and deferred types which are abstract or not, helps to ensure a
-      processor can verify a template is internally consistent.  For
-      example, a deferred type must not be permitted in a CLASS
-      declaration if it might be instantiated as INTEGER. Additionally,
-      a deferred type must not be permitted in a TYPE declaration if it
-      might be instantiated with an abstract derived type. The following
-      examples illustrate this point:
-
-      SUBROUTINE S1_bad(T)(X, Y)
-         TYPE, DEFERRED :: T
-         TYPE(T)  :: X ! ok
-         CLASS(T) :: Y ! invalid
-      END SUBROUTINE
-
-      SUBROUTINE S1(T)(X, Y)
-         TYPE, DEFERRED :: T
-         TYPE(T)  :: X ! ok
-         TYPE(T)  :: Y ! ok
-      END SUBROUTINE
-
-      SUBROUTINE S2(T)(X, Y)
-         TYPE, DEFERRED, EXTENSIBLE :: T
-         TYPE(T)  :: X ! ok
-         CLASS(T) :: Y ! ok
-      END SUBROUTINE
-
-      SUBROUTINE S3_bad(T)(X, Y)
-         TYPE, DEFERRED, ABSTRACT :: T
-         TYPE(T)  :: X ! invalid
-         CLASS(T) :: Y ! ok
-      END SUBROUTINE
-
-      SUBROUTINE S3(T)(X, Y)
-         TYPE, DEFERRED, ABSTRACT :: T
-         CLASS(T) :: X ! ok
-         CLASS(T) :: Y ! ok
-      END SUBROUTINE
-
-      TYPE :: EXT_TYPE
-      END TYPE
-
-      TYPE, ABSTRACT :: ABS_TYPE
-      END ABSTRACT
-
-      INSTANTIATE S1(INTEGER)  ! ok
-      INSTANTIATE S1(EXT_TYPE) ! ok
-      INSTANTIATE S1(ABS_TYPE) ! invalid
-
-      INSTANTIATE S2(INTEGER)  ! invalid
-      INSTANTIATE S2(EXT_TYPE) ! ok
-      INSTANTIATE S2(ABS_TYPE) ! invalid
-
-      INSTANTIATE S3(INTEGER)  ! invalid
-      INSTANTIATE S3(EXT_TYPE) ! ok
-      INSTANTIATE S3(ABS_TYPE) ! ok
-
-
-3.2 Specification of deferred arguments
----------------------------------------
-
-The specification of a deferred argument is explicit if it appears in
-the outermost scope in which it is a deferred argument.
-
-3.2.1 Specification of deferred constants
-
-Constraint: If any ultimate specification of a deferred argument is a
-            deferred constant, then all ultimate specifications of
-            that deferred argument shall be deferred constant.
-
-Constraint: All ultimate specifications of a deferred constant shall
-            specify the same type and kind-type parameters.
-
-Constraint: If any ultimate specification of a deferred constant is of
-            a non-implied rank R, then an explicit specification of
-            that deferred constant shall have rank R, and all other
-            ultimate specifications of that deferred constant shall
-            either have implied rank or have rank R.
-
-Constraint: If any ultimate specification of a deferred constant has
-            explicit shape S, then an explicit specification of that
-            deferred constant shall have shape S, and all other
-            ultimate specifications of that deferred constant shall
-            have implied rank, implied shape, or shape S.
-
-If any ultimate specification of a deferred constant has an explicit
-shape S, then that deferred constant has shape S.  Otherwise, if any
-ultimate specification of that deferred constant has implied shape,
-then it has implied shape with the same rank.  Otherwise it has
-implied rank.
-
-3.2.2 Specification of deferred procedures
-
-Constraint: If any ultimate specification of a deferred argument is a
-            deferred procedure, then all ultimate specifications of
-            that deferred argument shall be deferred procedure.
-
-Constraint: A deferred procedure shall not be referenced with keyword
-            arguments unless it has an explicit specification.
-
-Note: Although dummy arguments always have names, they are processor-
-      dependent for deferred procedures without an explicit
-      specification. The constraint above ensures such names cannot
-      be used.
-
-Constraint: Except for PURE, SIMPLE, and ELEMENTAL attributes, the
-            characteristics of all ultimate specifications of a
-            deferred procedure shall be consistent.
-
-Note: The characteristics of a procedure do not include the names
-      of the dummy arguments, so they need not be the same.
-
-Constraint: If any ultimate specification of a deferred procedure is
-            SIMPLE, then an explicit specification of that deferred
-            procedure shall be SIMPLE.
-
-Constraint: If any ultimate specification of a deferred procedure is
-            PURE, then an explicit specification of that deferred
-            procedure shall be PURE or SIMPLE.
-
-Constraint: If any ultimate specification of a deferred procedure is
-            ELEMENTAL, then an explicit specification of that deferred
-            procedure shall be ELEMENTAL.
-
-If any ultimate specification of a deferred procedure is SIMPLE then
-that deferred procedure is SIMPLE. Otherwise, if any ultimate
-specification of that deferred procedure is PURE, then it is PURE.
-
-If any ultimate specification of a deferred procedure is ELEMENTAL then
-that deferred procedure is ELEMENTAL.
-
-Only an explicit specification of a deferred procedure defines the names
-of its dummy arguments.
-
-3.2.3 Specification of deferred types
+##.2.2 Consistency of deferred argument specifications
+
+##.2.2.1 General
+
+Within a construct with a <deferred-arg>, an explicit specification of
+that <deferred-arg> is either <deferred-arg-explicit-stmt> or
+<interface-body> in a deferred interface block.
+
+A <deferred-arg> shall have one or more ultimate specifications.  The
+ultimate specifications of a <deferred-arg> are:
+    - an explicit specification, if present, and
+    - its ultimate specifications as instantiation arguments in
+      REQUIRES statements, if any.
+The ultimate specifications of an instantiation argument in a REQUIRES
+statement are the ultimate specifications of the corresponding
+deferred argument in the referenced requirement construct.
+
+Note: A deferred argument is always explicitly declared within the
+      template itself or directly or indirectly via a referenced
+      requirement.  A deferred argument has at least one ultimate
+      specification.
+
+Note: If a deferred argument has multiple ultimate specifications,
+      they must be consistent.  Constraints on consistency are
+      defined in section ???
+
+UTI: What section should the note above reference?
+
+##.2.2.2 Specification of deferred types
 
 Constraint: If any ultimate specification of a deferred argument is a
             deferred type, then all ultimate specifications of that
@@ -501,7 +301,7 @@ attribute. Otherwise the deferred type does not have the ABSTRACT
 attribute.
 
 NOTE: A deferred type with the ABSTRACT attribute is considered an
-      abstract derived type, it can only be an instantiation argument
+      abstract derived type, so it can only be an instantiation argument
       when the corresponding deferred argument has the ABSTRACT
       attribute. Therefore, if a deferred type has an explicit
       specification with the ABSTRACT attribute, all of its ultimate
@@ -591,6 +391,72 @@ NOTE: A deferred type with the ABSTRACT attribute is considered an
       REQUIRES R_ABSTRACT(T) ! valid, T is just extensible
    END TEMPLATE
 
-3.3 Deferred argument association
----------------------------------
+##.2.2.3 Specification of deferred constants
 
+Constraint: If any ultimate specification of a deferred argument is a
+            deferred constant, then all ultimate specifications of
+            that deferred argument shall be deferred constant.
+
+Constraint: All ultimate specifications of a deferred constant shall
+            specify the same type and kind-type parameters.
+
+Constraint: If any ultimate specification of a deferred constant is of
+            a non-implied rank R, then an explicit specification of
+            that deferred constant shall have rank R, and all other
+            ultimate specifications of that deferred constant shall
+            either have implied rank or have rank R.
+
+Constraint: If any ultimate specification of a deferred constant has
+            explicit shape S, then an explicit specification of that
+            deferred constant shall have shape S, and all other
+            ultimate specifications of that deferred constant shall
+            have implied rank, implied shape, or shape S.
+
+If any ultimate specification of a deferred constant has an explicit
+shape S, then that deferred constant has shape S.  Otherwise, if any
+ultimate specification of that deferred constant has implied shape,
+then it has implied shape with the same rank.  Otherwise it has
+implied rank.
+
+##.2.2.4 Specification of deferred procedures
+
+Constraint: If any ultimate specification of a deferred argument is a
+            deferred procedure, then all ultimate specifications of
+            that deferred argument shall be deferred procedure.
+
+Constraint: A deferred procedure shall not be referenced with keyword
+            arguments unless it has an explicit specification.
+
+Note: Although dummy arguments always have names, they are processor-
+      dependent for deferred procedures without an explicit
+      specification. The constraint above ensures such names cannot
+      be used.
+
+Constraint: Except for PURE, SIMPLE, and ELEMENTAL attributes, the
+            characteristics of all ultimate specifications of a
+            deferred procedure shall be consistent.
+
+Note: The characteristics of a procedure do not include the names
+      of the dummy arguments, so they need not be the same.
+
+Constraint: If any ultimate specification of a deferred procedure is
+            SIMPLE, then an explicit specification of that deferred
+            procedure shall be SIMPLE.
+
+Constraint: If any ultimate specification of a deferred procedure is
+            PURE, then an explicit specification of that deferred
+            procedure shall be PURE or SIMPLE.
+
+Constraint: If any ultimate specification of a deferred procedure is
+            ELEMENTAL, then an explicit specification of that deferred
+            procedure shall be ELEMENTAL.
+
+If any ultimate specification of a deferred procedure is SIMPLE then
+that deferred procedure is SIMPLE. Otherwise, if any ultimate
+specification of that deferred procedure is PURE, then it is PURE.
+
+If any ultimate specification of a deferred procedure is ELEMENTAL then
+that deferred procedure is ELEMENTAL.
+
+Only an explicit specification of a deferred procedure defines the names
+of its dummy arguments.
