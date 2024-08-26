@@ -1,0 +1,242 @@
+To: J3                                                     J3/##-###
+From: generics
+Subject: Edits for TEMPLATES: Instantiation
+Date:
+References: ###
+
+UTIs:
+
+1. What is the name of the procedure instantiated from a standalone
+   template procedure?
+
+
+* Append the following to the new clause introduced in paper ###.
+
+
+##.6 Instantiation
+
+##.6.1 The INSTANTIATE statement
+
+An INSTANTIATE statement is a specification statement that identifies
+an instance of a template by specifying instantiation arguments that
+become associated with the deferred arguments of that template.
+
+<instantiate-stmt>
+     <<is>> INSTANTIATE [::] <template-name> (
+            [ <instantiation-arg-spec-list> ] ) [, <rename-list> ]
+     <<or>> INSTANTIATE [::] <template-name> (
+            [ <instantiation-arg-spec-list> ] ), ONLY : [ <only-list> ]
+
+Constraint: Within an <instantiate-stmt>, <instantiation-arg> shall
+            not depend on any entity defined within the referenced
+            template.
+
+Constraint: In <instantiate-stmt>, <template-name> shall not be the
+            name of any construct in which it appears.
+
+Constraint: If <template-name> is the name of a standalone template
+            procedure, then <rename> shall appear, and <local-name>
+            shall not be the same as <use-name>.
+Note: The previous constraint deals with the fact that a standalone
+      template procedure and the procedure that is instantiated by it
+      have the same class 1 name by default.
+
+The INSTANTIATE statement without the ONLY option provides access to
+all public entities of the instantiated template.  The INSTANTIATE
+statement with the ONLY option provides access only to those entities
+that appear as <generic-specs>, <use-names>, or
+<use-defined-operators> in the only list.  If <template-name> is the
+name of a standalone template procedure, then the only public entity
+of the instantiation has the name <template-name>.
+
+An accessible entity of the referenced instantiation is associated
+with one or more accessed entities, each with its own identifier.
+These identifiers are
+
+   - the identifier of the entity in the referenced template if that
+     identifier appears as an <only-use-name> or as the
+     <defined-operator> of a <generic-spec> in any <only> for that
+     instantiation,
+   - each of the <local-names> or <local-defined-operators> that the
+     entity is given in any <rename> for that instantiation, and
+   - the identifier of the entity in that referenced template if
+     that identifier does not appear as a <use-name> or
+     <use-defined-operator> in any <rename> for that instantiation.
+
+
+
+##.6.2 Inline instantiation of standalone template procedures
+
+A standalone template procedure can be instantiated and referenced in
+an expression or the <procedure-designator> in a <call-stmt>.
+
+<inline-instantiate> <<is>>
+    <template-name> ^ ( <instantiation-arg-spec-list> )
+
+Constraint: <template-name> shall be the name of a
+            <standalone-template-function-subprogram> or a
+            <standalone-template-subroutine-subprogram>
+
+Constraint: In <inline-instantiate>, <template-name> shall not be the
+            name of any construct in which it appears.
+
+Note: Currently standalone template procedures cannot reference
+      themselves.  Future work could relax this.
+
+The procedure designated by <inline-instantiate> is the procedure
+produced from instantiating the standalone template procedure.
+
+##.6.3 Deferred argument association
+
+##.6.3.1 ???
+
+Instantiation arguments are specified by an INSTANTIATE statement, a
+REQUIRES statement, or by inline instantiation.
+
+<instantiation-arg-spec> <<is>>
+        [ <keyword> = ] <instantiation-arg>
+
+Constraint: Each <keyword> shall be the name of a <deferred-arg> in
+            the referenced requirement or template.
+
+In the absence of an argument keyword, an instantiation argument
+corresponds to the deferred argument occupying the corresponding
+position in <deferred-arg-list>; that is, the first instantiation
+argument corresponds to the first deferred argument in the
+reduced list, the second instantiation argument corresponds to the
+second deferred argument in the reduced list, etc.
+
+<instantiation-arg> <<is>> <constant-expr>
+                    <<or>> <type-spec>
+                    <<or>> <generic-spec>
+                    <<or>> <procedure-name>
+
+Note: <generic-spec> includes operators, defined assignment and
+      defined I/O.  The last may be somewhat awkward to use within a
+      template without re-expressing as defined I/O again.
+
+
+##.6.3.2 Deferred type association
+
+Constraint: An <instantiation-arg> that is a <type-spec> shall
+            correspond to a <deferred-arg> that is a <deferred-type>
+            in the referenced template or requirement.
+
+Constraint: An <instantiation-arg> that corresponds to a deferred type
+            that does not have the ABSTRACT attribute shall not be
+            abstract.
+
+Constraint: An <instantiation-arg>, T, that corresponds to a deferred
+            type shall be a type for which a variable whose declared
+            type is T is permitted in a variable definition context.
+
+Note: This constraint ensures that intrinsic assignment of variables
+      of deferred type is permitted within a template.  However, this
+      also disallows some types, e.g., the EVENT_TYPE, from being used
+      as an instantiation argument.
+
+Constraint: An <instantiation-arg> that corresponds to a deferred type
+            that has the EXTENSIBLE attribute shall be an extensible
+            derived type.
+
+Constraint: An <instantiation-arg> that corresponds to a deferred
+            type shall not have a coarray potential subobject
+            component.
+
+Note: The above constraint avoids the possibility of assignment
+      being invalid where the variable and expr do not agree on
+      the allocation status of a coarray component.
+
+Note: Non-abstract, extensible derived types can be associated with
+      both abstract and non-extensible deferred type arguments.
+
+Note: Intrinsic types, SEQUENCE types, and types with the BIND attribute
+      cannot be associated with deferred type arguments that have the
+      EXTENSIBLE attribute.
+
+      Simple example illustrating the above.
+
+      TYPE :: MY_T1
+      END TYPE
+
+      TYPE, ABSTRACT :: MY_T2
+      END TYPE
+
+      TEMPLATE TMPL1(T)
+         TYPE, DEFERRED :: T
+      END TEMPLATE TMPL
+
+      TEMPLATE TMPL2(U)
+         TYPE, ABSTRACT, DEFERRED :: U
+      END TEMPLATE TMPL
+
+      INSTANTIATE TMPL1(INTEGER) ! ok
+      INSTANTIATE TMPL1(MY_T1)   ! ok
+      INSTANTIATE TMPL1(MY_T2)   ! invalid
+
+      INSTANTIATE TMPL2(INTEGER) ! invalid
+      INSTANTIATE TMPL2(MY_T1)   ! ok
+      INSTANTIATE TMPL2(MY_T2)   ! ok
+
+Note: Potentially allow INSTANTIATE statement for an standalone
+      template procedure in a generic interface block.
+
+
+##.6.3.3 Deferred constant association
+
+Constraint: <constant-expr> shall be type INTEGER, LOGICAL or
+            CHARACTER.
+
+Constraint: An <instantiation-arg> that is a <constant-expr> shall
+            correspond to a <deferred-arg> that is a <deferred-const>
+            in the referenced template or requirement.
+
+Constraint: The type and kind of an <instantiation-arg> that is a
+            <constant-expr> shall have the same type and kind as the
+            corresponding <deferred-const> in the referenced template
+            or requirement.
+
+Constraint: If the shape of the corresponding <deferred-const> in the
+            referenced template or requirement is not implied, then
+            <constant-expr> shall have the same shape.
+
+Constraint: If the rank of the corresponding <deferred-const> in the
+            referenced template or requirement is not implied, then
+            <constant-expr> shall have the same rank.
+
+
+##.6.3.4 Deferred procedure association
+
+Constraint: An <instantiation-arg> that is a <generic-spec> or
+            <procedure-name> shall correspond to a <deferred-arg> that
+            is a deferred procedure in the referenced template or
+            requirement.
+
+Constraint: An <instantiation-arg> that is a <procedure-name> shall
+            have the same characteristics as the corresponding
+            deferred procedure in the referenced template or requirement,
+            except that a pure instantiation argument may be
+            associated with a deferred argument that is not pure, a
+            simple instantiation argument may be associated with a
+            deferred argument that is not simple, and an elemental
+            instantiation argument may be associated with a deferred
+            procedure that is not elemental.
+
+Constraint: An <instantiation-arg> that is a <generic-spec> shall have
+            one specific procedure that has the same characteristics
+            as the corresponding deferred procedure the referenced
+            template or requirement, except that a pure instantiation
+            argument may be associated with a deferred argument that
+            is not pure, a simple instantiation argument may be
+            associated with a deferred argument that is not simple,
+            and an elemental instantiation argument may be associated
+            with a deferred procedure that is not elemental.
+
+The deferred procedure is associated with the specific procedure that is
+consistent with the characteristics.
+
+Note: The previous two constraints constitute what is referred to as
+      "weak constraints" in other languages.
+
+
+===END===
