@@ -1,37 +1,24 @@
 # Clause: TEMPLATES
 
-## Concepts
+## Concepts & Deferred arguments
 
 - Paper 1
-- 3 meetings?
-
-## Deferred arguments
-
-- Paper 2
-- 1 meetings?
 
 ## Templates
 
-- Paper 3
-- 1 meetings?
-
-### Standalone Template Procedures
-### TEMPLATE construct
+- Paper 2
 
 ## Instantiations
+- Paper 3
+
+
+## REQUIREMENT construc
+t
 - Paper 4
-- 1 meetings?
-
-### Inline instantiation
-### INSTANTIATE statement
-
-## REQUIREMENT construct
-
-- Paper 5
 - 0 meetings?
 
 ## REQUIRES statement
 
-- Paper 5
+- Paper 4
 - 0 meetings?
 

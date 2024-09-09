@@ -6,9 +6,16 @@ References: ###
 
 UTIs:
 
+0. 2nd sentence in ##.6.1 ...
+
 1. What is the name of the procedure instantiated from a standalone
    template procedure?
 
+2. The optional [::] is unnecessary in the BNF for INSTANTIATE
+   statement.  Should it be removed until needed?
+
+3. Have we properly addressed uniqueness under instantiation of same
+   aguments?
 
 * Append the following to the new clause introduced in paper ###.
 
@@ -19,7 +26,10 @@ UTIs:
 
 An INSTANTIATE statement is a specification statement that identifies
 an instance of a template by specifying instantiation arguments that
-become associated with the deferred arguments of that template.
+become associated with the deferred arguments of the named template.
+An instance of a template is uniquely determined by the effective
+instantiation arguments to an INSTANTIATE statement.
+
 
 <instantiate-stmt>
      <<is>> INSTANTIATE [::] <template-name> (
@@ -37,6 +47,7 @@ Constraint: In <instantiate-stmt>, <template-name> shall not be the
 Constraint: If <template-name> is the name of a standalone template
             procedure, then <rename> shall appear, and <local-name>
             shall not be the same as <use-name>.
+
 Note: The previous constraint deals with the fact that a standalone
       template procedure and the procedure that is instantiated by it
       have the same class 1 name by default.
