@@ -33,6 +33,7 @@ B. INSTANTIATE tmpl_proc(...) as new_name
 C. INSTANTIATE tmpl_proc(...) <= new_name
 D. new_name => INSTANTIATE tmpl_proc(...)
 E. procedure(), parameter :: new_name = tmpl_proc^(...)
+F. INSTANTIATE tmpl_proc(...), [ONLY :] new_name => *
 
 It is noted that option A, while concise, clear and somewhat intuitive,
 has the order of entities reversed from the usual rename syntax. Option
@@ -42,5 +43,6 @@ operator. Option D is likely to be indistinguishable syntactically from
 a pointer assignment statement in some contexts. Option E expands on
 the procedure declaration statement in a new way, but the use of the
 parameter keyword (implying named constant) may be inappropriate in
-this context. Variations on the above examples are certainly also
-possible and worth considering.
+this context. Option F simply uses something other than a name for the
+use-name. Variations on the above examples are certainly also possible
+and worth considering.
