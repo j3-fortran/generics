@@ -7,9 +7,9 @@ Date:
   definition
 
 
-## Templates
+20 Templates
 
-##.1 Template semantics
+20.1 Template semantics
 
 A template is a scoping unit which is parameterized by deferred
 arguments and can contain declarations, specifications, and
@@ -18,11 +18,11 @@ instantiation arguments with deferred arguments and yields concrete
 (i.e., non-parameterized) instances of entities defined with the
 template.
 
-##.2 Deferred arguments
+20.2 Deferred arguments
 
-##.2.1 Declarations of deferred arguments
+20.2.1 Declarations of deferred arguments
 
-##.2.1.1 General
+20.2.1.1 General
 
 A deferred argument is an entity whose characteristics are determined
 by its effective instantiation argument.  A deferred argument can be a
@@ -31,15 +31,15 @@ construct, TEMPLATE construct, or standalone template procedure.
 Association with instantiation arguments occurs in the REQUIRES and
 INSTANTIATE statements.
 
-<deferred-arg> <<is>> <deferred-const-name>
+R2001  <deferred-arg> <<is>> <deferred-const-name>
                <<or>> <deferred-proc>
                <<or>> <deferred-type>
 
-Constraint: A <deferred-arg> shall appear in a <deferred-arg-decl-stmt>
+C2001 (R2001). A <deferred-arg> shall appear in a <deferred-arg-decl-stmt>
             or as the <function-name> or <subroutine-name> of an
             <interface-body>.
 
-Constraint: A <deferred-arg> shall have at most one explicit
+C2002 (R2001). A <deferred-arg> shall have at most one explicit
             specification in a given scoping unit.
 
 Note: Deferred arguments are local identifiers and are not externally
@@ -48,39 +48,39 @@ Note: Deferred arguments are local identifiers and are not externally
 A deferred argument declaration statement is used to declare
 deferred arguments.
 
-<deferred-arg-decl-stmt> <<is>> <deferred-arg-explicit-stmt>
+R2002 <deferred-arg-decl-stmt> <<is>> <deferred-arg-explicit-stmt>
                          <<or>> <requires-stmt>
 
-<deferred-arg-explicit-stmt> <<is>> <deferred-type-declaration-stmt>
+R2003 <deferred-arg-explicit-stmt> <<is>> <deferred-type-declaration-stmt>
                              <<or>> <deferred-const-declaration-stmt>
                              <<or>> <deferred-proc-declaration-stmt>
 
-Constraint: A <deferred-arg-explicit-stmt> shall not have an
+C2003 (R2003). A <deferred-arg-explicit-stmt> shall not have an
             <access-spec>.
 
-##.2.1.2 Deferred types
+20.2.1.2 Deferred types
 
 A deferred type is a deferred argument that can appear in a type
 specifier within a REQUIREMENT construct, TEMPLATE construct, or
 standalone template procedure.
 
-<deferred-type-declaration-stmt> <<is>>
+R2004 <deferred-type-declaration-stmt> <<is>>
          TYPE, <deferred-type-attr-list> :: <deferred-type-name-list>
 
-Constraint: Each <deferred-type-name> shall appear in <deferred-arg-list>
+C2004 (R2004). Each <deferred-type-name> shall appear in <deferred-arg-list>
             of the TEMPLATE, REQUIREMENT or standalone template
             procedure in which it appears.
 
-<deferred-type-attr> <<is>> DEFERRED
+R2005 <deferred-type-attr> <<is>> DEFERRED
                      <<or>> ABSTRACT
                      <<or>> EXTENSIBLE
 
-Constraint: DEFERRED shall appear in each <deferred-type-attr-list>.
+C2005 (R2005). DEFERRED shall appear in each <deferred-type-attr-list>.
 
-Constraint: The same <deferred-type-attr> shall not appear more than
+C2006 (R2005). The same <deferred-type-attr> shall not appear more than
             once in a given <deferred-type-attr-list>.
 
-Constraint: A <deferred-type> entity shall not appear as
+C2007 (R2005). A <deferred-type> entity shall not appear as
             <parent-type-name> in an EXTENDS attribute.
 
 Note: A deferred type is not a <type-name>.  Consequently it shall not
@@ -138,46 +138,46 @@ Note: The distinction between deferred types that are extensible or not,
          CLASS(T) :: Y ! ok
       END SUBROUTINE
 
-##.2.1.3 Deferred constants
+20.2.1.3 Deferred constants
 
 A deferred constant is a deferred argument that can appear in constant
 expressions within a REQUIREMENT construct, TEMPLATE construct, or
 standalone template procedure.
 
-<deferred-const-declaration-stmt> <<is>>
+R2006 <deferred-const-declaration-stmt> <<is>>
            <declaration-type-spec>, <deferred-const-attr-spec-list> ::
            <deferred-const-entity-decl-list>
 
-<deferred-const-attr-spec> <<is>> <dimension-spec>
+R2007 <deferred-const-attr-spec> <<is>> <dimension-spec>
                            <<or>> DEFERRED
                            <<or>> PARAMETER
                            <<or>> <rank-clause>
 
-Constraint: A <deferred-const-attr-spec-list> shall include both
+C2008 (R2007). A <deferred-const-attr-spec-list> shall include both
             the DEFERRED and PARAMETER keywords.
 
-Constraint: An entity declared in <deferred-const-declaration-stmt>
+C2009 (R2007). An entity declared in <deferred-const-declaration-stmt>
             shall be INTEGER, LOGICAL, or assumed-length CHARACTER.
 
-<deferred-const-entity-decl>
+R2008 <deferred-const-entity-decl>
      <<is>> <deferred-const-name> [ ( <array-spec> ) ]
 
-Constraint: Each <deferred-const-name> shall appear in
+C2010 (R2008). Each <deferred-const-name> shall appear in
             <deferred-arg-list> of the TEMPLATE, REQUIREMENT or
             standalone template procedure in which it appears.
 
-Constraint: If <array-spec> appears in
+C2011 (R2008). If <array-spec> appears in
             <deferred-const-declaration-stmt>, it shall be
             <implied-shape-spec>, <assumed-or-implied-rank-spec>,
             <explicit-shape-spec-list>, or
             <explicit-shape-bounds-spec>.
 
-Constraint: If <implied-shape-spec>, <explicit-shape-spec> or
+C2012 (R2008).: If <implied-shape-spec>, <explicit-shape-spec> or
             <explicit-shape-bounds-spec> appears in
             <deferred-const-declaration-stmt>, then <lower-bound>
             shall not be specified.
 
-Constraint: If <explicit-shape-bounds-spec> appears in
+C2013 (R2008). If <explicit-shape-bounds-spec> appears in
             <deferred-const-declaration-stmt>, then
             <explicit-bounds-expr> shall not appear as a lower bound.
 
@@ -199,7 +199,7 @@ Note: Examples of deferred constant declarations are:
     ! assumed-or-implied-rank-spec
     INTEGER, DEFERRED, PARAMETER :: x7(..)
 
-##.2.1.4 Deferred procedures
+20.2.1.4 Deferred procedures
 
 A deferred procedure is a deferred argument that can appear in
 procedure references within a REQUIREMENT construct, TEMPLATE
@@ -210,14 +210,14 @@ deferred procedure is established by its appearance in a
 <function-name> of an <interface-body> that appears in a deferred
 interface block.
 
-<deferred-proc-declaration-stmt> <<is>>
+R2009 <deferred-proc-declaration-stmt> <<is>>
      PROCEDURE(<interface>), DEFERRED :: <deferred-proc-name-list>
 
-Constraint: Each <deferred-proc-name> shall appear in the
+C2014 (R2009). Each <deferred-proc-name> shall appear in the
             <deferred-arg-list> of the TEMPLATE, REQUIREMENT or
             standalone template procedure in which it appears.
 
-Constraint: Each <subroutine-name> or <function-name> of an
+C2015 (R2009). Each <subroutine-name> or <function-name> of an
             <interface-body> that appears in a deferred interface
             block shall appear in the <deferred-arg-list> of the
             TEMPLATE, REQUIREMENT or standalone template procedure in
