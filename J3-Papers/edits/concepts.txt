@@ -3,23 +3,6 @@ From: generics
 Subject: Edits for TEMPLATES: Introduction and deferred arguments
 Date:
 
-UTI:
-
-A standalone template procedure is a template whose instantiation
-defines a single procedure.
-
-The TEMPLATE construct is used to define templates.
-
-A TEMPLATE construct may be defined in the specification section of a
-main program, a module, a submodule, or a TEMPLATE construct.
-
-UTI: Allow template definitions in submodule?
-UTI: Allow template definitions in module procedures?
-UTI: Allow template definitions in external procedures?
-UTI: Allow template definitions in internal procedures?
-UTI: Allow template definitions in a standalone template procedure?
-UTI: Add constraint to <access-stmt> that a <deferred-arg> shall not appear?
-
 * Introduce new clause after clause 19: Scope, association, and
   definition
 

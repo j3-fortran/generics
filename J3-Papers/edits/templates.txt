@@ -12,9 +12,7 @@ References: ###
 ##.3.1 Syntax for the TEMPLATE construct
 
 A TEMPLATE construct defines a template that may define multiple
-entities which may be accessed through instantiation.  A TEMPLATE
-construct may appear in the specification section of a program unit
-other than a block data program unit.
+entities which may be accessed through instantiation.
 
 <template> <<is>> <template-stmt>
                       [ <template-specification-part> ]
@@ -78,7 +76,8 @@ Note: This is to say, the template specification section cannot
 
 <template-subprogram> <<is>> <function-subprogram>
                       <<or>> <subroutine-subprogram>
-
+		      <<or>> <standalone-template-function-subprogram>
+		      <<or>> <standalone-template-subroutine-subprogram>
 
 ##.4 Standalone template procedures
 
@@ -93,12 +92,26 @@ procedure which is accessible via instantiation.
          [<internal-subprogram-part>]
          <end-function-stmt>
 
+Constraint: If a <function-name> appears in the <end-function-stmt>,
+            it shall be identical to the <template-name>
+            specified in the <standalone-template-function-stmt>.
+
+Constraint: An internal <standalone-template-function-subprogram>
+            shall not contain an <internal-subprogram-part>.
+
 <standalone-template-subroutine-subprogram> <<is>>
        <standalone-template-subroutine-stmt>
          <standalone-template-subprogram-specification-part>
          [<execution-part>]
          [<internal-subprogram-part>]
          <end-subroutine-stmt>
+
+Constraint: If a <subroutine-name> appears in the <end-subroutine-stmt>,
+            it shall be identical to the <template-name>
+            specified in the <standalone-template-subroutine-stmt>.
+
+Constraint: An internal <standalone-template-subroutine-subprogram>
+            shall not contain an <internal-subprogram-part>.
 
 <standalone-template-subprogram-specification-part> <<is>>
      [ <use-stmt> ] ...
@@ -120,14 +133,6 @@ procedure which is accessible via instantiation.
          ( <deferred-arg-list> ) ([<dummy-arg-list>])
 	 [<proc-language-binding-spec>]
 
-Constraint: If a <function-name> appears in the <end-function-stmt>,
-            it shall be identical to the <template-name>
-            specified in the <standalone-template-function-stmt>.
-
-Constraint: If a <subroutine-name> appears in the <end-subroutine-stmt>,
-            it shall be identical to the <template-name>
-            specified in the <standalone-template-subroutine-stmt>.
-
 ##.5 Restrictions on template definitions
 
 Constraint: A variable or procedure pointer declared in either a
@@ -142,8 +147,8 @@ Constraint: EQUIVALENCE and COMMON shall not appear in a
 
 Constraint: <template>, <standalone-template-function-subprogram> and
        <standalone-template-subroutine-subprogram> shall only reference
-       intrinsic procedures, procedures with explicit interfaces, and
-       operators.
+       intrinsic procedures, procedures with explicit interfaces, operators,
+       or intrinsic assignment.
 
 Note: This constraint expresses the notion of type-safety.  In
       particular, this allows a template implementation to be verified

@@ -5,6 +5,9 @@ Date:
 
 References: 24-125, 24-126, 24-127
 
+UTI: Add constraint to <access-stmt> that a <deferred-arg> shall not
+     appear?
+
 1. Introduction
 ===============
 
@@ -233,12 +236,16 @@ UTI: spelling of <inline-instantiate> vs <inline-instantiation>
         <<or>> <requirement>
         <<or>> <instantiate-stmt>
 
+  Constraint(R508): <template> or <requirement> shall only appear in a
+                    <program> or a <module>.
+
   Extend R512 to be:
      R512 <internal-subprogram>
          <<is>> <function-subprogram>
          <<or>> <subroutine-subprogram>
          <<or>> <standalone-template-subroutine-subprogram>
          <<or>> <standalone-template-function-subprogram>
+
 
 * 8.7 IMPLICIT Statement
 
@@ -296,8 +303,8 @@ R1408 <module-subprogram>
     <<is>> <function-subprogram>
     <<or>> <subroutine-subprogram>
     <<or>> <separate-module-subprogram>
-    <<or>> <standalone-template-subroutine-subprogram>
     <<or>> <standalone-template-function-subprogram>
+    <<or>> <standalone-template-subroutine-subprogram>
 
 * 15.4.3.2 Interface block
 
@@ -322,6 +329,22 @@ Add after para 2:
   An interface block introduced by DEFERRED INTERFACE is a deferred
   interface block. An interface body in a deferred interface block
   specifies a deferred procedure.
+
+* 15.6.2.2 Function subprogram
+
+  Change constraint C1573 to refer to rule R1532 instead of R1536.
+
+  Note: <end-function-stmt> is reused for standalone template
+        procedures.  Therefore the constraint must be attached to a
+        different rule to be applicable in both situation.
+
+* 15.6.2.3 Subroutine subprogram
+
+  Change constraint C1576 to refer to rule R1537 instead of R1540.
+
+  Note: <end-subroutine-stmt> is reused for standalone template
+        procedures.  Therefore the constraint must be attached to a
+        different rule to be applicable in both situation.
 
 4. Edits to TKR compatibility
 =============================
