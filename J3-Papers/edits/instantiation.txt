@@ -16,7 +16,7 @@ Straw vote: The INSTANTIATE statement does not need "[::]" at this time,
 	    NO  - keep the optional "[::]" in the BNF
 	    ABSTAIN
 
-* Append the following to the new clause introduced in paper 20#.
+* Append the following to the new clause introduced in paper ###.
 
 
 20.6 Instantiation
