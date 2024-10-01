@@ -27,30 +27,30 @@ An INSTANTIATE statement is a specification statement that identifies
 an instance of a template by specifying instantiation arguments that
 become associated with the deferred arguments of the named template.
 
-R2034 <template-instantiate-stmt>
+R2024 <template-instantiate-stmt>
      <<is>> INSTANTIATE [::] <template-name> (
             [ <instantiation-arg-spec-list> ] ) [, <rename-list> ]
      <<or>> INSTANTIATE [::] <template-name> (
             [ <instantiation-arg-spec-list> ] ), ONLY : [ <only-list> ]
 
-C2036 (R2034). <template-name> shall not be the name of a standalone
+C2036 (R2024). <template-name> shall not be the name of a standalone
             template procedure.
 
-R2035 <standalone-instantiate-stmt> <<is>>
+R2025 <standalone-instantiate-stmt> <<is>>
      INSTANTIATE [::] <template-name> (
             [ <instantiation-arg-spec-list> ] ), [ONLY :] <local-name> => *
 
-C2037 (R2035). <template-name> shall be the name of a standalone
+C2037 (R2025). <template-name> shall be the name of a standalone
             template procedure.
 
-R2036 <instantiate-stmt> <<is>> <template-instantiate-stmt>
+R2026 <instantiate-stmt> <<is>> <template-instantiate-stmt>
                    <<or>> <standalone-instantiate-stmt>
 
-C2038 (R2036). Within an <instantiate-stmt>, <instantiation-arg> shall
+C2038 (R2026). Within an <instantiate-stmt>, <instantiation-arg> shall
             not depend on any entity defined within the referenced
             template.
 
-C2039 (R2036). In <instantiate-stmt>, <template-name> shall not be the
+C2039 (R2026). In <instantiate-stmt>, <template-name> shall not be the
             name of any construct in which it appears.
 
 The INSTANTIATE statement without the ONLY option provides access to
@@ -80,14 +80,14 @@ These identifiers are
 A standalone template procedure can be instantiated and referenced in
 an expression or the <procedure-designator> in a <call-stmt>.
 
-R2037 <inline-instantiate> <<is>>
+R2027 <inline-instantiate> <<is>>
     <template-name> ^ ( <instantiation-arg-spec-list> )
 
-C2040 (R2037). <template-name> shall be the name of a
+C2040 (R2027). <template-name> shall be the name of a
             <standalone-template-function-subprogram> or a
             <standalone-template-subroutine-subprogram>
 
-C2041 (R2037). In <inline-instantiate>, <template-name> shall not be the
+C2041 (R2027). In <inline-instantiate>, <template-name> shall not be the
             name of any construct in which it appears.
 
 Note: Currently standalone template procedures cannot reference
@@ -182,10 +182,10 @@ Note: Example showing how procedure instantiation arguments influence
 Instantiation arguments are specified by an INSTANTIATE statement, a
 REQUIRES statement, or by inline instantiation.
 
-R2039 <instantiation-arg-spec> <<is>>
+R2028 <instantiation-arg-spec> <<is>>
         [ <keyword> = ] <instantiation-arg>
 
-C2042 (R2039). Each <keyword> shall be the name of a <deferred-arg> in
+C2042 (R2028). Each <keyword> shall be the name of a <deferred-arg> in
             the referenced requirement or template.
 
 In the absence of an argument keyword, an instantiation argument
@@ -195,7 +195,7 @@ argument corresponds to the first deferred argument in the
 reduced list, the second instantiation argument corresponds to the
 second deferred argument in the reduced list, etc.
 
-R2040 <instantiation-arg> <<is>> <constant-expr>
+R2029 <instantiation-arg> <<is>> <constant-expr>
                     <<or>> <type-spec>
                     <<or>> <generic-spec>
                     <<or>> <procedure-name>
@@ -207,18 +207,18 @@ Note: <generic-spec> includes operators, defined assignment and
 
 20.6.4.2 Deferred type association
 
-C2043 (R2040)). An <instantiation-arg> that is a <type-spec> shall
+C2043 (R2029)). An <instantiation-arg> that is a <type-spec> shall
             correspond to a <deferred-arg> that is a <deferred-type>
             in the referenced template or requirement.
 
-C2044 (R2040)).An <instantiation-arg> that is a <type-spec> shall have
+C2044 (R2029)).An <instantiation-arg> that is a <type-spec> shall have
             constant type parameters.
 
-C2045 (R2040)).An <instantiation-arg> that corresponds to a deferred type
+C2045 (R2029)).An <instantiation-arg> that corresponds to a deferred type
             that does not have the ABSTRACT attribute shall not be
             abstract.
 
-C2046 (R2040)).An <instantiation-arg>, T, that corresponds to a deferred
+C2046 (R2029)).An <instantiation-arg>, T, that corresponds to a deferred
             type shall be a type for which a variable whose declared
             type is T is permitted in a variable definition context.
 
@@ -227,11 +227,11 @@ Note: This constraint ensures that intrinsic assignment of variables
       also disallows some types, e.g., the EVENT_TYPE, from being used
       as an instantiation argument.
 
-C2047 (R2040)).An <instantiation-arg> that corresponds to a deferred type
+C2047 (R2029)).An <instantiation-arg> that corresponds to a deferred type
             that has the EXTENSIBLE attribute shall be an extensible
             derived type.
 
-C2048 (R2040)).An <instantiation-arg> that corresponds to a deferred
+C2048 (R2029)).An <instantiation-arg> that corresponds to a deferred
             type shall not have a coarray potential subobject
             component.
 
@@ -276,35 +276,35 @@ Note: Potentially allow INSTANTIATE statement for an standalone
 
 ##.6.4.3 Deferred constant association
 
-C2049 (R2040). <constant-expr> shall be type INTEGER, LOGICAL or
+C2049 (R2029). <constant-expr> shall be type INTEGER, LOGICAL or
             CHARACTER.
 
-C2050 (R2040).An <instantiation-arg> that is a <constant-expr> shall
+C2050 (R2029).An <instantiation-arg> that is a <constant-expr> shall
             correspond to a <deferred-arg> that is a <deferred-const>
             in the referenced template or requirement.
 
-C2051 (R2040).The type and kind of an <instantiation-arg> that is a
+C2051 (R2029).The type and kind of an <instantiation-arg> that is a
             <constant-expr> shall have the same type and kind as the
             corresponding <deferred-const> in the referenced template
             or requirement.
 
-C2052 (R2040).If the shape of the corresponding <deferred-const> in the
+C2052 (R2029).If the shape of the corresponding <deferred-const> in the
             referenced template or requirement is not implied, then
             <constant-expr> shall have the same shape.
 
-C2053 (R2040).If the rank of the corresponding <deferred-const> in the
+C2053 (R2029).If the rank of the corresponding <deferred-const> in the
             referenced template or requirement is not implied, then
             <constant-expr> shall have the same rank.
 
 
 ##.6.4.4 Deferred procedure association
 
-C2054 (R2040).An <instantiation-arg> that is a <generic-spec> or
+C2054 (R2029).An <instantiation-arg> that is a <generic-spec> or
             <procedure-name> shall correspond to a <deferred-arg> that
             is a deferred procedure in the referenced template or
             requirement.
 
-C2055 (R2040).An <instantiation-arg> that is a <procedure-name> shall
+C2055 (R2029).An <instantiation-arg> that is a <procedure-name> shall
             have the same characteristics as the corresponding
             deferred procedure in the referenced template or requirement,
             except that a pure instantiation argument may be
