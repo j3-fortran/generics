@@ -166,18 +166,18 @@ C2010 (R2008). Each <deferred-const-name> shall appear in
             <deferred-arg-list> of the TEMPLATE, REQUIREMENT or
             standalone template procedure in which it appears.
 
-C2011 (R2008). If <array-spec> appears in
+C2011 (R2006). If <array-spec> appears in
             <deferred-const-declaration-stmt>, it shall be
             <implied-shape-spec>, <assumed-or-implied-rank-spec>,
             <explicit-shape-spec-list>, or
             <explicit-shape-bounds-spec>.
 
-C2012 (R2008).: If <implied-shape-spec>, <explicit-shape-spec> or
+C2012 (R2006).: If <implied-shape-spec>, <explicit-shape-spec> or
             <explicit-shape-bounds-spec> appears in
             <deferred-const-declaration-stmt>, then <lower-bound>
             shall not be specified.
 
-C2013 (R2008). If <explicit-shape-bounds-spec> appears in
+C2013 (R2006). If <explicit-shape-bounds-spec> appears in
             <deferred-const-declaration-stmt>, then
             <explicit-bounds-expr> shall not appear as a lower bound.
 

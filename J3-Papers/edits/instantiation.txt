@@ -207,18 +207,18 @@ Note: <generic-spec> includes operators, defined assignment and
 
 20.6.4.2 Deferred type association
 
-C2043 (R2029)). An <instantiation-arg> that is a <type-spec> shall
+C2043 (R2029). An <instantiation-arg> that is a <type-spec> shall
             correspond to a <deferred-arg> that is a <deferred-type>
             in the referenced template or requirement.
 
-C2044 (R2029)).An <instantiation-arg> that is a <type-spec> shall have
+C2044 (R2029). An <instantiation-arg> that is a <type-spec> shall have
             constant type parameters.
 
-C2045 (R2029)).An <instantiation-arg> that corresponds to a deferred type
+C2045 (R2029). An <instantiation-arg> that corresponds to a deferred type
             that does not have the ABSTRACT attribute shall not be
             abstract.
 
-C2046 (R2029)).An <instantiation-arg>, T, that corresponds to a deferred
+C2046 (R2029). An <instantiation-arg>, T, that corresponds to a deferred
             type shall be a type for which a variable whose declared
             type is T is permitted in a variable definition context.
 
@@ -227,11 +227,11 @@ Note: This constraint ensures that intrinsic assignment of variables
       also disallows some types, e.g., the EVENT_TYPE, from being used
       as an instantiation argument.
 
-C2047 (R2029)).An <instantiation-arg> that corresponds to a deferred type
+C2047 (R2029). An <instantiation-arg> that corresponds to a deferred type
             that has the EXTENSIBLE attribute shall be an extensible
             derived type.
 
-C2048 (R2029)).An <instantiation-arg> that corresponds to a deferred
+C2048 (R2029). An <instantiation-arg> that corresponds to a deferred
             type shall not have a coarray potential subobject
             component.
 
