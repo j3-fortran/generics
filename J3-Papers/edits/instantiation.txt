@@ -19,38 +19,38 @@ Straw vote: The INSTANTIATE statement does not need "[::]" at this time,
 * Append the following to the new clause introduced in paper ###.
 
 
-##.6 Instantiation
+20.6 Instantiation
 
-##.6.1 The INSTANTIATE statement
+20.6.1 The INSTANTIATE statement
 
 An INSTANTIATE statement is a specification statement that identifies
 an instance of a template by specifying instantiation arguments that
 become associated with the deferred arguments of the named template.
 
-<template-instantiate-stmt>
+R2024 <template-instantiate-stmt>
      <<is>> INSTANTIATE [::] <template-name> (
             [ <instantiation-arg-spec-list> ] ) [, <rename-list> ]
      <<or>> INSTANTIATE [::] <template-name> (
             [ <instantiation-arg-spec-list> ] ), ONLY : [ <only-list> ]
 
-Constraint: <template-name> shall not be the name of a standalone
+C2036 (R2024). <template-name> shall not be the name of a standalone
             template procedure.
 
-<standalone-instantiate-stmt> <<is>>
+R2025 <standalone-instantiate-stmt> <<is>>
      INSTANTIATE [::] <template-name> (
             [ <instantiation-arg-spec-list> ] ), [ONLY :] <local-name> => *
 
-Constraint: <template-name> shall be the name of a standalone
+C2037 (R2025). <template-name> shall be the name of a standalone
             template procedure.
 
-<instantiate-stmt> <<is>> <template-instantiate-stmt>
+R2026 <instantiate-stmt> <<is>> <template-instantiate-stmt>
                    <<or>> <standalone-instantiate-stmt>
 
-Constraint: Within an <instantiate-stmt>, <instantiation-arg> shall
+C2038 (R2026). Within an <instantiate-stmt>, <instantiation-arg> shall
             not depend on any entity defined within the referenced
             template.
 
-Constraint: In <instantiate-stmt>, <template-name> shall not be the
+C2039 (R2026). In <instantiate-stmt>, <template-name> shall not be the
             name of any construct in which it appears.
 
 The INSTANTIATE statement without the ONLY option provides access to
@@ -75,19 +75,19 @@ These identifiers are
 
 
 
-##.6.2 Inline instantiation of standalone template procedures
+20.6.2 Inline instantiation of standalone template procedures
 
 A standalone template procedure can be instantiated and referenced in
 an expression or the <procedure-designator> in a <call-stmt>.
 
-<inline-instantiate> <<is>>
+R2027 <inline-instantiate> <<is>>
     <template-name> ^ ( <instantiation-arg-spec-list> )
 
-Constraint: <template-name> shall be the name of a
+C2040 (R2027). <template-name> shall be the name of a
             <standalone-template-function-subprogram> or a
             <standalone-template-subroutine-subprogram>
 
-Constraint: In <inline-instantiate>, <template-name> shall not be the
+C2041 (R2027). In <inline-instantiate>, <template-name> shall not be the
             name of any construct in which it appears.
 
 Note: Currently standalone template procedures cannot reference
@@ -98,7 +98,7 @@ produced from instantiating the standalone template procedure.
 
 
 
-##.6.3 Interpretation of template instantiation
+20.6.3 Interpretation of template instantiation
 
 Multiple instantiations of a given template with the same actual
 instantiation arguments identify the same instance of the referenced
@@ -175,17 +175,17 @@ Note: Example showing how procedure instantiation arguments influence
         INSTANTIATE TMPL(MY_U, B) ! Resolves to F3 ==> different
 
 
-##.6.4 Deferred argument association
+20.6.4 Deferred argument association
 
-##.6.4.1 ???
+20.6.4.1 Instantiation arguments
 
 Instantiation arguments are specified by an INSTANTIATE statement, a
 REQUIRES statement, or by inline instantiation.
 
-<instantiation-arg-spec> <<is>>
+R2028 <instantiation-arg-spec> <<is>>
         [ <keyword> = ] <instantiation-arg>
 
-Constraint: Each <keyword> shall be the name of a <deferred-arg> in
+C2042 (R2028). Each <keyword> shall be the name of a <deferred-arg> in
             the referenced requirement or template.
 
 In the absence of an argument keyword, an instantiation argument
@@ -195,7 +195,7 @@ argument corresponds to the first deferred argument in the
 reduced list, the second instantiation argument corresponds to the
 second deferred argument in the reduced list, etc.
 
-<instantiation-arg> <<is>> <constant-expr>
+R2029 <instantiation-arg> <<is>> <constant-expr>
                     <<or>> <type-spec>
                     <<or>> <generic-spec>
                     <<or>> <procedure-name>
@@ -205,20 +205,20 @@ Note: <generic-spec> includes operators, defined assignment and
       template without re-expressing as defined I/O again.
 
 
-##.6.4.2 Deferred type association
+20.6.4.2 Deferred type association
 
-Constraint: An <instantiation-arg> that is a <type-spec> shall
+C2043 (R2029). An <instantiation-arg> that is a <type-spec> shall
             correspond to a <deferred-arg> that is a <deferred-type>
             in the referenced template or requirement.
 
-Constraint: An <instantiation-arg> that is a <type-spec> shall have
+C2044 (R2029). An <instantiation-arg> that is a <type-spec> shall have
             constant type parameters.
 
-Constraint: An <instantiation-arg> that corresponds to a deferred type
+C2045 (R2029). An <instantiation-arg> that corresponds to a deferred type
             that does not have the ABSTRACT attribute shall not be
             abstract.
 
-Constraint: An <instantiation-arg>, T, that corresponds to a deferred
+C2046 (R2029). An <instantiation-arg>, T, that corresponds to a deferred
             type shall be a type for which a variable whose declared
             type is T is permitted in a variable definition context.
 
@@ -227,11 +227,11 @@ Note: This constraint ensures that intrinsic assignment of variables
       also disallows some types, e.g., the EVENT_TYPE, from being used
       as an instantiation argument.
 
-Constraint: An <instantiation-arg> that corresponds to a deferred type
+C2047 (R2029). An <instantiation-arg> that corresponds to a deferred type
             that has the EXTENSIBLE attribute shall be an extensible
             derived type.
 
-Constraint: An <instantiation-arg> that corresponds to a deferred
+C2048 (R2029). An <instantiation-arg> that corresponds to a deferred
             type shall not have a coarray potential subobject
             component.
 
@@ -276,35 +276,35 @@ Note: Potentially allow INSTANTIATE statement for an standalone
 
 ##.6.4.3 Deferred constant association
 
-Constraint: <constant-expr> shall be type INTEGER, LOGICAL or
+C2049 (R2029). <constant-expr> shall be type INTEGER, LOGICAL or
             CHARACTER.
 
-Constraint: An <instantiation-arg> that is a <constant-expr> shall
+C2050 (R2029).An <instantiation-arg> that is a <constant-expr> shall
             correspond to a <deferred-arg> that is a <deferred-const>
             in the referenced template or requirement.
 
-Constraint: The type and kind of an <instantiation-arg> that is a
+C2051 (R2029).The type and kind of an <instantiation-arg> that is a
             <constant-expr> shall have the same type and kind as the
             corresponding <deferred-const> in the referenced template
             or requirement.
 
-Constraint: If the shape of the corresponding <deferred-const> in the
+C2052 (R2029).If the shape of the corresponding <deferred-const> in the
             referenced template or requirement is not implied, then
             <constant-expr> shall have the same shape.
 
-Constraint: If the rank of the corresponding <deferred-const> in the
+C2053 (R2029).If the rank of the corresponding <deferred-const> in the
             referenced template or requirement is not implied, then
             <constant-expr> shall have the same rank.
 
 
 ##.6.4.4 Deferred procedure association
 
-Constraint: An <instantiation-arg> that is a <generic-spec> or
+C2054 (R2029).An <instantiation-arg> that is a <generic-spec> or
             <procedure-name> shall correspond to a <deferred-arg> that
             is a deferred procedure in the referenced template or
             requirement.
 
-Constraint: An <instantiation-arg> that is a <procedure-name> shall
+C2055 (R2029).An <instantiation-arg> that is a <procedure-name> shall
             have the same characteristics as the corresponding
             deferred procedure in the referenced template or requirement,
             except that a pure instantiation argument may be
@@ -314,7 +314,7 @@ Constraint: An <instantiation-arg> that is a <procedure-name> shall
             instantiation argument may be associated with a deferred
             procedure that is not elemental.
 
-Constraint: An <instantiation-arg> that is a <generic-spec> shall have
+C2056. An <instantiation-arg> that is a <generic-spec> shall have
             one specific procedure that has the same characteristics
             as the corresponding deferred procedure the referenced
             template or requirement, except that a pure instantiation

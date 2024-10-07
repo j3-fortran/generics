@@ -5,6 +5,12 @@ Date:
 
 References: 24-125, 24-126, 24-127
 
+UTI: Add constraint to <access-stmt> that a <deferred-arg> shall not
+     appear?
+
+UTI: Constraint on R508 is unprecedented.  No other constraints in all
+     of clause 5.
+
 1. Introduction
 ===============
 
@@ -70,13 +76,14 @@ have been identified so far.
 * 7.5.2.1 Syntax of a derived-type definition
 
   New constraint on R728:
-  "<parent-type-name> shall not be a <deferred-type>.
+
+  C737b (R728)  "<parent-type-name> shall not be a <deferred-type>.
 
 * 8.5.2 Accessibility attribute
 
   Change C817 to read as
 
-  An access-spec shall appear only in the specification-part of a
+  C817 An access-spec shall appear only in the specification-part of a
   module or template construct.
 
 * 8.6.1 Accessibility Statement
@@ -124,37 +131,38 @@ would make constraint for deferred constants clearer.
     The extent of each dimension of an implied-shape array is the same
     as the extent of the corresponding dimension of the constant-expr.
 
-Add new section after 8.5.8.7 Assumed-rank entity, titled
-"Implied-rank entity".
+Add new section after 8.5.8.7
 
-An implied-rank entity is an entity whose rank becomes defined only
-when the template in which it appears is instantiated.
+  8.5.8.7b Implied-rank entity
 
-Note: Also make sure it works with SELECT GENERIC RANK and spell out
+  An implied-rank entity is an entity whose rank becomes defined only
+  when the template in which it appears is instantiated.
+
+  Note: Also make sure it works with SELECT GENERIC RANK and spell out
       what can be done with implied-rank entities.
 
-  <implied-rank-spec> <<is>> ..
+  R287b <implied-rank-spec> <<is>> ..
 
-  Constraint:  An implied-rank entity shall be a <deferred-const>.
+  C841b (R287b).  An implied-rank entity shall be a <deferred-const>.
 
-Examples of implied-rank entities
+   Note: Examples of implied-rank entities
 
-TEMPLATE EXAMPLE(C, S, N)
-    INTEGER, DEFERRED, PARAMETER :: C(..) ! implied-shape & implied-rank
-    INTEGER, DEFERRED, PARAMETER :: S(*), N
-    INTEGER, PARAMETER :: B(S) = 1 ! explicit-shape & implied-rank
-END TEMPLATE
+   TEMPLATE EXAMPLE(C, S, N)
+      INTEGER, DEFERRED, PARAMETER :: C(..) ! implied-shape & implied-rank
+      INTEGER, DEFERRED, PARAMETER :: S(*), N
+      INTEGER, PARAMETER :: B(S) = 1 ! explicit-shape & implied-rank
+   END TEMPLATE
 
 * 8.5.17  RANK clause
 
   Replace constraint C864 which states:
 
-     An entity declared with a rank-clause shall be a dummy data
+  C864  An entity declared with a rank-clause shall be a dummy data
      object or have the ALLOCATABLE or POINTER attribute.
 
   With:
 
-     An entity declared with a rank-clause shall be a named constant,
+  C864   An entity declared with a rank-clause shall be a named constant,
      dummy data object or have the ALLOCATABLE or POINTER attribute.
 
   Replace the last paragraph:
@@ -177,7 +185,7 @@ END TEMPLATE
 
 Modify C873 to read as
 
-  An <access-stmt> shall appear only in the <specification-part> of a
+  C873 An <access-stmt> shall appear only in the <specification-part> of a
   module or template construct. Only one accessibility statement with
   an omitted <access-id-list> is permitted in the <specification-part>
   of a module or template construct.
@@ -209,7 +217,7 @@ Modify C873 to read as
       <<or>> CLASS DEFAULT [ <select-construct-name> ]
 
   Add constraint:
-    (R1156) <deferred-type> shall specify an extensible type.
+  C116b (R1156). <deferred-type> shall specify an extensible type.
 
 * 15.5.1 Syntax of a procedure reference
 
@@ -233,12 +241,16 @@ UTI: spelling of <inline-instantiate> vs <inline-instantiation>
         <<or>> <requirement>
         <<or>> <instantiate-stmt>
 
+  C501 (R508). <template> or <requirement> shall only appear in a
+                    <program> or a <module>.
+
   Extend R512 to be:
      R512 <internal-subprogram>
          <<is>> <function-subprogram>
          <<or>> <subroutine-subprogram>
          <<or>> <standalone-template-subroutine-subprogram>
          <<or>> <standalone-template-function-subprogram>
+
 
 * 8.7 IMPLICIT Statement
 
@@ -296,20 +308,21 @@ R1408 <module-subprogram>
     <<is>> <function-subprogram>
     <<or>> <subroutine-subprogram>
     <<or>> <separate-module-subprogram>
-    <<or>> <standalone-template-subroutine-subprogram>
     <<or>> <standalone-template-function-subprogram>
+    <<or>> <standalone-template-subroutine-subprogram>
 
 * 15.4.3.2 Interface block
 
-Change rule 1503:
+Change:
 
-   <interface-stmt> <<is>> INTERFACE [ <generic-spec> ]
-                    <<or>> ABSTRACT INTERFACE
+R1503 <interface-stmt> <<is>> INTERFACE [ <generic-spec> ]
+                       <<or>> ABSTRACT INTERFACE
 
 To read:
-   <interface-stmt> <<is>> INTERFACE [ <generic-spec> ]
-                    <<or>> ABSTRACT INTERFACE
-                    <<or>> DEFERRED INTERFACE
+
+R1503 <interface-stmt> <<is>> INTERFACE [ <generic-spec> ]
+                       <<or>> ABSTRACT INTERFACE
+                       <<or>> DEFERRED INTERFACE
 
 Change final sentence in para 2 such that the sentence reads:
 
@@ -322,6 +335,22 @@ Add after para 2:
   An interface block introduced by DEFERRED INTERFACE is a deferred
   interface block. An interface body in a deferred interface block
   specifies a deferred procedure.
+
+* 15.6.2.2 Function subprogram
+
+  Change constraint C1573 to refer to rule R1532 instead of R1536.
+
+  Note: <end-function-stmt> is reused for standalone template
+        procedures.  Therefore the constraint must be attached to a
+        different rule to be applicable in both situation.
+
+* 15.6.2.3 Subroutine subprogram
+
+  Change constraint C1576 to refer to rule R1537 instead of R1540.
+
+  Note: <end-subroutine-stmt> is reused for standalone template
+        procedures.  Therefore the constraint must be attached to a
+        different rule to be applicable in both situation.
 
 4. Edits to TKR compatibility
 =============================

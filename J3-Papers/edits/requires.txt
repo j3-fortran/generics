@@ -1,0 +1,100 @@
+To: J3                                                     J3/##-###
+From: generics
+Subject: Edits for REQUIREMENT and REQUIRE
+Date:
+References: ##
+
+
+UTIs:
+
+2. The optional [::] is unnecessary in the BNF for REQUIRE
+   statement.  Should it be removed until needed?
+
+Introduction
+------------
+
+Subgroup has made the following small change compared to the syntax
+paper to be more consistent with other Fortran keywords that are verbs:
+
+    REQUIRES --> REQUIRE
+
+Section 1
+---------
+* Append the following to the new clause introduced in paper ###.
+
+20.7 REQUIREMENT construct
+
+A REQUIREMENT is a named collection of deferred argument declarations
+intended to facilitate reuse of common patterns within templates and
+other requirements. A REQUIREMENT construct is a specification construct.
+
+R2041 <requirement>
+      <<is>> REQUIREMENT <requirement-name> ( [<deferred-arg-list>] )
+                [ <use-stmt> ] ...
+                <requirement-specification-construct> ...
+             END [REQUIREMENT [<requirement-name>]]
+
+C2057 (R2041). Each <deferred-arg> shall appear in a
+            <requirement-specification-construct>.
+
+C2058 (R2041). If a <requirement-name> appears in the <end-requirement-stmt>,
+            it shall be identical to the <requirement-name>
+            specified in the <requirement-stmt>.
+
+Note: A <requirement> is a scoping unit that allows use, host, and
+      deferred argument association.
+
+Note: Each <deferred-arg> is local to the REQUIREMENT construct.
+
+R2042 <requirement-specification-construct>
+        <<is>> <deferred-arg-decl-stmt>
+        <<or>> <interface-block>
+
+C2059 (R2042). <interface-stmt> shall include ABSTRACT or DEFERRED.
+
+
+Note: Examples of REQUIREMENT blocks:
+
+   REQUIREMENT R1(U, V, G)
+      TYPE, DEFERRED :: U, V
+      DEFERRED INTERFACE
+         FUNCTION G(X)
+            TYPE(U), INTENT(IN) :: X
+            TYPE(V) :: G
+         END FUNCTION
+      END INTERFACE
+   END REQUIREMENT
+
+   REQUIREMENT R2(U, G)
+      REQUIRE R1(U, U, G)
+   END REQUIREMENT
+
+Example REQUIRE statements for the above requirements are shown below,
+which could appear together in the same template, although they are
+redundant in this case.
+
+   REQUIRE R1(T, T, F)
+   REQUIRE R2(T, F)
+
+20.8 REQUIRE statement
+
+A REQUIRE statement provides specifications of deferred arguments by
+associating them with the deferred arguments of a REQUIREMENT. A
+REQUIRE statement is a specification statement.
+
+R2043 <requires-stmt> <<is>>
+      REQUIRE [::] <requirement-name>
+            ( [<instantiation-arg-spec-list>] )
+
+C2059 (R2043). <requirement-name> shall be the name of a previously
+            defined <requirement>.
+
+Note: Instantiation arguments in a REQUIRE statement are not required
+      to be deferred arguments.
+
+Note: Within a nested template, host associated entities are not
+      deferred arguments, and thus appearing as instantiation
+      arguments in a REQUIRE statement does not give them
+      specifications.
+
+===END===

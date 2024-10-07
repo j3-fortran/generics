@@ -8,9 +8,9 @@ References: ###
 * Append the following to the new clause introduced in paper ###.
 
 
-##.2.2 Consistency of deferred argument specifications
+20.2.2 Consistency of deferred argument specifications
 
-##.2.2.1 General
+20.2.2.1 General
 
 Within a construct with a <deferred-arg>, an explicit specification of
 that <deferred-arg> is either <deferred-arg-explicit-stmt> or
@@ -36,9 +36,9 @@ Note: If a deferred argument has multiple ultimate specifications,
 
 UTI: What section should the note above reference?
 
-##.2.2.2 Specification of deferred types
+20.2.2.2 Specification of deferred types
 
-Constraint: If any ultimate specification of a deferred argument is a
+C2016. If any ultimate specification of a deferred argument is a
             deferred type, then all ultimate specifications of that
             deferred argument shall be deferred type.
 
@@ -145,22 +145,22 @@ NOTE: Examples that illustrate valid and invalid uses of ABSTRACT and
             REQUIRES R_ABSTRACT(T) ! valid, T is just extensible
          END TEMPLATE
 
-##.2.2.3 Specification of deferred constants
+20.2.2.3 Specification of deferred constants
 
-Constraint: If any ultimate specification of a deferred argument is a
+C2017. If any ultimate specification of a deferred argument is a
             deferred constant, then all ultimate specifications of
             that deferred argument shall be deferred constant.
 
-Constraint: All ultimate specifications of a deferred constant shall
+C2018. All ultimate specifications of a deferred constant shall
             specify the same type and kind-type parameters.
 
-Constraint: If any ultimate specification of a deferred constant is of
+C2019. If any ultimate specification of a deferred constant is of
             a non-implied rank R, then an explicit specification of
             that deferred constant shall have rank R, and all other
             ultimate specifications of that deferred constant shall
             either have implied rank or have rank R.
 
-Constraint: If any ultimate specification of a deferred constant has
+C2020. If any ultimate specification of a deferred constant has
             explicit shape S, then an explicit specification of that
             deferred constant shall have shape S, and all other
             ultimate specifications of that deferred constant shall
@@ -172,13 +172,13 @@ ultimate specification of that deferred constant has implied shape,
 then it has implied shape with the same rank.  Otherwise it has
 implied rank.
 
-##.2.2.4 Specification of deferred procedures
+20.2.2.4 Specification of deferred procedures
 
-Constraint: If any ultimate specification of a deferred argument is a
+C2021. If any ultimate specification of a deferred argument is a
             deferred procedure, then all ultimate specifications of
             that deferred argument shall be deferred procedure.
 
-Constraint: A deferred procedure shall not be referenced with keyword
+C2022. A deferred procedure shall not be referenced with keyword
             arguments unless it has an explicit specification.
 
 Note: Although dummy arguments always have names, they are processor-
@@ -186,22 +186,22 @@ Note: Although dummy arguments always have names, they are processor-
       specification. The constraint above ensures such names cannot
       be used.
 
-Constraint: Except for PURE, SIMPLE, and ELEMENTAL attributes, the
+C2023. Except for PURE, SIMPLE, and ELEMENTAL attributes, the
             characteristics of all ultimate specifications of a
             deferred procedure shall be consistent.
 
 Note: The characteristics of a procedure do not include the names
       of the dummy arguments, so they need not be the same.
 
-Constraint: If any ultimate specification of a deferred procedure is
+C2024. If any ultimate specification of a deferred procedure is
             SIMPLE, then an explicit specification of that deferred
             procedure shall be SIMPLE.
 
-Constraint: If any ultimate specification of a deferred procedure is
+C2025. If any ultimate specification of a deferred procedure is
             PURE, then an explicit specification of that deferred
             procedure shall be PURE or SIMPLE.
 
-Constraint: If any ultimate specification of a deferred procedure is
+C2026. If any ultimate specification of a deferred procedure is
             ELEMENTAL, then an explicit specification of that deferred
             procedure shall be ELEMENTAL.
 
