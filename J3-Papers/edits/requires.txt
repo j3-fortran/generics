@@ -1,26 +1,25 @@
 To: J3                                                     J3/##-###
 From: generics
-Subject: Edits for REQUIREMENT and REQUIRE
+Subject: Edits for TEMPLATES: REQUIREMENT and REQUIRE
 Date:
-References: ##
+References: 24-161, 24-162, 24-163, 24-164, 24-125r5, 24-126r4, 24-127r4
 
-
-UTIs:
-
-2. The optional [::] is unnecessary in the BNF for REQUIRE
-   statement.  Should it be removed until needed?
 
 Introduction
 ------------
 
-Subgroup has made the following small change compared to the syntax
-paper to be more consistent with other Fortran keywords that are verbs:
+This is the 5th of 5 papers that provide edits for the approved
+syntax for templates.
 
-    REQUIRES --> REQUIRE
+Note: Subgroup has made the following small change compared to the
+      syntax paper to be more consistent with other Fortran keywords
+      that are verbs:
+
+      REQUIRES --> REQUIRE
 
 Section 1
 ---------
-* Append the following to the new clause introduced in paper ###.
+* Append the following at the end of clause 20 from paper 24-164.
 
 20.7 REQUIREMENT construct
 
@@ -37,9 +36,9 @@ R2041 <requirement>
 C2057 (R2041). Each <deferred-arg> shall appear in a
             <requirement-specification-construct>.
 
-C2058 (R2041). If a <requirement-name> appears in the <end-requirement-stmt>,
-            it shall be identical to the <requirement-name>
-            specified in the <requirement-stmt>.
+C2058 (R2041). If a <requirement-name> appears in the
+               <end-requirement-stmt>, it shall be identical to the
+               <requirement-name> specified in the <requirement-stmt>.
 
 Note: A <requirement> is a scoping unit that allows use, host, and
       deferred argument association.
@@ -82,7 +81,7 @@ A REQUIRE statement provides specifications of deferred arguments by
 associating them with the deferred arguments of a REQUIREMENT. A
 REQUIRE statement is a specification statement.
 
-R2043 <requires-stmt> <<is>>
+R2043 <require-stmt> <<is>>
       REQUIRE [::] <requirement-name>
             ( [<instantiation-arg-spec-list>] )
 

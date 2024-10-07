@@ -2,22 +2,32 @@ To: J3                                                     J3/##-###
 From: generics
 Subject: Edits for TEMPLATES: Instantiation
 Date:
-References: ###
+References: 24-161, 24-162, 24-163, 24-125r5, 24-126r4, 24-127r4
 
-Straw vote: The INSTANTIATE statement does not need "[::]" at this time,
-            but we note that various other bits of the BNF also have
-            unnecesary optional "[::]". E.g., various attribute
-            specification statements: DIMENSION, INTENT, SAVE, ...
 
-            Should "::" be removed from the BNF for the INSTANTIATION
-            statement?
+Introduction:
+-------------
+
+This is the 4th of 5 papers that provide edits for the approved
+syntax for templates.
+
+Straw vote: The INSTANTIATE and REQUIRE statements do not need "[::]"
+            at this time, but we note that various other bits of the
+            BNF also have unnecesary optional "[::]". E.g., various
+            attribute specification statements: DIMENSION, INTENT,
+            SAVE, ...
+
+            Should "::" be removed from the BNF for the INSTANTIATE
+            and REQUIRE statements?
 
             YES - omit the optional "[::]" in the BNF
 	    NO  - keep the optional "[::]" in the BNF
 	    ABSTAIN
 
-* Append the following to the new clause introduced in paper ###.
 
+Section 1:
+----------
+* Append the following at the end of clause 20 from paper 24-163.
 
 20.6 Instantiation
 
@@ -180,7 +190,7 @@ Note: Example showing how procedure instantiation arguments influence
 20.6.4.1 Instantiation arguments
 
 Instantiation arguments are specified by an INSTANTIATE statement, a
-REQUIRES statement, or by inline instantiation.
+REQUIRE statement, or by inline instantiation.
 
 R2028 <instantiation-arg-spec> <<is>>
         [ <keyword> = ] <instantiation-arg>

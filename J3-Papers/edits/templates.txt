@@ -1,11 +1,18 @@
 To: J3                                                     J3/##-###
 From: generics
-Subject: Edits for TEMPLATES: Consistency of deferred args
+Subject: Edits for TEMPLATE construct
 Date:
-References: ###
+References: 24-161, 24-162, 24-125r5, 24-126r4, 24-127r4
 
-* Append the following to the new clause introduced in paper ###.
+Introduction:
+-------------
 
+This is the 3rd of 5 papers that provide edits for the approved
+syntax for templates.
+
+Section 1:
+----------
+* Append the following at the end of clause 20 from paper 24-162.
 
 20.3 The TEMPLATE construct
 
@@ -19,7 +26,8 @@ R2010 <template> <<is>> <template-stmt>
                       [ <template-subprogram-part> ]
                       <end-template-stmt>
 
-R2011 <template-stmt> <<is>> TEMPLATE <template-name> ([<deferred-arg-list>])
+R2011 <template-stmt> <<is>>
+          TEMPLATE <template-name> ([<deferred-arg-list>])
 
 R2012 <end-template-stmt> <<is>>  END [TEMPLATE [<template-name>]]
 
@@ -38,10 +46,11 @@ The implicit mapping within <template> is as if
        IMPLICIT NONE(TYPE,EXTERNAL)
 is specified.
 
-R2014 <template-declaration-construct> <<is>> <template-specification-construct>
-                                 <<or>> <deferred-arg-decl-stmt>
-                                 <<or>> <requirement>
-                                 <<or>> <template>
+R2014 <template-declaration-construct>
+         <<is>> <template-specification-construct>
+         <<or>> <deferred-arg-decl-stmt>
+         <<or>> <requirement>
+         <<or>> <template>
 
 R2015 <template-specification-construct>
                       <<is>> <access-stmt>
@@ -146,9 +155,9 @@ C2034. EQUIVALENCE and COMMON shall not appear in a
 
 
 C2035. <template>, <standalone-template-function-subprogram> and
-       <standalone-template-subroutine-subprogram> shall only reference
-       intrinsic procedures, procedures with explicit interfaces, operators,
-       or intrinsic assignment.
+       <standalone-template-subroutine-subprogram> shall only
+       reference intrinsic procedures, procedures with explicit
+       interfaces, operators, or intrinsic assignment.
 
 Note: This constraint expresses the notion of type-safety.  In
       particular, this allows a template implementation to be verified
