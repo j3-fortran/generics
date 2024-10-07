@@ -2,22 +2,27 @@ To: J3                                                     J3/24-128r3
 From: generics
 Subject: Miscellaneous edits to incorporate templates
 Date: 
-
-References: 24-125, 24-126, 24-127
-
-UTI: Add constraint to <access-stmt> that a <deferred-arg> shall not
-     appear?
+References: 24-161, 24-162, 24-163, 24-164, 24-165,
+            24-125r5, 24-126r4, 24-127r4, 24-007
 
 UTI: Constraint on R508 is unprecedented.  No other constraints in all
      of clause 5.
 
+UTI: Section 4 does not seem to state where it goes in the standard
+
 1. Introduction
 ===============
 
-This paper describes many edits to the standard that will be required
-in order to incorporate the syntax and semantics for templates. this
-is not intended to be an exhaustive listing, but describes those that
-have been identified so far.
+This paper describes various edits to the standard that are necessary
+to incorporate the syntax and semantics for templates.
+
+The contents of this paper are:
+
+   Section 2: Edits required for deferred arguments
+   Section 3: Edits required for templates and instantiation
+   Section 4: Edits to TKR compatibility
+   Section 5: Edits for processor dependencies
+
 
 2. Edits required for deferred arguments
 ========================================
@@ -81,18 +86,53 @@ have been identified so far.
 
 * 8.5.2 Accessibility attribute
 
-  Change C817 to read as
+[106:6] In C817, insert "or template" after "module", so that it now reads:
 
   C817 An access-spec shall appear only in the specification-part of a
   module or template construct.
 
 * 8.6.1 Accessibility Statement
 
-  Change C874 to read:
+[120:28] Change C873 to read:
 
-C874 (R831) Each access-name shall be the name of a module, variable,
-            procedure, nonintrinsic type, named constant,
-            namelist group, requirement, or template.
+C873 (R831) An <access-stmt> shall appear only in the
+            <specification-part> of a module or template. Only one
+            accessibility statement with an omitted <access-id-list>
+            is permitted in the <specification-part> of a module or
+            template.
+
+[120:30] Change C874 to read:
+
+C874 (R831) Each <access-name> shall be the name of a module,
+            variable, procedure, nonintrinsic type, named constant
+            other than a deferred constant, namelist group,
+            requirement, or template.
+
+[120:37+] In 2nd sentence of paragraph 1, insert "or template" after
+          "in the module" in both locations such that the sentence now
+          reads:
+
+      "An access-stmt without an access-id list specifies the default
+       accessibility of the identifiers of entities declared in the
+       module or template, and of entities accessed from a module
+       whose name does not appear in any access-stmt in the module or
+       template."
+
+[120:43] In last sentence of paragraph 1, insert "or template" after
+          "in a module" such that the sentence now reads:
+
+      "If no such statement appears in a module or template, the
+       default is public accessibility."
+
+[121:1] In 1st sentence of paragraph 2, insert "or template" after "in
+        the module" such that the sentence now reads:
+
+     "If an identifier is accessed by use association and not declared
+     in the module or template, and the name of every module from
+     which it is accessed appears in an access-stmt in the scoping
+     unit, its default accessibility is PRIVATE if the access-spec in
+     every such access-stmt is PRIVATE, or PUBLIC if the access-spec
+     in any such access-stmt is PUBLIC."
 
 * 8.5.8.1 General
 
@@ -403,5 +443,13 @@ Note: Some examples of implied-rank entities are shown
       INTEGER, RANK(N) :: X
     END SUBROUTINE
   END TEMPLATE
+
+5. Edits for A.2 Processor Dependencies
+=======================================
+
+[555:15+] Insert new bullet:
+
+   * the names of the dummy arguments of a deferred procedure without
+     an explicit specification (20.2.2.4);
 
 ===END===
