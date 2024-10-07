@@ -1,7 +1,7 @@
-To: J3                                                     J3/##-###
+To: J3                                                     J3/24-162
 From: generics
 Subject: Edits for TEMPLATES: Consistency of deferred args
-Date:
+Date: 2024-October-07
 References: 24-161, 24-125r5, 24-126r4, 24-127r4
 
 Introduction:
@@ -65,82 +65,82 @@ NOTE: Examples that illustrate valid and invalid uses of ABSTRACT and
          REQUIREMENT R_REGULAR(U)
             TYPE, DEFERRED :: U
          END REQUIREMENT
-      
+
          REQUIREMENT R_EXTENSIBLE(U)
             TYPE, DEFERRED, EXTENSIBLE :: U
          END REQUIREMENT
-      
+
          REQUIREMENT R_ABSTRACT(U)
             TYPE, DEFERRED, ABSTRACT :: U
          END REQUIREMENT
-      
+
          TEMPLATE T1(T)
             REQUIRE R_REGULAR(T) ! valid, non-extensible
          END TEMPLATE
-      
+
          TEMPLATE T2(T)
             REQUIRE R_EXTENSIBLE(T) ! valid, extensible
          END TEMPLATE
-      
+
          TEMPLATE T3(T)
             REQUIRE R_ABSTRACT(T) ! valid, abstract
          END TEMPLATE
-      
+
          TEMPLATE T4(T)
             TYPE, DEFERRED :: T
             REQUIRE R_REGULAR(T) ! valid, non-extensible
          END TEMPLATE
-      
+
          TEMPLATE T5(T)
             TYPE, DEFERRED :: T
             REQUIRE R_EXTENSIBLE(T) ! invalid, explicit decl not extensible
          END TEMPLATE
-      
+
          TEMPLATE T6(T)
             TYPE, DEFERRED :: T
             REQUIRE R_ABSTRACT(T) ! invalid, explicit decl not extensible
          END TEMPLATE
-      
+
          TEMPLATE T7(T)
             TYPE, DEFERRED, EXTENSIBLE :: T
             REQUIRE R_REGULAR(T) ! valid, T is not abstract
          END TEMPLATE
-      
+
          TEMPLATE T8(T)
             TYPE, DEFERRED, EXTENSIBLE :: T
             REQUIRE R_EXTENSIBLE(T) ! valid, decls match
          END TEMPLATE
-      
+
          TEMPLATE T9(T)
             TYPE, DEFERRED, EXTENSIBLE :: T
             REQUIRE R_ABSTRACT(T) ! valid, T is just extensible
          END TEMPLATE
-      
+
          TEMPLATE T10(T)
             TYPE, DEFERRED, ABSTRACT :: T
             REQUIRE R_REGULAR(T) ! invalid, T is abstract
          END TEMPLATE
-      
+
          TEMPLATE T11(T)
             TYPE, DEFERRED, ABSTRACT :: T
             REQUIRE R_EXTENSIBLE(T) ! invalid, T is abstract
          END TEMPLATE
-      
+
          TEMPLATE T12(T)
             TYPE, DEFERRED, ABSTRACT :: T
             REQUIRE R_ABSTRACT(T) ! valid, decls match
          END TEMPLATE
-      
+
          TEMPLATE T13(T)
             REQUIRE R_REGULAR(T)
             REQUIRE R_EXTENSIBLE(T) ! valid, T is extensible
          END TEMPLATE
-      
+
          TEMPLATE T14(T)
             REQUIRE R_REGULAR(T)
             REQUIRE R_ABSTRACT(T) ! valid, T is just extensible
          END TEMPLATE
-      
+
          TEMPLATE T15(T)
             REQUIRE R_EXTENSIBLE(T)
             REQUIRE R_ABSTRACT(T) ! valid, T is just extensible

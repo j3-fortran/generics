@@ -1,7 +1,7 @@
-To: J3                                                     J3/##-###
+To: J3                                                     J3/24-164
 From: generics
 Subject: Edits for TEMPLATES: Instantiation
-Date:
+Date: 2024-October-07
 References: 24-161, 24-162, 24-163, 24-125r5, 24-126r4, 24-127r4
 
 
@@ -146,7 +146,7 @@ are equal.
 
 Two corresponding type-spec instantiation arguments are the same if
 and only if both have the same type and have the same kind and length
-type parameters.  
+type parameters.
 
 Two corresponding procedure instantiation arguments are the same if
 and only if both resolve to the same specific procedure.
