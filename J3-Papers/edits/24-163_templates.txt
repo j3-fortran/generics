@@ -22,9 +22,9 @@ A TEMPLATE construct defines a template that may define multiple
 entities which may be accessed through instantiation.
 
 R2010 <template> <<is>> <template-stmt>
-                      [ <template-specification-part> ]
-                      [ <template-subprogram-part> ]
-                      <end-template-stmt>
+                        [ <template-specification-part> ]
+                        [ <template-subprogram-part> ]
+                        <end-template-stmt>
 
 R2011 <template-stmt> <<is>>
           TEMPLATE <template-name> ([<deferred-arg-list>])
@@ -32,38 +32,38 @@ R2011 <template-stmt> <<is>>
 R2012 <end-template-stmt> <<is>>  END [TEMPLATE [<template-name>]]
 
 C2027 (R2012). If a <template-name> appears in the <end-template-stmt>,
-            it shall be identical to the <template-name>
-            specified in the <template-stmt>.
+               it shall be identical to the <template-name>
+               specified in the <template-stmt>.
 
 20.3.2 Template specification part
 
 R2013 <template-specification-part> <<is>>
-            [ <use-stmt> ] ...
-	    [ <import-stmt> ] ...
-            [ <template-declaration-construct> ] ...
+          [ <use-stmt> ] ...
+          [ <import-stmt> ] ...
+          [ <template-declaration-construct> ] ...
 
 The implicit mapping within <template> is as if
        IMPLICIT NONE(TYPE,EXTERNAL)
 is specified.
 
 R2014 <template-declaration-construct>
-         <<is>> <template-specification-construct>
-         <<or>> <deferred-arg-decl-stmt>
-         <<or>> <requirement>
-         <<or>> <template>
+          <<is>> <template-specification-construct>
+          <<or>> <deferred-arg-decl-stmt>
+          <<or>> <requirement>
+          <<or>> <template>
 
 R2015 <template-specification-construct>
-                      <<is>> <access-stmt>
-                      <<or>> <derived-type-def>
-                      <<or>> <dimension-stmt>
-                      <<or>> <enum-def>
-                      <<or>> <enumeration-type-def>
-                      <<or>> <generic-stmt>
-                      <<or>> <instantiate-stmt>
-		      <<or>> <interface-block>
-                      <<or>> <intrinsic-stmt>
-                      <<or>> <parameter-stmt>
-                      <<or>> <type-declaration-stmt>
+          <<is>> <access-stmt>
+          <<or>> <derived-type-def>
+          <<or>> <dimension-stmt>
+          <<or>> <enum-def>
+          <<or>> <enumeration-type-def>
+          <<or>> <generic-stmt>
+          <<or>> <instantiate-stmt>
+          <<or>> <interface-block>
+          <<or>> <intrinsic-stmt>
+          <<or>> <parameter-stmt>
+          <<or>> <type-declaration-stmt>
 
 Note: An ALLOCATABLE, ASYNCHRONOUS, BIND, CODIMENSION, COMMON,
       CONTIGUOUS, DATA, ENTRY, EQUIVALENCE, EXTERNAL, FORMAT, INTENT,
@@ -72,7 +72,7 @@ Note: An ALLOCATABLE, ASYNCHRONOUS, BIND, CODIMENSION, COMMON,
       template specification section.
 
 C2028 (R2015). An entity declared by <type-declaration-stmt> shall have
-            the PARAMETER attribute.
+               the PARAMETER attribute.
 
 Note: This is to say, the template specification section cannot
       declare variables.
@@ -81,12 +81,13 @@ Note: This is to say, the template specification section cannot
 20.3.3 Template subprogram part
 
 R2016 <template-subprogram-part> <<is>> <contains-stmt>
-                                     [ <template-subprogram> ] ...
+                                        [ <template-subprogram> ] ...
 
-R2017 <template-subprogram> <<is>> <function-subprogram>
-                      <<or>> <subroutine-subprogram>
-		      <<or>> <standalone-template-function-subprogram>
-		      <<or>> <standalone-template-subroutine-subprogram>
+R2017 <template-subprogram>
+          <<is>> <function-subprogram>
+          <<or>> <subroutine-subprogram>
+          <<or>> <standalone-template-function-subprogram>
+          <<or>> <standalone-template-subroutine-subprogram>
 
 20.4 Standalone template procedures
 
@@ -95,63 +96,63 @@ procedure which is accessible via instantiation.
 
 
 R2018 <standalone-template-function-subprogram> <<is>>
-       <standalone-template-function-stmt>
-         <standalone-template-subprogram-specification-part>
-         [<execution-part>]
-         [<internal-subprogram-part>]
-         <end-function-stmt>
+          <standalone-template-function-stmt>
+          <standalone-template-subprogram-specification-part>
+          [<execution-part>]
+          [<internal-subprogram-part>]
+          <end-function-stmt>
 
 C2029 (R2018). If a <function-name> appears in the <end-function-stmt>,
-            it shall be identical to the <template-name>
-            specified in the <standalone-template-function-stmt>.
+               it shall be identical to the <template-name>
+               specified in the <standalone-template-function-stmt>.
 
 C2030 (R2018). An internal <standalone-template-function-subprogram>
-            shall not contain an <internal-subprogram-part>.
+               shall not contain an <internal-subprogram-part>.
 
 R2019 <standalone-template-subroutine-subprogram> <<is>>
-       <standalone-template-subroutine-stmt>
-         <standalone-template-subprogram-specification-part>
-         [<execution-part>]
-         [<internal-subprogram-part>]
-         <end-subroutine-stmt>
+          <standalone-template-subroutine-stmt>
+          <standalone-template-subprogram-specification-part>
+          [<execution-part>]
+          [<internal-subprogram-part>]
+          <end-subroutine-stmt>
 
 C2031 (R2019). If a <subroutine-name> appears in the <end-subroutine-stmt>,
-            it shall be identical to the <template-name>
-            specified in the <standalone-template-subroutine-stmt>.
+               it shall be identical to the <template-name>
+               specified in the <standalone-template-subroutine-stmt>.
 
 C2032 (R2019). An internal <standalone-template-subroutine-subprogram>
-            shall not contain an <internal-subprogram-part>.
+               shall not contain an <internal-subprogram-part>.
 
 R2020 <standalone-template-subprogram-specification-part> <<is>>
-     [ <use-stmt> ] ...
-     [ <import-stmt> ] ...
-     [ <standalone-template-subprogram-declaration-construct> ] ...
+          [ <use-stmt> ] ...
+          [ <import-stmt> ] ...
+          [ <standalone-template-subprogram-declaration-construct> ] ...
 
-R2021 <standalone-template-subprogram-declaration-construct> <<is>>
-     <deferred-arg-decl-stmt>
-     <<or>> <format-stmt>
-     <<or>> <specification-construct>
+R2021 <standalone-template-subprogram-declaration-construct>
+          <<is>> <deferred-arg-decl-stmt>
+          <<or>> <format-stmt>
+          <<or>> <specification-construct>
 
 R2022 <standalone-template-function-stmt> <<is>>
-     [ <prefix> ] FUNCTION <template-name>
-         ( <deferred-arg-list> ) ([<dummy-arg-list>])
-	 [<suffix>]
+          [ <prefix> ] FUNCTION <template-name>
+          ( <deferred-arg-list> ) ([<dummy-arg-list>])
+          [<suffix>]
 
 R2023 <standalone-template-subroutine-stmt> <<is>>
-     [ <prefix> ] SUBROUTINE <template-name>
+         [ <prefix> ] SUBROUTINE <template-name>
          ( <deferred-arg-list> ) ([<dummy-arg-list>])
-	 [<proc-language-binding-spec>]
+         [<proc-language-binding-spec>]
 
 20.5 Restrictions on template definitions
 
 C2033. A variable or procedure pointer declared in either a
-	    <template-subprogram-part> or a
-	    <standalone-template-subprogram-declaration-construct> shall
-	    not have the SAVE attribute.
+       <template-subprogram-part> or a
+       <standalone-template-subprogram-declaration-construct> shall
+       not have the SAVE attribute.
 
 C2034. EQUIVALENCE and COMMON shall not appear in a
-            <template-subprogram-part> or a
-            <standalone-template-subprogram-declaration-construct>.
+       <template-subprogram-part> or a
+       <standalone-template-subprogram-declaration-construct>.
 
 
 C2035. <template>, <standalone-template-function-subprogram> and

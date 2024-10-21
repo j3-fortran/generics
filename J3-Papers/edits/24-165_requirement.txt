@@ -27,14 +27,14 @@ A REQUIREMENT is a named collection of deferred argument declarations
 intended to facilitate reuse of common patterns within templates and
 other requirements. A REQUIREMENT construct is a specification construct.
 
-R2041 <requirement>
-      <<is>> REQUIREMENT <requirement-name> ( [<deferred-arg-list>] )
-                [ <use-stmt> ] ...
-                <requirement-specification-construct> ...
-             END [REQUIREMENT [<requirement-name>]]
+R2041 <requirement> <<is>>
+          REQUIREMENT <requirement-name> ( [<deferred-arg-list>] )
+              [ <use-stmt> ] ...
+              <requirement-specification-construct> ...
+          END [REQUIREMENT [<requirement-name>]]
 
 C2057 (R2041). Each <deferred-arg> shall appear in a
-            <requirement-specification-construct>.
+               <requirement-specification-construct>.
 
 C2058 (R2041). If a <requirement-name> appears in the
                <end-requirement-stmt>, it shall be identical to the
@@ -46,8 +46,8 @@ Note: A <requirement> is a scoping unit that allows use, host, and
 Note: Each <deferred-arg> is local to the REQUIREMENT construct.
 
 R2042 <requirement-specification-construct>
-        <<is>> <deferred-arg-decl-stmt>
-        <<or>> <interface-block>
+          <<is>> <deferred-arg-decl-stmt>
+          <<or>> <interface-block>
 
 C2059 (R2042). <interface-stmt> shall include ABSTRACT or DEFERRED.
 
@@ -82,11 +82,11 @@ associating them with the deferred arguments of a REQUIREMENT. A
 REQUIRE statement is a specification statement.
 
 R2043 <require-stmt> <<is>>
-      REQUIRE [::] <requirement-name>
-            ( [<instantiation-arg-spec-list>] )
+          REQUIRE [::] <requirement-name>
+          ( [<instantiation-arg-spec-list>] )
 
 C2059 (R2043). <requirement-name> shall be the name of a previously
-            defined <requirement>.
+               defined <requirement>.
 
 Note: Instantiation arguments in a REQUIRE statement are not required
       to be deferred arguments.
