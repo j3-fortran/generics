@@ -26,14 +26,18 @@ R2010 <template> <<is>> <template-stmt>
                         [ <template-subprogram-part> ]
                         <end-template-stmt>
 
+C2027a (R2010). A <template> shall only appear in the <specification-part>
+                of a main program or module.
+
 R2011 <template-stmt> <<is>>
           TEMPLATE <template-name> ([<deferred-arg-list>])
 
 R2012 <end-template-stmt> <<is>>  END [TEMPLATE [<template-name>]]
 
-C2027 (R2012). If a <template-name> appears in the <end-template-stmt>,
-               it shall be identical to the <template-name>
-               specified in the <template-stmt>.
+
+C2027b (R2012). If a <template-name> appears in the <end-template-stmt>,
+                it shall be identical to the <template-name>
+                specified in the <template-stmt>.
 
 20.3.2 Template specification part
 

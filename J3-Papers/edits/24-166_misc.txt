@@ -5,9 +5,6 @@ Date: 2024-October-07
 References: 24-161, 24-162, 24-163, 24-164, 24-165,
             24-125r5, 24-126r4, 24-127r4, 24-007
 
-UTI: Constraint on R508 is unprecedented.  No other constraints in all
-     of clause 5.
-
 UTI: Section 4 does not seem to state where it goes in the standard
 
 1. Introduction
@@ -262,9 +259,6 @@ UTI: spelling of <inline-instantiate> vs <inline-instantiation>
     <<or>> <template>
     <<or>> <requirement>
     <<or>> <instantiate-stmt>
-
-  C501 (R508). <template> or <requirement> shall only appear in a
-               <program> or a <module>.
 
   Extend R512 to be:
     R512 <internal-subprogram>
