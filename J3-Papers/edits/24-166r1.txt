@@ -1,0 +1,415 @@
+To: J3                                                     J3/24-166r1
+From: generics
+Subject: Miscellaneous edits to incorporate templates
+Date: 2024-October-22
+References: 24-161, 24-162, 24-163, 24-164, 24-165,
+            24-125r5, 24-126r4, 24-127r4, 24-007
+
+UTI: Section 4 does not seem to state where it goes in the standard
+
+1. Introduction
+===============
+
+This paper describes various edits to the standard that are necessary
+to incorporate the syntax and semantics for templates.
+
+The contents of this paper are:
+
+   Section 2: Edits required for deferred arguments
+   Section 3: Edits required for templates and instantiation
+   Section 4: Edits to TKR compatibility
+   Section 5: Edits for processor dependencies
+
+
+2. Edits required for deferred arguments
+========================================
+
+* Insert new glossary term in 3.7
+
+  [deferred argument association]
+  association between an instantiation argument and a deferred
+  argument (Sec. ?)
+
+* Insert new glossary term
+
+  [deferred argument]
+  named entity that appears in a <deferred-arg-list> (Sec. ?)
+
+* Insert new glossary term 3.34.x
+
+  [deferred constant]
+  a deferred argument with the PARAMETER attribute
+
+  [instantiation argument]
+  argument to an INSTANTIATE statement or inline instantiation
+
+* 7.3.2.1 Type specifier syntax
+
+  Extend R702 <type-spec>:
+    <<or>> <deferred-type>
+
+  Extend C703 from:
+    (R702) The <derived-type-spec> shall not specify an abstract
+    type (7.5.7)
+  To:
+    (R702) The <derived-type-spec> or <deferred-type> shall not specify
+    an abstract type (7.5.7) except when used as an <instantiation-arg>.
+
+  Extend R703 <declaration-type-spec> to include:
+    <<or>> TYPE(<deferred-type>)
+    <<or>> CLASS(<deferred-type>)
+
+  Change C706 from:
+    (R703) TYPE(<derived-type-spec>) shall not specify an abstract
+    type (7.5.7).
+  To:
+    (R703) In a <declaration-type-spec> that uses the TYPE keyword,
+    <derived-type-spec> or <deferred-type> shall not specify an
+    abstract type (7.5.7).
+
+  Extend C705 from:
+    (R703) In a <declaration-type-spec> that uses the CLASS keyword,
+    <derived-type-spec> shall specify an extensible type (7.5.7).
+  To:
+    (R703) In a <declaration-type-spec> that uses the CLASS keyword,
+    <derived-type-spec> or <deferred-type> shall specify an extensible
+    type (7.5.7).
+
+* 7.5.2.1 Syntax of a derived-type definition
+
+  Insert new constraint on R728:
+    C737b (R728) <parent-type-name> shall not be a <deferred-type>.
+
+* 8.5.2 Accessibility attribute
+
+[106:6] In C817, insert "or template" after "module", so that it now reads:
+
+  C817 An access-spec shall appear only in the specification-part of a
+       module or template construct.
+
+* 8.6.1 Accessibility Statement
+
+  [120:28] Change C873 to read:
+    C873 (R831) An <access-stmt> shall appear only in the
+                <specification-part> of a module or template. Only one
+                accessibility statement with an omitted <access-id-list>
+                is permitted in the <specification-part> of a module or
+                template.
+
+  [120:30] Change C874 to read:
+    C874 (R831) Each <access-name> shall be the name of a module,
+                variable, procedure, nonintrinsic type, named constant
+                other than a deferred constant, namelist group,
+                requirement, or template.
+
+  [120:37+] In 2nd sentence of paragraph 1, insert "or template" after
+            "in the module" in both locations such that the sentence now
+            reads:
+    An access-stmt without an access-id list specifies the default
+    accessibility of the identifiers of entities declared in the
+    module or template, and of entities accessed from a module
+    whose name does not appear in any access-stmt in the module or
+    template.
+
+  [120:43] In last sentence of paragraph 1, insert "or template" after
+           "in a module" such that the sentence now reads:
+    If no such statement appears in a module or template, the
+    default is public accessibility.
+
+  [121:1] In 1st sentence of paragraph 2, insert "or template" after "in
+          the module" such that the sentence now reads:
+    If an identifier is accessed by use association and not declared
+    in the module or template, and the name of every module from
+    which it is accessed appears in an access-stmt in the scoping
+    unit, its default accessibility is PRIVATE if the access-spec in
+    every such access-stmt is PRIVATE, or PUBLIC if the access-spec
+    in any such access-stmt is PUBLIC.
+
+* 8.5.8.1 General
+
+  Change last entry for <array-spec> from:
+    <<or>>   <assumed-rank-spec>
+  To:
+    <<or>>   <assumed-or-implied-rank-spec>
+
+* 8.5.8.2 Explicit-shape array
+
+Note:
+
+It may be better to modify <explicit-shape-bounds-spec> to
+disambiguate <explicit-bounds-expr> for lower and upper bounds.  This
+would make constraint for deferred constants clearer.
+
+* 8.5.8.6 Implied-shape array
+
+  Modify the first sentence from:
+    An implied-shape array is a named constant that takes its shape
+    from the constant-expr in its declaration.
+  To:
+    An implied-shape array is a named constant that takes its shape
+    from a constant expression. If it is a deferred constant, it takes
+    its shape from the associated instantiation argument, otherwise it
+    takes its shape from the constant expression in its declaration.
+
+  Delete the first sentence in the last paragraph which reads:
+
+    The extent of each dimension of an implied-shape array is the same
+    as the extent of the corresponding dimension of the constant-expr.
+
+  Insert new section after 8.5.8.7
+
+    8.5.8.7b Implied-rank entity
+
+    An implied-rank entity is an entity whose rank becomes defined only
+    when the template in which it appears is instantiated.
+
+    Note: Also make sure it works with SELECT GENERIC RANK and spell out
+          what can be done with implied-rank entities.
+
+    R287b <implied-rank-spec> <<is>> ..
+
+    C841b (R287b).  An implied-rank entity shall be a <deferred-const>.
+
+    Note: Examples of implied-rank entities
+
+    TEMPLATE EXAMPLE(C, S, N)
+       INTEGER, DEFERRED, PARAMETER :: C(..) ! implied-shape & implied-rank
+       INTEGER, DEFERRED, PARAMETER :: S(*), N
+       INTEGER, PARAMETER :: B(S) = 1 ! explicit-shape & implied-rank
+    END TEMPLATE
+
+* 8.5.17  RANK clause
+
+  Replace constraint C864 which states:
+    C864  An entity declared with a rank-clause shall be a dummy data
+          object or have the ALLOCATABLE or POINTER attribute.
+  With:
+    C864  An entity declared with a rank-clause shall be a named constant,
+          dummy data object or have the ALLOCATABLE or POINTER attribute.
+
+  Replace the last paragraph:
+    If the rank is zero the entity is scalar; otherwise, if it has
+    the ALLOCATABLE or POINTER attribute, it specifies that it is a
+    deferred-shape array; otherwise, it specifies that it is an
+    assumed-shape array with all the lower bounds equal to one.
+  With:
+    If the rank is zero the entity is scalar; otherwise, if it has
+    the ALLOCATABLE or POINTER attribute, it specifies that it is a
+    deferred-shape array; otherwise, if it is a named constant, it
+    specifies that it is an implied-shape array with all lower
+    bounds equal to one; otherwise, it specifies that it is an
+    assumed-shape array with all the lower bounds equal to one.
+
+* 8.6.1 Accessibility statement
+
+Modify C873 to read as
+
+  C873 An <access-stmt> shall appear only in the <specification-part> of a
+  module or template construct. Only one accessibility statement with
+  an omitted <access-id-list> is permitted in the <specification-part>
+  of a module or template construct.
+
+* 10.1.12 Constant expression
+
+  Extend list in normative text for "constant expression":
+  "deferred constant"
+
+* 10.1 Expressions and Assignment
+
+  New section 10.1.13 Deferred constant expressions
+
+  <deferred-const-expr> <<is>> <constant-expr>
+
+  An expression is a <deferred-const-expr> if one or more of its
+  primaries is a deferred constant.
+
+  A <deferred-const-expr> is not equal to any other <expr> unless
+  <expr> is syntactically equivalent.
+
+* 11.1.11.1 Purpose and form of the SELECT TYPE construct
+
+  Extend R1156 to
+  R1156 <type-guard-stmt>
+      <<is>> TYPE IS ( <type-spec> ) [ <select-construct-name> ]
+      <<or>> CLASS IS ( <derived-type-spec> ) [ <select-construct-name> ]
+      <<or>> CLASS IS ( <deferred-type> ) [ <select-construct-name> ]
+      <<or>> CLASS DEFAULT [ <select-construct-name> ]
+
+  Add constraint:
+  C116b (R1156). <deferred-type> shall specify an extensible type.
+
+* 15.5.1 Syntax of a procedure reference
+
+UTI: spelling of <inline-instantiate> vs <inline-instantiation>
+
+  Extend R1522 <procedure-designator> with:
+    <<or>> <deferred-proc>
+    <<or>> <inline-instantiate>
+
+  Extend R1524 <actual-arg> with:
+    <<or>> <deferred-proc>
+    <<or>> <inline-instantiate>
+
+3. Edits required for templates and instantiation
+=================================================
+
+* 5.1 High level syntax
+
+  Extend R508 <specification-construct> to include:
+    <<or>> <template>
+    <<or>> <requirement>
+    <<or>> <instantiate-stmt>
+
+  Extend R512 to be:
+    R512 <internal-subprogram>
+         <<is>> <function-subprogram>
+         <<or>> <subroutine-subprogram>
+         <<or>> <standalone-template-subroutine-subprogram>
+         <<or>> <standalone-template-function-subprogram>
+
+
+* 8.7 IMPLICIT Statement
+
+  Modify last sentence in para 3 on page 127 from:
+    If a mapping is not specified for a letter, the default
+    for a program unit or an interface body is default integer if the
+    letter is I, J, ..., or N and default real otherwise, and the default
+    for a BLOCK construct, internal subprogram, or module subprogram is
+    the mapping in the host scoping unit.
+  To:
+    If a mapping is not specified for a letter, the default for a program
+    unit or an interface body that does not appear in a deferred interface
+    block is default integer if the letter is I, J, ..., or N and default
+    real otherwise.  The default for a BLOCK construct, internal
+    subprogram, or module subprogram is the mapping in the host scoping
+    unit.  The default for an interface body inside of a deferred
+    interface block is as if IMPLICIT NONE(TYPE, EXTERNAL) appeared.
+
+
+* 8.8p2 IMPORT Statement
+
+  Modify sentence 2 in p2 from:
+    This is the default for an interface body that is not a module
+    procedure interface body.
+  To:
+    This is the default for an interface body that is not a module
+    procedure interface body or an interface body that appears in a
+    deferred interface block.
+
+  Modify sentence 2 in p4 from:
+    This is the default for a derived-type definition, internal
+    subprogram, module procedure interface body, module subprogram,
+    or submodule.
+  To:
+    This is the default for a derived-type definition, internal
+    subprogram, module procedure interface body, module subprogram,
+    submodule, or an interface body that appears in a deferred
+    interface block.
+
+
+* 14.2.1 Module syntax and semantics
+
+  Modify R1408 to become:
+    R1408 <module-subprogram>
+              <<is>> <function-subprogram>
+              <<or>> <subroutine-subprogram>
+              <<or>> <separate-module-subprogram>
+              <<or>> <standalone-template-function-subprogram>
+              <<or>> <standalone-template-subroutine-subprogram>
+
+* 15.4.3.2 Interface block
+
+  Change R1503 from:
+    R1503 <interface-stmt> <<is>> INTERFACE [ <generic-spec> ]
+                           <<or>> ABSTRACT INTERFACE
+  To:
+    R1503 <interface-stmt> <<is>> INTERFACE [ <generic-spec> ]
+                           <<or>> ABSTRACT INTERFACE
+                           <<or>> DEFERRED INTERFACE
+
+  Change final sentence in para 2 such that the sentence reads:
+    An interface block without ABSTRACT, DEFERRED, or a generic
+    specification is a specific interface block.
+
+
+  Add after para 2:
+    An interface block introduced by DEFERRED INTERFACE is a deferred
+    interface block. An interface body in a deferred interface block
+    specifies a deferred procedure.
+
+* 15.6.2.2 Function subprogram
+
+  Change constraint C1573 to refer to rule R1532 instead of R1536.
+
+  Note: <end-function-stmt> is reused for standalone template
+        procedures.  Therefore the constraint must be attached to a
+        different rule to be applicable in both situations.
+
+* 15.6.2.3 Subroutine subprogram
+
+  Change constraint C1576 to refer to rule R1537 instead of R1540.
+
+  Note: <end-subroutine-stmt> is reused for standalone template
+        procedures.  Therefore the constraint must be attached to a
+        different rule to be applicable in both situations.
+
+4. Edits to TKR compatibility
+=============================
+
+  An entity whose rank is, or depends on, a deferred argument does not
+  have the same rank as any other entity, unless that entity has its
+  rank defined with a syntactically equivalent expression. If the rank
+  of an implied-rank entity is not declared with a rank clause, it is
+  considered to have no expression for its rank, and therefore does not
+  have the same rank as any other entity.
+
+  An entity whose kind is, or depends on, a deferred argument does not
+  have the same kind as any other entity, unless that entity has its
+  kind defined with a syntactically equivalent expression.
+
+  Note: Some examples of implied-rank entities are shown
+        in the following example template. C is explicitly declared
+        as implied-rank. B is implied-rank because its rank depends on
+        the size of the deferred argument S. X, Y and Z are implied-rank
+        because their ranks depend on the value of the deferred argument N.
+
+    TEMPLATE EXAMPLE(C, S, N)
+      INTEGER, DEFERRED, PARAMETER :: C(..) ! implied-shape & implied-rank
+      INTEGER, DEFERRED, PARAMETER :: S(*), N
+      INTEGER, PARAMETER :: B(S) = 1 ! explicit-shape & implied-rank
+    CONTAINS
+      SUBROUTINE SUB(X)
+        INTEGER, RANK(N) :: X ! assumed-shape & implied-rank
+        INTEGER :: Y([(i, i = 1, N)]) ! explicit-shape & implied-rank
+        INTEGER, RANK(N), ALLOCATABLE :: Z ! deferred-shape & implied-rank
+        call sub_explicit(C) ! valid, element order association
+        ! call sub_assumed(C) ! invalid, rank expressions don't match
+        ! call sub_same_rank(C) ! invalid, rank expressions don't match
+
+        call sub_explicit(X) ! valid, element order association
+        ! call sub_assumed(X) ! invalid, rank expressions don't match
+        call sub_same_rank(X) ! valid, rank expressions match
+
+        call sub_explicit(Y) ! valid, element order association
+        ! call sub_assumed(Y) ! invalid, rank expressions don't match
+        ! call sub_same_rank(Y) ! invalid, rank expressions don't match
+      END SUBROUTINE
+      SUBROUTINE SUB_EXPLICIT(X)
+        INTEGER :: X(10)
+      END SUBROUTINE
+      SUBROUTINE SUB_ASSUMED(X)
+        INTEGER :: X(:)
+      END SUBROUTINE
+      SUBROUTINE SUB_SAME_RANK(X)
+        INTEGER, RANK(N) :: X
+      END SUBROUTINE
+    END TEMPLATE
+
+5. Edits for A.2 Processor Dependencies
+=======================================
+
+  [555:15+] Insert new bullet:
+    * the names of the dummy arguments of a deferred procedure without
+      an explicit specification (20.2.2.4);
+
+===END===

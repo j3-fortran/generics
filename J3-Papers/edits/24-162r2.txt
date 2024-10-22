@@ -1,0 +1,219 @@
+To: J3                                                     J3/24-162r2
+From: generics
+Subject: Edits for TEMPLATES: Consistency of deferred args
+Date: 2024-October-22
+References: 24-161, 24-125r5, 24-126r4, 24-127r4
+
+Introduction:
+-------------
+
+This is the 2nd of 5 papers that provide edits for the approved
+syntax for templates.
+
+Section 1:
+----------
+
+* Append the following to the new clause introduced in paper 24-161.
+
+20.2.2 Consistency of deferred argument specifications
+
+20.2.2.1 General
+
+Within a construct with a <deferred-arg>, an explicit specification of
+that <deferred-arg> is either <deferred-arg-explicit-stmt> or
+<interface-body> in a deferred interface block.
+
+A <deferred-arg> shall have one or more ultimate specifications.  The
+ultimate specifications of a <deferred-arg> are:
+    - an explicit specification, if present, and
+    - its ultimate specifications as instantiation arguments in
+      REQUIRE statements, if any.
+The ultimate specifications of an instantiation argument in a REQUIRE
+statement are the ultimate specifications of the corresponding
+deferred argument in the referenced requirement construct.
+
+Note: A deferred argument is always explicitly declared within the
+      template itself or directly or indirectly via a referenced
+      requirement.  A deferred argument has at least one ultimate
+      specification.
+
+20.2.2.2 Specification of deferred types
+
+C2016. If any ultimate specification of a deferred argument is a
+       deferred type, then all ultimate specifications of that
+       deferred argument shall be deferred type.
+
+If any ultimate specification of a deferred type has the EXTENSIBLE
+attribute, then the deferred type has the EXTENSIBLE attribute.
+
+If all ultimate specifications of a deferred type have the ABSTRACT
+attribute, or if the deferred type has an explicit specification
+with the ABSTRACT attribute, then the deferred type has the ABSTRACT
+attribute. Otherwise the deferred type does not have the ABSTRACT
+attribute.
+
+NOTE: A deferred type with the ABSTRACT attribute is considered an
+      abstract derived type, so it can only be an instantiation argument
+      when the corresponding deferred argument has the ABSTRACT
+      attribute. Therefore, if a deferred type has an explicit
+      specification with the ABSTRACT attribute, all of its ultimate
+      specifications must have the ABSTRACT attribute.
+
+NOTE: Examples that illustrate valid and invalid uses of ABSTRACT and
+      EXTENSIBLE attributes on deferred types are:
+
+         REQUIREMENT R_REGULAR(U)
+            TYPE, DEFERRED :: U
+         END REQUIREMENT
+
+         REQUIREMENT R_EXTENSIBLE(U)
+            TYPE, DEFERRED, EXTENSIBLE :: U
+         END REQUIREMENT
+
+         REQUIREMENT R_ABSTRACT(U)
+            TYPE, DEFERRED, ABSTRACT :: U
+         END REQUIREMENT
+
+         TEMPLATE T1(T)
+            REQUIRE R_REGULAR(T) ! valid, non-extensible
+         END TEMPLATE
+
+         TEMPLATE T2(T)
+            REQUIRE R_EXTENSIBLE(T) ! valid, extensible
+         END TEMPLATE
+
+         TEMPLATE T3(T)
+            REQUIRE R_ABSTRACT(T) ! valid, abstract
+         END TEMPLATE
+
+         TEMPLATE T4(T)
+            TYPE, DEFERRED :: T
+            REQUIRE R_REGULAR(T) ! valid, non-extensible
+         END TEMPLATE
+
+         TEMPLATE T5(T)
+            TYPE, DEFERRED :: T
+            REQUIRE R_EXTENSIBLE(T) ! invalid, explicit decl not extensible
+         END TEMPLATE
+
+         TEMPLATE T6(T)
+            TYPE, DEFERRED :: T
+            REQUIRE R_ABSTRACT(T) ! invalid, explicit decl not extensible
+         END TEMPLATE
+
+         TEMPLATE T7(T)
+            TYPE, DEFERRED, EXTENSIBLE :: T
+            REQUIRE R_REGULAR(T) ! valid, T is not abstract
+         END TEMPLATE
+
+         TEMPLATE T8(T)
+            TYPE, DEFERRED, EXTENSIBLE :: T
+            REQUIRE R_EXTENSIBLE(T) ! valid, decls match
+         END TEMPLATE
+
+         TEMPLATE T9(T)
+            TYPE, DEFERRED, EXTENSIBLE :: T
+            REQUIRE R_ABSTRACT(T) ! valid, T is just extensible
+         END TEMPLATE
+
+         TEMPLATE T10(T)
+            TYPE, DEFERRED, ABSTRACT :: T
+            REQUIRE R_REGULAR(T) ! invalid, T is abstract
+         END TEMPLATE
+
+         TEMPLATE T11(T)
+            TYPE, DEFERRED, ABSTRACT :: T
+            REQUIRE R_EXTENSIBLE(T) ! invalid, T is abstract
+         END TEMPLATE
+
+         TEMPLATE T12(T)
+            TYPE, DEFERRED, ABSTRACT :: T
+            REQUIRE R_ABSTRACT(T) ! valid, decls match
+         END TEMPLATE
+
+         TEMPLATE T13(T)
+            REQUIRE R_REGULAR(T)
+            REQUIRE R_EXTENSIBLE(T) ! valid, T is extensible
+         END TEMPLATE
+
+         TEMPLATE T14(T)
+            REQUIRE R_REGULAR(T)
+            REQUIRE R_ABSTRACT(T) ! valid, T is just extensible
+         END TEMPLATE
+
+         TEMPLATE T15(T)
+            REQUIRE R_EXTENSIBLE(T)
+            REQUIRE R_ABSTRACT(T) ! valid, T is just extensible
+         END TEMPLATE
+
+20.2.2.3 Specification of deferred constants
+
+C2017. If any ultimate specification of a deferred argument is a
+       deferred constant, then all ultimate specifications of
+       that deferred argument shall be deferred constant.
+
+C2018. All ultimate specifications of a deferred constant shall
+       specify the same type and kind-type parameters.
+
+C2019. If any ultimate specification of a deferred constant is of
+       a non-implied rank R, then an explicit specification of
+       that deferred constant shall have rank R, and all other
+       ultimate specifications of that deferred constant shall
+       either have implied rank or have rank R.
+
+C2020. If any ultimate specification of a deferred constant has
+       explicit shape S, then an explicit specification of that
+       deferred constant shall have shape S, and all other
+       ultimate specifications of that deferred constant shall
+       have implied rank, implied shape, or shape S.
+
+If any ultimate specification of a deferred constant has an explicit
+shape S, then that deferred constant has shape S.  Otherwise, if any
+ultimate specification of that deferred constant has implied shape,
+then it has implied shape with the same rank.  Otherwise it has
+implied rank.
+
+20.2.2.4 Specification of deferred procedures
+
+C2021. If any ultimate specification of a deferred argument is a
+       deferred procedure, then all ultimate specifications of
+       that deferred argument shall be deferred procedure.
+
+C2022. A deferred procedure shall not be referenced with keyword
+       arguments unless it has an explicit specification.
+
+Note: Although dummy arguments always have names, they are processor-
+      dependent for deferred procedures without an explicit
+      specification. The constraint above ensures such names cannot
+      be used.
+
+C2023. Except for PURE, SIMPLE, and ELEMENTAL attributes, the
+       characteristics of all ultimate specifications of a
+       deferred procedure shall be consistent.
+
+Note: The characteristics of a procedure do not include the names
+      of the dummy arguments, so they need not be the same.
+
+C2024. If any ultimate specification of a deferred procedure is
+       SIMPLE, then an explicit specification of that deferred
+       procedure shall be SIMPLE.
+
+C2025. If any ultimate specification of a deferred procedure is
+       PURE, then an explicit specification of that deferred
+       procedure shall be PURE or SIMPLE.
+
+C2026. If any ultimate specification of a deferred procedure is
+       ELEMENTAL, then an explicit specification of that deferred
+       procedure shall be ELEMENTAL.
+
+If any ultimate specification of a deferred procedure is SIMPLE then
+that deferred procedure is SIMPLE. Otherwise, if any ultimate
+specification of that deferred procedure is PURE, then it is PURE.
+
+If any ultimate specification of a deferred procedure is ELEMENTAL then
+that deferred procedure is ELEMENTAL.
+
+Only an explicit specification of a deferred procedure defines the names
+of its dummy arguments.
+
+===END===

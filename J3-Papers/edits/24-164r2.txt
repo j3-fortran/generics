@@ -1,0 +1,345 @@
+To: J3                                                     J3/24-164r2
+From: generics
+Subject: Edits for TEMPLATES: Instantiation
+Date: 2024-October-22
+References: 24-161, 24-162, 24-163, 24-125r5, 24-126r4, 24-127r4
+
+
+Introduction:
+-------------
+
+This is the 4th of 5 papers that provide edits for the approved
+syntax for templates.
+
+Straw vote: The INSTANTIATE and REQUIRE statements do not need "[::]"
+            at this time, but we note that various other bits of the
+            BNF also have unnecesary optional "[::]". E.g., various
+            attribute specification statements: DIMENSION, INTENT,
+            SAVE, ...
+
+            Should "::" be removed from the BNF for the INSTANTIATE
+            and REQUIRE statements?
+
+            YES - omit the optional "[::]" in the BNF
+            NO  - keep the optional "[::]" in the BNF
+            ABSTAIN
+
+
+Section 1:
+----------
+* Append the following at the end of clause 20 from paper 24-163.
+
+20.6 Instantiation
+
+20.6.1 The INSTANTIATE statement
+
+An INSTANTIATE statement is a specification statement that identifies
+an instance of a template by specifying instantiation arguments that
+become associated with the deferred arguments of the named template.
+
+R2024 <template-instantiate-stmt>
+         <<is>> INSTANTIATE [::] <template-name> (
+                [ <instantiation-arg-spec-list> ] ) [, <rename-list> ]
+         <<or>> INSTANTIATE [::] <template-name> (
+                [ <instantiation-arg-spec-list> ] ), ONLY : [ <only-list> ]
+
+C2036 (R2024). <template-name> shall not be the name of a standalone
+               template procedure.
+
+R2025 <standalone-instantiate-stmt> <<is>>
+          INSTANTIATE [::] <template-name> (
+          [ <instantiation-arg-spec-list> ] ), [ONLY :] <local-name> => *
+
+C2037 (R2025). <template-name> shall be the name of a standalone
+               template procedure.
+
+R2026 <instantiate-stmt> <<is>> <template-instantiate-stmt>
+                         <<or>> <standalone-instantiate-stmt>
+
+C2038 (R2026). Within an <instantiate-stmt>, <instantiation-arg> shall
+               not depend on any entity defined within the referenced
+               template.
+
+C2039 (R2026). In <instantiate-stmt>, <template-name> shall not be the
+               name of any construct in which it appears.
+
+The INSTANTIATE statement without the ONLY option provides access to
+all public entities of the referenced template.  The INSTANTIATE
+statement with the ONLY option provides access only to those entities
+that appear as <generic-specs>, <use-names>, or
+<use-defined-operators> in the only list.
+
+An accessible entity of the referenced instantiation is associated
+with one or more accessed entities, each with its own identifier.
+These identifiers are
+
+   - the identifier of the entity in the referenced template if that
+     identifier appears as an <only-use-name> or as the
+     <defined-operator> of a <generic-spec> in any <only> for that
+     instantiation,
+   - each of the <local-names> or <local-defined-operators> that the
+     entity is given in any <rename> for that instantiation, and
+
+   - the identifier of the entity in that referenced template if
+     that identifier does not appear as a <use-name> or
+     <use-defined-operator> in any <rename> for that instantiation.
+
+
+
+20.6.2 Inline instantiation of standalone template procedures
+
+A standalone template procedure can be instantiated and referenced in
+an expression or the <procedure-designator> in a <call-stmt>.
+
+R2027 <inline-instantiate> <<is>>
+    <template-name> ^ ( <instantiation-arg-spec-list> )
+
+C2040 (R2027). <template-name> shall be the name of a
+               <standalone-template-function-subprogram> or a
+               <standalone-template-subroutine-subprogram>
+
+C2041 (R2027). In <inline-instantiate>, <template-name> shall not be the
+               name of any construct in which it appears.
+
+Note: Currently standalone template procedures cannot reference
+      themselves.  Future work could relax this.
+
+The procedure designated by <inline-instantiate> is the procedure
+produced from instantiating the standalone template procedure.
+
+
+
+20.6.3 Interpretation of template instantiation
+
+Multiple instantiations of a given template with the same actual
+instantiation arguments identify the same instance of the referenced
+template.
+
+Note: As a consequence, if a template defines a derived type, two
+      identical instantiations of that template define the same type.
+      This provides a mechanism for derived types from templates to be
+      compatible across scoping units in a convenient manner. For
+      example:
+
+   TEMPLATE TMPL(T)
+      TYPE, DEFERRED :: T
+      TYPE :: list_t
+         TYPE(T), ALLOCATABLE :: elements(:)
+      END TYPE
+   END TEMPLATE
+
+   ...
+
+   SUBROUTINE SUB(list)
+      INSTANTIATE TMPL(integer)
+      TYPE(list_t) :: list
+   END SUBROUTINE
+
+   SUBROUTINE DRIVER()
+      INSTANTIATE TMPL(integer)
+      TYPE(list_t) :: list ! list_t is same type as in SUB
+      CALL SUB(list)
+   END SUBROUTINE
+
+Two corresponding constant instantiation arguments are the same if and
+only if both have the same shape, same type, same type parameters, and
+are equal.
+
+Two corresponding type-spec instantiation arguments are the same if
+and only if both have the same type and have the same kind and length
+type parameters.
+
+Two corresponding procedure instantiation arguments are the same if
+and only if both resolve to the same specific procedure.
+
+Note: Example showing how procedure instantiation arguments influence
+      whether instantiations are the same.
+
+        INTERFACE
+           SUBROUTINE F1(x)
+              TYPE(MY_T) :: x
+           END SUBROUTINE
+           SUBROUTINE F2(x)
+              TYPE(MY_U) :: x
+           END SUBROUTINE
+           SUBROUTINE F3(x)
+              TYPE(MY_U) :: x
+           END SUBROUTINE
+        END INTERFACE
+
+        GENERIC :: A => F1, F2
+        GENERIC :: B => F1, F3
+
+        TEMPLATE TMPL(T, F)
+            TYPE, DEFERRED :: T
+            INTERFACE
+               SUBROUTINE F(x)
+                  TYPE(T), INTENT(INOUT) :: x
+               END SUBROUTINE F
+            END INTERFACE
+        END TEMPLATE
+
+        INSTANTIATE TMPL(MY_T, A) ! Resolves to F1
+        INSTANTIATE TMPL(MY_T, B) ! Resolves to F1 ==> same
+
+        INSTANTIATE TMPL(MY_U, A) ! Resolves to F2
+        INSTANTIATE TMPL(MY_U, B) ! Resolves to F3 ==> different
+
+
+20.6.4 Deferred argument association
+
+20.6.4.1 Instantiation arguments
+
+Instantiation arguments are specified by an INSTANTIATE statement, a
+REQUIRE statement, or by inline instantiation.
+
+R2028 <instantiation-arg-spec> <<is>>
+          [ <keyword> = ] <instantiation-arg>
+
+C2042 (R2028). Each <keyword> shall be the name of a <deferred-arg> in
+               the referenced requirement or template.
+
+In the absence of an argument keyword, an instantiation argument
+corresponds to the deferred argument occupying the corresponding
+position in <deferred-arg-list>; that is, the first instantiation
+argument corresponds to the first deferred argument in the
+reduced list, the second instantiation argument corresponds to the
+second deferred argument in the reduced list, etc.
+
+R2029 <instantiation-arg> <<is>> <constant-expr>
+                          <<or>> <type-spec>
+                          <<or>> <generic-spec>
+                          <<or>> <procedure-name>
+
+Note: <generic-spec> includes operators, defined assignment and
+      defined I/O.  The last may be somewhat awkward to use within a
+      template without re-expressing as defined I/O again.
+
+
+20.6.4.2 Deferred type association
+
+C2043 (R2029). An <instantiation-arg> that is a <type-spec> shall
+               correspond to a <deferred-arg> that is a <deferred-type>
+               in the referenced template or requirement.
+
+C2044 (R2029). An <instantiation-arg> that is a <type-spec> shall have
+               constant type parameters.
+
+C2045 (R2029). An <instantiation-arg> that corresponds to a deferred type
+               that does not have the ABSTRACT attribute shall not be
+               abstract.
+
+C2046 (R2029). An <instantiation-arg>, T, that corresponds to a deferred
+               type shall be a type for which a variable whose declared
+               type is T is permitted in a variable definition context.
+
+Note: This constraint ensures that intrinsic assignment of variables
+      of deferred type is permitted within a template.  However, this
+      also disallows some types, e.g., the EVENT_TYPE, from being used
+      as an instantiation argument.
+
+C2047 (R2029). An <instantiation-arg> that corresponds to a deferred type
+               that has the EXTENSIBLE attribute shall be an extensible
+               derived type.
+
+C2048 (R2029). An <instantiation-arg> that corresponds to a deferred
+               type shall not have a coarray potential subobject
+               component.
+
+Note: The above constraint avoids the possibility of assignment
+      being invalid where the variable and expr do not agree on
+      the allocation status of a coarray component.
+
+Note: Non-abstract, extensible derived types can be associated with
+      both abstract and non-extensible deferred type arguments.
+
+Note: Intrinsic types, SEQUENCE types, and types with the BIND attribute
+      cannot be associated with deferred type arguments that have the
+      EXTENSIBLE attribute.
+
+      Simple example illustrating the above.
+
+      TYPE :: MY_T1
+      END TYPE
+
+      TYPE, ABSTRACT :: MY_T2
+      END TYPE
+
+      TEMPLATE TMPL1(T)
+         TYPE, DEFERRED :: T
+      END TEMPLATE TMPL
+
+      TEMPLATE TMPL2(U)
+         TYPE, ABSTRACT, DEFERRED :: U
+      END TEMPLATE TMPL
+
+      INSTANTIATE TMPL1(INTEGER) ! ok
+      INSTANTIATE TMPL1(MY_T1)   ! ok
+      INSTANTIATE TMPL1(MY_T2)   ! invalid
+
+      INSTANTIATE TMPL2(INTEGER) ! invalid
+      INSTANTIATE TMPL2(MY_T1)   ! ok
+      INSTANTIATE TMPL2(MY_T2)   ! ok
+
+Note: Potentially allow INSTANTIATE statement for an standalone
+      template procedure in a generic interface block.
+
+
+##.6.4.3 Deferred constant association
+
+C2049 (R2029). <constant-expr> shall be type INTEGER, LOGICAL or
+               CHARACTER.
+
+C2050 (R2029). An <instantiation-arg> that is a <constant-expr> shall
+               correspond to a <deferred-arg> that is a <deferred-const>
+               in the referenced template or requirement.
+
+C2051 (R2029). The type and kind of an <instantiation-arg> that is a
+               <constant-expr> shall have the same type and kind as the
+               corresponding <deferred-const> in the referenced template
+               or requirement.
+
+C2052 (R2029). If the shape of the corresponding <deferred-const> in the
+               referenced template or requirement is not implied, then
+               <constant-expr> shall have the same shape.
+
+C2053 (R2029). If the rank of the corresponding <deferred-const> in the
+               referenced template or requirement is not implied, then
+               <constant-expr> shall have the same rank.
+
+
+##.6.4.4 Deferred procedure association
+
+C2054 (R2029). An <instantiation-arg> that is a <generic-spec> or
+               <procedure-name> shall correspond to a <deferred-arg> that
+               is a deferred procedure in the referenced template or
+               requirement.
+
+C2055 (R2029). An <instantiation-arg> that is a <procedure-name> shall
+               have the same characteristics as the corresponding
+               deferred procedure in the referenced template or
+               requirement, except that a pure instantiation argument may
+               be associated with a deferred argument that is not pure, a
+               simple instantiation argument may be associated with a
+               deferred argument that is not simple, and an elemental
+               instantiation argument may be associated with a deferred
+               procedure that is not elemental.
+
+C2056. An <instantiation-arg> that is a <generic-spec> shall have
+       one specific procedure that has the same characteristics
+       as the corresponding deferred procedure the referenced
+       template or requirement, except that a pure instantiation
+       argument may be associated with a deferred argument that
+       is not pure, a simple instantiation argument may be
+       associated with a deferred argument that is not simple,
+       and an elemental instantiation argument may be associated
+       with a deferred procedure that is not elemental.
+
+The deferred procedure is associated with the specific procedure that is
+consistent with the characteristics.
+
+Note: The previous two constraints constitute what is referred to as
+      "weak constraints" in other languages.
+
+
+===END===
