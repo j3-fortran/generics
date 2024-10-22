@@ -38,10 +38,10 @@ an instance of a template by specifying instantiation arguments that
 become associated with the deferred arguments of the named template.
 
 R2024 <template-instantiate-stmt>
-          <<is>> INSTANTIATE [::] <template-name> (
-                 [ <instantiation-arg-spec-list> ] ) [, <rename-list> ]
-          <<or>> INSTANTIATE [::] <template-name> (
-                 [ <instantiation-arg-spec-list> ] ), ONLY : [ <only-list> ]
+         <<is>> INSTANTIATE [::] <template-name> (
+                [ <instantiation-arg-spec-list> ] ) [, <rename-list> ]
+         <<or>> INSTANTIATE [::] <template-name> (
+                [ <instantiation-arg-spec-list> ] ), ONLY : [ <only-list> ]
 
 C2036 (R2024). <template-name> shall not be the name of a standalone
                template procedure.
@@ -79,6 +79,7 @@ These identifiers are
      instantiation,
    - each of the <local-names> or <local-defined-operators> that the
      entity is given in any <rename> for that instantiation, and
+
    - the identifier of the entity in that referenced template if
      that identifier does not appear as a <use-name> or
      <use-defined-operator> in any <rename> for that instantiation.

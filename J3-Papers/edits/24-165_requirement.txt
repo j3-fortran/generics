@@ -33,8 +33,8 @@ R2041 <requirement> <<is>>
               <requirement-specification-construct> ...
           END [REQUIREMENT [<requirement-name>]]
 
-C2057a (R2041). A <requirement> shall only appear in the <specification-part>
-                of a main program or module.
+C2057a (R2041). A <requirement> shall only appear in the 
+                <specification-part> of a main program or module.
 
 C2057b (R2041). Each <deferred-arg> shall appear as the name of an entity
                 declared by a <requirement-specification-construct>.
