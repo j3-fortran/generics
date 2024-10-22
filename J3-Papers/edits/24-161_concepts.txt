@@ -42,15 +42,15 @@ Association with instantiation arguments occurs in the REQUIRE and
 INSTANTIATE statements.
 
 R2001  <deferred-arg> <<is>> <deferred-const-name>
-               <<or>> <deferred-proc>
-               <<or>> <deferred-type>
+                      <<or>> <deferred-proc>
+                      <<or>> <deferred-type>
 
 C2001 (R2001). A <deferred-arg> shall appear in a <deferred-arg-decl-stmt>
-            or as the <function-name> or <subroutine-name> of an
-            <interface-body>.
+               or as the <function-name> or <subroutine-name> of an
+               <interface-body>.
 
 C2002 (R2001). A <deferred-arg> shall have at most one explicit
-            specification in a given scoping unit.
+               specification in a given scoping unit.
 
 Note: Deferred arguments are local identifiers and are not externally
       accessible.
@@ -59,14 +59,15 @@ A deferred argument declaration statement is used to declare
 deferred arguments.
 
 R2002 <deferred-arg-decl-stmt> <<is>> <deferred-arg-explicit-stmt>
-                         <<or>> <require-stmt>
+                               <<or>> <require-stmt>
 
-R2003 <deferred-arg-explicit-stmt> <<is>> <deferred-type-declaration-stmt>
-                             <<or>> <deferred-const-declaration-stmt>
-                             <<or>> <deferred-proc-declaration-stmt>
+R2003 <deferred-arg-explicit-stmt>
+          <<is>> <deferred-type-declaration-stmt>
+          <<or>> <deferred-const-declaration-stmt>
+          <<or>> <deferred-proc-declaration-stmt>
 
 C2003 (R2003). A <deferred-arg-explicit-stmt> shall not have an
-            <access-spec>.
+               <access-spec>.
 
 20.2.1.2 Deferred types
 
@@ -82,16 +83,16 @@ C2004 (R2004). Each <deferred-type-name> shall appear in
                standalone template procedure in which it appears.
 
 R2005 <deferred-type-attr> <<is>> DEFERRED
-                     <<or>> ABSTRACT
-                     <<or>> EXTENSIBLE
+                           <<or>> ABSTRACT
+                           <<or>> EXTENSIBLE
 
 C2005 (R2005). DEFERRED shall appear in each <deferred-type-attr-list>.
 
 C2006 (R2005). The same <deferred-type-attr> shall not appear more than
-            once in a given <deferred-type-attr-list>.
+               once in a given <deferred-type-attr-list>.
 
 C2007 (R2005). A <deferred-type> entity shall not appear as
-            <parent-type-name> in an EXTENDS attribute.
+               <parent-type-name> in an EXTENDS attribute.
 
 Note: A deferred type is not a <type-name>.  Consequently it shall not
       appear as a <derived-type-spec>, and so a deferred type
@@ -159,37 +160,37 @@ R2006 <deferred-const-declaration-stmt> <<is>>
            <deferred-const-entity-decl-list>
 
 R2007 <deferred-const-attr-spec> <<is>> <dimension-spec>
-                           <<or>> DEFERRED
-                           <<or>> PARAMETER
-                           <<or>> <rank-clause>
+                                 <<or>> DEFERRED
+                                 <<or>> PARAMETER
+                                 <<or>> <rank-clause>
 
 R2008 <deferred-const-entity-decl>
-     <<is>> <deferred-const-name> [ ( <array-spec> ) ]
+          <<is>> <deferred-const-name> [ ( <array-spec> ) ]
 
 C2008 (R2007). A <deferred-const-attr-spec-list> shall include both
-            the DEFERRED and PARAMETER keywords.
+               the DEFERRED and PARAMETER keywords.
 
 C2009 (R2007). An entity declared in <deferred-const-declaration-stmt>
-            shall be INTEGER, LOGICAL, or assumed-length CHARACTER.
+               shall be INTEGER, LOGICAL, or assumed-length CHARACTER.
 
 C2010 (R2008). Each <deferred-const-name> shall appear in
-            <deferred-arg-list> of the TEMPLATE, REQUIREMENT or
-            standalone template procedure in which it appears.
+               <deferred-arg-list> of the TEMPLATE, REQUIREMENT or
+               standalone template procedure in which it appears.
 
 C2011 (R2006). If <array-spec> appears in
-            <deferred-const-declaration-stmt>, it shall be
-            <implied-shape-spec>, <assumed-or-implied-rank-spec>,
-            <explicit-shape-spec-list>, or
-            <explicit-shape-bounds-spec>.
+               <deferred-const-declaration-stmt>, it shall be
+               <implied-shape-spec>, <assumed-or-implied-rank-spec>,
+               <explicit-shape-spec-list>, or
+               <explicit-shape-bounds-spec>.
 
 C2012 (R2006). If <implied-shape-spec>, <explicit-shape-spec> or
-            <explicit-shape-bounds-spec> appears in
-            <deferred-const-declaration-stmt>, then <lower-bound>
-            shall not be specified.
+               <explicit-shape-bounds-spec> appears in
+               <deferred-const-declaration-stmt>, then <lower-bound>
+               shall not be specified.
 
 C2013 (R2006). If <explicit-shape-bounds-spec> appears in
-            <deferred-const-declaration-stmt>, then
-            <explicit-bounds-expr> shall not appear as a lower bound.
+               <deferred-const-declaration-stmt>, then
+               <explicit-bounds-expr> shall not appear as a lower bound.
 
 Note: Deferred constants will always have default lower bounds.
 
@@ -224,14 +225,14 @@ R2009 <deferred-proc-declaration-stmt> <<is>>
      PROCEDURE(<interface>), DEFERRED :: <deferred-proc-name-list>
 
 C2014 (R2009). Each <deferred-proc-name> shall appear in the
-            <deferred-arg-list> of the TEMPLATE, REQUIREMENT or
-            standalone template procedure in which it appears.
+               <deferred-arg-list> of the TEMPLATE, REQUIREMENT or
+               standalone template procedure in which it appears.
 
 C2015 (R2009). Each <subroutine-name> or <function-name> of an
-            <interface-body> that appears in a deferred interface
-            block shall appear in the <deferred-arg-list> of the
-            TEMPLATE, REQUIREMENT or standalone template procedure in
-            which it appears.
+               <interface-body> that appears in a deferred interface
+               block shall appear in the <deferred-arg-list> of the
+               TEMPLATE, REQUIREMENT or standalone template procedure in
+               which it appears.
 
 Note: The interface of a deferred procedure may be defined in terms of
       other deferred arguments.
