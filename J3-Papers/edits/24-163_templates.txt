@@ -34,7 +34,7 @@ C1527a (R1510) A <template> shall only appear in the <specification-part>
 R1511 <template-stmt> <<is>>
           TEMPLATE <template-name> ([<deferred-arg-list>])
 
-R1512 <end-template-stmt> <<is>>  END [TEMPLATE [<template-name>]]
+R1512 <end-template-stmt> <<is>>  END TEMPLATE [<template-name>]
 
 
 C1527b (R1512) If a <template-name> appears in the <end-template-stmt>,

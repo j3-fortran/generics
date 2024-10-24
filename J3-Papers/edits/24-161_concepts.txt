@@ -4,6 +4,9 @@ Subject: Edits for TEMPLATES: Introduction and deferred arguments
 Date: 2024-October-22
 References: 24-125r5, 24-126r4, 24-127r4
 
+UTI: From Malcolm's notes: "deferred type specifier", instead of
+     "deferred type"?
+
 Introduction:
 =============
 
@@ -21,7 +24,7 @@ Section 1:
 
 15.1 Template semantics
 
-A template is a scoping unit which is parameterized by deferred
+A template is a scoping unit that is parameterized by deferred
 arguments and can contain declarations, specifications, and
 definitions.  Instantiation of a template occurs via association of
 instantiation arguments with deferred arguments and defines
@@ -109,7 +112,11 @@ type. A deferred type with the ABSTRACT attribute implicitly has the
 EXTENSIBLE attribute, which can be confirmed with an explicit inclusion
 of the EXTENSIBLE keyword in the <deferred-type-attr-list>.
 
-[UTI: NOTE 2 is bad.]
+[UTI: NOTE 2 is bad. From Malcolm's notes, this could useful as part of fixing
+this note:
+Cxxxx The name of a deferred type shall not appear as a <derived-type-spec>
+      except in the <declaration-type-spec> of a <type-declaration-stmt>.
+]
 
 NOTE 2
 
@@ -127,8 +134,8 @@ NOTE 3
 
 NOTE 4
 
-    The distinction between deferred types which are extensible or
-    not, and deferred types which are abstract or not, helps to ensure
+    The distinction between deferred types that are extensible or
+    not, and deferred types that are abstract or not, helps to ensure
     a processor can verify a template is internally consistent.  For
     example, a deferred type must not be permitted in a CLASS
     declaration if it might be instantiated as INTEGER.  Likewise, a
