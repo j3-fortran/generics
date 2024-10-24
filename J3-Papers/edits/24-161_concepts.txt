@@ -97,9 +97,9 @@ C1507 The name of a deferred type shall not appear as a
 
 NOTE 1
 
-    A deferred type is cannot be extended. The name of the EXTENSIBLE
-    keyword primarily refers to instantiation arg associated with the
-    deferred arg, which must be extensible.
+    A deferred type cannot be extended. The use of the term EXTENSIBLE
+    refers to the instantiation arg associated with the deferred arg,
+    which must be extensible.
 
 [UTI: Rename EXTENSIBLE? Perhaps DERIVED?]
 
@@ -232,7 +232,7 @@ that appears in a deferred interface block.
 R1509 <deferred-proc-declaration-stmt> <<is>>
      PROCEDURE(<interface>), DEFERRED :: <deferred-proc-name-list>
 
-C1514 (R1509) Each <deferred-proc-name> shall appear in the the
+C1514 (R1509) Each <deferred-proc-name> shall appear in the
               <deferred-arg-list> of the TEMPLATE, REQUIREMENT or
               standalone template procedure in which it appears.
 
