@@ -33,10 +33,12 @@ The ultimate specifications of an instantiation argument in a REQUIRE
 statement are the ultimate specifications of the corresponding
 deferred argument in the referenced requirement construct.
 
-Note: A deferred argument is always explicitly declared within the
-      template itself or directly or indirectly via a referenced
-      requirement.  A deferred argument has at least one ultimate
-      specification.
+NOTE 1
+
+    A deferred argument is always explicitly declared within the
+    template itself or directly or indirectly via a referenced
+    requirement.  A deferred argument has at least one ultimate
+    specification.
 
 15.2.2.2 Specification of deferred types
 
@@ -53,99 +55,103 @@ with the ABSTRACT attribute, then the deferred type has the ABSTRACT
 attribute. Otherwise the deferred type does not have the ABSTRACT
 attribute.
 
-NOTE: A deferred type with the ABSTRACT attribute is considered an
-      abstract derived type, so it can only be an instantiation argument
-      when the corresponding deferred argument has the ABSTRACT
-      attribute. Therefore, if a deferred type has an explicit
-      specification with the ABSTRACT attribute, all of its ultimate
-      specifications must have the ABSTRACT attribute.
+NOTE 1
 
-NOTE: Examples that illustrate valid and invalid uses of ABSTRACT and
-      EXTENSIBLE attributes on deferred types are:
+    A deferred type with the ABSTRACT attribute is considered an
+    abstract derived type, so it can only be an instantiation argument
+    when the corresponding deferred argument has the ABSTRACT
+    attribute. Therefore, if a deferred type has an explicit
+    specification with the ABSTRACT attribute, all of its ultimate
+    specifications must have the ABSTRACT attribute.
 
-         REQUIREMENT R_REGULAR(U)
-            TYPE, DEFERRED :: U
-         END REQUIREMENT
+NOTE 2
 
-         REQUIREMENT R_EXTENSIBLE(U)
-            TYPE, DEFERRED, EXTENSIBLE :: U
-         END REQUIREMENT
+    Examples that illustrate valid and invalid uses of ABSTRACT and
+    EXTENSIBLE attributes on deferred types are:
 
-         REQUIREMENT R_ABSTRACT(U)
-            TYPE, DEFERRED, ABSTRACT :: U
-         END REQUIREMENT
+        REQUIREMENT R_REGULAR(U)
+           TYPE, DEFERRED :: U
+        END REQUIREMENT
 
-         TEMPLATE T1(T)
-            REQUIRE R_REGULAR(T) ! valid, non-extensible
-         END TEMPLATE
+        REQUIREMENT R_EXTENSIBLE(U)
+           TYPE, DEFERRED, EXTENSIBLE :: U
+        END REQUIREMENT
 
-         TEMPLATE T2(T)
-            REQUIRE R_EXTENSIBLE(T) ! valid, extensible
-         END TEMPLATE
+        REQUIREMENT R_ABSTRACT(U)
+           TYPE, DEFERRED, ABSTRACT :: U
+        END REQUIREMENT
 
-         TEMPLATE T3(T)
-            REQUIRE R_ABSTRACT(T) ! valid, abstract
-         END TEMPLATE
+        TEMPLATE T1(T)
+           REQUIRE R_REGULAR(T) ! valid, non-extensible
+        END TEMPLATE
 
-         TEMPLATE T4(T)
-            TYPE, DEFERRED :: T
-            REQUIRE R_REGULAR(T) ! valid, non-extensible
-         END TEMPLATE
+        TEMPLATE T2(T)
+           REQUIRE R_EXTENSIBLE(T) ! valid, extensible
+        END TEMPLATE
 
-         TEMPLATE T5(T)
-            TYPE, DEFERRED :: T
-            REQUIRE R_EXTENSIBLE(T) ! invalid, explicit decl not extensible
-         END TEMPLATE
+        TEMPLATE T3(T)
+           REQUIRE R_ABSTRACT(T) ! valid, abstract
+        END TEMPLATE
 
-         TEMPLATE T6(T)
-            TYPE, DEFERRED :: T
-            REQUIRE R_ABSTRACT(T) ! invalid, explicit decl not extensible
-         END TEMPLATE
+        TEMPLATE T4(T)
+           TYPE, DEFERRED :: T
+           REQUIRE R_REGULAR(T) ! valid, non-extensible
+        END TEMPLATE
 
-         TEMPLATE T7(T)
-            TYPE, DEFERRED, EXTENSIBLE :: T
-            REQUIRE R_REGULAR(T) ! valid, T is not abstract
-         END TEMPLATE
+        TEMPLATE T5(T)
+           TYPE, DEFERRED :: T
+           REQUIRE R_EXTENSIBLE(T) ! invalid, explicit decl not extensible
+        END TEMPLATE
 
-         TEMPLATE T8(T)
-            TYPE, DEFERRED, EXTENSIBLE :: T
-            REQUIRE R_EXTENSIBLE(T) ! valid, decls match
-         END TEMPLATE
+        TEMPLATE T6(T)
+           TYPE, DEFERRED :: T
+           REQUIRE R_ABSTRACT(T) ! invalid, explicit decl not extensible
+        END TEMPLATE
 
-         TEMPLATE T9(T)
-            TYPE, DEFERRED, EXTENSIBLE :: T
-            REQUIRE R_ABSTRACT(T) ! valid, T is just extensible
-         END TEMPLATE
+        TEMPLATE T7(T)
+           TYPE, DEFERRED, EXTENSIBLE :: T
+           REQUIRE R_REGULAR(T) ! valid, T is not abstract
+        END TEMPLATE
 
-         TEMPLATE T10(T)
-            TYPE, DEFERRED, ABSTRACT :: T
-            REQUIRE R_REGULAR(T) ! invalid, T is abstract
-         END TEMPLATE
+        TEMPLATE T8(T)
+           TYPE, DEFERRED, EXTENSIBLE :: T
+           REQUIRE R_EXTENSIBLE(T) ! valid, decls match
+        END TEMPLATE
 
-         TEMPLATE T11(T)
-            TYPE, DEFERRED, ABSTRACT :: T
-            REQUIRE R_EXTENSIBLE(T) ! invalid, T is abstract
-         END TEMPLATE
+        TEMPLATE T9(T)
+           TYPE, DEFERRED, EXTENSIBLE :: T
+           REQUIRE R_ABSTRACT(T) ! valid, T is just extensible
+        END TEMPLATE
 
-         TEMPLATE T12(T)
-            TYPE, DEFERRED, ABSTRACT :: T
-            REQUIRE R_ABSTRACT(T) ! valid, decls match
-         END TEMPLATE
+        TEMPLATE T10(T)
+           TYPE, DEFERRED, ABSTRACT :: T
+           REQUIRE R_REGULAR(T) ! invalid, T is abstract
+        END TEMPLATE
 
-         TEMPLATE T13(T)
-            REQUIRE R_REGULAR(T)
-            REQUIRE R_EXTENSIBLE(T) ! valid, T is extensible
-         END TEMPLATE
+        TEMPLATE T11(T)
+           TYPE, DEFERRED, ABSTRACT :: T
+           REQUIRE R_EXTENSIBLE(T) ! invalid, T is abstract
+        END TEMPLATE
 
-         TEMPLATE T14(T)
-            REQUIRE R_REGULAR(T)
-            REQUIRE R_ABSTRACT(T) ! valid, T is just extensible
-         END TEMPLATE
+        TEMPLATE T12(T)
+           TYPE, DEFERRED, ABSTRACT :: T
+           REQUIRE R_ABSTRACT(T) ! valid, decls match
+        END TEMPLATE
 
-         TEMPLATE T15(T)
-            REQUIRE R_EXTENSIBLE(T)
-            REQUIRE R_ABSTRACT(T) ! valid, T is just extensible
-         END TEMPLATE
+        TEMPLATE T13(T)
+           REQUIRE R_REGULAR(T)
+           REQUIRE R_EXTENSIBLE(T) ! valid, T is extensible
+        END TEMPLATE
+
+        TEMPLATE T14(T)
+           REQUIRE R_REGULAR(T)
+           REQUIRE R_ABSTRACT(T) ! valid, T is just extensible
+        END TEMPLATE
+
+        TEMPLATE T15(T)
+           REQUIRE R_EXTENSIBLE(T)
+           REQUIRE R_ABSTRACT(T) ! valid, T is just extensible
+        END TEMPLATE
 
 15.2.2.3 Specification of deferred constants
 
@@ -183,17 +189,20 @@ C2021. If any ultimate specification of a deferred argument is a
 C2022. A deferred procedure shall not be referenced with keyword
        arguments unless it has an explicit specification.
 
-Note: Although dummy arguments always have names, they are processor-
-      dependent for deferred procedures without an explicit
-      specification. The constraint above ensures such names cannot
-      be used.
+NOTE 1
+
+    Although dummy arguments always have names, they are processor-
+    dependent for deferred procedures without an explicit specification.
+    The constraint above ensures such names cannot be used.
 
 C2023. Except for PURE, SIMPLE, and ELEMENTAL attributes, the
        characteristics of all ultimate specifications of a
        deferred procedure shall be consistent.
 
-Note: The characteristics of a procedure do not include the names
-      of the dummy arguments, so they need not be the same.
+NOTE 2
+
+    The characteristics of a procedure do not include the names
+    of the dummy arguments, so they need not be the same.
 
 C2024. If any ultimate specification of a deferred procedure is
        SIMPLE, then an explicit specification of that deferred

@@ -71,18 +71,21 @@ R2015 <template-specification-construct>
           <<or>> <parameter-stmt>
           <<or>> <type-declaration-stmt>
 
-Note: An ALLOCATABLE, ASYNCHRONOUS, BIND, CODIMENSION, COMMON,
-      CONTIGUOUS, DATA, ENTRY, EQUIVALENCE, EXTERNAL, FORMAT, INTENT,
-      NAMELIST, OPTIONAL, POINTER, PROTECTED, SAVE, TARGET, VOLATILE,
-      VALUE, or statement function statement is not permitted in a
-      template specification section.
+NOTE 1
+
+    An ALLOCATABLE, ASYNCHRONOUS, BIND, CODIMENSION, COMMON,
+    CONTIGUOUS, DATA, ENTRY, EQUIVALENCE, EXTERNAL, FORMAT, INTENT,
+    NAMELIST, OPTIONAL, POINTER, PROTECTED, SAVE, TARGET, VOLATILE,
+    VALUE, or statement function statement is not permitted in a
+    template specification section.
 
 C2028 (R2015). An entity declared by <type-declaration-stmt> shall have
                the PARAMETER attribute.
 
-Note: This is to say, the template specification section cannot
-      declare variables.
+NOTE 2
 
+    This is to say, a template specification section cannot
+    declare variables.
 
 15.3.3 Template subprogram part
 
@@ -166,8 +169,10 @@ C2035. <template>, <standalone-template-function-subprogram> and
        reference intrinsic procedures, procedures with explicit
        interfaces, operators, or intrinsic assignment.
 
-Note: This constraint expresses the notion of type-safety.  In
-      particular, this allows a template implementation to be verified
-      to be internally consistent.
+NOTE
+
+    This constraint expresses the notion of type-safety.  In particular,
+    this allows a template implementation to be verified to be internally
+    consistent.
 
 ===END===

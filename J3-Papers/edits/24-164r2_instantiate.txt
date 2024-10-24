@@ -86,7 +86,6 @@ These identifiers are
      <use-defined-operator> in any <rename> for that instantiation.
 
 
-
 15.6.2 Inline instantiation of standalone template procedures
 
 A standalone template procedure can be instantiated and referenced in
@@ -102,12 +101,12 @@ C2040 (R2027). <template-name> shall be the name of a
 C2041 (R2027). In <inline-instantiate>, <template-name> shall not be the
                name of any construct in which it appears.
 
-Note: Currently standalone template procedures cannot reference
-      themselves.  Future work could relax this.
-
 The procedure designated by <inline-instantiate> is the procedure
 produced from instantiating the standalone template procedure.
 
+NOTE
+
+    Standalone template procedures cannot reference themselves.
 
 
 15.6.3 Interpretation of template instantiation
@@ -116,31 +115,33 @@ Multiple instantiations of a given template with the same actual
 instantiation arguments identify the same instance of the referenced
 template.
 
-Note: As a consequence, if a template defines a derived type, two
-      identical instantiations of that template define the same type.
-      This provides a mechanism for derived types from templates to be
-      compatible across scoping units in a convenient manner. For
-      example:
+NOTE 1
 
-   TEMPLATE TMPL(T)
-      TYPE, DEFERRED :: T
-      TYPE :: list_t
-         TYPE(T), ALLOCATABLE :: elements(:)
-      END TYPE
-   END TEMPLATE
+    As a consequence, if a template defines a derived type, two
+    identical instantiations of that template define the same type.
+    This provides a mechanism for derived types from templates to be
+    compatible across scoping units in a convenient manner. For
+    example:
 
-   ...
+        TEMPLATE TMPL(T)
+           TYPE, DEFERRED :: T
+           TYPE :: list_t
+              TYPE(T), ALLOCATABLE :: elements(:)
+           END TYPE
+        END TEMPLATE
 
-   SUBROUTINE SUB(list)
-      INSTANTIATE TMPL(integer)
-      TYPE(list_t) :: list
-   END SUBROUTINE
+        ...
 
-   SUBROUTINE DRIVER()
-      INSTANTIATE TMPL(integer)
-      TYPE(list_t) :: list ! list_t is same type as in SUB
-      CALL SUB(list)
-   END SUBROUTINE
+        SUBROUTINE SUB(list)
+           INSTANTIATE TMPL(integer)
+           TYPE(list_t) :: list
+        END SUBROUTINE
+
+        SUBROUTINE DRIVER()
+           INSTANTIATE TMPL(integer)
+           TYPE(list_t) :: list ! list_t is same type as in SUB
+           CALL SUB(list)
+        END SUBROUTINE
 
 Two corresponding constant instantiation arguments are the same if and
 only if both have the same shape, same type, same type parameters, and
@@ -153,8 +154,10 @@ type parameters.
 Two corresponding procedure instantiation arguments are the same if
 and only if both resolve to the same specific procedure.
 
-Note: Example showing how procedure instantiation arguments influence
-      whether instantiations are the same.
+NOTE 2
+
+    Example showing how procedure instantiation arguments influence
+    whether instantiations are the same:
 
         INTERFACE
            SUBROUTINE F1(x)
@@ -211,6 +214,16 @@ R2029 <instantiation-arg> <<is>> <constant-expr>
                           <<or>> <type-spec>
                           <<or>> <generic-spec>
                           <<or>> <procedure-name>
+
+[UTI: This note needs to be revised. "Somewhat awkward" is not acceptable.
+      Also a defined I/O generic-spec cannot be used here because its
+      syntax of "READ(FORMATTED)", (and etc.) conflicts with other syntax.
+      E.g. that could be an array element reference, or a function
+      reference. We either need to say that defined I/O generics are not
+      permitted, provide separate syntax for it, or say that an
+      instantiation arg that is for a deferred procedure has special
+      behavior in that the READ(FORMATTED), etc., will always refer to
+      the defined I/O, not anything else it might possibly be.]
 
 Note: <generic-spec> includes operators, defined assignment and
       defined I/O.  The last may be somewhat awkward to use within a

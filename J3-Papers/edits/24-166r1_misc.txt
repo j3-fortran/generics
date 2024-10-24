@@ -136,11 +136,9 @@ The contents of this paper are:
 
 * 8.5.8.2 Explicit-shape array
 
-Note:
-
-It may be better to modify <explicit-shape-bounds-spec> to
-disambiguate <explicit-bounds-expr> for lower and upper bounds.  This
-would make constraint for deferred constants clearer.
+[UTI: It may be better to modify <explicit-shape-bounds-spec> to
+      disambiguate <explicit-bounds-expr> for lower and upper bounds.
+      This would make constraint for deferred constants clearer.]
 
 * 8.5.8.6 Implied-shape array
 
@@ -158,27 +156,30 @@ would make constraint for deferred constants clearer.
     The extent of each dimension of an implied-shape array is the same
     as the extent of the corresponding dimension of the constant-expr.
 
-  Insert new section after 8.5.8.7
+  Insert new section after 8.5.8.7:
 
     8.5.8.7b Implied-rank entity
 
     An implied-rank entity is an entity whose rank becomes defined only
     when the template in which it appears is instantiated.
 
-    Note: Also make sure it works with SELECT GENERIC RANK and spell out
-          what can be done with implied-rank entities.
+[UTI: Also make sure it works with SELECT GENERIC RANK and spell out
+      what can be done with implied-rank entities.]
 
     R287b <implied-rank-spec> <<is>> ..
 
     C841b (R287b).  An implied-rank entity shall be a <deferred-const>.
 
-    Note: Examples of implied-rank entities
+    NOTE
 
-    TEMPLATE EXAMPLE(C, S, N)
-       INTEGER, DEFERRED, PARAMETER :: C(..) ! implied-shape & implied-rank
-       INTEGER, DEFERRED, PARAMETER :: S(*), N
-       INTEGER, PARAMETER :: B(S) = 1 ! explicit-shape & implied-rank
-    END TEMPLATE
+        The following are examples of implied-rank entities
+
+        TEMPLATE EXAMPLE(C, S, N)
+           INTEGER, DEFERRED, PARAMETER :: C(..)
+               ! implied-shape & implied-rank
+           INTEGER, DEFERRED, PARAMETER :: S(*), N
+           INTEGER, PARAMETER :: B(S) = 1 ! explicit-shape & implied-rank
+        END TEMPLATE
 
 * 8.5.17  RANK clause
 

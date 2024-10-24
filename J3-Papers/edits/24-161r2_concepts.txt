@@ -52,9 +52,6 @@ C2001 (R2001). A <deferred-arg> shall appear in a <deferred-arg-decl-stmt>
 C2002 (R2001). A <deferred-arg> shall have at most one explicit
                specification in a given scoping unit.
 
-Note: Deferred arguments are local identifiers and are not externally
-      accessible.
-
 A deferred argument declaration statement is used to declare
 deferred arguments.
 
@@ -68,6 +65,11 @@ R2003 <deferred-arg-explicit-stmt>
 
 C2003 (R2003). A <deferred-arg-explicit-stmt> shall not have an
                <access-spec>.
+
+NOTE
+
+    Deferred arguments are local identifiers and are not externally
+    accessible.
 
 15.2.1.2 Deferred types
 
@@ -94,60 +96,50 @@ C2006 (R2005). The same <deferred-type-attr> shall not appear more than
 C2007 (R2005). A <deferred-type> entity shall not appear as
                <parent-type-name> in an EXTENDS attribute.
 
-Note: A deferred type is not a <type-name>.  Consequently it shall not
-      appear as a <derived-type-spec>, and so a deferred type
-      may not be used in a <structure-constructor>.
-
 A deferred type with the EXTENSIBLE attribute is an extensible derived
 type. A deferred type with the ABSTRACT attribute is an abstract derived
 type. A deferred type with the ABSTRACT attribute implicitly has the
 EXTENSIBLE attribute, which can be confirmed with an explicit inclusion
 of the EXTENSIBLE keyword in the <deferred-type-attr-list>.
 
-Note: Examples of deferred type declarations are:
+[UTI: NOTE 1 is bad.]
 
-    TYPE, DEFERRED :: T1
-    TYPE, EXTENSIBLE, DEFERRED :: T2
-    TYPE, ABSTRACT, DEFERRED :: T3
+NOTE 1
 
-Note: The distinction between deferred types that are extensible or not,
-      and deferred types which are abstract or not, helps to ensure a
-      processor can verify a template is internally consistent.  For
-      example, a deferred type must not be permitted in a CLASS
-      declaration if it might be instantiated as INTEGER. Additionally,
-      a deferred type must not be permitted in a TYPE declaration if it
-      might be instantiated with an abstract derived type. The following
-      examples illustrate this point:
+    A deferred type is not a <type-name>.  Consequently it cannot
+    appear as a <derived-type-spec>, and so a deferred type
+    may not be used in a <structure-constructor>.
 
-      SUBROUTINE S1_bad(T)(X, Y)
-         TYPE, DEFERRED :: T
-         TYPE(T)  :: X ! ok
-         CLASS(T) :: Y ! invalid
-      END SUBROUTINE
+NOTE 2
 
-      SUBROUTINE S1(T)(X, Y)
-         TYPE, DEFERRED :: T
-         TYPE(T)  :: X ! ok
-         TYPE(T)  :: Y ! ok
-      END SUBROUTINE
+    Examples of deferred type declarations are:
 
-      SUBROUTINE S2(T)(X, Y)
-         TYPE, DEFERRED, EXTENSIBLE :: T
-         TYPE(T)  :: X ! ok
-         CLASS(T) :: Y ! ok
-      END SUBROUTINE
+        TYPE, DEFERRED :: T1
+        TYPE, DEFERRED, EXTENSIBLE :: T2
+        TYPE, DEFERRED, ABSTRACT :: T3
 
-      SUBROUTINE S3_bad(T)(X, Y)
-         TYPE, DEFERRED, ABSTRACT :: T
-         TYPE(T)  :: X ! invalid
-         CLASS(T) :: Y ! ok
-      END SUBROUTINE
+NOTE 3
 
-      SUBROUTINE S3(T)(X, Y)
-         TYPE, DEFERRED, ABSTRACT :: T
-         CLASS(T) :: X ! ok
-         CLASS(T) :: Y ! ok
-      END SUBROUTINE
+    The distinction between deferred types which are extensible or
+    not, and deferred types which are abstract or not, helps to ensure
+    a processor can verify a template is internally consistent.  For
+    example, a deferred type must not be permitted in a CLASS
+    declaration if it might be instantiated as INTEGER.  Likewise, a
+    deferred type must not be permitted in a TYPE declaration if it
+    might be instantiated with an abstract derived type.
+
+    Using the deferred type declarations from NOTE 2, the following
+    examples of type declaration statements are valid or invalid as
+    marked:
+
+        TYPE(T1)  :: A1   ! Valid
+        CLASS(T1) :: A2   ! Invalid
+
+        TYPE(T2)  :: B1   ! Valid
+        CLASS(T2) :: B2   ! Valid
+
+        TYPE(T3)  :: C1   ! Invalid
+        CLASS(T3) :: C2   ! Valid
 
 15.2.1.3 Deferred constants
 
@@ -192,9 +184,13 @@ C2013 (R2006). If <explicit-shape-bounds-spec> appears in
                <deferred-const-declaration-stmt>, then
                <explicit-bounds-expr> shall not appear as a lower bound.
 
-Note: Deferred constants will always have default lower bounds.
+NOTE 1
 
-Note: Examples of deferred constant declarations are:
+    Deferred constant arrays always have default lower bounds.
+
+NOTE 2
+
+    Examples of deferred constant declarations are:
 
     ! explicit shape
     INTEGER, DEFERRED, PARAMETER  :: x1
@@ -234,21 +230,25 @@ C2015 (R2009). Each <subroutine-name> or <function-name> of an
                TEMPLATE, REQUIREMENT or standalone template procedure in
                which it appears.
 
-Note: The interface of a deferred procedure may be defined in terms of
-      other deferred arguments.
+NOTE 1
 
-Note: The following example declares deferred procedures F, S, and G:
+    The interface of a deferred procedure may be defined in terms of
+    other deferred arguments.
 
-   TYPE, DEFERRED :: T
-   DEFERRED INTERFACE
-      FUNCTION F(X)
-         TYPE(T), INTENT(IN) :: X
-         TYPE(T) :: F
-      END FUNCTION
-      SUBROUTINE S(Y)
-         TYPE(T), INTENT(INOUT) :: Y
-      END SUBROUTINE
-   END INTERFACE
-   PROCEDURE(F_I), DEFERRED :: G
+NOTE 2
+
+    The following example declares deferred procedures F, S, and G:
+
+        TYPE, DEFERRED :: T
+        DEFERRED INTERFACE
+           FUNCTION F(X)
+              TYPE(T), INTENT(IN) :: X
+              TYPE(T) :: F
+           END FUNCTION
+           SUBROUTINE S(Y)
+              TYPE(T), INTENT(INOUT) :: Y
+           END SUBROUTINE
+        END INTERFACE
+        PROCEDURE(F_I), DEFERRED :: G
 
 ===END===

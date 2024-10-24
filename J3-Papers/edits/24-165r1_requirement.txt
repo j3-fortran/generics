@@ -44,33 +44,40 @@ C2058 (R2041). If a <requirement-name> appears in the
                <end-requirement-stmt>, it shall be identical to the
                <requirement-name> specified in the <requirement-stmt>.
 
-Note: A <requirement> is a scoping unit that allows use, host, and
-      deferred argument association.
-
-Note: Each <deferred-arg> is local to the REQUIREMENT construct.
-
 R2042 <requirement-specification-construct>
           <<is>> <deferred-arg-decl-stmt>
           <<or>> <interface-block>
 
 C2059 (R2042). <interface-stmt> shall include ABSTRACT or DEFERRED.
 
+[UTI: NOTE 1 probably should be normative text.]
 
-Note: Examples of REQUIREMENT blocks:
+NOTE 1
 
-   REQUIREMENT R1(U, V, G)
-      TYPE, DEFERRED :: U, V
-      DEFERRED INTERFACE
-         FUNCTION G(X)
-            TYPE(U), INTENT(IN) :: X
-            TYPE(V) :: G
-         END FUNCTION
-      END INTERFACE
-   END REQUIREMENT
+    A <requirement> is a scoping unit that allows use, host, and
+    deferred argument association.
 
-   REQUIREMENT R2(U, G)
-      REQUIRE R1(U, U, G)
-   END REQUIREMENT
+NOTE 2
+
+    Each <deferred-arg> is local to the REQUIREMENT construct.
+
+NOTE 3
+
+    Examples of REQUIREMENT blocks:
+
+        REQUIREMENT R1(U, V, G)
+           TYPE, DEFERRED :: U, V
+           DEFERRED INTERFACE
+              FUNCTION G(X)
+                 TYPE(U), INTENT(IN) :: X
+                 TYPE(V) :: G
+              END FUNCTION
+           END INTERFACE
+        END REQUIREMENT
+
+        REQUIREMENT R2(U, G)
+           REQUIRE R1(U, U, G)
+        END REQUIREMENT
 
 Example REQUIRE statements for the above requirements are shown below,
 which could appear together in the same template, although they are
@@ -92,12 +99,15 @@ R2043 <require-stmt> <<is>>
 C2059 (R2043). <requirement-name> shall be the name of a previously
                defined <requirement>.
 
-Note: Instantiation arguments in a REQUIRE statement are not required
-      to be deferred arguments.
+NOTE 1
 
-Note: Within a nested template, host associated entities are not
-      deferred arguments, and thus appearing as instantiation
-      arguments in a REQUIRE statement does not give them
-      specifications.
+    Instantiation arguments in a REQUIRE statement are not required
+    to be deferred arguments.
+
+NOTE 2
+
+    Within a nested template, host associated entities are not deferred
+    arguments, and thus appearing as instantiation arguments in a
+    REQUIRE statement does not give them specifications.
 
 ===END===
