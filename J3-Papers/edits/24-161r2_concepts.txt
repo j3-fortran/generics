@@ -24,9 +24,8 @@ Section 1:
 A template is a scoping unit which is parameterized by deferred
 arguments and can contain declarations, specifications, and
 definitions.  Instantiation of a template occurs via association of
-instantiation arguments with deferred arguments and yields concrete
-(i.e., non-parameterized) instances of entities defined with the
-template.
+instantiation arguments with deferred arguments and defines
+non-parameterized instances of entities defined within the template.
 
 15.2 Deferred arguments
 
@@ -80,7 +79,7 @@ standalone template procedure.
 R1504 <deferred-type-declaration-stmt> <<is>>
          TYPE, <deferred-type-attr-list> :: <deferred-type-name-list>
 
-C1504 (R1504) Each <deferred-type-name> shall appear in
+C1504 (R1504) Each <deferred-type-name> shall appear in the
               <deferred-arg-list> of the TEMPLATE, REQUIREMENT or
               standalone template procedure in which it appears.
 
@@ -93,8 +92,16 @@ C1505 (R1505) DEFERRED shall appear in each <deferred-type-attr-list>.
 C1506 (R1505) The same <deferred-type-attr> shall not appear more than
               once in a given <deferred-type-attr-list>.
 
-C1507 (R1505) A <deferred-type> entity shall not appear as
-              <parent-type-name> in an EXTENDS attribute.
+C1507 The name of a deferred type shall not appear as a
+      <parent-type-name> in a <type-attr-spec>.
+
+NOTE 1
+
+    A deferred type is cannot be extended. The name of the EXTENSIBLE
+    keyword primarily refers to instantiation arg associated with the
+    deferred arg, which must be extensible.
+
+[UTI: Rename EXTENSIBLE? Perhaps DERIVED?]
 
 A deferred type with the EXTENSIBLE attribute is an extensible derived
 type. A deferred type with the ABSTRACT attribute is an abstract derived
@@ -102,15 +109,15 @@ type. A deferred type with the ABSTRACT attribute implicitly has the
 EXTENSIBLE attribute, which can be confirmed with an explicit inclusion
 of the EXTENSIBLE keyword in the <deferred-type-attr-list>.
 
-[UTI: NOTE 1 is bad.]
+[UTI: NOTE 2 is bad.]
 
-NOTE 1
+NOTE 2
 
     A deferred type is not a <type-name>.  Consequently it cannot
     appear as a <derived-type-spec>, and so a deferred type
     may not be used in a <structure-constructor>.
 
-NOTE 2
+NOTE 3
 
     Examples of deferred type declarations are:
 
@@ -118,7 +125,7 @@ NOTE 2
         TYPE, DEFERRED, EXTENSIBLE :: T2
         TYPE, DEFERRED, ABSTRACT :: T3
 
-NOTE 3
+NOTE 4
 
     The distinction between deferred types which are extensible or
     not, and deferred types which are abstract or not, helps to ensure
@@ -128,7 +135,7 @@ NOTE 3
     deferred type must not be permitted in a TYPE declaration if it
     might be instantiated with an abstract derived type.
 
-    Using the deferred type declarations from NOTE 2, the following
+    Using the deferred type declarations from NOTE 3, the following
     examples of type declaration statements are valid or invalid as
     marked:
 
@@ -165,7 +172,7 @@ C1508 (R1507) A <deferred-const-attr-spec-list> shall include both
 C1509 (R1507) An entity declared in <deferred-const-declaration-stmt>
               shall be INTEGER, LOGICAL, or assumed-length CHARACTER.
 
-C1510 (R1508) Each <deferred-const-name> shall appear in
+C1510 (R1508) Each <deferred-const-name> shall appear in the
               <deferred-arg-list> of the TEMPLATE, REQUIREMENT or
               standalone template procedure in which it appears.
 
@@ -208,19 +215,20 @@ NOTE 2
 
 15.2.1.4 Deferred procedures
 
-A deferred procedure is a deferred argument that can appear in
-procedure references within a REQUIREMENT construct, TEMPLATE
-construct, or standalone template procedure.  A deferred procedure's
-interface shall be established in that construct. The interface of a
-deferred procedure is established by its appearance in a
-<deferred-proc-declaration-stmt> or as the <subroutine-name> or
-<function-name> of an <interface-body> that appears in a deferred
-interface block.
+A deferred procedure is a deferred argument that can appear as the
+procedure designator of a procedure reference
+[UTI: And where else?]
+within a REQUIREMENT construct, TEMPLATE construct, or standalone
+template procedure.  A deferred procedure's interface shall be
+established in that construct. The interface of a deferred procedure
+is established by its appearance in a <deferred-proc-declaration-stmt>
+or as the <subroutine-name> or <function-name> of an <interface-body>
+that appears in a deferred interface block.
 
 R1509 <deferred-proc-declaration-stmt> <<is>>
      PROCEDURE(<interface>), DEFERRED :: <deferred-proc-name-list>
 
-C1514 (R1509) Each <deferred-proc-name> shall appear in the
+C1514 (R1509) Each <deferred-proc-name> shall appear in the the
               <deferred-arg-list> of the TEMPLATE, REQUIREMENT or
               standalone template procedure in which it appears.
 
