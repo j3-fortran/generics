@@ -10,8 +10,10 @@ UTI: Section 4 does not seem to state where it goes in the standard
 1. Introduction
 ===============
 
-This paper describes various edits to the standard that are necessary
-to incorporate the syntax and semantics for templates.
+This is the 6th of 6 papers that provide edits for the approved syntax
+for templates. This paper describes various edits occurring outside the
+new new clause introduced in papers 1-5 that are necessary to incorporate
+the syntax and semantics for templates.
 
 The contents of this paper are:
 

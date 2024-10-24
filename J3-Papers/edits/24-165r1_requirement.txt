@@ -4,12 +4,11 @@ Subject: Edits for TEMPLATES: REQUIREMENT and REQUIRE
 Date: 2024-October-22
 References: 24-161, 24-162, 24-163, 24-164, 24-125r5, 24-126r4, 24-127r4
 
-
 Introduction
-------------
+============
 
-This is the 5th of 5 papers that provide edits for the approved
-syntax for templates.
+This is the 5th of 6 papers that provide edits for the approved syntax
+for templates.
 
 Note: Subgroup has made the following small change compared to the
       syntax paper to be more consistent with other Fortran keywords
@@ -18,8 +17,10 @@ Note: Subgroup has made the following small change compared to the
       REQUIRES --> REQUIRE
 
 Section 1
----------
+=========
+
 * Append the following at the end of clause 15 from paper 24-164.
+
 
 15.7 REQUIREMENT construct
 

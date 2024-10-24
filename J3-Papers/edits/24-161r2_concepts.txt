@@ -5,13 +5,14 @@ Date: 2024-October-22
 References: 24-125r5, 24-126r4, 24-127r4
 
 Introduction:
--------------
+=============
 
-This is the first of 5 papers that provide edits for the approved
-syntax for templates.
+This is the 1st of 6 papers that provide edits for the approved syntax
+for templates. Papers 1-5 introduce a new clause titled "Templates" to
+the standard. Paper 6 includes all other edits outside the new clause.
 
 Section 1:
-----------
+==========
 
 * Insert the following text as a new clause after clause 14 Program units.
 

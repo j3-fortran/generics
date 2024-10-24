@@ -5,15 +5,16 @@ Date: 2024-October-22
 References: 24-161, 24-125r5, 24-126r4, 24-127r4
 
 Introduction:
--------------
+=============
 
-This is the 2nd of 5 papers that provide edits for the approved
-syntax for templates.
+This is the 2nd of 5 papers that provide edits for the approved syntax
+for templates.
 
 Section 1:
-----------
+==========
 
 * Append the following to the new clause introduced in paper 24-161.
+
 
 15.2.2 Consistency of deferred argument specifications
 

@@ -4,12 +4,11 @@ Subject: Edits for TEMPLATES: Instantiation
 Date: 2024-October-22
 References: 24-161, 24-162, 24-163, 24-125r5, 24-126r4, 24-127r4
 
-
 Introduction:
--------------
+=============
 
-This is the 4th of 5 papers that provide edits for the approved
-syntax for templates.
+This is the 4th of 6 papers that provide edits for the approved syntax
+for templates.
 
 Straw vote: The INSTANTIATE and REQUIRE statements do not need "[::]"
             at this time, but we note that various other bits of the
@@ -26,8 +25,10 @@ Straw vote: The INSTANTIATE and REQUIRE statements do not need "[::]"
 
 
 Section 1:
-----------
+==========
+
 * Append the following at the end of clause 15 from paper 24-163.
+
 
 15.6 Instantiation
 
