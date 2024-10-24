@@ -98,8 +98,8 @@ C1507 The name of a deferred type shall not appear as a
 NOTE 1
 
     A deferred type cannot be extended. The use of the term EXTENSIBLE
-    refers to the instantiation arg associated with the deferred arg,
-    which must be extensible.
+    refers to the instantiation argument associated with the deferred
+    argument, which must be extensible.
 
 [UTI: Rename EXTENSIBLE? Perhaps DERIVED?]
 
