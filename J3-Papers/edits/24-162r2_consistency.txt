@@ -42,7 +42,7 @@ NOTE 1
 
 15.2.2.2 Specification of deferred types
 
-C2016 If any ultimate specification of a deferred argument is a
+C1516 If any ultimate specification of a deferred argument is a
       deferred type, then all ultimate specifications of that
       deferred argument shall be deferred type.
 
@@ -155,20 +155,20 @@ NOTE 2
 
 15.2.2.3 Specification of deferred constants
 
-C2017 If any ultimate specification of a deferred argument is a
+C1517 If any ultimate specification of a deferred argument is a
       deferred constant, then all ultimate specifications of
       that deferred argument shall be deferred constant.
 
-C2018 All ultimate specifications of a deferred constant shall
+C1518 All ultimate specifications of a deferred constant shall
       specify the same type and kind-type parameters.
 
-C2019 If any ultimate specification of a deferred constant is of
+C1519 If any ultimate specification of a deferred constant is of
       a non-implied rank R, then an explicit specification of
       that deferred constant shall have rank R, and all other
       ultimate specifications of that deferred constant shall
       either have implied rank or have rank R.
 
-C2020 If any ultimate specification of a deferred constant has
+C1520 If any ultimate specification of a deferred constant has
       explicit shape S, then an explicit specification of that
       deferred constant shall have shape S, and all other
       ultimate specifications of that deferred constant shall
@@ -182,11 +182,11 @@ implied rank.
 
 15.2.2.4 Specification of deferred procedures
 
-C2021 If any ultimate specification of a deferred argument is a
+C1521 If any ultimate specification of a deferred argument is a
       deferred procedure, then all ultimate specifications of
       that deferred argument shall be deferred procedure.
 
-C2022 A deferred procedure shall not be referenced with keyword
+C1522 A deferred procedure shall not be referenced with keyword
       arguments unless it has an explicit specification.
 
 NOTE 1
@@ -195,7 +195,7 @@ NOTE 1
     dependent for deferred procedures without an explicit specification.
     The constraint above ensures such names cannot be used.
 
-C2023 Except for PURE, SIMPLE, and ELEMENTAL attributes, the
+C1523 Except for PURE, SIMPLE, and ELEMENTAL attributes, the
       characteristics of all ultimate specifications of a
       deferred procedure shall be consistent.
 
@@ -204,15 +204,15 @@ NOTE 2
     The characteristics of a procedure do not include the names
     of the dummy arguments, so they need not be the same.
 
-C2024 If any ultimate specification of a deferred procedure is
+C1524 If any ultimate specification of a deferred procedure is
       SIMPLE, then an explicit specification of that deferred
       procedure shall be SIMPLE.
 
-C2025 If any ultimate specification of a deferred procedure is
+C1525 If any ultimate specification of a deferred procedure is
       PURE, then an explicit specification of that deferred
       procedure shall be PURE or SIMPLE.
 
-C2026 If any ultimate specification of a deferred procedure is
+C1526 If any ultimate specification of a deferred procedure is
       ELEMENTAL, then an explicit specification of that deferred
       procedure shall be ELEMENTAL.
 

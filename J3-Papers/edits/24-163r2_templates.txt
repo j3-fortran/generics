@@ -23,27 +23,27 @@ Section 1:
 A TEMPLATE construct defines a template that may define multiple
 entities which may be accessed through instantiation.
 
-R2010 <template> <<is>> <template-stmt>
+R1510 <template> <<is>> <template-stmt>
                         [ <template-specification-part> ]
                         [ <template-subprogram-part> ]
                         <end-template-stmt>
 
-C2027a (R2010) A <template> shall only appear in the <specification-part>
+C1527a (R1510) A <template> shall only appear in the <specification-part>
                of a main program or module.
 
-R2011 <template-stmt> <<is>>
+R1511 <template-stmt> <<is>>
           TEMPLATE <template-name> ([<deferred-arg-list>])
 
-R2012 <end-template-stmt> <<is>>  END [TEMPLATE [<template-name>]]
+R1512 <end-template-stmt> <<is>>  END [TEMPLATE [<template-name>]]
 
 
-C2027b (R2012) If a <template-name> appears in the <end-template-stmt>,
+C1527b (R1512) If a <template-name> appears in the <end-template-stmt>,
                it shall be identical to the <template-name>
                specified in the <template-stmt>.
 
 15.3.2 Template specification part
 
-R2013 <template-specification-part> <<is>>
+R1513 <template-specification-part> <<is>>
           [ <use-stmt> ] ...
           [ <import-stmt> ] ...
           [ <template-declaration-construct> ] ...
@@ -52,13 +52,13 @@ The implicit mapping within <template> is as if
        IMPLICIT NONE(TYPE,EXTERNAL)
 is specified.
 
-R2014 <template-declaration-construct>
+R1514 <template-declaration-construct>
           <<is>> <template-specification-construct>
           <<or>> <deferred-arg-decl-stmt>
           <<or>> <requirement>
           <<or>> <template>
 
-R2015 <template-specification-construct>
+R1515 <template-specification-construct>
           <<is>> <access-stmt>
           <<or>> <derived-type-def>
           <<or>> <dimension-stmt>
@@ -79,7 +79,7 @@ NOTE 1
     VALUE, or statement function statement is not permitted in a
     template specification section.
 
-C2028 (R2015) An entity declared by <type-declaration-stmt> shall have
+C1528 (R1515) An entity declared by <type-declaration-stmt> shall have
               the PARAMETER attribute.
 
 NOTE 2
@@ -89,10 +89,10 @@ NOTE 2
 
 15.3.3 Template subprogram part
 
-R2016 <template-subprogram-part> <<is>> <contains-stmt>
+R1516 <template-subprogram-part> <<is>> <contains-stmt>
                                         [ <template-subprogram> ] ...
 
-R2017 <template-subprogram>
+R1517 <template-subprogram>
           <<is>> <function-subprogram>
           <<or>> <subroutine-subprogram>
           <<or>> <standalone-template-function-subprogram>
@@ -104,67 +104,67 @@ A standalone template procedure is a template that defines a single
 procedure which is accessible via instantiation.
 
 
-R2018 <standalone-template-function-subprogram> <<is>>
+R1518 <standalone-template-function-subprogram> <<is>>
           <standalone-template-function-stmt>
           <standalone-template-subprogram-specification-part>
           [<execution-part>]
           [<internal-subprogram-part>]
           <end-function-stmt>
 
-C2029 (R2018) If a <function-name> appears in the <end-function-stmt>,
+C1529 (R1518) If a <function-name> appears in the <end-function-stmt>,
               it shall be identical to the <template-name>
               specified in the <standalone-template-function-stmt>.
 
-C2030 (R2018) An internal <standalone-template-function-subprogram>
+C1530 (R1518) An internal <standalone-template-function-subprogram>
               shall not contain an <internal-subprogram-part>.
 
-R2019 <standalone-template-subroutine-subprogram> <<is>>
+R1519 <standalone-template-subroutine-subprogram> <<is>>
           <standalone-template-subroutine-stmt>
           <standalone-template-subprogram-specification-part>
           [<execution-part>]
           [<internal-subprogram-part>]
           <end-subroutine-stmt>
 
-C2031 (R2019) If a <subroutine-name> appears in the <end-subroutine-stmt>,
+C1531 (R1519) If a <subroutine-name> appears in the <end-subroutine-stmt>,
               it shall be identical to the <template-name>
               specified in the <standalone-template-subroutine-stmt>.
 
-C2032 (R2019) An internal <standalone-template-subroutine-subprogram>
+C1532 (R1519) An internal <standalone-template-subroutine-subprogram>
               shall not contain an <internal-subprogram-part>.
 
-R2020 <standalone-template-subprogram-specification-part> <<is>>
+R1520 <standalone-template-subprogram-specification-part> <<is>>
           [ <use-stmt> ] ...
           [ <import-stmt> ] ...
           [ <standalone-template-subprogram-declaration-construct> ] ...
 
-R2021 <standalone-template-subprogram-declaration-construct>
+R1521 <standalone-template-subprogram-declaration-construct>
           <<is>> <deferred-arg-decl-stmt>
           <<or>> <format-stmt>
           <<or>> <specification-construct>
 
-R2022 <standalone-template-function-stmt> <<is>>
+R1522 <standalone-template-function-stmt> <<is>>
           [ <prefix> ] FUNCTION <template-name>
           ( <deferred-arg-list> ) ([<dummy-arg-list>])
           [<suffix>]
 
-R2023 <standalone-template-subroutine-stmt> <<is>>
+R1523 <standalone-template-subroutine-stmt> <<is>>
          [ <prefix> ] SUBROUTINE <template-name>
          ( <deferred-arg-list> ) ([<dummy-arg-list>])
          [<proc-language-binding-spec>]
 
 15.5 Restrictions on template definitions
 
-C2033 A variable or procedure pointer declared in either a
+C1533 A variable or procedure pointer declared in either a
       <template-subprogram-part> or a
       <standalone-template-subprogram-declaration-construct> shall
       not have the SAVE attribute.
 
-C2034 EQUIVALENCE and COMMON shall not appear in a
+C1534 EQUIVALENCE and COMMON shall not appear in a
       <template-subprogram-part> or a
       <standalone-template-subprogram-declaration-construct>.
 
 
-C2035 <template>, <standalone-template-function-subprogram> and
+C1535 <template>, <standalone-template-function-subprogram> and
       <standalone-template-subroutine-subprogram> shall only
       reference intrinsic procedures, procedures with explicit
       interfaces, operators, or intrinsic assignment.
