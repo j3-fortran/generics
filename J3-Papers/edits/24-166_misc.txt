@@ -1,4 +1,4 @@
-To: J3                                                     J3/24-166r1
+To: J3                                                     J3/24-166rX
 From: generics
 Subject: Miscellaneous edits to incorporate templates
 Date: 2024-October-22
@@ -10,8 +10,10 @@ UTI: Section 4 does not seem to state where it goes in the standard
 1. Introduction
 ===============
 
-This paper describes various edits to the standard that are necessary
-to incorporate the syntax and semantics for templates.
+This is the 6th of 6 papers that provide edits for the approved syntax
+for templates. This paper describes various edits occurring outside the
+new new clause introduced in papers 1-5 that are necessary to incorporate
+the syntax and semantics for templates.
 
 The contents of this paper are:
 
@@ -134,11 +136,9 @@ The contents of this paper are:
 
 * 8.5.8.2 Explicit-shape array
 
-Note:
-
-It may be better to modify <explicit-shape-bounds-spec> to
-disambiguate <explicit-bounds-expr> for lower and upper bounds.  This
-would make constraint for deferred constants clearer.
+[UTI: It may be better to modify <explicit-shape-bounds-spec> to
+      disambiguate <explicit-bounds-expr> for lower and upper bounds.
+      This would make constraint for deferred constants clearer.]
 
 * 8.5.8.6 Implied-shape array
 
@@ -156,27 +156,30 @@ would make constraint for deferred constants clearer.
     The extent of each dimension of an implied-shape array is the same
     as the extent of the corresponding dimension of the constant-expr.
 
-  Insert new section after 8.5.8.7
+  Insert new section after 8.5.8.7:
 
     8.5.8.7b Implied-rank entity
 
     An implied-rank entity is an entity whose rank becomes defined only
     when the template in which it appears is instantiated.
 
-    Note: Also make sure it works with SELECT GENERIC RANK and spell out
-          what can be done with implied-rank entities.
+[UTI: Also make sure it works with SELECT GENERIC RANK and spell out
+      what can be done with implied-rank entities.]
 
     R287b <implied-rank-spec> <<is>> ..
 
-    C841b (R287b).  An implied-rank entity shall be a <deferred-const>.
+    C841b (R287b) An implied-rank entity shall be a <deferred-const>.
 
-    Note: Examples of implied-rank entities
+    NOTE
 
-    TEMPLATE EXAMPLE(C, S, N)
-       INTEGER, DEFERRED, PARAMETER :: C(..) ! implied-shape & implied-rank
-       INTEGER, DEFERRED, PARAMETER :: S(*), N
-       INTEGER, PARAMETER :: B(S) = 1 ! explicit-shape & implied-rank
-    END TEMPLATE
+        The following are examples of implied-rank entities
+
+        TEMPLATE EXAMPLE(C, S, N)
+           INTEGER, DEFERRED, PARAMETER :: C(..)
+               ! implied-shape & implied-rank
+           INTEGER, DEFERRED, PARAMETER :: S(*), N
+           INTEGER, PARAMETER :: B(S) = 1 ! explicit-shape & implied-rank
+        END TEMPLATE
 
 * 8.5.17  RANK clause
 
@@ -236,7 +239,7 @@ Modify C873 to read as
       <<or>> CLASS DEFAULT [ <select-construct-name> ]
 
   Add constraint:
-  C116b (R1156). <deferred-type> shall specify an extensible type.
+    C116b (R1156) <deferred-type> shall specify an extensible type.
 
 * 15.5.1 Syntax of a procedure reference
 
@@ -410,6 +413,6 @@ UTI: spelling of <inline-instantiate> vs <inline-instantiation>
 
   [555:15+] Insert new bullet:
     * the names of the dummy arguments of a deferred procedure without
-      an explicit specification (20.2.2.4);
+      an explicit specification (15.2.2.4);
 
 ===END===
