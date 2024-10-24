@@ -15,9 +15,9 @@ Section 1:
 
 * Append the following to the new clause introduced in paper 24-161.
 
-20.2.2 Consistency of deferred argument specifications
+15.2.2 Consistency of deferred argument specifications
 
-20.2.2.1 General
+15.2.2.1 General
 
 Within a construct with a <deferred-arg>, an explicit specification of
 that <deferred-arg> is either <deferred-arg-explicit-stmt> or
@@ -37,7 +37,7 @@ Note: A deferred argument is always explicitly declared within the
       requirement.  A deferred argument has at least one ultimate
       specification.
 
-20.2.2.2 Specification of deferred types
+15.2.2.2 Specification of deferred types
 
 C2016. If any ultimate specification of a deferred argument is a
        deferred type, then all ultimate specifications of that
@@ -146,7 +146,7 @@ NOTE: Examples that illustrate valid and invalid uses of ABSTRACT and
             REQUIRE R_ABSTRACT(T) ! valid, T is just extensible
          END TEMPLATE
 
-20.2.2.3 Specification of deferred constants
+15.2.2.3 Specification of deferred constants
 
 C2017. If any ultimate specification of a deferred argument is a
        deferred constant, then all ultimate specifications of
@@ -173,7 +173,7 @@ ultimate specification of that deferred constant has implied shape,
 then it has implied shape with the same rank.  Otherwise it has
 implied rank.
 
-20.2.2.4 Specification of deferred procedures
+15.2.2.4 Specification of deferred procedures
 
 C2021. If any ultimate specification of a deferred argument is a
        deferred procedure, then all ultimate specifications of

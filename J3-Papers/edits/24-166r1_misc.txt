@@ -410,6 +410,6 @@ UTI: spelling of <inline-instantiate> vs <inline-instantiation>
 
   [555:15+] Insert new bullet:
     * the names of the dummy arguments of a deferred procedure without
-      an explicit specification (20.2.2.4);
+      an explicit specification (15.2.2.4);
 
 ===END===

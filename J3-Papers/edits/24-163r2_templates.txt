@@ -12,11 +12,11 @@ syntax for templates.
 
 Section 1:
 ----------
-* Append the following at the end of clause 20 from paper 24-162.
+* Append the following at the end of clause 15 from paper 24-162.
 
-20.3 The TEMPLATE construct
+15.3 The TEMPLATE construct
 
-20.3.1 Syntax for the TEMPLATE construct
+15.3.1 Syntax for the TEMPLATE construct
 
 A TEMPLATE construct defines a template that may define multiple
 entities which may be accessed through instantiation.
@@ -39,7 +39,7 @@ C2027b (R2012). If a <template-name> appears in the <end-template-stmt>,
                 it shall be identical to the <template-name>
                 specified in the <template-stmt>.
 
-20.3.2 Template specification part
+15.3.2 Template specification part
 
 R2013 <template-specification-part> <<is>>
           [ <use-stmt> ] ...
@@ -82,7 +82,7 @@ Note: This is to say, the template specification section cannot
       declare variables.
 
 
-20.3.3 Template subprogram part
+15.3.3 Template subprogram part
 
 R2016 <template-subprogram-part> <<is>> <contains-stmt>
                                         [ <template-subprogram> ] ...
@@ -93,7 +93,7 @@ R2017 <template-subprogram>
           <<or>> <standalone-template-function-subprogram>
           <<or>> <standalone-template-subroutine-subprogram>
 
-20.4 Standalone template procedures
+15.4 Standalone template procedures
 
 A standalone template procedure is a template that defines a single
 procedure which is accessible via instantiation.
@@ -147,7 +147,7 @@ R2023 <standalone-template-subroutine-stmt> <<is>>
          ( <deferred-arg-list> ) ([<dummy-arg-list>])
          [<proc-language-binding-spec>]
 
-20.5 Restrictions on template definitions
+15.5 Restrictions on template definitions
 
 C2033. A variable or procedure pointer declared in either a
        <template-subprogram-part> or a

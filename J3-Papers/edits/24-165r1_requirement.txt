@@ -19,9 +19,9 @@ Note: Subgroup has made the following small change compared to the
 
 Section 1
 ---------
-* Append the following at the end of clause 20 from paper 24-164.
+* Append the following at the end of clause 15 from paper 24-164.
 
-20.7 REQUIREMENT construct
+15.7 REQUIREMENT construct
 
 A REQUIREMENT is a named collection of deferred argument declarations
 intended to facilitate reuse of common patterns within templates and
@@ -78,7 +78,7 @@ redundant in this case.
    REQUIRE R1(T, T, F)
    REQUIRE R2(T, F)
 
-20.8 REQUIRE statement
+15.8 REQUIRE statement
 
 A REQUIRE statement provides specifications of deferred arguments by
 associating them with the deferred arguments of a REQUIREMENT. A

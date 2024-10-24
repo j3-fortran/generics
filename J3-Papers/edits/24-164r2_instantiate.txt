@@ -27,11 +27,11 @@ Straw vote: The INSTANTIATE and REQUIRE statements do not need "[::]"
 
 Section 1:
 ----------
-* Append the following at the end of clause 20 from paper 24-163.
+* Append the following at the end of clause 15 from paper 24-163.
 
-20.6 Instantiation
+15.6 Instantiation
 
-20.6.1 The INSTANTIATE statement
+15.6.1 The INSTANTIATE statement
 
 An INSTANTIATE statement is a specification statement that identifies
 an instance of a template by specifying instantiation arguments that
@@ -86,7 +86,7 @@ These identifiers are
 
 
 
-20.6.2 Inline instantiation of standalone template procedures
+15.6.2 Inline instantiation of standalone template procedures
 
 A standalone template procedure can be instantiated and referenced in
 an expression or the <procedure-designator> in a <call-stmt>.
@@ -109,7 +109,7 @@ produced from instantiating the standalone template procedure.
 
 
 
-20.6.3 Interpretation of template instantiation
+15.6.3 Interpretation of template instantiation
 
 Multiple instantiations of a given template with the same actual
 instantiation arguments identify the same instance of the referenced
@@ -186,9 +186,9 @@ Note: Example showing how procedure instantiation arguments influence
         INSTANTIATE TMPL(MY_U, B) ! Resolves to F3 ==> different
 
 
-20.6.4 Deferred argument association
+15.6.4 Deferred argument association
 
-20.6.4.1 Instantiation arguments
+15.6.4.1 Instantiation arguments
 
 Instantiation arguments are specified by an INSTANTIATE statement, a
 REQUIRE statement, or by inline instantiation.
@@ -216,7 +216,7 @@ Note: <generic-spec> includes operators, defined assignment and
       template without re-expressing as defined I/O again.
 
 
-20.6.4.2 Deferred type association
+15.6.4.2 Deferred type association
 
 C2043 (R2029). An <instantiation-arg> that is a <type-spec> shall
                correspond to a <deferred-arg> that is a <deferred-type>
