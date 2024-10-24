@@ -168,7 +168,7 @@ The contents of this paper are:
 
     R287b <implied-rank-spec> <<is>> ..
 
-    C841b (R287b).  An implied-rank entity shall be a <deferred-const>.
+    C841b (R287b) An implied-rank entity shall be a <deferred-const>.
 
     NOTE
 
@@ -239,7 +239,7 @@ Modify C873 to read as
       <<or>> CLASS DEFAULT [ <select-construct-name> ]
 
   Add constraint:
-  C116b (R1156). <deferred-type> shall specify an extensible type.
+    C116b (R1156) <deferred-type> shall specify an extensible type.
 
 * 15.5.1 Syntax of a procedure reference
 

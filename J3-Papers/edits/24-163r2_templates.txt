@@ -28,8 +28,8 @@ R2010 <template> <<is>> <template-stmt>
                         [ <template-subprogram-part> ]
                         <end-template-stmt>
 
-C2027a (R2010). A <template> shall only appear in the <specification-part>
-                of a main program or module.
+C2027a (R2010) A <template> shall only appear in the <specification-part>
+               of a main program or module.
 
 R2011 <template-stmt> <<is>>
           TEMPLATE <template-name> ([<deferred-arg-list>])
@@ -37,9 +37,9 @@ R2011 <template-stmt> <<is>>
 R2012 <end-template-stmt> <<is>>  END [TEMPLATE [<template-name>]]
 
 
-C2027b (R2012). If a <template-name> appears in the <end-template-stmt>,
-                it shall be identical to the <template-name>
-                specified in the <template-stmt>.
+C2027b (R2012) If a <template-name> appears in the <end-template-stmt>,
+               it shall be identical to the <template-name>
+               specified in the <template-stmt>.
 
 15.3.2 Template specification part
 
@@ -79,8 +79,8 @@ NOTE 1
     VALUE, or statement function statement is not permitted in a
     template specification section.
 
-C2028 (R2015). An entity declared by <type-declaration-stmt> shall have
-               the PARAMETER attribute.
+C2028 (R2015) An entity declared by <type-declaration-stmt> shall have
+              the PARAMETER attribute.
 
 NOTE 2
 
@@ -111,12 +111,12 @@ R2018 <standalone-template-function-subprogram> <<is>>
           [<internal-subprogram-part>]
           <end-function-stmt>
 
-C2029 (R2018). If a <function-name> appears in the <end-function-stmt>,
-               it shall be identical to the <template-name>
-               specified in the <standalone-template-function-stmt>.
+C2029 (R2018) If a <function-name> appears in the <end-function-stmt>,
+              it shall be identical to the <template-name>
+              specified in the <standalone-template-function-stmt>.
 
-C2030 (R2018). An internal <standalone-template-function-subprogram>
-               shall not contain an <internal-subprogram-part>.
+C2030 (R2018) An internal <standalone-template-function-subprogram>
+              shall not contain an <internal-subprogram-part>.
 
 R2019 <standalone-template-subroutine-subprogram> <<is>>
           <standalone-template-subroutine-stmt>
@@ -125,12 +125,12 @@ R2019 <standalone-template-subroutine-subprogram> <<is>>
           [<internal-subprogram-part>]
           <end-subroutine-stmt>
 
-C2031 (R2019). If a <subroutine-name> appears in the <end-subroutine-stmt>,
-               it shall be identical to the <template-name>
-               specified in the <standalone-template-subroutine-stmt>.
+C2031 (R2019) If a <subroutine-name> appears in the <end-subroutine-stmt>,
+              it shall be identical to the <template-name>
+              specified in the <standalone-template-subroutine-stmt>.
 
-C2032 (R2019). An internal <standalone-template-subroutine-subprogram>
-               shall not contain an <internal-subprogram-part>.
+C2032 (R2019) An internal <standalone-template-subroutine-subprogram>
+              shall not contain an <internal-subprogram-part>.
 
 R2020 <standalone-template-subprogram-specification-part> <<is>>
           [ <use-stmt> ] ...
@@ -154,20 +154,20 @@ R2023 <standalone-template-subroutine-stmt> <<is>>
 
 15.5 Restrictions on template definitions
 
-C2033. A variable or procedure pointer declared in either a
-       <template-subprogram-part> or a
-       <standalone-template-subprogram-declaration-construct> shall
-       not have the SAVE attribute.
+C2033 A variable or procedure pointer declared in either a
+      <template-subprogram-part> or a
+      <standalone-template-subprogram-declaration-construct> shall
+      not have the SAVE attribute.
 
-C2034. EQUIVALENCE and COMMON shall not appear in a
-       <template-subprogram-part> or a
-       <standalone-template-subprogram-declaration-construct>.
+C2034 EQUIVALENCE and COMMON shall not appear in a
+      <template-subprogram-part> or a
+      <standalone-template-subprogram-declaration-construct>.
 
 
-C2035. <template>, <standalone-template-function-subprogram> and
-       <standalone-template-subroutine-subprogram> shall only
-       reference intrinsic procedures, procedures with explicit
-       interfaces, operators, or intrinsic assignment.
+C2035 <template>, <standalone-template-function-subprogram> and
+      <standalone-template-subroutine-subprogram> shall only
+      reference intrinsic procedures, procedures with explicit
+      interfaces, operators, or intrinsic assignment.
 
 NOTE
 
