@@ -341,4 +341,13 @@ C1556 An <instantiation-arg> that is a <generic-spec> shall have
 The deferred procedure is associated with the specific procedure that is
 consistent with the characteristics.
 
+{UTI: This sentence is too vague. Perhaps this is better?
+  If an instantation argument is a generic identifier, the corresponding
+  deferred procedure is associated with the specific procedure of that
+  generic identifier that is consistent with the characteristics of the
+  deferred procedure.
+We may also need to explicitly say what happens if the instantiation argument
+is not a generic. And for that matter, say how association happens for
+deferred constants and deferred types.}
+
 ===END===

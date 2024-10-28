@@ -132,6 +132,14 @@ C1530 (R1519) If a <subroutine-name> appears in the <end-subroutine-stmt>,
 C1531 An internal templated procedure shall not contain an
       <internal-subprogram-part>.
 
+{UTI: I seem to recall that we wanted to prohibit nested templated procedures.
+Do we? I can't find any constraint to prohibit that. Should we add
+
+C1532 The <internal-subprogram-part> of a templated procedure shall not
+      conatain a <templated-function-subprogram> or
+      <templated-subroutine-subprogram>.
+}
+
 R1520 <templated-subprogram-specification-part> <<is>>
           [ <use-stmt> ] ...
           [ <import-stmt> ] ...
@@ -163,6 +171,24 @@ C1534 EQUIVALENCE and COMMON shall not appear in a
       <template-subprogram-part> or a
       <templated-subprogram-declaration-construct>.
 
+{UTI: Should we just say "EQUIVALENCE and COMMON shall not appear within
+      a template or templated procedure? In particular, C1534 does not
+      cover the case of
+         MODULE M
+         CONTAINS
+             SUBROUTINE tmplsub(T)(x)
+             CONTAINS
+                 SUBROUTINE internal_nontemplate_sub()
+                     COMMON ...
+                     EQUIVALENCE ...
+                 END SUBROUTINE
+             END SUBROUTINE
+         END CONTAINS
+      because internal_nontemplate_sub does not have a
+      <templated-subprogram-declaration-construct>
+
+     Same goes for C1533 and the SAVE attribute.
+}
 
 C1535 <template>, <templated-function-subprogram> and
       <templated-subroutine-subprogram> shall only

@@ -62,12 +62,12 @@ R1542 <requirement-specification-construct>
 
 C1559 (R1542) <interface-stmt> shall include ABSTRACT or DEFERRED.
 
-{UTI: NOTE 1 probably should be normative text.}
-
 NOTE 1
 
     A <requirement> is a scoping unit that allows use, host, and
     deferred argument association.
+
+{UTI: Change NOTE 1 to normative text?}
 
 NOTE 2
 
