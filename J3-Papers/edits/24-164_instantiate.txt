@@ -236,10 +236,10 @@ C1546 (R1529) An <instantiation-arg>, T, that corresponds to a deferred
               type is T is permitted in a variable definition context.
 
 NOTE 1
-      This constraint ensures that intrinsic assignment of variables
-      of deferred type is permitted within a template.  However, this
-      also disallows some types, e.g., the EVENT_TYPE, from being used
-      as an instantiation argument.
+      Constraint C1545 ensures that intrinsic assignment is available for
+      variables of deferred type.  However, the constraint disallows some
+      types, e.g., the EVENT_TYPE, from being used as an instantiation
+      argument.
 
 C1547 (R1529) An <instantiation-arg> that corresponds to a deferred type
               that has the EXTENSIBLE attribute shall be an extensible
@@ -250,7 +250,7 @@ C1548 (R1529) An <instantiation-arg> that corresponds to a deferred
               component.
 
 NOTE 2
-      The above constraint avoids the possibility of assignment
+      Constraint C1548 avoids the possibility of assignment
       being invalid where the variable and expr do not agree on
       the allocation status of a coarray component.
 
