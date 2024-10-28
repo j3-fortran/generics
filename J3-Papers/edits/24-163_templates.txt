@@ -118,9 +118,6 @@ C1529 (R1518) If a <function-name> appears in the <end-function-stmt>,
               it shall be identical to the <template-name>
               specified in the <templated-function-stmt>.
 
-C1530 (R1518) An internal <templated-function-subprogram>
-              shall not contain an <internal-subprogram-part>.
-
 R1519 <templated-subroutine-subprogram> <<is>>
           <templated-subroutine-stmt>
           <templated-subprogram-specification-part>
@@ -128,12 +125,12 @@ R1519 <templated-subroutine-subprogram> <<is>>
           [<internal-subprogram-part>]
           <end-subroutine-stmt>
 
-C1531 (R1519) If a <subroutine-name> appears in the <end-subroutine-stmt>,
+C1530 (R1519) If a <subroutine-name> appears in the <end-subroutine-stmt>,
               it shall be identical to the <template-name>
               specified in the <templated-subroutine-stmt>.
 
-C1532 (R1519) An internal <templated-subroutine-subprogram>
-              shall not contain an <internal-subprogram-part>.
+C1531 An internal templated procedure shall not contain an
+      <internal-subprogram-part>.
 
 R1520 <templated-subprogram-specification-part> <<is>>
           [ <use-stmt> ] ...
