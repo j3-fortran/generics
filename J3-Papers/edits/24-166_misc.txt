@@ -267,8 +267,8 @@ UTI: spelling of <inline-instantiate> vs <inline-instantiation>
     R512 <internal-subprogram>
          <<is>> <function-subprogram>
          <<or>> <subroutine-subprogram>
-         <<or>> <standalone-template-subroutine-subprogram>
-         <<or>> <standalone-template-function-subprogram>
+         <<or>> <templated-subroutine-subprogram>
+         <<or>> <templated-function-subprogram>
 
 
 * 8.7 IMPLICIT Statement
@@ -317,8 +317,8 @@ UTI: spelling of <inline-instantiate> vs <inline-instantiation>
               <<is>> <function-subprogram>
               <<or>> <subroutine-subprogram>
               <<or>> <separate-module-subprogram>
-              <<or>> <standalone-template-function-subprogram>
-              <<or>> <standalone-template-subroutine-subprogram>
+              <<or>> <templated-function-subprogram>
+              <<or>> <templated-subroutine-subprogram>
 
 * 15.4.3.2 Interface block
 

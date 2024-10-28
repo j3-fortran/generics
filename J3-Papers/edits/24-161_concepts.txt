@@ -38,10 +38,9 @@ non-parameterized instances of entities defined within the template.
 
 A deferred argument is an entity whose characteristics are determined
 by its effective instantiation argument.  A deferred argument can be a
-constant, procedure, or type and can appear in a REQUIREMENT
-construct, TEMPLATE construct, or standalone template procedure.
-Association with instantiation arguments occurs in the REQUIRE and
-INSTANTIATE statements.
+constant, procedure, or type and can appear in a REQUIREMENT construct,
+TEMPLATE construct, or templated procedure. Association with
+instantiation arguments occurs in the REQUIRE and INSTANTIATE statements.
 
 R1501  <deferred-arg> <<is>> <deferred-const-name>
                       <<or>> <deferred-proc>
@@ -74,14 +73,14 @@ NOTE
 
 A deferred type is a deferred argument that can appear in a type
 specifier within a REQUIREMENT construct, TEMPLATE construct, or
-standalone template procedure.
+templated procedure.
 
 R1504 <deferred-type-declaration-stmt> <<is>>
          DEFERRED TYPE[, <deferred-type-attr-list>] :: <deferred-type-name-list>
 
 C1504 (R1504) Each <deferred-type-name> shall appear in the
               <deferred-arg-list> of the TEMPLATE, REQUIREMENT or
-              standalone template procedure in which it appears.
+              templated procedure in which it appears.
 
 R1505 <deferred-type-attr> <<is>> ABSTRACT
                            <<or>> EXTENSIBLE
@@ -154,7 +153,7 @@ NOTE 4
 
 A deferred constant is a deferred argument that can appear in constant
 expressions within a REQUIREMENT construct, TEMPLATE construct, or
-standalone template procedure.
+templated procedure.
 
 R1506 <deferred-const-declaration-stmt> <<is>>
            DEFERRED <declaration-type-spec>,
@@ -176,7 +175,7 @@ C1509 (R1507) An entity declared in <deferred-const-declaration-stmt>
 
 C1510 (R1508) Each <deferred-const-name> shall appear in the
               <deferred-arg-list> of the TEMPLATE, REQUIREMENT or
-              standalone template procedure in which it appears.
+              templated procedure in which it appears.
 
 C1511 (R1506) If <array-spec> appears in
               <deferred-const-declaration-stmt>, it shall be
@@ -220,24 +219,24 @@ NOTE 2
 A deferred procedure is a deferred argument that can appear as the
 procedure designator of a procedure reference
 {UTI: And where else?}
-within a REQUIREMENT construct, TEMPLATE construct, or standalone
-template procedure.  A deferred procedure's interface shall be
-established in that construct. The interface of a deferred procedure
-is established by its appearance in a <deferred-proc-declaration-stmt>
-or as the <subroutine-name> or <function-name> of an <interface-body>
-that appears in a deferred interface block.
+within a REQUIREMENT construct, TEMPLATE construct, or templated
+procedure.  A deferred procedure's interface shall be established in that
+construct. The interface of a deferred procedure is established by its
+appearance in a <deferred-proc-declaration-stmt> or as the
+<subroutine-name> or <function-name> of an <interface-body> that appears
+in a deferred interface block.
 
 R1509 <deferred-proc-declaration-stmt> <<is>>
      DEFERRED PROCEDURE(<interface>) [ :: ] <deferred-proc-name-list>
 
 C1514 (R1509) Each <deferred-proc-name> shall appear in the
               <deferred-arg-list> of the TEMPLATE, REQUIREMENT or
-              standalone template procedure in which it appears.
+              templated procedure in which it appears.
 
 C1515 (R1509) Each <subroutine-name> or <function-name> of an
               <interface-body> that appears in a deferred interface
               block shall appear in the <deferred-arg-list> of the
-              TEMPLATE, REQUIREMENT or standalone template procedure in
+              TEMPLATE, REQUIREMENT or templated procedure in
               which it appears.
 
 NOTE 1
