@@ -175,9 +175,9 @@ The contents of this paper are:
         The following are examples of implied-rank entities
 
         TEMPLATE EXAMPLE(C, S, N)
-           INTEGER, DEFERRED, PARAMETER :: C(..)
+           DEFERRED INTEGER, PARAMETER :: C(..)
                ! implied-shape & implied-rank
-           INTEGER, DEFERRED, PARAMETER :: S(*), N
+           DEFERRED INTEGER, PARAMETER :: S(*), N
            INTEGER, PARAMETER :: B(S) = 1 ! explicit-shape & implied-rank
         END TEMPLATE
 
@@ -377,8 +377,8 @@ UTI: spelling of <inline-instantiate> vs <inline-instantiation>
         because their ranks depend on the value of the deferred argument N.
 
     TEMPLATE EXAMPLE(C, S, N)
-      INTEGER, DEFERRED, PARAMETER :: C(..) ! implied-shape & implied-rank
-      INTEGER, DEFERRED, PARAMETER :: S(*), N
+      DEFERRED INTEGER, PARAMETER :: C(..) ! implied-shape & implied-rank
+      DEFERRED INTEGER, PARAMETER :: S(*), N
       INTEGER, PARAMETER :: B(S) = 1 ! explicit-shape & implied-rank
     CONTAINS
       SUBROUTINE SUB(X)
