@@ -325,9 +325,10 @@ C1555 (R1529) An <instantiation-arg> that is a <procedure-name> shall
               instantiation argument may be associated with a deferred
               procedure that is not elemental.
 
-C1556 An <instantiation-arg> that is a <generic-spec> shall have
-      one specific procedure that has the same characteristics
-      as the corresponding deferred procedure the referenced
+C1556 An <instantiation-arg> that is a <generic-spec> shall be a
+      generic identifier with exactly one specific procedure that
+      has the same characteristics as the corresponding deferred
+      procedure of the referenced
       template or requirement, except that a pure instantiation
       argument may be associated with a deferred argument that
       is not pure, a simple instantiation argument may be
