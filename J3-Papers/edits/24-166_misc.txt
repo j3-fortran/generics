@@ -344,17 +344,17 @@ UTI: spelling of <inline-instantiate> vs <inline-instantiation>
 
   Change constraint C1573 to refer to rule R1532 instead of R1536.
 
-  Note: <end-function-stmt> is reused for standalone template
-        procedures.  Therefore the constraint must be attached to a
-        different rule to be applicable in both situations.
+  {<end-function-stmt> is reused for templated procedures. Therefore
+  the constraint must be attached to a different rule to be applicable
+  in both situations.}
 
 * 15.6.2.3 Subroutine subprogram
 
   Change constraint C1576 to refer to rule R1537 instead of R1540.
 
-  Note: <end-subroutine-stmt> is reused for standalone template
-        procedures.  Therefore the constraint must be attached to a
-        different rule to be applicable in both situations.
+  {<end-subroutine-stmt> is reused for templated procedures. Therefore
+  the constraint must be attached to a different rule to be applicable
+  in both situations.}
 
 4. Edits to TKR compatibility
 =============================

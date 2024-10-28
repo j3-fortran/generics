@@ -76,7 +76,8 @@ specifier within a REQUIREMENT construct, TEMPLATE construct, or
 templated procedure.
 
 R1504 <deferred-type-declaration-stmt> <<is>>
-         DEFERRED TYPE[, <deferred-type-attr-list>] :: <deferred-type-name-list>
+         DEFERRED TYPE[, <deferred-type-attr-list>] ::
+         <deferred-type-name-list>
 
 C1504 (R1504) Each <deferred-type-name> shall appear in the
               <deferred-arg-list> of the TEMPLATE, REQUIREMENT or
@@ -106,10 +107,11 @@ type. A deferred type with the ABSTRACT attribute is an abstract derived
 type. A deferred type with the ABSTRACT attribute implicitly has the
 EXTENSIBLE attribute.
 
-{UTI: NOTE 2 is bad. From Malcolm's notes, this could useful as part of fixing
-this note:
-Cxxxx The name of a deferred type shall not appear as a <derived-type-spec>
-      except in the <declaration-type-spec> of a <type-declaration-stmt>.
+{UTI: NOTE 2 is bad. From Malcolm's notes, this could useful as part of
+fixing this note:
+Cxxxx The name of a deferred type shall not appear as a
+      <derived-type-spec> except in the <declaration-type-spec> of a
+      <type-declaration-stmt>.
 }
 
 NOTE 2
