@@ -10,18 +10,6 @@ Introduction:
 This is the 4th of 6 papers that provide edits for the approved syntax
 for templates.
 
-Straw vote: The REQUIRE statement does not need "[::]" at this time, but
-            we note that various other bits of the BNF also have
-            unnecesary optional "[::]". E.g., various attribute
-            specification statements: DIMENSION, INTENT, SAVE, ...
-
-            Should "::" be removed from the BNF for the REQUIRE
-            statement?
-
-            YES - omit the optional "[::]" in the BNF
-            NO  - keep the optional "[::]" in the BNF
-            ABSTAIN
-
 UTI: Can we enable I/O generic spec as an instantiation argument?
 
      instantiate foo(..., write(formatted))
