@@ -189,7 +189,7 @@ REQUIRE statement, or by inline instantiation.
 R1528 <instantiation-arg-spec> <<is>>
           [ <keyword> = ] <instantiation-arg>
 
-C1542 (R1528) Each <keyword> shall be the name of a <deferred-arg> in
+C1542 (R1528) Each <keyword> shall be the name of a deferred argument in
               the referenced requirement or template.
 
 In the absence of an argument keyword, an instantiation argument
@@ -221,7 +221,7 @@ C1542b (R1529) The <generic-spec> shall not be
 15.6.4.2 Deferred type association
 
 C1543 (R1529) An <instantiation-arg> that is a <type-spec> shall
-              correspond to a <deferred-arg> that is a <deferred-type>
+              correspond to a deferred argument that is a deferred type
               in the referenced template or requirement.
 
 C1544 (R1529) An <instantiation-arg> that is a <type-spec> shall have
@@ -293,19 +293,19 @@ C1549 (R1529) <constant-expr> shall be type INTEGER, LOGICAL or
               CHARACTER.
 
 C1550 (R1529) An <instantiation-arg> that is a <constant-expr> shall
-              correspond to a <deferred-arg> that is a <deferred-const>
+              correspond to a deferred argument that is a deferred constant
               in the referenced template or requirement.
 
 C1551 (R1529) The type and kind of an <instantiation-arg> that is a
               <constant-expr> shall have the same type and kind as the
-              corresponding <deferred-const> in the referenced template
+              corresponding deferred constant in the referenced template
               or requirement.
 
-C1552 (R1529) If the shape of the corresponding <deferred-const> in the
+C1552 (R1529) If the shape of the corresponding deferred constant in the
               referenced template or requirement is not implied, then
               <constant-expr> shall have the same shape.
 
-C1553 (R1529) If the rank of the corresponding <deferred-const> in the
+C1553 (R1529) If the rank of the corresponding deferred constant in the
               referenced template or requirement is not implied, then
               <constant-expr> shall have the same rank.
 
@@ -313,7 +313,7 @@ C1553 (R1529) If the rank of the corresponding <deferred-const> in the
 15.6.4.4 Deferred procedure association
 
 C1554 (R1529) An <instantiation-arg> that is a <generic-spec> or
-              <procedure-name> shall correspond to a <deferred-arg> that
+              <procedure-name> shall correspond to a deferred argument that
               is a deferred procedure in the referenced template or
               requirement.
 
