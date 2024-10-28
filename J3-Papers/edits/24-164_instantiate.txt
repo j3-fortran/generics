@@ -34,8 +34,8 @@ R1524 <template-instantiate-stmt>
          <<or>> INSTANTIATE [::] <template-name> (
                 [ <instantiation-arg-spec-list> ] ), ONLY : [ <only-list> ]
 
-C1536 (R1524) <template-name> shall not be the name of a templated
-              procedure.
+C1536 (R1524) The <template-name> shall be the name of a template that is
+              not a templated procedure.
 
 R1525 <templated-procedure-instantiate-stmt> <<is>>
           INSTANTIATE :: <local-name> => <template-name> (
