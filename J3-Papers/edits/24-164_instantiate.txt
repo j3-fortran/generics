@@ -46,7 +46,7 @@ C1537 (R1525) The <template-name> shall be the name of a templated procedure.
 R1526 <instantiate-stmt> <<is>> <template-instantiate-stmt>
                          <<or>> <template-procedure-instantiate-stmt>
 
-C1538 (R1526) Within an <instantiate-stmt>, <instantiation-arg> shall
+C1538 (R1526) Within an <instantiate-stmt>, an <instantiation-arg> shall
               not depend on any entity defined within the referenced
               template.
 
@@ -289,7 +289,7 @@ NOTE 4
 
 15.6.4.3 Deferred constant association
 
-C1549 (R1529) <constant-expr> shall be type INTEGER, LOGICAL or
+C1549 (R1529) The <constant-expr> shall be of type INTEGER, LOGICAL or
               CHARACTER.
 
 C1550 (R1529) An <instantiation-arg> that is a <constant-expr> shall
@@ -303,11 +303,11 @@ C1551 (R1529) The type and kind of an <instantiation-arg> that is a
 
 C1552 (R1529) If the shape of the corresponding deferred constant in the
               referenced template or requirement is not implied, then
-              <constant-expr> shall have the same shape.
+              the <constant-expr> shall have the same shape.
 
 C1553 (R1529) If the rank of the corresponding deferred constant in the
               referenced template or requirement is not implied, then
-              <constant-expr> shall have the same rank.
+              the <constant-expr> shall have the same rank.
 
 
 15.6.4.4 Deferred procedure association
