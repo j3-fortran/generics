@@ -136,9 +136,9 @@ The contents of this paper are:
 
 * 8.5.8.2 Explicit-shape array
 
-[UTI: It may be better to modify <explicit-shape-bounds-spec> to
+{UTI: It may be better to modify <explicit-shape-bounds-spec> to
       disambiguate <explicit-bounds-expr> for lower and upper bounds.
-      This would make constraint for deferred constants clearer.]
+      This would make constraint for deferred constants clearer.}
 
 * 8.5.8.6 Implied-shape array
 
@@ -163,8 +163,8 @@ The contents of this paper are:
     An implied-rank entity is an entity whose rank becomes defined only
     when the template in which it appears is instantiated.
 
-[UTI: Also make sure it works with SELECT GENERIC RANK and spell out
-      what can be done with implied-rank entities.]
+{UTI: Also make sure it works with SELECT GENERIC RANK and spell out
+      what can be done with implied-rank entities.}
 
     R287b <implied-rank-spec> <<is>> ..
 

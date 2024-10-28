@@ -50,7 +50,7 @@ R1542 <requirement-specification-construct>
 
 C1559 (R1542) <interface-stmt> shall include ABSTRACT or DEFERRED.
 
-[UTI: NOTE 1 probably should be normative text.]
+{UTI: NOTE 1 probably should be normative text.}
 
 NOTE 1
 
