@@ -66,7 +66,7 @@ NOTE 3
     Examples of REQUIREMENT blocks:
 
         REQUIREMENT R1(U, V, G)
-           TYPE, DEFERRED :: U, V
+           DEFERRED TYPE :: U, V
            DEFERRED INTERFACE
               FUNCTION G(X)
                  TYPE(U), INTENT(IN) :: X

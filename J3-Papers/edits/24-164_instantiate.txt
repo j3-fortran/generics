@@ -10,19 +10,21 @@ Introduction:
 This is the 4th of 6 papers that provide edits for the approved syntax
 for templates.
 
-Straw vote: The INSTANTIATE and REQUIRE statements do not need "[::]"
-            at this time, but we note that various other bits of the
-            BNF also have unnecesary optional "[::]". E.g., various
-            attribute specification statements: DIMENSION, INTENT,
-            SAVE, ...
+Straw vote: The REQUIRE statement does not need "[::]" at this time, but
+            we note that various other bits of the BNF also have
+            unnecesary optional "[::]". E.g., various attribute
+            specification statements: DIMENSION, INTENT, SAVE, ...
 
-            Should "::" be removed from the BNF for the INSTANTIATE
-            and REQUIRE statements?
+            Should "::" be removed from the BNF for the REQUIRE
+            statement?
 
             YES - omit the optional "[::]" in the BNF
             NO  - keep the optional "[::]" in the BNF
             ABSTAIN
 
+UTI: Can we enable I/O generic spec as an instantiation argument?
+
+     instantiate foo(..., write(formatted))
 
 Section 1:
 ==========
@@ -44,18 +46,18 @@ R1524 <template-instantiate-stmt>
          <<or>> INSTANTIATE [::] <template-name> (
                 [ <instantiation-arg-spec-list> ] ), ONLY : [ <only-list> ]
 
-C1536 (R1524) <template-name> shall not be the name of a standalone
-              template procedure.
+C1536 (R1524) <template-name> shall not be the name of a templated
+              procedure.
 
-R1525 <standalone-instantiate-stmt> <<is>>
-          INSTANTIATE [::] <template-name> (
-          [ <instantiation-arg-spec-list> ] ), [ONLY :] <local-name> => *
+R1525 <templated-procedure-instantiate-stmt> <<is>>
+          INSTANTIATE :: <local-name> => <template-name> (
+          [ <instantiation-arg-spec-list> ] )
 
-C1537 (R1525) <template-name> shall be the name of a standalone
-              template procedure.
+C1537 (R1525) <template-name> shall be the name of a templated
+              procedure.
 
 R1526 <instantiate-stmt> <<is>> <template-instantiate-stmt>
-                         <<or>> <standalone-instantiate-stmt>
+                         <<or>> <template-procedure-instantiate-stmt>
 
 C1538 (R1526) Within an <instantiate-stmt>, <instantiation-arg> shall
               not depend on any entity defined within the referenced
@@ -86,27 +88,27 @@ These identifiers are
      <use-defined-operator> in any <rename> for that instantiation.
 
 
-15.6.2 Inline instantiation of standalone template procedures
+15.6.2 Inline instantiation of templated procedures
 
-A standalone template procedure can be instantiated and referenced in
+A templated procedure can be instantiated and referenced in
 an expression or the <procedure-designator> in a <call-stmt>.
 
 R1527 <inline-instantiate> <<is>>
     <template-name> ^ ( <instantiation-arg-spec-list> )
 
 C1540 (R1527) <template-name> shall be the name of a
-              <standalone-template-function-subprogram> or a
-              <standalone-template-subroutine-subprogram>
+              <templated-function-subprogram> or a
+              <templated-subroutine-subprogram>
 
 C1541 (R1527) In <inline-instantiate>, <template-name> shall not be the
               name of any construct in which it appears.
 
 The procedure designated by <inline-instantiate> is the procedure
-produced from instantiating the standalone template procedure.
+produced from instantiating the templated procedure.
 
 NOTE
 
-    Standalone template procedures cannot reference themselves.
+    Templated procedures cannot reference themselves.
 
 
 15.6.3 Interpretation of template instantiation
@@ -124,7 +126,7 @@ NOTE 1
     example:
 
         TEMPLATE TMPL(T)
-           TYPE, DEFERRED :: T
+           DEFERRED TYPE :: T
            TYPE :: list_t
               TYPE(T), ALLOCATABLE :: elements(:)
            END TYPE
@@ -175,8 +177,8 @@ NOTE 2
         GENERIC :: B => F1, F3
 
         TEMPLATE TMPL(T, F)
-            TYPE, DEFERRED :: T
-            INTERFACE
+            DEFERRED TYPE :: T
+	    DEFERRED INTERFACE
                SUBROUTINE F(x)
                   TYPE(T), INTENT(INOUT) :: x
                END SUBROUTINE F
@@ -215,20 +217,19 @@ R1529 <instantiation-arg> <<is>> <constant-expr>
                           <<or>> <generic-spec>
                           <<or>> <procedure-name>
 
-[UTI: This note needs to be revised. "Somewhat awkward" is not acceptable.
-      Also a defined I/O generic-spec cannot be used here because its
+C1542b (R1529) The <generic-spec> shall not be
+              <defined-io-generic-spec>.
+
+{UTI: 
+      A defined I/O generic-spec cannot be used here because its
       syntax of "READ(FORMATTED)", (and etc.) conflicts with other syntax.
       E.g. that could be an array element reference, or a function
       reference. We either need to say that defined I/O generics are not
       permitted, provide separate syntax for it, or say that an
       instantiation arg that is for a deferred procedure has special
       behavior in that the READ(FORMATTED), etc., will always refer to
-      the defined I/O, not anything else it might possibly be.]
-
-Note: <generic-spec> includes operators, defined assignment and
-      defined I/O.  The last may be somewhat awkward to use within a
-      template without re-expressing as defined I/O again.
-
+      the defined I/O, not anything else it might possibly be.
+}
 
 15.6.4.2 Deferred type association
 
@@ -247,7 +248,8 @@ C1546 (R1529) An <instantiation-arg>, T, that corresponds to a deferred
               type shall be a type for which a variable whose declared
               type is T is permitted in a variable definition context.
 
-Note: This constraint ensures that intrinsic assignment of variables
+NOTE 1
+      This constraint ensures that intrinsic assignment of variables
       of deferred type is permitted within a template.  However, this
       also disallows some types, e.g., the EVENT_TYPE, from being used
       as an instantiation argument.
@@ -260,14 +262,17 @@ C1548 (R1529) An <instantiation-arg> that corresponds to a deferred
               type shall not have a coarray potential subobject
               component.
 
-Note: The above constraint avoids the possibility of assignment
+NOTE 2
+      The above constraint avoids the possibility of assignment
       being invalid where the variable and expr do not agree on
       the allocation status of a coarray component.
 
-Note: Non-abstract, extensible derived types can be associated with
+NOTE 3
+      Non-abstract, extensible derived types can be associated with
       both abstract and non-extensible deferred type arguments.
 
-Note: Intrinsic types, SEQUENCE types, and types with the BIND attribute
+NOTE 4
+      Intrinsic types, SEQUENCE types, and types with the BIND attribute
       cannot be associated with deferred type arguments that have the
       EXTENSIBLE attribute.
 
@@ -280,11 +285,11 @@ Note: Intrinsic types, SEQUENCE types, and types with the BIND attribute
       END TYPE
 
       TEMPLATE TMPL1(T)
-         TYPE, DEFERRED :: T
+         DEFERRED TYPE :: T
       END TEMPLATE TMPL
 
       TEMPLATE TMPL2(U)
-         TYPE, ABSTRACT, DEFERRED :: U
+         DEFERRED TYPE, ABSTRACT :: U
       END TEMPLATE TMPL
 
       INSTANTIATE TMPL1(INTEGER) ! ok
@@ -295,11 +300,7 @@ Note: Intrinsic types, SEQUENCE types, and types with the BIND attribute
       INSTANTIATE TMPL2(MY_T1)   ! ok
       INSTANTIATE TMPL2(MY_T2)   ! ok
 
-Note: Potentially allow INSTANTIATE statement for an standalone
-      template procedure in a generic interface block.
-
-
-##.6.4.3 Deferred constant association
+15.6.4.3 Deferred constant association
 
 C1549 (R1529) <constant-expr> shall be type INTEGER, LOGICAL or
               CHARACTER.
@@ -322,7 +323,7 @@ C1553 (R1529) If the rank of the corresponding <deferred-const> in the
               <constant-expr> shall have the same rank.
 
 
-##.6.4.4 Deferred procedure association
+15.6.4.4 Deferred procedure association
 
 C1554 (R1529) An <instantiation-arg> that is a <generic-spec> or
               <procedure-name> shall correspond to a <deferred-arg> that
@@ -351,9 +352,5 @@ C1556 An <instantiation-arg> that is a <generic-spec> shall have
 
 The deferred procedure is associated with the specific procedure that is
 consistent with the characteristics.
-
-Note: The previous two constraints constitute what is referred to as
-      "weak constraints" in other languages.
-
 
 ===END===

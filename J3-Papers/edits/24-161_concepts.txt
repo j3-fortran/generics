@@ -77,17 +77,16 @@ specifier within a REQUIREMENT construct, TEMPLATE construct, or
 standalone template procedure.
 
 R1504 <deferred-type-declaration-stmt> <<is>>
-         TYPE, <deferred-type-attr-list> :: <deferred-type-name-list>
+         DEFERRED TYPE[, <deferred-type-attr-list>] :: <deferred-type-name-list>
 
 C1504 (R1504) Each <deferred-type-name> shall appear in the
               <deferred-arg-list> of the TEMPLATE, REQUIREMENT or
               standalone template procedure in which it appears.
 
-R1505 <deferred-type-attr> <<is>> DEFERRED
-                           <<or>> ABSTRACT
+R1505 <deferred-type-attr> <<is>> ABSTRACT
                            <<or>> EXTENSIBLE
 
-C1505 (R1505) DEFERRED shall appear in each <deferred-type-attr-list>.
+C1505 (R1505) Only one of ABSTRACT or EXTENSIBLE shall appear.
 
 C1506 (R1505) The same <deferred-type-attr> shall not appear more than
               once in a given <deferred-type-attr-list>.
@@ -101,19 +100,18 @@ NOTE 1
     refers to the instantiation argument associated with the deferred
     argument, which must be extensible.
 
-[UTI: Rename EXTENSIBLE? Perhaps DERIVED?]
+{UTI: Rename EXTENSIBLE? Perhaps DERIVED?}
 
 A deferred type with the EXTENSIBLE attribute is an extensible derived
 type. A deferred type with the ABSTRACT attribute is an abstract derived
 type. A deferred type with the ABSTRACT attribute implicitly has the
-EXTENSIBLE attribute, which can be confirmed with an explicit inclusion
-of the EXTENSIBLE keyword in the <deferred-type-attr-list>.
+EXTENSIBLE attribute.
 
-[UTI: NOTE 2 is bad. From Malcolm's notes, this could useful as part of fixing
+{UTI: NOTE 2 is bad. From Malcolm's notes, this could useful as part of fixing
 this note:
 Cxxxx The name of a deferred type shall not appear as a <derived-type-spec>
       except in the <declaration-type-spec> of a <type-declaration-stmt>.
-]
+}
 
 NOTE 2
 
@@ -125,9 +123,9 @@ NOTE 3
 
     Examples of deferred type declarations are:
 
-        TYPE, DEFERRED :: T1
-        TYPE, DEFERRED, EXTENSIBLE :: T2
-        TYPE, DEFERRED, ABSTRACT :: T3
+        DEFERRED TYPE :: T1
+        DEFERRED TYPE, EXTENSIBLE :: T2
+        DEFERRED TYPE, ABSTRACT :: T3
 
 NOTE 4
 
@@ -159,19 +157,19 @@ expressions within a REQUIREMENT construct, TEMPLATE construct, or
 standalone template procedure.
 
 R1506 <deferred-const-declaration-stmt> <<is>>
-           <declaration-type-spec>, <deferred-const-attr-spec-list> ::
-           <deferred-const-entity-decl-list>
+           DEFERRED <declaration-type-spec>,
+	         <deferred-const-attr-spec-list> ::
+                 <deferred-const-entity-decl-list>
 
-R1507 <deferred-const-attr-spec> <<is>> <dimension-spec>
-                                 <<or>> DEFERRED
+R1507 <deferred-const-attr-spec> <<is>> DIMENSION(<array-spec>)
                                  <<or>> PARAMETER
                                  <<or>> <rank-clause>
 
 R1508 <deferred-const-entity-decl>
           <<is>> <deferred-const-name> [ ( <array-spec> ) ]
 
-C1508 (R1507) A <deferred-const-attr-spec-list> shall include both
-              the DEFERRED and PARAMETER keywords.
+C1508 (R1506) The <deferred-const-attr-spec-list> shall include
+              PARAMETER.
 
 C1509 (R1507) An entity declared in <deferred-const-declaration-stmt>
               shall be INTEGER, LOGICAL, or assumed-length CHARACTER.
@@ -204,24 +202,24 @@ NOTE 2
     Examples of deferred constant declarations are:
 
     ! explicit shape
-    INTEGER, DEFERRED, PARAMETER  :: x1
-    INTEGER, DEFERRED, PARAMETER :: x2(3)
-    INTEGER, PARAMETER :: v1(2) = [5,15] ! not a deferred constant
-    INTEGER, DEFERRED, PARAMETER  :: x3(v1)
+    DEFERRED INTEGER, PARAMETER  :: x1
+    DEFERRED INTEGER, PARAMETER :: x2(3)
+    DEFERRED INTEGER, PARAMETER :: v1(2) = [5,15] ! not a deferred constant
+    DEFERRED INTEGER, PARAMETER  :: x3(v1)
 
     ! implied shape
-    INTEGER, DEFERRED, PARAMETER :: x4(*)
-    INTEGER, DEFERRED, PARAMETER :: x5(*,*)
-    INTEGER, DEFERRED, PARAMETER, RANK(2) :: x6
+    DEFERRED INTEGER, PARAMETER :: x4(*)
+    DEFERRED INTEGER, PARAMETER :: x5(*,*)
+    DEFERRED INTEGER, PARAMETER, RANK(2) :: x6
 
     ! assumed-or-implied-rank-spec
-    INTEGER, DEFERRED, PARAMETER :: x7(..)
+    DEFERRED INTEGER, PARAMETER :: x7(..)
 
 15.2.1.4 Deferred procedures
 
 A deferred procedure is a deferred argument that can appear as the
 procedure designator of a procedure reference
-[UTI: And where else?]
+{UTI: And where else?}
 within a REQUIREMENT construct, TEMPLATE construct, or standalone
 template procedure.  A deferred procedure's interface shall be
 established in that construct. The interface of a deferred procedure
@@ -230,7 +228,7 @@ or as the <subroutine-name> or <function-name> of an <interface-body>
 that appears in a deferred interface block.
 
 R1509 <deferred-proc-declaration-stmt> <<is>>
-     PROCEDURE(<interface>), DEFERRED :: <deferred-proc-name-list>
+     DEFERRED PROCEDURE(<interface>) [ :: ] <deferred-proc-name-list>
 
 C1514 (R1509) Each <deferred-proc-name> shall appear in the
               <deferred-arg-list> of the TEMPLATE, REQUIREMENT or
@@ -249,9 +247,11 @@ NOTE 1
 
 NOTE 2
 
-    The following example declares deferred procedures F, S, and G:
+    The following example declares deferred procedures F, S, and G.
+    The declaration of G is in terms of an interface F_I.
 
-        TYPE, DEFERRED :: T
+
+        DEFERRED TYPE :: T
         DEFERRED INTERFACE
            FUNCTION F(X)
               TYPE(T), INTENT(IN) :: X
@@ -261,6 +261,6 @@ NOTE 2
               TYPE(T), INTENT(INOUT) :: Y
            END SUBROUTINE
         END INTERFACE
-        PROCEDURE(F_I), DEFERRED :: G
+	DEFERRED PROCEDURE(F_I) :: G
 
 ===END===

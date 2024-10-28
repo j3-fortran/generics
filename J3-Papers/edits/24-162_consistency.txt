@@ -70,88 +70,66 @@ NOTE 2
     EXTENSIBLE attributes on deferred types are:
 
         REQUIREMENT R_REGULAR(U)
-           TYPE, DEFERRED :: U
+           DEFERRED TYPE :: U
         END REQUIREMENT
 
         REQUIREMENT R_EXTENSIBLE(U)
-           TYPE, DEFERRED, EXTENSIBLE :: U
+           DEFERRED TYPE, EXTENSIBLE :: U
         END REQUIREMENT
 
         REQUIREMENT R_ABSTRACT(U)
-           TYPE, DEFERRED, ABSTRACT :: U
+           DEFERRED TYPE, ABSTRACT :: U
         END REQUIREMENT
 
-        TEMPLATE T1(T)
-           REQUIRE R_REGULAR(T) ! valid, non-extensible
-        END TEMPLATE
+Note 3
 
-        TEMPLATE T2(T)
-           REQUIRE R_EXTENSIBLE(T) ! valid, extensible
-        END TEMPLATE
+    Given the requirements from NOTE 2 and a deferred argument T, the following lines are valid
+    or invalid as marked.
 
-        TEMPLATE T3(T)
-           REQUIRE R_ABSTRACT(T) ! valid, abstract
-        END TEMPLATE
+        REQUIRE R_REGULAR(T) ! valid, non-extensible
 
-        TEMPLATE T4(T)
-           TYPE, DEFERRED :: T
-           REQUIRE R_REGULAR(T) ! valid, non-extensible
-        END TEMPLATE
+        REQUIRE R_EXTENSIBLE(T) ! valid, extensible
 
-        TEMPLATE T5(T)
-           TYPE, DEFERRED :: T
-           REQUIRE R_EXTENSIBLE(T) ! invalid, explicit decl not extensible
-        END TEMPLATE
+        REQUIRE R_ABSTRACT(T) ! valid, abstract
 
-        TEMPLATE T6(T)
-           TYPE, DEFERRED :: T
-           REQUIRE R_ABSTRACT(T) ! invalid, explicit decl not extensible
-        END TEMPLATE
+	DEFERRED TYPE, EXTENSIBLE :: T_ext
+	DEFERRED TYPE, ABSTRACT :: T_abs
 
-        TEMPLATE T7(T)
-           TYPE, DEFERRED, EXTENSIBLE :: T
-           REQUIRE R_REGULAR(T) ! valid, T is not abstract
-        END TEMPLATE
+        DEFERRED TYPE :: T
+        REQUIRE R_REGULAR(T) ! valid, non-extensible
 
-        TEMPLATE T8(T)
-           TYPE, DEFERRED, EXTENSIBLE :: T
-           REQUIRE R_EXTENSIBLE(T) ! valid, decls match
-        END TEMPLATE
+        DEFERRED TYPE :: T
+        REQUIRE R_EXTENSIBLE(T) ! invalid, explicit decl not extensible
 
-        TEMPLATE T9(T)
-           TYPE, DEFERRED, EXTENSIBLE :: T
-           REQUIRE R_ABSTRACT(T) ! valid, T is just extensible
-        END TEMPLATE
+        DEFERRED TYPE :: T
+        REQUIRE R_ABSTRACT(T) ! invalid, explicit decl not extensible
 
-        TEMPLATE T10(T)
-           TYPE, DEFERRED, ABSTRACT :: T
-           REQUIRE R_REGULAR(T) ! invalid, T is abstract
-        END TEMPLATE
+        DEFERRED TYPE, EXTENSIBLE :: T
+        REQUIRE R_REGULAR(T) ! valid, T is not abstract
 
-        TEMPLATE T11(T)
-           TYPE, DEFERRED, ABSTRACT :: T
-           REQUIRE R_EXTENSIBLE(T) ! invalid, T is abstract
-        END TEMPLATE
+        DEFERRED TYPE, EXTENSIBLE :: T
+        REQUIRE R_EXTENSIBLE(T) ! valid, decls match
 
-        TEMPLATE T12(T)
-           TYPE, DEFERRED, ABSTRACT :: T
-           REQUIRE R_ABSTRACT(T) ! valid, decls match
-        END TEMPLATE
+        DEFERRED TYPE, EXTENSIBLE :: T
+        REQUIRE R_ABSTRACT(T) ! valid, T is just extensible
 
-        TEMPLATE T13(T)
-           REQUIRE R_REGULAR(T)
-           REQUIRE R_EXTENSIBLE(T) ! valid, T is extensible
-        END TEMPLATE
+        DEFERRED TYPE, ABSTRACT :: T
+        REQUIRE R_REGULAR(T) ! invalid, T is abstract
 
-        TEMPLATE T14(T)
-           REQUIRE R_REGULAR(T)
-           REQUIRE R_ABSTRACT(T) ! valid, T is just extensible
-        END TEMPLATE
+        DEFERRED TYPE, ABSTRACT :: T
+        REQUIRE R_EXTENSIBLE(T) ! invalid, T is abstract
 
-        TEMPLATE T15(T)
-           REQUIRE R_EXTENSIBLE(T)
-           REQUIRE R_ABSTRACT(T) ! valid, T is just extensible
-        END TEMPLATE
+        DEFERRED TYPE, ABSTRACT :: T
+        REQUIRE R_ABSTRACT(T) ! valid, decls match
+
+        REQUIRE R_REGULAR(T)
+        REQUIRE R_EXTENSIBLE(T) ! valid, T is extensible
+
+        REQUIRE R_REGULAR(T)
+        REQUIRE R_ABSTRACT(T) ! valid, T is just extensible
+
+        REQUIRE R_EXTENSIBLE(T)
+        REQUIRE R_ABSTRACT(T) ! valid, T is just extensible
 
 15.2.2.3 Specification of deferred constants
 
