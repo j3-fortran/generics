@@ -109,7 +109,7 @@ R1543 <require-stmt> <<is>>
           ( [<instantiation-arg-spec-list>] )
 
 C1559 (R1543) <requirement-name> shall be the name of a previously
-              defined <requirement>.
+              defined REQUIREMENT.
 
 NOTE 1
 
