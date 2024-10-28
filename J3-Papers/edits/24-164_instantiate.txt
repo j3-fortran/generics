@@ -178,7 +178,7 @@ NOTE 2
 
         TEMPLATE TMPL(T, F)
             DEFERRED TYPE :: T
-	    DEFERRED INTERFACE
+            DEFERRED INTERFACE
                SUBROUTINE F(x)
                   TYPE(T), INTENT(INOUT) :: x
                END SUBROUTINE F

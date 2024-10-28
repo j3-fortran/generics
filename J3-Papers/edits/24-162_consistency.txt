@@ -92,8 +92,8 @@ Note 3
 
         REQUIRE R_ABSTRACT(T) ! valid, abstract
 
-	DEFERRED TYPE, EXTENSIBLE :: T_ext
-	DEFERRED TYPE, ABSTRACT :: T_abs
+        DEFERRED TYPE, EXTENSIBLE :: T_ext
+        DEFERRED TYPE, ABSTRACT :: T_abs
 
         DEFERRED TYPE :: T
         REQUIRE R_REGULAR(T) ! valid, non-extensible

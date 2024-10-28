@@ -158,7 +158,7 @@ standalone template procedure.
 
 R1506 <deferred-const-declaration-stmt> <<is>>
            DEFERRED <declaration-type-spec>,
-	         <deferred-const-attr-spec-list> ::
+                 <deferred-const-attr-spec-list> ::
                  <deferred-const-entity-decl-list>
 
 R1507 <deferred-const-attr-spec> <<is>> DIMENSION(<array-spec>)
@@ -261,6 +261,6 @@ NOTE 2
               TYPE(T), INTENT(INOUT) :: Y
            END SUBROUTINE
         END INTERFACE
-	DEFERRED PROCEDURE(F_I) :: G
+        DEFERRED PROCEDURE(F_I) :: G
 
 ===END===
