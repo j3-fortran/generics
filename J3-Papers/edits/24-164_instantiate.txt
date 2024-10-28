@@ -83,9 +83,7 @@ an expression or the <procedure-designator> in a <call-stmt>.
 R1527 <inline-instantiate> <<is>>
     <template-name> ^ ( <instantiation-arg-spec-list> )
 
-C1540 (R1527) <template-name> shall be the name of a
-              <templated-function-subprogram> or a
-              <templated-subroutine-subprogram>
+C1540 (R1527) The <template-name> shall be the name of a templated procedure.
 
 C1541 (R1527) In <inline-instantiate>, <template-name> shall not be the
               name of any construct in which it appears.
