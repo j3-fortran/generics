@@ -41,8 +41,7 @@ R1525 <templated-procedure-instantiate-stmt> <<is>>
           INSTANTIATE :: <local-name> => <template-name> (
           [ <instantiation-arg-spec-list> ] )
 
-C1537 (R1525) <template-name> shall be the name of a templated
-              procedure.
+C1537 (R1525) The <template-name> shall be the name of a templated procedure.
 
 R1526 <instantiate-stmt> <<is>> <template-instantiate-stmt>
                          <<or>> <template-procedure-instantiate-stmt>
@@ -206,9 +205,9 @@ R1529 <instantiation-arg> <<is>> <constant-expr>
                           <<or>> <procedure-name>
 
 C1542b (R1529) The <generic-spec> shall not be
-              <defined-io-generic-spec>.
+               <defined-io-generic-spec>.
 
-{UTI: 
+{UTI:
       A defined I/O generic-spec cannot be used here because its
       syntax of "READ(FORMATTED)", (and etc.) conflicts with other syntax.
       E.g. that could be an array element reference, or a function
