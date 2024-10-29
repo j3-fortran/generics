@@ -136,9 +136,9 @@ The contents of this paper are:
 
 * 8.5.8.2 Explicit-shape array
 
-[UTI: It may be better to modify <explicit-shape-bounds-spec> to
+{UTI: It may be better to modify <explicit-shape-bounds-spec> to
       disambiguate <explicit-bounds-expr> for lower and upper bounds.
-      This would make constraint for deferred constants clearer.]
+      This would make constraint for deferred constants clearer.}
 
 * 8.5.8.6 Implied-shape array
 
@@ -163,8 +163,8 @@ The contents of this paper are:
     An implied-rank entity is an entity whose rank becomes defined only
     when the template in which it appears is instantiated.
 
-[UTI: Also make sure it works with SELECT GENERIC RANK and spell out
-      what can be done with implied-rank entities.]
+{UTI: Also make sure it works with SELECT GENERIC RANK and spell out
+      what can be done with implied-rank entities.}
 
     R287b <implied-rank-spec> <<is>> ..
 
@@ -175,9 +175,9 @@ The contents of this paper are:
         The following are examples of implied-rank entities
 
         TEMPLATE EXAMPLE(C, S, N)
-           INTEGER, DEFERRED, PARAMETER :: C(..)
+           DEFERRED INTEGER, PARAMETER :: C(..)
                ! implied-shape & implied-rank
-           INTEGER, DEFERRED, PARAMETER :: S(*), N
+           DEFERRED INTEGER, PARAMETER :: S(*), N
            INTEGER, PARAMETER :: B(S) = 1 ! explicit-shape & implied-rank
         END TEMPLATE
 
@@ -267,8 +267,8 @@ UTI: spelling of <inline-instantiate> vs <inline-instantiation>
     R512 <internal-subprogram>
          <<is>> <function-subprogram>
          <<or>> <subroutine-subprogram>
-         <<or>> <standalone-template-subroutine-subprogram>
-         <<or>> <standalone-template-function-subprogram>
+         <<or>> <templated-subroutine-subprogram>
+         <<or>> <templated-function-subprogram>
 
 
 * 8.7 IMPLICIT Statement
@@ -317,8 +317,8 @@ UTI: spelling of <inline-instantiate> vs <inline-instantiation>
               <<is>> <function-subprogram>
               <<or>> <subroutine-subprogram>
               <<or>> <separate-module-subprogram>
-              <<or>> <standalone-template-function-subprogram>
-              <<or>> <standalone-template-subroutine-subprogram>
+              <<or>> <templated-function-subprogram>
+              <<or>> <templated-subroutine-subprogram>
 
 * 15.4.3.2 Interface block
 
@@ -344,17 +344,17 @@ UTI: spelling of <inline-instantiate> vs <inline-instantiation>
 
   Change constraint C1573 to refer to rule R1532 instead of R1536.
 
-  Note: <end-function-stmt> is reused for standalone template
-        procedures.  Therefore the constraint must be attached to a
-        different rule to be applicable in both situations.
+  {<end-function-stmt> is reused for templated procedures. Therefore
+  the constraint must be attached to a different rule to be applicable
+  in both situations.}
 
 * 15.6.2.3 Subroutine subprogram
 
   Change constraint C1576 to refer to rule R1537 instead of R1540.
 
-  Note: <end-subroutine-stmt> is reused for standalone template
-        procedures.  Therefore the constraint must be attached to a
-        different rule to be applicable in both situations.
+  {<end-subroutine-stmt> is reused for templated procedures. Therefore
+  the constraint must be attached to a different rule to be applicable
+  in both situations.}
 
 4. Edits to TKR compatibility
 =============================
@@ -377,8 +377,8 @@ UTI: spelling of <inline-instantiate> vs <inline-instantiation>
         because their ranks depend on the value of the deferred argument N.
 
     TEMPLATE EXAMPLE(C, S, N)
-      INTEGER, DEFERRED, PARAMETER :: C(..) ! implied-shape & implied-rank
-      INTEGER, DEFERRED, PARAMETER :: S(*), N
+      DEFERRED INTEGER, PARAMETER :: C(..) ! implied-shape & implied-rank
+      DEFERRED INTEGER, PARAMETER :: S(*), N
       INTEGER, PARAMETER :: B(S) = 1 ! explicit-shape & implied-rank
     CONTAINS
       SUBROUTINE SUB(X)

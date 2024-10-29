@@ -10,6 +10,18 @@ Introduction
 This is the 5th of 6 papers that provide edits for the approved syntax
 for templates.
 
+Straw vote: The REQUIRE statement does not need "[::]" at this time, but
+            we note that various other bits of the BNF also have
+            unnecesary optional "[::]". E.g., various attribute
+            specification statements: DIMENSION, INTENT, SAVE, ...
+
+            Should "::" be removed from the BNF for the REQUIRE
+            statement?
+
+            YES - omit the optional "[::]" in the BNF
+            NO  - keep the optional "[::]" in the BNF
+            ABSTAIN
+
 Note: Subgroup has made the following small change compared to the
       syntax paper to be more consistent with other Fortran keywords
       that are verbs:
@@ -50,12 +62,12 @@ R1542 <requirement-specification-construct>
 
 C1559 (R1542) <interface-stmt> shall include ABSTRACT or DEFERRED.
 
-[UTI: NOTE 1 probably should be normative text.]
-
 NOTE 1
 
     A <requirement> is a scoping unit that allows use, host, and
     deferred argument association.
+
+{UTI: Change NOTE 1 to normative text?}
 
 NOTE 2
 
@@ -97,7 +109,7 @@ R1543 <require-stmt> <<is>>
           ( [<instantiation-arg-spec-list>] )
 
 C1559 (R1543) <requirement-name> shall be the name of a previously
-              defined <requirement>.
+              defined REQUIREMENT.
 
 NOTE 1
 
