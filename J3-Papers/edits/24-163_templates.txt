@@ -1,7 +1,7 @@
 To: J3                                                     J3/24-163rX
 From: generics
 Subject: Edits for TEMPLATE construct
-Date: 2024-October-22
+Date: 2024-October-29
 References: 24-161, 24-162, 24-125r5, 24-126r4, 24-127r4
 
 Introduction:
@@ -75,8 +75,8 @@ R1515 <template-specification-construct>
           <<or>> <parameter-stmt>
           <<or>> <type-declaration-stmt>
 
-C1528 (R1515) An entity declared by <type-declaration-stmt> shall have
-              the PARAMETER attribute.
+C1528 (R1515) An entity declared by <type-declaration-stmt> shall
+              have the PARAMETER attribute.
 
 NOTE 1
 
@@ -132,8 +132,9 @@ C1530 (R1519) If a <subroutine-name> appears in the <end-subroutine-stmt>,
 C1531 An internal templated procedure shall not contain an
       <internal-subprogram-part>.
 
-{UTI: I seem to recall that we wanted to prohibit nested templated procedures.
-Do we? I can't find any constraint to prohibit that. Should we add
+{UTI: I seem to recall that we wanted to prohibit nested templated
+procedures.  Do we? I can't find any constraint to prohibit
+that. Should we add
 
 C1532 The <internal-subprogram-part> of a templated procedure shall not
       conatain a <templated-function-subprogram> or

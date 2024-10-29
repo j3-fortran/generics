@@ -1,7 +1,7 @@
 To: J3                                                     J3/24-164rX
 From: generics
 Subject: Edits for TEMPLATES: Instantiation
-Date: 2024-October-22
+Date: 2024-October-29
 References: 24-161, 24-162, 24-163, 24-125r5, 24-126r4, 24-127r4
 
 Introduction:
@@ -41,7 +41,8 @@ R1525 <templated-procedure-instantiate-stmt> <<is>>
           INSTANTIATE :: <local-name> => <template-name> (
           [ <instantiation-arg-spec-list> ] )
 
-C1537 (R1525) The <template-name> shall be the name of a templated procedure.
+C1537 (R1525) The <template-name> shall be the name of a templated
+              procedure.
 
 R1526 <instantiate-stmt> <<is>> <template-instantiate-stmt>
                          <<or>> <template-procedure-instantiate-stmt>
@@ -83,7 +84,8 @@ an expression or the <procedure-designator> in a <call-stmt>.
 R1527 <inline-instantiate> <<is>>
     <template-name> ^ ( <instantiation-arg-spec-list> )
 
-C1540 (R1527) The <template-name> shall be the name of a templated procedure.
+C1540 (R1527) The <template-name> shall be the name of a templated
+              procedure.
 
 C1541 (R1527) In <inline-instantiate>, <template-name> shall not be the
               name of any construct in which it appears.
@@ -344,8 +346,8 @@ consistent with the characteristics.
   deferred procedure is associated with the specific procedure of that
   generic identifier that is consistent with the characteristics of the
   deferred procedure.
-We may also need to explicitly say what happens if the instantiation argument
-is not a generic. And for that matter, say how association happens for
-deferred constants and deferred types.}
+We may also need to explicitly say what happens if the instantiation
+argument is not a generic. And for that matter, say how association
+happens for deferred constants and deferred types.}
 
 ===END===
