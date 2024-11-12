@@ -10,9 +10,12 @@ Introduction:
 This is the 4th of 6 papers that provide edits for the approved syntax
 for templates.
 
-UTI: Can we enable I/O generic spec as an instantiation argument?
+{ UTI: Can we enable I/O generic spec as an instantiation argument?
 
      instantiate foo(..., write(formatted))
+}
+
+{ UTI: Prevent circular dependencies in deferred procedure args }
 
 Section 1:
 ==========
@@ -202,10 +205,9 @@ second deferred argument in the reduced list, etc.
 R1529 <instantiation-arg> <<is>> <constant-expr>
                           <<or>> <type-spec>
                           <<or>> <generic-spec>
-                          <<or>> <procedure-name>
+                          <<or>> <specific-procedure>
 
-C1542b (R1529) The <generic-spec> shall not be
-               <defined-io-generic-spec>.
+C1542b (R1529) A <generic-spec> shall not be <defined-io-generic-spec>.
 
 {UTI:
       A defined I/O generic-spec cannot be used here because its
