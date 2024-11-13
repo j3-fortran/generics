@@ -280,14 +280,20 @@ UTI: spelling of <inline-instantiate> vs <inline-instantiation>
     for a BLOCK construct, internal subprogram, or module subprogram is
     the mapping in the host scoping unit.
   To:
-    If a mapping is not specified for a letter, the default for a program
-    unit or an interface body that does not appear in a deferred interface
-    block is default integer if the letter is I, J, ..., or N and default
-    real otherwise.  The default for a BLOCK construct, internal
-    subprogram, or module subprogram is the mapping in the host scoping
-    unit.  The default for an interface body inside of a deferred
-    interface block is as if IMPLICIT NONE(TYPE, EXTERNAL) appeared.
+    If a mapping is not specified for a letter, the default mapping of
+     - a program unit, or
+     - an interface body outside a template scoping unit or templated
+       subprogram
+    is default integer if the letter is I, J, ..., or N and default real
+    otherwise.
 
+    If a mapping is not specified for a letter, the default mapping for
+    a BLOCK construct, internal subprogram, or module subprogram is the
+    mapping in the host scoping unit.
+
+    The mapping for a template construct, a templated subprogram, or
+    an interface body that appears within a template or templated
+    subprogram is the null mapping.
 
 * 8.8p2 IMPORT Statement
 

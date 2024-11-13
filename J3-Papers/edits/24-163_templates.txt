@@ -24,8 +24,14 @@ Section 1:
 
 15.3.1 Syntax for the TEMPLATE construct
 
-A TEMPLATE construct defines a template that may define multiple
-entities which may be accessed through instantiation.
+{ UTI: This has been reworked since the standard meeting to be based on
+  the text about modules from 14.2.1, but it probably needs more work
+  still. }
+A template contains declarations, specifications, and definitions that are
+parameterized by deferred arguments. Public identifiers of a template are
+made accessible to other scoping units by instantiation of the template
+and refer to specifc instances of the entities created by the
+instantiation.
 
 R1510 <template> <<is>> <template-stmt>
                         [ <template-specification-part> ]
@@ -52,10 +58,6 @@ R1513 <template-specification-part> <<is>>
           [ <import-stmt> ] ...
           [ <template-declaration-construct> ] ...
 
-The implicit mapping within <template> is as if
-       IMPLICIT NONE(TYPE,EXTERNAL)
-is specified.
-
 R1514 <template-declaration-construct>
           <<is>> <template-specification-construct>
           <<or>> <deferred-arg-decl-stmt>
@@ -65,30 +67,25 @@ R1514 <template-declaration-construct>
 R1515 <template-specification-construct>
           <<is>> <access-stmt>
           <<or>> <derived-type-def>
-          <<or>> <dimension-stmt>
           <<or>> <enum-def>
           <<or>> <enumeration-type-def>
           <<or>> <generic-stmt>
           <<or>> <instantiate-stmt>
           <<or>> <interface-block>
           <<or>> <intrinsic-stmt>
-          <<or>> <parameter-stmt>
           <<or>> <type-declaration-stmt>
 
-C1528 (R1515) An entity declared by <type-declaration-stmt> shall
-              have the PARAMETER attribute.
+C1528 (R1515) If <type-declaration-stmt> is specified, PARAMETER shall
+              appear as an <attr-spec>.
 
-NOTE 1
+{ The implicit mapping within a template scoping unit is the null mapping
+  for all the letters - specified in the "misc edits" paper via a change
+  to "8.7 Implicit statement". }
 
-    ALLOCATABLE, ASYNCHRONOUS, BIND, CODIMENSION, COMMON, CONTIGUOUS,
-    DATA, ENTRY, EQUIVALENCE, EXTERNAL, FORMAT, INTENT, NAMELIST,
-    OPTIONAL, POINTER, PROTECTED, SAVE, TARGET, VOLATILE, VALUE, or
-    statement function statements cannot appear in a template
-    specification section.
+NOTE
 
-NOTE 2
-
-    A template specification section cannot declare variables.
+    A template specification section cannot declare variables or procedure
+    pointers.
 
 15.3.3 Template subprogram part
 
@@ -106,6 +103,9 @@ R1517 <template-subprogram>
 A templated procedure is a template that defines a single
 procedure which is accessible via instantiation.
 
+{ Templated procedures are added to <internal-subprogram> and
+  <module-subprogram> by the "misc edits" paper, and so can appear
+  anywhere a normal procedure definition can appear. }
 
 R1518 <templated-function-subprogram> <<is>>
           <templated-function-stmt>
@@ -132,14 +132,20 @@ C1530 (R1519) If a <subroutine-name> appears in the <end-subroutine-stmt>,
 C1531 An internal templated procedure shall not contain an
       <internal-subprogram-part>.
 
-{UTI: I seem to recall that we wanted to prohibit nested templated
-procedures.  Do we? I can't find any constraint to prohibit
-that. Should we add
-
 C1532 The <internal-subprogram-part> of a templated procedure shall not
-      conatain a <templated-function-subprogram> or
+      contain a <templated-function-subprogram> or
       <templated-subroutine-subprogram>.
-}
+
+{ UTI: Consider TEMPLATE keyword prefix }
+R1522 <templated-function-stmt> <<is>>
+          [ <prefix> ] FUNCTION <template-name>
+          ( <deferred-arg-list> ) ([<dummy-arg-list>])
+          [<suffix>]
+
+R1523 <templated-subroutine-stmt> <<is>>
+         [ <prefix> ] SUBROUTINE <template-name>
+         ( <deferred-arg-list> ) ([<dummy-arg-list>])
+         [<proc-language-binding-spec>]
 
 R1520 <templated-subprogram-specification-part> <<is>>
           [ <use-stmt> ] ...
@@ -151,54 +157,20 @@ R1521 <templated-subprogram-declaration-construct>
           <<or>> <format-stmt>
           <<or>> <specification-construct>
 
-R1522 <templated-function-stmt> <<is>>
-          [ <prefix> ] FUNCTION <template-name>
-          ( <deferred-arg-list> ) ([<dummy-arg-list>])
-          [<suffix>]
-
-R1523 <templated-subroutine-stmt> <<is>>
-         [ <prefix> ] SUBROUTINE <template-name>
-         ( <deferred-arg-list> ) ([<dummy-arg-list>])
-         [<proc-language-binding-spec>]
-
 15.5 Restrictions on template definitions
 
-C1533 A variable or procedure pointer declared in either a
-      <template-subprogram-part> or a
-      <templated-subprogram-declaration-construct> shall
-      not have the SAVE attribute.
+C1533 A variable or procedure pointer declared anywhere within a template
+      or templated subprogram shall not have the SAVE attribute.
 
-C1534 EQUIVALENCE and COMMON shall not appear in a
-      <template-subprogram-part> or a
-      <templated-subprogram-declaration-construct>.
+C1534 An <equivalence-stmt> or <common-stmt> shall not appear anywhere
+      within a template or templated subprogram.
 
-{UTI: Should we just say "EQUIVALENCE and COMMON shall not appear within
-      a template or templated procedure? In particular, C1534 does not
-      cover the case of
-         MODULE M
-         CONTAINS
-             SUBROUTINE tmplsub(T)(x)
-             CONTAINS
-                 SUBROUTINE internal_nontemplate_sub()
-                     COMMON ...
-                     EQUIVALENCE ...
-                 END SUBROUTINE
-             END SUBROUTINE
-         END CONTAINS
-      because internal_nontemplate_sub does not have a
-      <templated-subprogram-declaration-construct>
-
-     Same goes for C1533 and the SAVE attribute.
-}
-
-C1535 <template>, <templated-function-subprogram> and
-      <templated-subroutine-subprogram> shall only
-      reference intrinsic procedures, procedures with explicit
-      interfaces, operators, or intrinsic assignment.
+C1535 A procedure referenced anywhere within a template or templated
+      subprogram shall have an explicit interface.
 
 NOTE
 
-    This constraint expresses the notion of type-safety.  In particular,
+    Constraint C1535 expresses the notion of type-safety.  In particular,
     this allows a template implementation to be verified to be internally
     consistent.
 
