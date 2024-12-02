@@ -202,7 +202,7 @@ C1542b (R1528) Each <keyword> shall be the name of a deferred argument in
 
 The instantiation argument list identifies the correspondence between the
 instantiation arguments and the deferred arguments of the referenced
-templated or requirement. This correspondence can be established either by
+template or requirement. This correspondence can be established either by
 keyword or by position. If an argument keyword appears, the instantiation
 argument corresponds to the deferred argument whose name is the same as
 the argument keyword. In the absence of an argument keyword, an
