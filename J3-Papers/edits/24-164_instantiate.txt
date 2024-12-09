@@ -10,7 +10,9 @@ Introduction:
 This is the 4th of 6 papers that provide edits for the approved syntax
 for templates.
 
-{ UTI: Prevent circular dependencies in deferred procedure args }
+{ UTI: Prevent circular dependencies in deferred procedure args.
+  (A deferred procedure's declaration might reference other deferred
+  procedures.) }
 
 Section 1:
 ==========
@@ -438,10 +440,6 @@ instantiation arg would cause problems. It seems like it's fine.
 }
 
 
-{UTI: Add a constraint that <procedure-name> shall not identify a
-procedure with the same name as a generic identifer? Therefore, a name
-which could be either would be interpreted as the generic identifier.}
-
 C1555 (R1529) The procedure specified by <procedure-name> shall have the
               same characteristics as its corresponding deferred
               procedure, except that a pure procedure may correspond to a
@@ -459,10 +457,21 @@ C1556 (R1529) The generic identifier specified by <generic-spec> shall
               simple, and an elemental specific procedure may correspond
               to a deferred procedure that is not elemental.
 
-If a deferred procedure corresponds to a generic identifier, it becomes
-associated with the specific procedure identified by constraint C1556.
+C1557 (R1529) A <procedure-name> shall not be the name of a generic
+              identifier.
 
 If a deferred procedure corresponds to a specific procedure name, it
 becomes associated with that named procedure.
+
+If a deferred procedure corresponds to a generic identifier, it becomes
+associated with the specific procedure that satisfies constraint C1556.
+
+NOTE
+
+      If a generic identifier and one of its specific procedures have the
+      same name, and that name is specified as the instantiation argument
+      for a deferred procedure, the generic identifier is the
+      instantiation argument.
+
 
 ===END===
