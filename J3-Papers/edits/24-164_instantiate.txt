@@ -243,10 +243,10 @@ NOTE 1
       Constraint C1547 ensures that intrinsic assignment is available for
       variables of deferred type.
 
-{A number of places in the standard have a similar exception for these three
-types. A separate edit paper could perhaps introduce a name for this category
-of types for which intrinsic assignment is not permitted so that all these
-constraints can reference a shared term.}
+{A number of places in the standard have a similar exception for these
+three types. A separate edit paper could perhaps introduce a name for this
+category of types for which intrinsic assignment is not permitted so that
+all these constraints can reference a shared term.}
 
 C1548 (R1529) A <type-spec> shall not specify a type with a coarray
               potential subobject component.
@@ -256,8 +256,8 @@ NOTE 2
       being invalid where the variable and expr do not agree on
       the allocation status of a coarray component.
 
-A deferred type becomes associated with the type and type parameters identified
-by its corresponding instantiation argument.
+A deferred type becomes associated with the type and type parameters
+identified by its corresponding instantiation argument.
 
 NOTE 3
       Non-abstract, extensible derived types can be associated with
@@ -321,41 +321,42 @@ C1554 (R1529) A <procedure-name> shall denote a nonintrinsic, nonpointer
 
 {
 UTI: Can <procedure-name> be a specific intrinsic? Can <generic-spec> be a
-generic intrinsic? Intrinsics, other than the specific intrinsics, cannot be
-passed as an actual arg to functions because of the issues with generic
+generic intrinsic? Intrinsics, other than the specific intrinsics, cannot
+be passed as an actual arg to functions because of the issues with generic
 resolution, but that issue is resolved for templates, so can we say that a
 generic intrinsic is resolved to a specific based on the interface of the
-deferred procedure? We would have to prohibit the restricted specific intrinsic
-functions listed in Table 16.3, as well as an undetermiened list of generic
-intrinsic functions. For example, any generic intrinsic function with a KIND
-arg cannot be used as an instantation argument, since its interface cannot
-be described via the mechanisms of a normal Fortran interface.
+deferred procedure? We would have to prohibit the restricted specific
+intrinsic functions listed in Table 16.3, as well as an undetermiened list
+of generic intrinsic functions. For example, any generic intrinsic
+function with a KIND arg cannot be used as an instantation argument, since
+its interface cannot be described via the mechanisms of a normal Fortran
+interface.
 }
 
 
 {
-UTI: Can a <procedure-name> be a procedure pointer? If it were, invocations of
-it by the template would need to be resolved at runtime, so it would be no
-different than passing the procedure pointer as an actual argument. However,
-there is this odd case with generics:
+UTI: Can a <procedure-name> be a procedure pointer? If it were,
+invocations of it by the template would need to be resolved at runtime, so
+it would be no different than passing the procedure pointer as an actual
+argument. However, there is this odd case with generics:
 
 procedure(my_intf), pointer :: p
 interface my_generic
     procedure :: p
 end interface
 
-This is legal and creates a generic, my_generic, which has a specific procedure
-that is a pointer. If an invocation of my_generic resolves to that pointer
-specific, then the procedure pointed to by p is invoked. So even if we
-prohibit <procedure-name> from being a procedure pointer, a pointer could
-still "sneak its way in" through a generic name.
+This is legal and creates a generic, my_generic, which has a specific
+procedure that is a pointer. If an invocation of my_generic resolves to
+that pointer specific, then the procedure pointed to by p is invoked. So
+even if we prohibit <procedure-name> from being a procedure pointer, a
+pointer could still "sneak its way in" through a generic name.
 
-If we wanted to prohbit procedure pointers entirely, we would also need to add
-that the specific procedure resolved from <generic-spec> shall not be a
-pointer. However, users passing a generic procedure name might be taking it
-from some external library which uses pointer specifics, and the user will have
-no idea that pointers are involved, and so would be surprised by an error for
-using it as an intstantiation arg.
+If we wanted to prohbit procedure pointers entirely, we would also need to
+add that the specific procedure resolved from <generic-spec> shall not be
+a pointer. However, users passing a generic procedure name might be taking
+it from some external library which uses pointer specifics, and the user
+will have no idea that pointers are involved, and so would be surprised by
+an error for using it as an intstantiation arg.
 
 Here is a full example of a generic procedure with pointer specifics which
 works the same with gfortran, ifx, and nagfor:
@@ -423,17 +424,17 @@ In current Fortran there isn't a way (that I can think of) for a generic
 interface to outlive the scope of a pointer that is one of its specifics.
 E.g. this is not allowed:
   procedure(my_generic), pointer :: generic_proc_ptr
-If it were, then generic_proc_ptr could be saved and referenced after p1 and
-p2 went out of scope, and so invoking that specific from the generic would
-be undefined behavior... maybe? The generic resolution process itself wouldn't
-be affected, though.
+If it were, then generic_proc_ptr could be saved and referenced after p1
+and p2 went out of scope, and so invoking that specific from the generic
+would be undefined behavior... maybe? The generic resolution process
+itself wouldn't be affected, though.
 
 For templates, a <generic-spec> instantiation arg will be resolved to a
-specific at the time of instantiation, so generics won't cause any issues more
-than just a pointer <procedure-name> would. And a pointer <procedure-name>
-as an instantiation arg should effectively act the same as a pointer actual
-arg. I'm unsure if a pointer <procedure-name> instantiation arg would cause
-problems. It seems like it's fine.
+specific at the time of instantiation, so generics won't cause any issues
+more than just a pointer <procedure-name> would. And a pointer
+<procedure-name> as an instantiation arg should effectively act the same
+as a pointer actual arg. I'm unsure if a pointer <procedure-name>
+instantiation arg would cause problems. It seems like it's fine.
 }
 
 
