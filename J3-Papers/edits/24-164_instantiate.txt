@@ -333,112 +333,27 @@ of generic intrinsic functions. For example, any generic intrinsic
 function with a KIND arg cannot be used as an instantation argument, since
 its interface cannot be described via the mechanisms of a normal Fortran
 interface.
+
+Categories:
+    1. Intrinsics that fundamentally cannot work (magic).
+       - E.g., KIND arguments
+       - Probably many/most cases with any optional argument if it affects result type/rank
+    2. Intrinsics that take any type
+       - TRANSFER
+       - MERGE
+       - ASSOCIATED
+       - CO_BROADCAST
+    3. Intrinsics that require arguments that are co-arrays
+       - Atomics
+    4. Variadics?
+       - MIN/MAX but with specific number of args for deferred seems ok?
+
 }
 
-
-{
-UTI: Can a <procedure-name> be a procedure pointer? If it were,
-invocations of it by the template would need to be resolved at runtime, so
-it would be no different than passing the procedure pointer as an actual
-argument. However, there is this odd case with generics:
-
-procedure(my_intf), pointer :: p
-interface my_generic
-    procedure :: p
-end interface
-
-This is legal and creates a generic, my_generic, which has a specific
-procedure that is a pointer. If an invocation of my_generic resolves to
-that pointer specific, then the procedure pointed to by p is invoked. So
-even if we prohibit <procedure-name> from being a procedure pointer, a
-pointer could still "sneak its way in" through a generic name.
-
-If we wanted to prohbit procedure pointers entirely, we would also need to
-add that the specific procedure resolved from <generic-spec> shall not be
-a pointer. However, users passing a generic procedure name might be taking
-it from some external library which uses pointer specifics, and the user
-will have no idea that pointers are involved, and so would be surprised by
-an error for using it as an intstantiation arg.
-
-Here is a full example of a generic procedure with pointer specifics which
-works the same with gfortran, ifx, and nagfor:
-
-    module m
-        abstract interface
-            integer function intf1(i)
-                integer :: i
-            end function
-            real function intf2(r)
-                real :: r
-            end function
-        end interface
-
-        procedure(intf1), pointer :: p1
-        procedure(intf2), pointer :: p2
-
-        interface my_generic
-            procedure :: p1
-            procedure :: p2
-        end interface
-    contains
-        integer function fn1(i)
-            integer :: i
-            fn1 = i + 1
-        end function
-
-        real function fn2(r)
-            real :: r
-            fn2 = r + 2
-        end function
-
-        integer function fn3(i)
-            integer :: i
-            fn3 = i + 123
-        end function
-
-        real function fn4(r)
-            real :: r
-            fn4 = r + 456.0
-        end function
-    end module
-
-    program p
-        use m
-        p1 => fn1
-        p2 => fn2
-
-        print *, my_generic(5)    ! prints 6
-        print *, my_generic(5.0)  ! prints 7.0
-
-        p1 => fn3
-        p2 => fn4
-
-        print *, my_generic(5)    ! prints 128
-        print *, my_generic(5.0)  ! prints 461.0
-
-        p2 => NULL()
-
-        print *, my_generic(5)    ! prints 128
-        print *, my_generic(5.0)  ! segfault!
-    end program
-
-In current Fortran there isn't a way (that I can think of) for a generic
-interface to outlive the scope of a pointer that is one of its specifics.
-E.g. this is not allowed:
-  procedure(my_generic), pointer :: generic_proc_ptr
-If it were, then generic_proc_ptr could be saved and referenced after p1
-and p2 went out of scope, and so invoking that specific from the generic
-would be undefined behavior... maybe? The generic resolution process
-itself wouldn't be affected, though.
-
-For templates, a <generic-spec> instantiation arg will be resolved to a
-specific at the time of instantiation, so generics won't cause any issues
-more than just a pointer <procedure-name> would. And a pointer
-<procedure-name> as an instantiation arg should effectively act the same
-as a pointer actual arg. I'm unsure if a pointer <procedure-name>
-instantiation arg would cause problems. It seems like it's fine.
+{UTI: Might need constraint on deferred type arguments: Shall not have
+a co-rank greater than 0.  Related: using co_reduce inside template.
+Deferred type may not meet requirements.
 }
-
 
 C1555 (R1529) The procedure specified by <procedure-name> shall have the
               same characteristics as its corresponding deferred
