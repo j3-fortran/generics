@@ -12,7 +12,8 @@ for templates.
 
 { UTI: Prevent circular dependencies in deferred procedure args.
   (A deferred procedure's declaration might reference other deferred
-  procedures.) }
+  procedures.)
+}
 
 Section 1:
 ==========
@@ -348,6 +349,8 @@ Categories:
     4. Variadics?
        - MIN/MAX but with specific number of args for deferred seems ok?
 
+Approach: Here is a list of the intrinsics that are permitted as
+          instantiation arguments.
 }
 
 {UTI: Might need constraint on deferred type arguments: Shall not have
