@@ -10,11 +10,6 @@ Introduction:
 This is the 4th of 6 papers that provide edits for the approved syntax
 for templates.
 
-{ UTI: Prevent circular dependencies in deferred procedure args.
-  (A deferred procedure's declaration might reference other deferred
-  procedures.)
-}
-
 Section 1:
 ==========
 
@@ -316,42 +311,11 @@ the constant expression in the corresponding instantiation argument.
 15.6.4.4 Deferred procedure association
 
 C1553 (R1529) An <instantiation-arg> that corresponds to a deferred
-              procedure shall be a <generic-spec> or a <procedure-name>.
+              procedure shall be a <generic-spec> or <procedure-name>.
 
-C1554 (R1529) A <procedure-name> shall denote a nonintrinsic, nonpointer
-              procedure that has an explicit interface.
+C1554 (R1529) A <procedure-name> shall denote a nonpointer,
+              nonintrinsic procedure that has an explicit interface.
 
-
-{
-UTI: Can <procedure-name> be a specific intrinsic? Can <generic-spec> be a
-generic intrinsic? Intrinsics, other than the specific intrinsics, cannot
-be passed as an actual arg to functions because of the issues with generic
-resolution, but that issue is resolved for templates, so can we say that a
-generic intrinsic is resolved to a specific based on the interface of the
-deferred procedure? We would have to prohibit the restricted specific
-intrinsic functions listed in Table 16.3, as well as an undetermiened list
-of generic intrinsic functions. For example, any generic intrinsic
-function with a KIND arg cannot be used as an instantation argument, since
-its interface cannot be described via the mechanisms of a normal Fortran
-interface.
-
-Categories:
-    1. Intrinsics that fundamentally cannot work (magic).
-       - E.g., KIND arguments
-       - Probably many/most cases with any optional argument if it affects result type/rank
-    2. Intrinsics that take any type
-       - TRANSFER
-       - MERGE
-       - ASSOCIATED
-       - CO_BROADCAST
-    3. Intrinsics that require arguments that are co-arrays
-       - Atomics
-    4. Variadics?
-       - MIN/MAX but with specific number of args for deferred seems ok?
-
-Approach: Here is a list of the intrinsics that are permitted as
-          instantiation arguments.
-}
 
 {UTI: Might need constraint on deferred type arguments: Shall not have
 a co-rank greater than 0.  Related: using co_reduce inside template.
@@ -383,6 +347,21 @@ becomes associated with that named procedure.
 
 If a deferred procedure corresponds to a generic identifier, it becomes
 associated with the specific procedure that satisfies constraint C1556.
+
+{UTI - too many "that's" in the following sentence.}
+{UTI - not good to reference the constraint explicitly.}
+If a deferred procedure corresponds to a nonintrinsic generic
+identifier, it becomes associated with the specific procedure that is
+a member of that generic identifier that satisfies constraint C1556.
+
+{UTI - the wording here is not "right"}
+If a deferred procedure corresponds to an intrinsic generic
+identifier, it becomes associated with that intrinsic identifier.
+
+C1557+ (R1529) If a deferred procedure corresponds to an intrinsic, it
+               shall be valid for that intrinsic to appear where the
+               deferred procedure is referenced.
+
 
 NOTE
 
