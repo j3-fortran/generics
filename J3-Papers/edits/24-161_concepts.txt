@@ -7,6 +7,8 @@ References: 24-125r5, 24-126r4, 24-127r4
 UTI: From Malcolm's notes: "deferred type specifier", instead of
      "deferred type"?
 
+UTI: Remove C1507+ (co-rank)  Maybe too far?  Note 5 is also involved.
+
 Introduction:
 =============
 
@@ -94,31 +96,26 @@ C1506 (R1505) The same <deferred-type-attr> shall not appear more than
 C1507 The name of a deferred type shall not appear as a
       <parent-type-name> in a <type-attr-spec>.
 
+C1507+ A variable of deferred-type shall not have co-rank greater than
+       zero.
+
+
 NOTE 1
 
     A deferred type cannot be extended. The use of the term EXTENSIBLE
     refers to the instantiation argument associated with the deferred
     argument, which must be extensible.
 
-{UTI: Rename EXTENSIBLE? Perhaps DERIVED?}
-
 A deferred type with the EXTENSIBLE attribute is an extensible derived
 type. A deferred type with the ABSTRACT attribute is an abstract derived
 type. A deferred type with the ABSTRACT attribute implicitly has the
 EXTENSIBLE attribute.
 
-{UTI: NOTE 2 is bad. From Malcolm's notes, this could useful as part of
-fixing this note:
-Cxxxx The name of a deferred type shall not appear as a
-      <derived-type-spec> except in the <declaration-type-spec> of a
-      <type-declaration-stmt>.
-}
-
 NOTE 2
 
-    A deferred type is not a <type-name>.  Consequently it cannot
-    appear as a <derived-type-spec>, and so a deferred type
-    may not be used in a <structure-constructor>.
+    A deferred type cannot be used as a structure-constructor, since
+    it is not a derived type.
+
 
 NOTE 3
 
@@ -150,6 +147,20 @@ NOTE 4
 
         TYPE(T3)  :: C1   ! Invalid
         CLASS(T3) :: C2   ! Valid
+
+Note 5: Variables of deferred-type are not permitted to have co-rank
+        greater than zero because it is invalid to coindex a variable
+        that has polymorphic ultimate components, and instantiation
+        arguments are permitted to have polymorphic ultimate
+        components.  Straightforward workarounds are possible using
+        deferred procedures.
+
+
+{
+Future work could relax this constraint while introducing a "intrinsic
+requirement" that specifies that the type does not have allocatable
+components. And this would be checked at instantiate.
+}
 
 15.2.1.3 Deferred constants
 

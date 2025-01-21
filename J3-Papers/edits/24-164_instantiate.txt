@@ -237,6 +237,8 @@ C1547 (R1529) A <type-spec> shall not specify EVENT_TYPE, LOCK_TYPE, or
               NOTIFY_TYPE, or specify a type that has a potential subobject
               component of type EVENT_TYPE, LOCK_TYPE, or NOTIFY_TYPE.
 
+
+
 NOTE 1
       Constraint C1547 ensures that intrinsic assignment is available for
       variables of deferred type.
@@ -316,12 +318,6 @@ C1553 (R1529) An <instantiation-arg> that corresponds to a deferred
 C1554 (R1529) A <procedure-name> shall denote a nonpointer,
               nonintrinsic procedure that has an explicit interface.
 
-
-{UTI: Might need constraint on deferred type arguments: Shall not have
-a co-rank greater than 0.  Related: using co_reduce inside template.
-Deferred type may not meet requirements.
-}
-
 C1555 (R1529) The procedure specified by <procedure-name> shall have the
               same characteristics as its corresponding deferred
               procedure, except that a pure procedure may correspond to a
@@ -342,33 +338,27 @@ C1556 (R1529) The generic identifier specified by <generic-spec> shall
 C1557 (R1529) A <procedure-name> shall not be the name of a generic
               identifier.
 
+{C1557 is a disambiguating constraint.}
+
 If a deferred procedure corresponds to a specific procedure name, it
 becomes associated with that named procedure.
 
-If a deferred procedure corresponds to a generic identifier, it becomes
-associated with the specific procedure that satisfies constraint C1556.
-
-{UTI - too many "that's" in the following sentence.}
-{UTI - not good to reference the constraint explicitly.}
 If a deferred procedure corresponds to a nonintrinsic generic
 identifier, it becomes associated with the specific procedure that is
-a member of that generic identifier that satisfies constraint C1556.
+a member of that generic identifier that has the same characteristics
+except whether it is PURE, SIMPLE, or ELEMENTAL.
 
-{UTI - the wording here is not "right"}
 If a deferred procedure corresponds to an intrinsic generic
 identifier, it becomes associated with that intrinsic identifier.
 
-C1557+ (R1529) If a deferred procedure corresponds to an intrinsic, it
-               shall be valid for that intrinsic to appear where the
+C1557+ (R1529) If a deferred procedure corresponds to an intrinsic
+               procedure or procedure from an intrinsic module, it
+               shall be valid for that procedure to appear where the
                deferred procedure is referenced.
 
 
 NOTE
-
-      If a generic identifier and one of its specific procedures have the
-      same name, and that name is specified as the instantiation argument
-      for a deferred procedure, the generic identifier is the
-      instantiation argument.
-
+      If a generic identifier and a specific procedure have the same
+      name, the generic identifier takes precedence.
 
 ===END===
