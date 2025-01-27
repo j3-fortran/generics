@@ -4,11 +4,6 @@ Subject: Edits for TEMPLATES: Introduction and deferred arguments
 Date: 2024-October-22
 References: 24-125r5, 24-126r4, 24-127r4
 
-UTI: From Malcolm's notes: "deferred type specifier", instead of
-     "deferred type"?
-
-UTI: Remove C1507+ (co-rank)  Maybe too far?  Note 5 is also involved.
-
 Introduction:
 =============
 
@@ -96,8 +91,7 @@ C1506 (R1505) The same <deferred-type-attr> shall not appear more than
 C1507 The name of a deferred type shall not appear as a
       <parent-type-name> in a <type-attr-spec>.
 
-C1507+ A variable of deferred-type shall not have co-rank greater than
-       zero.
+C1507+ A variable of deferred type shall not be a coarray.
 
 
 NOTE 1
@@ -148,7 +142,7 @@ NOTE 4
         TYPE(T3)  :: C1   ! Invalid
         CLASS(T3) :: C2   ! Valid
 
-Note 5: Variables of deferred-type are not permitted to have co-rank
+Note 5: Variables of deferred type are not permitted to have co-rank
         greater than zero because it is invalid to coindex a variable
         that has polymorphic ultimate components, and instantiation
         arguments are permitted to have polymorphic ultimate
@@ -231,7 +225,6 @@ NOTE 2
 
 A deferred procedure is a deferred argument that can appear as the
 procedure designator of a procedure reference
-{UTI: And where else?}
 within a REQUIREMENT construct, TEMPLATE construct, or templated
 procedure.  A deferred procedure's interface shall be established in that
 construct. The interface of a deferred procedure is established by its

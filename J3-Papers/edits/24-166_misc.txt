@@ -19,6 +19,8 @@ the syntax and semantics for templates.
 
 The contents of this paper are:
 
+{ More aspirational than true.}
+ 
    Section 2: Edits required for deferred arguments
    Section 3: Edits required for templates and instantiation
    Section 4: Edits to TKR compatibility
@@ -27,6 +29,7 @@ The contents of this paper are:
 
 2. Edits required for deferred arguments
 ========================================
+
 
 * Insert new glossary term in 3.7
 
@@ -46,6 +49,16 @@ The contents of this paper are:
 
   [instantiation argument]
   argument to an INSTANTIATE statement or inline instantiation
+
+* 3.120 Scoping unit
+
+  Add TEMPLATE construct and REQUIREMENT construct to the list in the
+  definition.
+
+* 3.139 Subprogram
+
+  Add <templated-function-subprogram> and
+  <templated-subroutine-subprogram>.
 
 * 7.3.2.1 Type specifier syntax
 
@@ -347,6 +360,16 @@ UTI: spelling of <inline-instantiate> vs <inline-instantiation>
     An interface block introduced by DEFERRED INTERFACE is a deferred
     interface block. An interface body in a deferred interface block
     specifies a deferred procedure.
+
+* 15.6.2.1 General
+
+{<prefix-spec> for templated procedures.}
+
+R1530 extended to include TEMPLATE.
+
+C???? (R1530) TEMPLATE shall not appear except in a
+              <templated-function-stmt> or a
+              <templated-subroutine-stmt>.
 
 * 15.6.2.2 Function subprogram
 

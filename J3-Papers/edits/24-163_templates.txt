@@ -24,9 +24,6 @@ Section 1:
 
 15.3.1 Syntax for the TEMPLATE construct
 
-{ UTI: This has been reworked since the standard meeting to be based on
-  the text about modules from 14.2.1, but it probably needs more work
-  still. }
 A template contains declarations, specifications, and definitions that are
 parameterized by deferred arguments. Public identifiers of a template are
 made accessible to other scoping units by instantiation of the template
@@ -136,7 +133,7 @@ C1532 The <internal-subprogram-part> of a templated procedure shall not
       contain a <templated-function-subprogram> or
       <templated-subroutine-subprogram>.
 
-{ UTI: Consider TEMPLATE keyword prefix }
+
 R1522 <templated-function-stmt> <<is>>
           [ <prefix> ] FUNCTION <template-name>
           ( <deferred-arg-list> ) ([<dummy-arg-list>])
@@ -157,6 +154,9 @@ R1521 <templated-subprogram-declaration-construct>
           <<or>> <format-stmt>
           <<or>> <specification-construct>
 
+C1532+ In either <templated-function-stmt> or
+       <templated-subroutine-stmt>, <prefix> shall include TEMPLATE.
+
 15.5 Restrictions on template definitions
 
 C1533 A variable or procedure pointer declared anywhere within a template
@@ -174,4 +174,10 @@ NOTE
     this allows a template implementation to be verified to be internally
     consistent.
 
+{ 
+Subgroup should add examples of templates here.  Esp. templated
+procedures.
+}
+
+    
 ===END===

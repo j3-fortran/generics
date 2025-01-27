@@ -38,7 +38,9 @@ Section 1
 
 A REQUIREMENT is a named collection of deferred argument declarations
 intended to facilitate reuse of common patterns within templates and
-other requirements. A REQUIREMENT construct is a specification construct.
+other requirements. A REQUIREMENT construct is a specification
+construct and a scoping unit.
+
 
 R1541 <requirement> <<is>>
           REQUIREMENT <requirement-name> ( [<deferred-arg-list>] )
@@ -64,16 +66,9 @@ C1559 (R1542) <interface-stmt> shall include ABSTRACT or DEFERRED.
 
 NOTE 1
 
-    A <requirement> is a scoping unit that allows use, host, and
-    deferred argument association.
-
-{UTI: Change NOTE 1 to normative text?}
-
-NOTE 2
-
     Each <deferred-arg> is local to the REQUIREMENT construct.
 
-NOTE 3
+NOTE 2
 
     Examples of REQUIREMENT blocks:
 
