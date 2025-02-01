@@ -130,22 +130,22 @@ Ctt34 The <internal-subprogram-part> of a templated procedure shall not
       <templated-subroutine-subprogram>.
 
 
-Rtt22 <templated-function-stmt> <<is>>
+Rtt20 <templated-function-stmt> <<is>>
           [ <prefix> ] FUNCTION <template-name>
           ( <deferred-arg-list> ) ([<dummy-arg-list>])
           [<suffix>]
 
-Rtt23 <templated-subroutine-stmt> <<is>>
+Rtt21 <templated-subroutine-stmt> <<is>>
          [ <prefix> ] SUBROUTINE <template-name>
          ( <deferred-arg-list> ) ([<dummy-arg-list>])
          [<proc-language-binding-spec>]
 
-Rtt20 <templated-subprogram-specification-part> <<is>>
+Rtt22 <templated-subprogram-specification-part> <<is>>
           [ <use-stmt> ] ...
           [ <import-stmt> ] ...
           [ <templated-subprogram-declaration-construct> ] ...
 
-Rtt21 <templated-subprogram-declaration-construct>
+Rtt23 <templated-subprogram-declaration-construct>
           <<is>> <deferred-arg-decl-stmt>
           <<or>> <format-stmt>
           <<or>> <specification-construct>

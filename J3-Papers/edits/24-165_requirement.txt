@@ -42,27 +42,27 @@ other requirements. A REQUIREMENT construct is a specification
 construct and a scoping unit.
 
 
-Rtt41 <requirement> <<is>>
+Rtt30 <requirement> <<is>>
           REQUIREMENT <requirement-name> ( [<deferred-arg-list>] )
               [ <use-stmt> ] ...
               <requirement-specification-construct> ...
           END [REQUIREMENT [<requirement-name>]]
 
-Ctt63 (Rtt41) A <requirement> shall only appear in the
+Ctt63 (Rtt30) A <requirement> shall only appear in the
               <specification-part> of a main program or module.
 
-Ctt64 (Rtt41) Each <deferred-arg> shall appear as the name of an entity
+Ctt64 (Rtt30) Each <deferred-arg> shall appear as the name of an entity
               declared by a <requirement-specification-construct>.
 
-Ctt65 (Rtt41) If a <requirement-name> appears in the
+Ctt65 (Rtt30) If a <requirement-name> appears in the
               <end-requirement-stmt>, it shall be identical to the
               <requirement-name> specified in the <requirement-stmt>.
 
-Rtt42 <requirement-specification-construct>
+Rtt31 <requirement-specification-construct>
           <<is>> <deferred-arg-decl-stmt>
           <<or>> <interface-block>
 
-Ctt66 (Rtt42) <interface-stmt> shall include ABSTRACT or DEFERRED.
+Ctt66 (Rtt31) <interface-stmt> shall include ABSTRACT or DEFERRED.
 
 NOTE 1
 
@@ -99,11 +99,11 @@ A REQUIRE statement provides specifications of deferred arguments by
 associating them with the deferred arguments of a REQUIREMENT. A
 REQUIRE statement is a specification statement.
 
-Rtt43 <require-stmt> <<is>>
+Rtt32 <require-stmt> <<is>>
           REQUIRE [::] <requirement-name>
           ( [<instantiation-arg-spec-list>] )
 
-Ctt67 (Rtt43) <requirement-name> shall be the name of a previously
+Ctt67 (Rtt32) <requirement-name> shall be the name of a previously
               defined REQUIREMENT.
 
 NOTE 1
