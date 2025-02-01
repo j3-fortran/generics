@@ -31,8 +31,8 @@ Rtt10 <template> <<is>> <template-stmt>
                         [ <template-subprogram-part> ]
                         <end-template-stmt>
 
-Ctt27a (Rtt10) A <template> shall only appear in the <specification-part>
-               of a main program or module.
+Ctt28 (Rtt10) A <template> shall only appear in the <specification-part>
+              of a main program or module.
 
 Rtt11 <template-stmt> <<is>>
           TEMPLATE <template-name> ([<deferred-arg-list>])
@@ -40,9 +40,9 @@ Rtt11 <template-stmt> <<is>>
 Rtt12 <end-template-stmt> <<is>>  END TEMPLATE [<template-name>]
 
 
-Ctt27b (Rtt12) If a <template-name> appears in the <end-template-stmt>,
-               it shall be identical to the <template-name>
-               specified in the <template-stmt>.
+Ctt29 (Rtt12) If a <template-name> appears in the <end-template-stmt>,
+              it shall be identical to the <template-name>
+              specified in the <template-stmt>.
 
 tt.3.2 Template specification part
 
@@ -68,7 +68,7 @@ Rtt15 <template-specification-construct>
           <<or>> <intrinsic-stmt>
           <<or>> <type-declaration-stmt>
 
-Ctt28 (Rtt15) If <type-declaration-stmt> is specified, PARAMETER shall
+Ctt30 (Rtt15) If <type-declaration-stmt> is specified, PARAMETER shall
               appear as an <attr-spec>.
 
 { The implicit mapping within a template scoping unit is the null mapping
@@ -107,7 +107,7 @@ Rtt18 <templated-function-subprogram> <<is>>
           [<internal-subprogram-part>]
           <end-function-stmt>
 
-Ctt29 (Rtt18) If a <function-name> appears in the <end-function-stmt>,
+Ctt31 (Rtt18) If a <function-name> appears in the <end-function-stmt>,
               it shall be identical to the <template-name>
               specified in the <templated-function-stmt>.
 
@@ -118,14 +118,14 @@ Rtt19 <templated-subroutine-subprogram> <<is>>
           [<internal-subprogram-part>]
           <end-subroutine-stmt>
 
-Ctt30 (Rtt19) If a <subroutine-name> appears in the <end-subroutine-stmt>,
+Ctt32 (Rtt19) If a <subroutine-name> appears in the <end-subroutine-stmt>,
               it shall be identical to the <template-name>
               specified in the <templated-subroutine-stmt>.
 
-Ctt31 An internal templated procedure shall not contain an
+Ctt33 An internal templated procedure shall not contain an
       <internal-subprogram-part>.
 
-Ctt32 The <internal-subprogram-part> of a templated procedure shall not
+Ctt34 The <internal-subprogram-part> of a templated procedure shall not
       contain a <templated-function-subprogram> or
       <templated-subroutine-subprogram>.
 
@@ -150,23 +150,23 @@ Rtt21 <templated-subprogram-declaration-construct>
           <<or>> <format-stmt>
           <<or>> <specification-construct>
 
-Ctt32+ In either <templated-function-stmt> or
-       <templated-subroutine-stmt>, <prefix> shall include TEMPLATE.
+Ctt35 In either <templated-function-stmt> or
+      <templated-subroutine-stmt>, <prefix> shall include TEMPLATE.
 
 tt.5 Restrictions on template definitions
 
-Ctt33 A variable or procedure pointer declared anywhere within a template
+Ctt36 A variable or procedure pointer declared anywhere within a template
       or templated subprogram shall not have the SAVE attribute.
 
-Ctt34 An <equivalence-stmt> or <common-stmt> shall not appear anywhere
+Ctt37 An <equivalence-stmt> or <common-stmt> shall not appear anywhere
       within a template or templated subprogram.
 
-Ctt35 A procedure referenced anywhere within a template or templated
+Ctt38 A procedure referenced anywhere within a template or templated
       subprogram shall have an explicit interface.
 
 NOTE
 
-    Constraint Ctt35 expresses the notion of type-safety.  In particular,
+    Constraint Ctt38 expresses the notion of type-safety.  In particular,
     this allows a template implementation to be verified to be internally
     consistent.
 

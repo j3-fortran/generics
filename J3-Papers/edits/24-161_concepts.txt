@@ -91,7 +91,7 @@ Ctt06 (Rtt05) The same <deferred-type-attr> shall not appear more than
 Ctt07 The name of a deferred type shall not appear as a
       <parent-type-name> in a <type-attr-spec>.
 
-Ctt07+ A variable of deferred type shall not be a coarray.
+Ctt08 A variable of deferred type shall not be a coarray.
 
 
 NOTE 1
@@ -174,28 +174,28 @@ Rtt07 <deferred-const-attr-spec> <<is>> DIMENSION(<array-spec>)
 Rtt08 <deferred-const-entity-decl>
           <<is>> <deferred-const-name> [ ( <array-spec> ) ]
 
-Ctt08 (Rtt06) The <deferred-const-attr-spec-list> shall include
+Ctt09 (Rtt06) The <deferred-const-attr-spec-list> shall include
               PARAMETER.
 
-Ctt09 (Rtt07) An entity declared in <deferred-const-declaration-stmt>
+Ctt10 (Rtt07) An entity declared in <deferred-const-declaration-stmt>
               shall be INTEGER, LOGICAL, or assumed-length CHARACTER.
 
-Ctt10 (Rtt08) Each <deferred-const-name> shall appear in the
+Ctt11 (Rtt08) Each <deferred-const-name> shall appear in the
               <deferred-arg-list> of the TEMPLATE, REQUIREMENT or
               templated procedure in which it appears.
 
-Ctt11 (Rtt06) If <array-spec> appears in
+Ctt12 (Rtt06) If <array-spec> appears in
               <deferred-const-declaration-stmt>, it shall be
               <implied-shape-spec>, <assumed-or-implied-rank-spec>,
               <explicit-shape-spec-list>, or
               <explicit-shape-bounds-spec>.
 
-Ctt12 (Rtt06) If <implied-shape-spec>, <explicit-shape-spec> or
+Ctt13 (Rtt06) If <implied-shape-spec>, <explicit-shape-spec> or
               <explicit-shape-bounds-spec> appears in
               <deferred-const-declaration-stmt>, then <lower-bound>
               shall not be specified.
 
-Ctt13 (Rtt06) If <explicit-shape-bounds-spec> appears in
+Ctt14 (Rtt06) If <explicit-shape-bounds-spec> appears in
               <deferred-const-declaration-stmt>, then
               <explicit-bounds-expr> shall not appear as a lower bound.
 
@@ -235,11 +235,11 @@ in a deferred interface block.
 Rtt09 <deferred-proc-declaration-stmt> <<is>>
      DEFERRED PROCEDURE(<interface>) [ :: ] <deferred-proc-name-list>
 
-Ctt14 (Rtt09) Each <deferred-proc-name> shall appear in the
+Ctt15 (Rtt09) Each <deferred-proc-name> shall appear in the
               <deferred-arg-list> of the TEMPLATE, REQUIREMENT or
               templated procedure in which it appears.
 
-Ctt15 (Rtt09) Each <subroutine-name> or <function-name> of an
+Ctt16 (Rtt09) Each <subroutine-name> or <function-name> of an
               <interface-body> that appears in a deferred interface
               block shall appear in the <deferred-arg-list> of the
               TEMPLATE, REQUIREMENT or templated procedure in
