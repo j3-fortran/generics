@@ -35,7 +35,7 @@ Ctt28 (Rtt10) A <template> shall only appear in the <specification-part>
               of a main program or module.
 
 Rtt11 <template-stmt> <<is>>
-          TEMPLATE <template-name> ([<deferred-arg-list>])
+          TEMPLATE <template-name> ([<deferred-arg-name-list>])
 
 Rtt12 <end-template-stmt> <<is>>  END TEMPLATE [<template-name>]
 
@@ -140,12 +140,12 @@ Ctt34 The <internal-subprogram-part> of a templated procedure shall not
 
 Rtt20 <templated-function-stmt> <<is>>
           [ <prefix> ] FUNCTION <template-name>
-          ( <deferred-arg-list> ) ([<dummy-arg-list>])
+          ( <deferred-arg-name-list> ) ([<dummy-arg-list>])
           [<suffix>]
 
 Rtt21 <templated-subroutine-stmt> <<is>>
          [ <prefix> ] SUBROUTINE <template-name>
-         ( <deferred-arg-list> ) ([<dummy-arg-list>])
+         ( <deferred-arg-name-list> ) ([<dummy-arg-list>])
          [<proc-language-binding-spec>]
 
 Rtt22 <templated-subprogram-specification-part> <<is>>

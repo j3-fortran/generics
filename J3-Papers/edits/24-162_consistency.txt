@@ -20,18 +20,22 @@ tt.2.2 Consistency of deferred argument specifications
 
 tt.2.2.1 General
 
-Within a construct with a <deferred-arg>, an explicit specification of
-that <deferred-arg> is either <deferred-arg-explicit-stmt> or
-<interface-body> in a deferred interface block.
+Within a construct with deferred arguments, an explicit specification of
+a deferred argument is provided by a <deferred-type-declaration-stmt>,
+a <deferred-const-declaration-stmt>, a <deferred-proc-declaration-stmt>
+or an <interface-body> in a deferred interface block.
 
-A <deferred-arg> shall have one or more ultimate specifications.  The
-ultimate specifications of a <deferred-arg> are:
+A deferred argument shall have one or more ultimate specifications.  The
+ultimate specifications of a deferred argument are:
     - an explicit specification, if present, and
     - its ultimate specifications as instantiation arguments in
       REQUIRE statements, if any.
 The ultimate specifications of an instantiation argument in a REQUIRE
 statement are the ultimate specifications of the corresponding
 deferred argument in the referenced requirement construct.
+
+Ctt02 A deferred argument shall have at most one explicit specification in
+      a given scoping unit.
 
 NOTE 1
 
@@ -62,7 +66,7 @@ NOTE 1
     when the corresponding deferred argument has the ABSTRACT
     attribute. Therefore, if a deferred type has an explicit
     specification with the ABSTRACT attribute, all of its ultimate
-    specifications must have the ABSTRACT attribute.
+    specifications need the ABSTRACT attribute too.
 
 NOTE 2
 

@@ -29,55 +29,33 @@ non-parameterized instances of entities defined within the template.
 
 tt.2 Deferred arguments
 
-tt.2.1 Declarations of deferred arguments
+tt.2.1 Concepts
 
-tt.2.1.1 General
+A deferred argument is an entity whose identifier appears in a
+<deferred-arg-name-list> in a template, requirement, or templated
+procedure.  A deferred argument can be a constant, procedure, or type.
+When a template, requirement, or templated procedure is instantiated
+with a REQUIRE or INSTANTIATE statement, the deferred arguments of the
+instance are associated with the instantiation arguments specified by
+the REQUIRE or INSTANTIATE statements.
 
-A deferred argument is an entity whose characteristics are determined
-by its effective instantiation argument.  A deferred argument can be a
-constant, procedure, or type and can appear in a REQUIREMENT construct,
-TEMPLATE construct, or templated procedure. Association with
-instantiation arguments occurs in the REQUIRE and INSTANTIATE statements.
-
-{
-  UTI: This is still awful. I thought we had done something with this, but
-  I guess not. <defered-proc> and <deferred-type> are not defined anywhere!
-  and <deferred-const-name> is a <name> by R402, but it needs a constraint
-  to somehow state that it is the name of a deferred argument. In general
-  this just needs to be refactored still. I had made a proposal to fix this
-  back in October, but I think it got forgotten after I asked Malcolm to
-  review it.
-  Also <deferred-arg> is completely orphaned syntax.
-}
-
-Rtt01  <deferred-arg> <<is>> <deferred-const-name>
-                      <<or>> <deferred-proc>
-                      <<or>> <deferred-type>
-
-Ctt01 (Rtt01) A <deferred-arg> shall appear in a <deferred-arg-decl-stmt>
-              or as the <function-name> or <subroutine-name> of an
-              <interface-body>.
-
-Ctt02 (Rtt01) A <deferred-arg> shall have at most one explicit
-              specification in a given scoping unit.
+tt.2.2 Declaration of deferred arguments
 
 A deferred argument declaration statement is used to declare
 deferred arguments.
 
-Rtt02 <deferred-arg-decl-stmt> <<is>> <deferred-arg-explicit-stmt>
-                               <<or>> <require-stmt>
-
-Rtt03 <deferred-arg-explicit-stmt>
+Rtt02 <deferred-arg-decl-stmt>
           <<is>> <deferred-type-declaration-stmt>
           <<or>> <deferred-const-declaration-stmt>
           <<or>> <deferred-proc-declaration-stmt>
+          <<or>> <require-stmt>
 
 NOTE
 
     Deferred arguments are local identifiers and are not externally
     accessible.
 
-tt.2.1.2 Deferred types
+tt.2.3 Deferred types
 
 A deferred type is a deferred argument that can appear in a type
 specifier within a REQUIREMENT construct, TEMPLATE construct, or
@@ -87,33 +65,9 @@ Rtt04 <deferred-type-declaration-stmt> <<is>>
          DEFERRED TYPE[, <deferred-type-attr-list>] ::
          <deferred-type-name-list>
 
-{
-  UTI: Malcolm said the wording of this constraint (and Ctt11 and Ctt15)
-  is bad:
-
-  > <Ctt04> looks broken, if I remember correctly you permit nested
-  > TEMPLATEs? In which case inside the nested TEMPLATE, there are two
-  > deferred argument lists, but presumably you want it to be the innermost
-  > one. In which case, something like "<Ctt04> A deferred-arg-name that
-  > appears in a deferred-arg-declaration shall be the name of a deferred
-  > argument of the scoping unit."
-
-  My concern with Malcolm's suggestion is whether or not the presence of
-  a name in a <deferred-arg-list> defines what is a deferred argument, or
-  whether the presence of a name in a <deferred-arg-decl-stmt> (or deferred
-  interface block) defines what is a deferred argument.
-
-  Due to REQUIRE statements, I think it has to be the former.
-     REQUIRE foo(T)
-  We can't say that T must be a deferred arg, even though it might declare
-  T, since T could be anything really. It's a deferred arg *because* it's
-  in the <deferred-arg-decl-list>, and its declaration is in the REQUIRE
-  statement.
-}
-
-Ctt04 (Rtt04) Each <deferred-type-name> shall appear in the
-              <deferred-arg-list> of the TEMPLATE, REQUIREMENT or
-              templated procedure in which it appears.
+Ctt04 (Rtt04) Each <deferred-type-name> shall be the name of a deferred
+              argument of the scoping unit in which the declaration
+              appears.
 
 Rtt05 <deferred-type-attr> <<is>> ABSTRACT
                            <<or>> EXTENSIBLE
@@ -128,38 +82,24 @@ Ctt07 The name of a deferred type shall not appear as a
 
 Ctt08 A variable of deferred type shall not be a coarray.
 
-
-NOTE 1
-
-    A deferred type cannot be extended. The use of the term EXTENSIBLE
-    refers to the instantiation argument associated with the deferred
-    argument, which must be extensible.
-
-{
-  UTI: Malcolm said NOTE 1 is bad:
-
-    In NOTE 1, misuse of the word "must". And you cannot have a
-    requirement here. And there is no antecedent for "the instantiation
-    argument". Maybe reword the whole second sentence as "The keyword
-    EXTENSIBLE refers to an instantiation argument that can be associated
-    with the deferred argument."
-}
-
 A deferred type with the EXTENSIBLE attribute is an extensible derived
 type. A deferred type with the ABSTRACT attribute is an abstract derived
 type. A deferred type with the ABSTRACT attribute implicitly has the
 EXTENSIBLE attribute.
 
+NOTE 1
+
+    A deferred type cannot be extended. The keyword EXTENSIBLE refers to
+    an instantiation argument associated with the deferred argument.
+
+{ Alternate: "The keyword EXTENSIBLE indicates restrictions on what types
+can be associated with the deferred argument. }
+
 NOTE 2
 
-{
-  UTI: We just said it was derived type in the previous paragraph.
-  Reword this. Perhaps just "A deferred type cannot be constructed."
-}
-
-    A deferred type cannot be used as a structure-constructor, since
-    it is not a derived type.
-
+    Even with the EXTENSIBLE attribute, a deferred type cannot be
+    constructed because its components (and type parameters, if any)
+    are not known within the template.
 
 NOTE 3
 
@@ -230,9 +170,9 @@ Ctt09 (Rtt06) The <deferred-const-attr-spec-list> shall include
 Ctt10 (Rtt07) An entity declared in <deferred-const-declaration-stmt>
               shall be INTEGER, LOGICAL, or assumed-length CHARACTER.
 
-Ctt11 (Rtt08) Each <deferred-const-name> shall appear in the
-              <deferred-arg-list> of the TEMPLATE, REQUIREMENT or
-              templated procedure in which it appears.
+Ctt11 (Rtt08) Each <deferred-const-name> shall be the name of a deferred
+              argument of the scoping unit in which the declaration
+              appears.
 
 Ctt12 (Rtt06) If <array-spec> appears in
               <deferred-const-declaration-stmt>, it shall be
@@ -307,14 +247,14 @@ interface block.
 Rtt09 <deferred-proc-declaration-stmt> <<is>>
      DEFERRED PROCEDURE(<interface>) [ :: ] <deferred-proc-name-list>
 
-Ctt15 (Rtt09) Each <deferred-proc-name> shall appear in the
-              <deferred-arg-list> of the TEMPLATE, REQUIREMENT or
-              templated procedure in which it appears.
+Ctt15 (Rtt09) Each <deferred-proc-name> shall be the name of a deferred
+              argument of the scoping unit in which the declaration
+              appears.
 
 Ctt16 Each <subroutine-name> or <function-name> of an <interface-body>
-      that appears in a deferred interface block shall appear in the
-      <deferred-arg-list> of the TEMPLATE, REQUIREMENT or templated
-      procedure in which it appears.
+      that appears in a deferred interface block shall be the name of
+      a deferred argument of the scoping unit in which the
+      <interface-body> appears.
 
 {
   UTI: I think malcolm wanted some deferred interface blocks to be defined

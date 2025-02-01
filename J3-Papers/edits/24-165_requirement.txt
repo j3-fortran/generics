@@ -43,7 +43,7 @@ construct and a scoping unit.
 
 
 Rtt30 <requirement> <<is>>
-          REQUIREMENT <requirement-name> ( [<deferred-arg-list>] )
+          REQUIREMENT <requirement-name> ( [<deferred-arg-name-list>] )
               [ <use-stmt> ] ...
               <requirement-specification-construct> ...
           END [REQUIREMENT [<requirement-name>]]
