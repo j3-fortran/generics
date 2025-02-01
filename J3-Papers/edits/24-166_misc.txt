@@ -444,6 +444,6 @@ C???? (R1530) TEMPLATE shall not appear except in a
 
   [555:15+] Insert new bullet:
     * the names of the dummy arguments of a deferred procedure without
-      an explicit specification (15.2.2.4);
+      an explicit specification (tt.2.2.4);
 
 ===END===

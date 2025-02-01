@@ -13,41 +13,41 @@ for templates.
 Section 1:
 ==========
 
-* Append the following at the end of clause 15 from paper 24-163.
+* Append the following at the end of the clause from paper 24-163.
 
 
-15.6 Instantiation
+tt.6 Instantiation
 
-15.6.1 The INSTANTIATE statement
+tt.6.1 The INSTANTIATE statement
 
 An INSTANTIATE statement is a specification statement that identifies
 an instance of a template by specifying instantiation arguments that
 become associated with the deferred arguments of the named template.
 
-R1524 <template-instantiate-stmt>
+Rtt24 <template-instantiate-stmt>
          <<is>> INSTANTIATE [::] <template-name> (
                 [ <instantiation-arg-spec-list> ] ) [, <rename-list> ]
          <<or>> INSTANTIATE [::] <template-name> (
                 [ <instantiation-arg-spec-list> ] ), ONLY : [ <only-list> ]
 
-C1536 (R1524) The <template-name> shall be the name of a template that is
+Ctt36 (Rtt24) The <template-name> shall be the name of a template that is
               not a templated procedure.
 
-R1525 <templated-procedure-instantiate-stmt> <<is>>
+Rtt25 <templated-procedure-instantiate-stmt> <<is>>
           INSTANTIATE :: <local-name> => <template-name> (
           [ <instantiation-arg-spec-list> ] )
 
-C1537 (R1525) The <template-name> shall be the name of a templated
+Ctt37 (Rtt25) The <template-name> shall be the name of a templated
               procedure.
 
-R1526 <instantiate-stmt> <<is>> <template-instantiate-stmt>
+Rtt26 <instantiate-stmt> <<is>> <template-instantiate-stmt>
                          <<or>> <template-procedure-instantiate-stmt>
 
-C1538 (R1526) Within an <instantiate-stmt>, an <instantiation-arg> shall
+Ctt38 (Rtt26) Within an <instantiate-stmt>, an <instantiation-arg> shall
               not depend on any entity defined within the referenced
               template.
 
-C1539 (R1526) In <instantiate-stmt>, <template-name> shall not be the
+Ctt39 (Rtt26) In <instantiate-stmt>, <template-name> shall not be the
               name of any construct in which it appears.
 
 The INSTANTIATE statement without the ONLY option provides access to
@@ -72,18 +72,18 @@ These identifiers are
      <use-defined-operator> in any <rename> for that instantiation.
 
 
-15.6.2 Inline instantiation of templated procedures
+tt.6.2 Inline instantiation of templated procedures
 
 A templated procedure can be instantiated and referenced in
 an expression or the <procedure-designator> in a <call-stmt>.
 
-R1527 <inline-instantiate> <<is>>
+Rtt27 <inline-instantiate> <<is>>
     <template-name> ^ ( <instantiation-arg-spec-list> )
 
-C1540 (R1527) The <template-name> shall be the name of a templated
+Ctt40 (Rtt27) The <template-name> shall be the name of a templated
               procedure.
 
-C1541 (R1527) In <inline-instantiate>, <template-name> shall not be the
+Ctt41 (Rtt27) In <inline-instantiate>, <template-name> shall not be the
               name of any construct in which it appears.
 
 The procedure designated by <inline-instantiate> is the procedure
@@ -94,7 +94,7 @@ NOTE
     Templated procedures cannot reference themselves.
 
 
-15.6.3 Interpretation of template instantiation
+tt.6.3 Interpretation of template instantiation
 
 Multiple instantiations of a given template with the same actual
 instantiation arguments identify the same instance of the referenced
@@ -175,27 +175,27 @@ NOTE 2
         INSTANTIATE TMPL(MY_U, B) ! Resolves to F3 ==> different
 
 
-15.6.4 Deferred argument association
+tt.6.4 Deferred argument association
 
-15.6.4.1 Instantiation arguments
+tt.6.4.1 Instantiation arguments
 
 Instantiation arguments are specified by an INSTANTIATE statement, a
 REQUIRE statement, or by inline instantiation.
 
-R1528 <instantiation-arg-spec> <<is>>
+Rtt28 <instantiation-arg-spec> <<is>>
           [ <keyword> = ] <instantiation-arg>
 
-R1529 <instantiation-arg> <<is>> <constant-expr>
+Rtt29 <instantiation-arg> <<is>> <constant-expr>
                           <<or>> <type-spec>
                           <<or>> <generic-spec>
                           <<or>> <procedure-name>
 
-C1542a (R1528) The <keyword> = shall not be omitted from an
+Ctt42a (Rtt28) The <keyword> = shall not be omitted from an
                <instantiation-arg-spec> unless it has been omitted from
                each preceding <instantiation-arg-spec> in the argument
                list.
 
-C1542b (R1528) Each <keyword> shall be the name of a deferred argument in
+Ctt42b (Rtt28) Each <keyword> shall be the name of a deferred argument in
                the referenced requirement or template.
 
 The instantiation argument list identifies the correspondence between the
@@ -215,32 +215,32 @@ instantiation argument shall correspond to each deferred argument.
 The entity that is associated with a deferred argument is called its
 effective instantiation argument.
 
-15.6.4.2 Deferred type association
+tt.6.4.2 Deferred type association
 
-C1543 (R1529) An <instantiation-arg> that corresponds to a deferred type
+Ctt43 (Rtt29) An <instantiation-arg> that corresponds to a deferred type
               shall be a <type-spec>.
 
-C1544 (R1529) A <type-spec> shall specify constant type parameters.
+Ctt44 (Rtt29) A <type-spec> shall specify constant type parameters.
 
-C1545 (R1529) A <type-spec> shall not specify an abstract type if its
+Ctt45 (Rtt29) A <type-spec> shall not specify an abstract type if its
               corresponding deferred type does not have the ABSTRACT
               attribute.
 
 { Judging by C7109 & C7110, just saying "its corresponding deferred type"
   should be sufficient and unambiguous in context. }
 
-C1546 (R1529) A <type-spec> shall specify an extensible derived type if
+Ctt46 (Rtt29) A <type-spec> shall specify an extensible derived type if
               its corresponding deferred type has the EXTENSIBLE
               attribute.
 
-C1547 (R1529) A <type-spec> shall not specify EVENT_TYPE, LOCK_TYPE, or
+Ctt47 (Rtt29) A <type-spec> shall not specify EVENT_TYPE, LOCK_TYPE, or
               NOTIFY_TYPE, or specify a type that has a potential subobject
               component of type EVENT_TYPE, LOCK_TYPE, or NOTIFY_TYPE.
 
 
 
 NOTE 1
-      Constraint C1547 ensures that intrinsic assignment is available for
+      Constraint Ctt47 ensures that intrinsic assignment is available for
       variables of deferred type.
 
 {A number of places in the standard have a similar exception for these
@@ -248,11 +248,11 @@ three types. A separate edit paper could perhaps introduce a name for this
 category of types for which intrinsic assignment is not permitted so that
 all these constraints can reference a shared term.}
 
-C1548 (R1529) A <type-spec> shall not specify a type with a coarray
+Ctt48 (Rtt29) A <type-spec> shall not specify a type with a coarray
               potential subobject component.
 
 NOTE 2
-      Constraint C1548 avoids the possibility of assignment
+      Constraint Ctt48 avoids the possibility of assignment
       being invalid where the variable and expr do not agree on
       the allocation status of a coarray component.
 
@@ -292,33 +292,33 @@ NOTE 4
       INSTANTIATE TMPL2(MY_T1)   ! ok
       INSTANTIATE TMPL2(MY_T2)   ! ok
 
-15.6.4.3 Deferred constant association
+tt.6.4.3 Deferred constant association
 
-C1549 (R1529) An <instantiation-arg> that corresponds to a deferred
+Ctt49 (Rtt29) An <instantiation-arg> that corresponds to a deferred
               constant shall be a <constant-expr>.
 
-C1550 (R1529) The type and kind type parameters of <constant-expr> shall
+Ctt50 (Rtt29) The type and kind type parameters of <constant-expr> shall
               be the same as the type and kind type parameter of its
               corresponding deferred constant.
 
-C1551 (R1529) If the shape of the corresponding deferred constant is not
+Ctt51 (Rtt29) If the shape of the corresponding deferred constant is not
               implied, then the <constant-expr> shall have the same shape.
 
-C1552 (R1529) If the rank of the corresponding deferred constant is not
+Ctt52 (Rtt29) If the rank of the corresponding deferred constant is not
               implied, then the <constant-expr> shall have the same rank.
 
 The value of a deferred constant becomes associated with the value of
 the constant expression in the corresponding instantiation argument.
 
-15.6.4.4 Deferred procedure association
+tt.6.4.4 Deferred procedure association
 
-C1553 (R1529) An <instantiation-arg> that corresponds to a deferred
+Ctt53 (Rtt29) An <instantiation-arg> that corresponds to a deferred
               procedure shall be a <generic-spec> or <procedure-name>.
 
-C1554 (R1529) A <procedure-name> shall denote a nonpointer,
+Ctt54 (Rtt29) A <procedure-name> shall denote a nonpointer,
               nonintrinsic procedure that has an explicit interface.
 
-C1555 (R1529) The procedure specified by <procedure-name> shall have the
+Ctt55 (Rtt29) The procedure specified by <procedure-name> shall have the
               same characteristics as its corresponding deferred
               procedure, except that a pure procedure may correspond to a
               deferred procedure that is not pure, a simple procedure may
@@ -326,7 +326,7 @@ C1555 (R1529) The procedure specified by <procedure-name> shall have the
               an elemental procedure may correspond to a deferred
               procedure that is not elemental.
 
-C1556 (R1529) The generic identifier specified by <generic-spec> shall
+Ctt56 (Rtt29) The generic identifier specified by <generic-spec> shall
               have exactly one specific procedure that has the same
               characteristics as the corresponding deferred procedure,
               except that a pure specific procedure may correspond to a
@@ -335,10 +335,10 @@ C1556 (R1529) The generic identifier specified by <generic-spec> shall
               simple, and an elemental specific procedure may correspond
               to a deferred procedure that is not elemental.
 
-C1557 (R1529) A <procedure-name> shall not be the name of a generic
+Ctt57 (Rtt29) A <procedure-name> shall not be the name of a generic
               identifier.
 
-{C1557 is a disambiguating constraint.}
+{Ctt57 is a disambiguating constraint.}
 
 If a deferred procedure corresponds to a specific procedure name, it
 becomes associated with that named procedure.
@@ -351,7 +351,7 @@ except whether it is PURE, SIMPLE, or ELEMENTAL.
 If a deferred procedure corresponds to an intrinsic generic
 identifier, it becomes associated with that intrinsic identifier.
 
-C1557+ (R1529) If a deferred procedure corresponds to an intrinsic
+Ctt57+ (Rtt29) If a deferred procedure corresponds to an intrinsic
                procedure or procedure from an intrinsic module, it
                shall be valid for that procedure to appear where the
                deferred procedure is referenced.
