@@ -39,6 +39,17 @@ constant, procedure, or type and can appear in a REQUIREMENT construct,
 TEMPLATE construct, or templated procedure. Association with
 instantiation arguments occurs in the REQUIRE and INSTANTIATE statements.
 
+{
+  UTI: This is still awful. I thought we had done something with this, but
+  I guess not. <defered-proc> and <deferred-type> are not defined anywhere!
+  and <deferred-const-name> is a <name> by R402, but it needs a constraint
+  to somehow state that it is the name of a deferred argument. In general
+  this just needs to be refactored still. I had made a proposal to fix this
+  back in October, but I think it got forgotten after I asked Malcolm to
+  review it.
+  Also <deferred-arg> is completely orphaned syntax.
+}
+
 Rtt01  <deferred-arg> <<is>> <deferred-const-name>
                       <<or>> <deferred-proc>
                       <<or>> <deferred-type>
@@ -76,6 +87,30 @@ Rtt04 <deferred-type-declaration-stmt> <<is>>
          DEFERRED TYPE[, <deferred-type-attr-list>] ::
          <deferred-type-name-list>
 
+{
+  UTI: Malcolm said the wording of this constraint (and Ctt11 and Ctt15)
+  is bad:
+
+  > <Ctt04> looks broken, if I remember correctly you permit nested
+  > TEMPLATEs? In which case inside the nested TEMPLATE, there are two
+  > deferred argument lists, but presumably you want it to be the innermost
+  > one. In which case, something like "<Ctt04> A deferred-arg-name that
+  > appears in a deferred-arg-declaration shall be the name of a deferred
+  > argument of the scoping unit."
+
+  My concern with Malcolm's suggestion is whether or not the presence of
+  a name in a <deferred-arg-list> defines what is a deferred argument, or
+  whether the presence of a name in a <deferred-arg-decl-stmt> (or deferred
+  interface block) defines what is a deferred argument.
+
+  Due to REQUIRE statements, I think it has to be the former.
+     REQUIRE foo(T)
+  We can't say that T must be a deferred arg, even though it might declare
+  T, since T could be anything really. It's a deferred arg *because* it's
+  in the <deferred-arg-decl-list>, and its declaration is in the REQUIRE
+  statement.
+}
+
 Ctt04 (Rtt04) Each <deferred-type-name> shall appear in the
               <deferred-arg-list> of the TEMPLATE, REQUIREMENT or
               templated procedure in which it appears.
@@ -100,12 +135,27 @@ NOTE 1
     refers to the instantiation argument associated with the deferred
     argument, which must be extensible.
 
+{
+  UTI: Malcolm said NOTE 1 is bad:
+
+    In NOTE 1, misuse of the word "must". And you cannot have a
+    requirement here. And there is no antecedent for "the instantiation
+    argument". Maybe reword the whole second sentence as "The keyword
+    EXTENSIBLE refers to an instantiation argument that can be associated
+    with the deferred argument."
+}
+
 A deferred type with the EXTENSIBLE attribute is an extensible derived
 type. A deferred type with the ABSTRACT attribute is an abstract derived
 type. A deferred type with the ABSTRACT attribute implicitly has the
 EXTENSIBLE attribute.
 
 NOTE 2
+
+{
+  UTI: We just said it was derived type in the previous paragraph.
+  Reword this. Perhaps just "A deferred type cannot be constructed."
+}
 
     A deferred type cannot be used as a structure-constructor, since
     it is not a derived type.
@@ -124,10 +174,10 @@ NOTE 4
     The distinction between deferred types that are extensible or
     not, and deferred types that are abstract or not, helps to ensure
     a processor can verify a template is internally consistent.  For
-    example, a deferred type must not be permitted in a CLASS
-    declaration if it might be instantiated as INTEGER.  Likewise, a
-    deferred type must not be permitted in a TYPE declaration if it
-    might be instantiated with an abstract derived type.
+    example, a deferred type cannot be used in a CLASS declaration if
+    it might be instantiated as INTEGER.  Likewise, a deferred type
+    cannot be used in a TYPE declaration if it might be instantiated
+    with an abstract derived type.
 
     Using the deferred type declarations from NOTE 3, the following
     examples of type declaration statements are valid or invalid as
@@ -142,18 +192,18 @@ NOTE 4
         TYPE(T3)  :: C1   ! Invalid
         CLASS(T3) :: C2   ! Valid
 
-Note 5: Variables of deferred type are not permitted to have co-rank
-        greater than zero because it is invalid to coindex a variable
-        that has polymorphic ultimate components, and instantiation
-        arguments are permitted to have polymorphic ultimate
-        components.  Straightforward workarounds are possible using
-        deferred procedures.
+NOTE 5
 
+    Variables of deferred type are not permitted to be coarrays because
+    it is invalid to coindex a variable that has polymorphic ultimate
+    components, and instantiation arguments are permitted to have
+    polymorphic ultimate components.  Straightforward workarounds are
+    possible using deferred procedures.
 
 {
-Future work could relax this constraint while introducing a "intrinsic
-requirement" that specifies that the type does not have allocatable
-components. And this would be checked at instantiate.
+Future work could relax Ctt08 while introducing a "intrinsic requirement"
+that specifies that the type does not have allocatable components. And
+this would be checked at instantiate.
 }
 
 tt.2.1.3 Deferred constants
@@ -203,6 +253,29 @@ NOTE 1
 
     Deferred constant arrays always have default lower bounds.
 
+{
+  UTI: Malcolm said:
+
+  > I don't understand the allergy to non-unity lower bounds. Why?
+
+  Perhaps we explain why in this note? Does anyone remember why?
+  Something to do with agreement between different ultimate
+  specifications coming from REQUIRE statements, I think?.
+
+  He continued:
+  > Even if there is a good reason, why prohibit the user from specifying
+  > 1:N?
+  >
+  > If we really want this, maybe replace <Ctt13> and <Ctt14> with
+  > "<Ctt13-14> Each lower bound of a deferred constant that is an array
+  >  shall be equal to one."
+  > or
+  > "<Ctt13-14 Lower bounds shall not be explicitly specified for a
+  >  deferred constant." Depending on what you really want.
+
+  I like the former one of his replacement constraint suggestions.
+}
+
 NOTE 2
 
     Examples of deferred constant declarations are:
@@ -224,13 +297,12 @@ NOTE 2
 tt.2.1.4 Deferred procedures
 
 A deferred procedure is a deferred argument that can appear as the
-procedure designator of a procedure reference
-within a REQUIREMENT construct, TEMPLATE construct, or templated
-procedure.  A deferred procedure's interface shall be established in that
-construct. The interface of a deferred procedure is established by its
-appearance in a <deferred-proc-declaration-stmt> or as the
-<subroutine-name> or <function-name> of an <interface-body> that appears
-in a deferred interface block.
+procedure designator of a procedure reference within a REQUIREMENT
+construct, TEMPLATE construct, or templated procedure.  A deferred
+procedure's interface is established in that construct by its appearance
+in a <deferred-proc-declaration-stmt> or as the <subroutine-name> or
+<function-name> of an <interface-body> that appears in a deferred
+interface block.
 
 Rtt09 <deferred-proc-declaration-stmt> <<is>>
      DEFERRED PROCEDURE(<interface>) [ :: ] <deferred-proc-name-list>
@@ -239,11 +311,29 @@ Ctt15 (Rtt09) Each <deferred-proc-name> shall appear in the
               <deferred-arg-list> of the TEMPLATE, REQUIREMENT or
               templated procedure in which it appears.
 
-Ctt16 (Rtt09) Each <subroutine-name> or <function-name> of an
-              <interface-body> that appears in a deferred interface
-              block shall appear in the <deferred-arg-list> of the
-              TEMPLATE, REQUIREMENT or templated procedure in
-              which it appears.
+Ctt16 Each <subroutine-name> or <function-name> of an <interface-body>
+      that appears in a deferred interface block shall appear in the
+      <deferred-arg-list> of the TEMPLATE, REQUIREMENT or templated
+      procedure in which it appears.
+
+{
+  UTI: I think malcolm wanted some deferred interface blocks to be defined
+  in this section, somehow. Or at leasted referenced better. He said:
+
+  > Can I express my displeasure that deferred interface blocks are not
+  > listed in <Rtt03>?
+
+  Tom replied:
+
+  > I think the omission is partly due to the (likely confused) desire not
+  > to mix statements and blocks inside the same bnf.   We also found it
+  > easy to just add deferred interfaces in the ordinary interface
+  > section. (misc paper).   We can re-examine both decisions.
+
+  In my response to Malcolm's email, I proposed some ways to integrate
+  deferred interface blocks here, but none of them were good. I asked
+  for his opinion, but I don't think he ever responsed.
+}
 
 NOTE 1
 
@@ -269,3 +359,13 @@ NOTE 2
         DEFERRED PROCEDURE(F_I) :: G
 
 ===END===
+
+
+{
+Further work: We should come up with and use an "association" term.
+Malcolm's preferred term was "instantiation association" or "template
+association".
+I like "instantiation association".
+"deferred argument association" is also an option. Malcolm said it was
+okay but a mouthful.
+}

@@ -71,6 +71,14 @@ Rtt15 <template-specification-construct>
 Ctt30 (Rtt15) If <type-declaration-stmt> is specified, PARAMETER shall
               appear as an <attr-spec>.
 
+{
+  UTI: Malcolm asks why, if we allow <interface-block> and
+  <deferred-proc-decl-stmt> (via <deferred-arg-decl-stmt>),
+  why not allow <procedure-declaration-stmt> ?
+  If we do, we'll need to prohibit POINTER from appearing on
+  <procedure-declaration-stmt>.
+}
+
 { The implicit mapping within a template scoping unit is the null mapping
   for all the letters - specified in the "misc edits" paper via a change
   to "8.7 Implicit statement". }
@@ -158,8 +166,42 @@ tt.5 Restrictions on template definitions
 Ctt36 A variable or procedure pointer declared anywhere within a template
       or templated subprogram shall not have the SAVE attribute.
 
-Ctt37 An <equivalence-stmt> or <common-stmt> shall not appear anywhere
-      within a template or templated subprogram.
+{
+  UTI: Malcolm has a problem with Ctt36 as it was written in 24-163r3.
+
+     C1533 A variable or procedure pointer declared in either a
+         <template-subprogram-part> or a
+         <templated-subprogram-declaration-construct> shall
+         not have the SAVE attribute.
+
+  and I don't believe our updated wording fully addresses his issue.
+
+  > <Ctt36> is both too strong and not obviously effectual.
+  >
+  > not obviously effectual: it's not obvious what "in" means because
+  > scoping units have holes in them;
+  >
+  > too strong: you USE a module that has a variable, and declare it to
+  > be ASYNCHRONOUS because you're going to do some async magic in the
+  > template procedure - invalid because that variable has SAVE.
+  >
+  > I think you should probably say it like "A local variable or local
+  > procedure pointer of a template subprogram, of a BLOCK construct
+  > nested within a template subprogram, or of a subprogram nested within
+  > a template subprogram, shall not have the SAVE attribute."
+  >
+  > (I modelled this on existing C1598 for pure procedures.  Note that
+  > BLOCK nested within subprogram nested within tsub is still a BLOCK
+  > nested within tsub.)
+
+  His wording is pretty verbose, but I think one thing to take from it
+  is the use of "local variable or local procedure pointer". We could
+  use that wording to solve the issue he mentions with USE statements.
+}
+
+
+Ctt37 A COMMON statement or EQUIVALENCE statement shall not appear
+      anywhere within a template or templated subprogram.
 
 Ctt38 A procedure referenced anywhere within a template or templated
       subprogram shall have an explicit interface.
