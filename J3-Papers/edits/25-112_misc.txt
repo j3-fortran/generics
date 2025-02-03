@@ -1,7 +1,7 @@
-To: J3                                                     J3/24-166rX
+To: J3                                                     J3/25-112
 From: generics
 Subject: Miscellaneous edits to incorporate templates
-Date: 2024-October-22
+Date: 2025-February-03
 References: 25-107, 25-108, 25-109, 25-110, 25-111, 24-125r5,
             24-126r4, 24-127r4, 24-007
 
@@ -20,7 +20,7 @@ the syntax and semantics for templates.
 The contents of this paper are:
 
 { More aspirational than true.}
- 
+
    Section 2: Edits required for deferred arguments
    Section 3: Edits required for templates and instantiation
    Section 4: Edits to TKR compatibility
