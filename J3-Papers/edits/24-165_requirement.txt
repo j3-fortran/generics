@@ -10,6 +10,9 @@ Introduction
 This is the 5th of 6 papers that provide edits for the approved syntax
 for templates.
 
+{ UTI: Did we get to this straw vote at the last meeting? Can we remove it
+  now? }
+
 Straw vote: The REQUIRE statement does not need "[::]" at this time, but
             we note that various other bits of the BNF also have
             unnecesary optional "[::]". E.g., various attribute
@@ -31,10 +34,10 @@ Note: Subgroup has made the following small change compared to the
 Section 1
 =========
 
-* Append the following at the end of clause 15 from paper 24-164.
+* Append the following at the end of the clause from paper 24-164.
 
 
-15.7 REQUIREMENT construct
+tt.7 REQUIREMENT construct
 
 A REQUIREMENT is a named collection of deferred argument declarations
 intended to facilitate reuse of common patterns within templates and
@@ -42,31 +45,28 @@ other requirements. A REQUIREMENT construct is a specification
 construct and a scoping unit.
 
 
-R1541 <requirement> <<is>>
-          REQUIREMENT <requirement-name> ( [<deferred-arg-list>] )
+Rtt30 <requirement> <<is>>
+          REQUIREMENT <requirement-name> ( [<deferred-arg-name-list>] )
               [ <use-stmt> ] ...
               <requirement-specification-construct> ...
           END [REQUIREMENT [<requirement-name>]]
 
-C1557a (R1541) A <requirement> shall only appear in the
-               <specification-part> of a main program or module.
+Ctt63 (Rtt30) A <requirement> shall only appear in the
+              <specification-part> of a main program or module.
 
-C1557b (R1541) Each <deferred-arg> shall appear as the name of an entity
-               declared by a <requirement-specification-construct>.
-
-C1558 (R1541) If a <requirement-name> appears in the
+Ctt65 (Rtt30) If a <requirement-name> appears in the
               <end-requirement-stmt>, it shall be identical to the
               <requirement-name> specified in the <requirement-stmt>.
 
-R1542 <requirement-specification-construct>
+Rtt31 <requirement-specification-construct>
           <<is>> <deferred-arg-decl-stmt>
           <<or>> <interface-block>
 
-C1559 (R1542) <interface-stmt> shall include ABSTRACT or DEFERRED.
+Ctt66 (Rtt31) An <interface-stmt> shall include ABSTRACT or DEFERRED.
 
 NOTE 1
 
-    Each <deferred-arg> is local to the REQUIREMENT construct.
+    Each <deferred-arg-name> is local to the REQUIREMENT construct.
 
 NOTE 2
 
@@ -86,24 +86,24 @@ NOTE 2
            REQUIRE R1(U, U, G)
         END REQUIREMENT
 
-Example REQUIRE statements for the above requirements are shown below,
-which could appear together in the same template, although they are
-redundant in this case.
+    Example REQUIRE statements for the above requirements are shown below,
+    which could appear together in the same template, although they are
+    redundant in this case.
 
-   REQUIRE R1(T, T, F)
-   REQUIRE R2(T, F)
+       REQUIRE R1(T, T, F)
+       REQUIRE R2(T, F)
 
-15.8 REQUIRE statement
+tt.8 REQUIRE statement
 
 A REQUIRE statement provides specifications of deferred arguments by
 associating them with the deferred arguments of a REQUIREMENT. A
 REQUIRE statement is a specification statement.
 
-R1543 <require-stmt> <<is>>
+Rtt32 <require-stmt> <<is>>
           REQUIRE [::] <requirement-name>
           ( [<instantiation-arg-spec-list>] )
 
-C1559 (R1543) <requirement-name> shall be the name of a previously
+Ctt67 (Rtt32) <requirement-name> shall be the name of a previously
               defined REQUIREMENT.
 
 NOTE 1
@@ -113,8 +113,8 @@ NOTE 1
 
 NOTE 2
 
-    Within a nested template, host associated entities are not deferred
-    arguments, and thus appearing as instantiation arguments in a
-    REQUIRE statement does not give them specifications.
+    An instantiation argument that appears in a REQUIRE statement is only given
+    an ultimate specification if it is a deferred argument of the scoping unit in
+    which the declaration appears. See tt.2.2.1.
 
 ===END===

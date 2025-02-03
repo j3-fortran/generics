@@ -10,19 +10,15 @@ Introduction:
 This is the 3rd of 6 papers that provide edits for the approved syntax
 for templates.
 
-Note that the section numbering is merely suggestive.  The overall
-ordering of template subclauses will change in future papers, and
-clause 15 itself is merely a placeholder.
-
 Section 1:
 ==========
 
-* Append the following at the end of clause 15 from paper 24-162.
+* Append the following at the end of the clause from paper 24-162.
 
 
-15.3 The TEMPLATE construct
+tt.3 The TEMPLATE construct
 
-15.3.1 Syntax for the TEMPLATE construct
+tt.3.1 Syntax for the TEMPLATE construct
 
 A template contains declarations, specifications, and definitions that are
 parameterized by deferred arguments. Public identifiers of a template are
@@ -30,38 +26,38 @@ made accessible to other scoping units by instantiation of the template
 and refer to specifc instances of the entities created by the
 instantiation.
 
-R1510 <template> <<is>> <template-stmt>
+Rtt10 <template> <<is>> <template-stmt>
                         [ <template-specification-part> ]
                         [ <template-subprogram-part> ]
                         <end-template-stmt>
 
-C1527a (R1510) A <template> shall only appear in the <specification-part>
-               of a main program or module.
+Ctt28 (Rtt10) A <template> shall only appear in the <specification-part>
+              of a main program or module.
 
-R1511 <template-stmt> <<is>>
-          TEMPLATE <template-name> ([<deferred-arg-list>])
+Rtt11 <template-stmt> <<is>>
+          TEMPLATE <template-name> ([<deferred-arg-name-list>])
 
-R1512 <end-template-stmt> <<is>>  END TEMPLATE [<template-name>]
+Rtt12 <end-template-stmt> <<is>>  END TEMPLATE [<template-name>]
 
 
-C1527b (R1512) If a <template-name> appears in the <end-template-stmt>,
-               it shall be identical to the <template-name>
-               specified in the <template-stmt>.
+Ctt29 (Rtt12) If a <template-name> appears in the <end-template-stmt>,
+              it shall be identical to the <template-name>
+              specified in the <template-stmt>.
 
-15.3.2 Template specification part
+tt.3.2 Template specification part
 
-R1513 <template-specification-part> <<is>>
+Rtt13 <template-specification-part> <<is>>
           [ <use-stmt> ] ...
           [ <import-stmt> ] ...
           [ <template-declaration-construct> ] ...
 
-R1514 <template-declaration-construct>
+Rtt14 <template-declaration-construct>
           <<is>> <template-specification-construct>
           <<or>> <deferred-arg-decl-stmt>
           <<or>> <requirement>
           <<or>> <template>
 
-R1515 <template-specification-construct>
+Rtt15 <template-specification-construct>
           <<is>> <access-stmt>
           <<or>> <derived-type-def>
           <<or>> <enum-def>
@@ -72,8 +68,16 @@ R1515 <template-specification-construct>
           <<or>> <intrinsic-stmt>
           <<or>> <type-declaration-stmt>
 
-C1528 (R1515) If <type-declaration-stmt> is specified, PARAMETER shall
+Ctt30 (Rtt15) If <type-declaration-stmt> is specified, PARAMETER shall
               appear as an <attr-spec>.
+
+{
+  UTI: Malcolm asks why, if we allow <interface-block> and
+  <deferred-proc-decl-stmt> (via <deferred-arg-decl-stmt>),
+  why not allow <procedure-declaration-stmt> ?
+  If we do, we'll need to prohibit POINTER from appearing on
+  <procedure-declaration-stmt>.
+}
 
 { The implicit mapping within a template scoping unit is the null mapping
   for all the letters - specified in the "misc edits" paper via a change
@@ -84,18 +88,18 @@ NOTE
     A template specification section cannot declare variables or procedure
     pointers.
 
-15.3.3 Template subprogram part
+tt.3.3 Template subprogram part
 
-R1516 <template-subprogram-part> <<is>> <contains-stmt>
+Rtt16 <template-subprogram-part> <<is>> <contains-stmt>
                                         [ <template-subprogram> ] ...
 
-R1517 <template-subprogram>
+Rtt17 <template-subprogram>
           <<is>> <function-subprogram>
           <<or>> <subroutine-subprogram>
           <<or>> <templated-function-subprogram>
           <<or>> <templated-subroutine-subprogram>
 
-15.4 Templated procedures
+tt.4 Templated procedures
 
 A templated procedure is a template that defines a single
 procedure which is accessible via instantiation.
@@ -104,73 +108,107 @@ procedure which is accessible via instantiation.
   <module-subprogram> by the "misc edits" paper, and so can appear
   anywhere a normal procedure definition can appear. }
 
-R1518 <templated-function-subprogram> <<is>>
+Rtt18 <templated-function-subprogram> <<is>>
           <templated-function-stmt>
           <templated-subprogram-specification-part>
           [<execution-part>]
           [<internal-subprogram-part>]
           <end-function-stmt>
 
-C1529 (R1518) If a <function-name> appears in the <end-function-stmt>,
+Ctt31 (Rtt18) If a <function-name> appears in the <end-function-stmt>,
               it shall be identical to the <template-name>
               specified in the <templated-function-stmt>.
 
-R1519 <templated-subroutine-subprogram> <<is>>
+Rtt19 <templated-subroutine-subprogram> <<is>>
           <templated-subroutine-stmt>
           <templated-subprogram-specification-part>
           [<execution-part>]
           [<internal-subprogram-part>]
           <end-subroutine-stmt>
 
-C1530 (R1519) If a <subroutine-name> appears in the <end-subroutine-stmt>,
+Ctt32 (Rtt19) If a <subroutine-name> appears in the <end-subroutine-stmt>,
               it shall be identical to the <template-name>
               specified in the <templated-subroutine-stmt>.
 
-C1531 An internal templated procedure shall not contain an
+Ctt33 An internal templated procedure shall not contain an
       <internal-subprogram-part>.
 
-C1532 The <internal-subprogram-part> of a templated procedure shall not
+Ctt34 The <internal-subprogram-part> of a templated procedure shall not
       contain a <templated-function-subprogram> or
       <templated-subroutine-subprogram>.
 
 
-R1522 <templated-function-stmt> <<is>>
+Rtt20 <templated-function-stmt> <<is>>
           [ <prefix> ] FUNCTION <template-name>
-          ( <deferred-arg-list> ) ([<dummy-arg-list>])
+          ( <deferred-arg-name-list> ) ([<dummy-arg-list>])
           [<suffix>]
 
-R1523 <templated-subroutine-stmt> <<is>>
+Rtt21 <templated-subroutine-stmt> <<is>>
          [ <prefix> ] SUBROUTINE <template-name>
-         ( <deferred-arg-list> ) ([<dummy-arg-list>])
+         ( <deferred-arg-name-list> ) ([<dummy-arg-list>])
          [<proc-language-binding-spec>]
 
-R1520 <templated-subprogram-specification-part> <<is>>
+Rtt22 <templated-subprogram-specification-part> <<is>>
           [ <use-stmt> ] ...
           [ <import-stmt> ] ...
           [ <templated-subprogram-declaration-construct> ] ...
 
-R1521 <templated-subprogram-declaration-construct>
+Rtt23 <templated-subprogram-declaration-construct>
           <<is>> <deferred-arg-decl-stmt>
           <<or>> <format-stmt>
           <<or>> <specification-construct>
 
-C1532+ In either <templated-function-stmt> or
-       <templated-subroutine-stmt>, <prefix> shall include TEMPLATE.
+Ctt35 In either <templated-function-stmt> or
+      <templated-subroutine-stmt>, <prefix> shall include TEMPLATE.
 
-15.5 Restrictions on template definitions
+tt.5 Restrictions on template definitions
 
-C1533 A variable or procedure pointer declared anywhere within a template
+Ctt36 A variable or procedure pointer declared anywhere within a template
       or templated subprogram shall not have the SAVE attribute.
 
-C1534 An <equivalence-stmt> or <common-stmt> shall not appear anywhere
-      within a template or templated subprogram.
+{
+  UTI: Malcolm has a problem with Ctt36 as it was written in 24-163r3.
 
-C1535 A procedure referenced anywhere within a template or templated
+     C1533 A variable or procedure pointer declared in either a
+         <template-subprogram-part> or a
+         <templated-subprogram-declaration-construct> shall
+         not have the SAVE attribute.
+
+  and I don't believe our updated wording fully addresses his issue.
+
+  > <Ctt36> is both too strong and not obviously effectual.
+  >
+  > not obviously effectual: it's not obvious what "in" means because
+  > scoping units have holes in them;
+  >
+  > too strong: you USE a module that has a variable, and declare it to
+  > be ASYNCHRONOUS because you're going to do some async magic in the
+  > template procedure - invalid because that variable has SAVE.
+  >
+  > I think you should probably say it like "A local variable or local
+  > procedure pointer of a template subprogram, of a BLOCK construct
+  > nested within a template subprogram, or of a subprogram nested within
+  > a template subprogram, shall not have the SAVE attribute."
+  >
+  > (I modelled this on existing C1598 for pure procedures.  Note that
+  > BLOCK nested within subprogram nested within tsub is still a BLOCK
+  > nested within tsub.)
+
+  His wording is pretty verbose, but I think one thing to take from it
+  is the use of "local variable or local procedure pointer". We could
+  use that wording to solve the issue he mentions with USE statements.
+}
+
+
+Ctt37 A COMMON statement or EQUIVALENCE statement shall not appear
+      anywhere within a template or templated subprogram.
+
+Ctt38 A procedure referenced anywhere within a template or templated
       subprogram shall have an explicit interface.
 
 NOTE
 
-    Constraint C1535 expresses the notion of type-safety.  In particular,
+    Constraint Ctt38 expresses the notion of type-safety.  In particular,
     this allows a template implementation to be verified to be internally
     consistent.
 
