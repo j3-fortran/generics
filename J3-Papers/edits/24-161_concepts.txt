@@ -195,30 +195,19 @@ Ctt14 (Rtt06) If <explicit-shape-bounds-spec> appears in
 
 NOTE 1
 
-    Deferred constant arrays always have default lower bounds.
+    Deferred constant arrays always have default lower bounds.  This
+    restriction ensures consistency of lower-bounds when reusing
+    requirements.
 
 {
-  UTI: Malcolm said:
 
-  > I don't understand the allergy to non-unity lower bounds. Why?
+ Subgroup prefers to disallow explicit confirmation of default lower
+ bounds because we envision that there may be a useful distinction to
+ be made in the future between specified lower bounds and default
+ lower bounds.
 
-  Perhaps we explain why in this note? Does anyone remember why?
-  Something to do with agreement between different ultimate
-  specifications coming from REQUIRE statements, I think?.
-
-  He continued:
-  > Even if there is a good reason, why prohibit the user from specifying
-  > 1:N?
-  >
-  > If we really want this, maybe replace <Ctt13> and <Ctt14> with
-  > "<Ctt13-14> Each lower bound of a deferred constant that is an array
-  >  shall be equal to one."
-  > or
-  > "<Ctt13-14 Lower bounds shall not be explicitly specified for a
-  >  deferred constant." Depending on what you really want.
-
-  I like the former one of his replacement constraint suggestions.
 }
+
 
 NOTE 2
 
@@ -259,25 +248,6 @@ Ctt16 Each <subroutine-name> or <function-name> of an <interface-body>
       that appears in a deferred interface block shall be the name of
       a deferred argument of the scoping unit in which the
       <interface-body> appears.
-
-{
-  UTI: I think malcolm wanted some deferred interface blocks to be defined
-  in this section, somehow. Or at leasted referenced better. He said:
-
-  > Can I express my displeasure that deferred interface blocks are not
-  > listed in <Rtt03>?
-
-  Tom replied:
-
-  > I think the omission is partly due to the (likely confused) desire not
-  > to mix statements and blocks inside the same bnf.   We also found it
-  > easy to just add deferred interfaces in the ordinary interface
-  > section. (misc paper).   We can re-examine both decisions.
-
-  In my response to Malcolm's email, I proposed some ways to integrate
-  deferred interface blocks here, but none of them were good. I asked
-  for his opinion, but I don't think he ever responsed.
-}
 
 NOTE 1
 

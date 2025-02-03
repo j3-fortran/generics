@@ -46,9 +46,6 @@ Rtt26 <instantiate-stmt> <<is>> <template-instantiate-stmt>
 Ctt41 (Rtt26) Within an <instantiate-stmt>, an <instantiation-arg> shall
               not depend on any entity defined within the referenced
               template.
-{UTI: Change to "shall not depend on any entity declared by any instance
- of the referenced template"?   defined->declared, and use "any
- instance".}
 
 Ctt42 (Rtt26) A <template-name> shall not be the name of any construct in
               which it appears.
