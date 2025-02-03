@@ -36,10 +36,9 @@ tt.2.1.1 General
 A deferred argument is an entity whose identifier appears in a
 <deferred-arg-name-list> in a template, requirement, or templated
 procedure.  A deferred argument can be a constant, procedure, or type.
-When a template, requirement, or templated procedure is instantiated
-with a REQUIRE or INSTANTIATE statement, the deferred arguments of the
-instance are associated with the instantiation arguments specified by
-the REQUIRE or INSTANTIATE statements.
+A deferred argument becomes associated with instantiation arguments
+through instantiation of a template, requirement or templated procedure
+as described in tt.6.
 
 A deferred argument declaration statement is used to declare
 deferred arguments.
@@ -87,19 +86,19 @@ type. A deferred type with the ABSTRACT attribute is an abstract derived
 type. A deferred type with the ABSTRACT attribute implicitly has the
 EXTENSIBLE attribute.
 
+{UTI: Perhaps we should avoid ever calling deferred arguments
+"derived types".}
+
 NOTE 1
 
-    A deferred type cannot be extended. The keyword EXTENSIBLE refers to
-    an instantiation argument associated with the deferred argument.
-
-{ Alternate: "The keyword EXTENSIBLE indicates restrictions on what types
-can be associated with the deferred argument. }
+    A deferred type cannot be extended. The use of the term "extensible"
+    is to imply a restriction on the instantiation argument.
 
 NOTE 2
 
     Even with the EXTENSIBLE attribute, a deferred type cannot be
-    constructed because its components (and type parameters, if any)
-    are not known within the template.
+    constructed because it has unspecified components and type
+    parameters within the template.
 
 NOTE 3
 

@@ -103,9 +103,6 @@ Note 3
 
         REQUIRE R_ABSTRACT(T) ! valid, abstract
 
-        DEFERRED TYPE, EXTENSIBLE :: T_ext   {UTI: what are these doing here?}
-        DEFERRED TYPE, ABSTRACT :: T_abs
-
         DEFERRED TYPE :: T
         REQUIRE R_REGULAR(T) ! valid, non-extensible
 
@@ -178,17 +175,6 @@ Ctt22 If any ultimate specification of a deferred argument is a
 Ctt23 A deferred procedure shall not be referenced with keyword
       arguments unless it has an explicit specification.
 
-NOTE 1
-
-    Although dummy arguments always have names, they are processor-
-    dependent for deferred procedures without an explicit specification.
-    The constraint above ensures such names cannot be used.
-
-{UTI: I don't know if we can say something as string as "they are
-processor-dependent" in a note. Perhaps just say "they are unspecified"?
-Or state the processor dependency in normative text, adding on to the last
-paragraph. }
-
 Ctt24 Except for the PURE, SIMPLE, and ELEMENTAL attributes, the
       characteristics of all ultimate specifications of a
       deferred procedure shall be consistent.
@@ -218,6 +204,7 @@ If any ultimate specification of a deferred procedure is ELEMENTAL then
 that deferred procedure is ELEMENTAL.
 
 Only an explicit specification of a deferred procedure defines the names
-of its dummy arguments.
+of its dummy arguments. The names of the dummy arguments of a deferred
+procedure without an explicit specification are unspecified.
 
 ===END===
