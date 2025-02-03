@@ -113,8 +113,8 @@ NOTE 1
 
 NOTE 2
 
-    Within a nested template, a host-associated deferred argument appearing as
-    an instantiation argument in a REQUIRE statement does not give it
-    specifications. See tt.2.2.1.
+    An instantiation argument that appears in a REQUIRE statement is only given
+    an ultimate specification if it is a deferred argument of the scoping unit in
+    which the declaration appears. See tt.2.2.1.
 
 ===END===

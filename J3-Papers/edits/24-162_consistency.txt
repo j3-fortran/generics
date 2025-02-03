@@ -24,9 +24,9 @@ Within a construct with deferred arguments, an explicit specification of
 a deferred argument is provided by
     - a <deferred-type-declaration-stmt>,
     - a <deferred-const-declaration-stmt>,
-    - a <deferred-proc-declaration-stmt>,
-    - or an <interface-body> in a deferred interface block
-in the scoping unit where the deferred arg appeared in a
+    - a <deferred-proc-declaration-stmt>, or
+    - an <interface-body> in a deferred interface block
+in the scoping unit where the deferred argument appeared in a
 <deferred-arg-name-list>.
 
 {The final porition of the above paragraph might be redundant with Ctt04,
@@ -37,7 +37,7 @@ ultimate specifications of a deferred argument are:
     - an explicit specification, if present, and
     - its ultimate specifications as instantiation arguments in
       REQUIRE statements in the scoping unit where the deferred
-      arg appeared in a <deferred-arg-name-list>, if any.
+      argument appeared in a <deferred-arg-name-list>, if any.
 The ultimate specifications of an instantiation argument in a REQUIRE
 statement are the ultimate specifications of the corresponding
 deferred argument in the referenced requirement construct.
