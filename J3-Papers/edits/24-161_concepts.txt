@@ -36,8 +36,8 @@ tt.2.1.1 General
 A deferred argument is an entity whose identifier appears in a
 <deferred-arg-name-list> in a template, requirement, or templated
 procedure.  A deferred argument can be a constant, procedure, or type.
-A deferred argument becomes associated with instantiation arguments
-through instantiation of a template, requirement or templated procedure
+A deferred argument becomes associated with an instantiation argument
+through instantiation of a template, requirement, or templated procedure
 as described in tt.6.
 
 A deferred argument declaration statement is used to declare
