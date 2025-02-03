@@ -29,7 +29,9 @@ non-parameterized instances of entities defined within the template.
 
 tt.2 Deferred arguments
 
-tt.2.1 Concepts
+tt.2.1 Declarations of deferred arguments
+
+tt.2.1.1 General
 
 A deferred argument is an entity whose identifier appears in a
 <deferred-arg-name-list> in a template, requirement, or templated
@@ -38,8 +40,6 @@ When a template, requirement, or templated procedure is instantiated
 with a REQUIRE or INSTANTIATE statement, the deferred arguments of the
 instance are associated with the instantiation arguments specified by
 the REQUIRE or INSTANTIATE statements.
-
-tt.2.2 Declaration of deferred arguments
 
 A deferred argument declaration statement is used to declare
 deferred arguments.
@@ -55,7 +55,7 @@ NOTE
     Deferred arguments are local identifiers and are not externally
     accessible.
 
-tt.2.3 Deferred types
+tt.2.1.2 Deferred types
 
 A deferred type is a deferred argument that can appear in a type
 specifier within a REQUIREMENT construct, TEMPLATE construct, or
