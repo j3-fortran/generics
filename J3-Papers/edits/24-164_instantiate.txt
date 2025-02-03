@@ -46,15 +46,18 @@ Rtt26 <instantiate-stmt> <<is>> <template-instantiate-stmt>
 Ctt41 (Rtt26) Within an <instantiate-stmt>, an <instantiation-arg> shall
               not depend on any entity defined within the referenced
               template.
+{UTI: Change to "shall not depend on any entity declared by any instance
+ of the referenced template"?   defined->declared, and use "any
+ instance".}
 
-Ctt42 (Rtt26) In <instantiate-stmt>, <template-name> shall not be the
-              name of any construct in which it appears.
+Ctt42 (Rtt26) A <template-name> shall not be the name of any construct in
+              which it appears.
 
 The INSTANTIATE statement without the ONLY option provides access to
 all public entities of the referenced template.  The INSTANTIATE
 statement with the ONLY option provides access only to those entities
-that appear as <generic-specs>, <use-names>, or
-<use-defined-operators> in the only list.
+that appear as <generic-spec>s, <use-name>s, or
+<use-defined-operator>s in the only list.
 
 An accessible entity of the referenced instantiation is associated
 with one or more accessed entities, each with its own identifier.
@@ -64,7 +67,7 @@ These identifiers are
      identifier appears as an <only-use-name> or as the
      <defined-operator> of a <generic-spec> in any <only> for that
      instantiation,
-   - each of the <local-names> or <local-defined-operators> that the
+   - each of the <local-name>s or <local-defined-operator>s that the
      entity is given in any <rename> for that instantiation, and
 
    - the identifier of the entity in that referenced template if
@@ -83,8 +86,8 @@ Rtt27 <inline-instantiate> <<is>>
 Ctt43 (Rtt27) The <template-name> shall be the name of a templated
               procedure.
 
-Ctt44 (Rtt27) In <inline-instantiate>, <template-name> shall not be the
-              name of any construct in which it appears.
+Ctt44 (Rtt27) The <template-name> shall not be the name of any construct
+              in which it appears.
 
 The procedure designated by <inline-instantiate> is the procedure
 produced from instantiating the templated procedure.
@@ -297,7 +300,7 @@ tt.6.4.3 Deferred constant association
 Ctt53 (Rtt29) An <instantiation-arg> that corresponds to a deferred
               constant shall be a <constant-expr>.
 
-Ctt54 (Rtt29) The type and kind type parameters of <constant-expr> shall
+Ctt54 (Rtt29) The type and kind type parameters of a <constant-expr> shall
               be the same as the type and kind type parameter of its
               corresponding deferred constant.
 
@@ -318,7 +321,7 @@ Ctt57 (Rtt29) An <instantiation-arg> that corresponds to a deferred
 Ctt58 (Rtt29) A <procedure-name> shall denote a nonpointer,
               nonintrinsic procedure that has an explicit interface.
 
-Ctt59 (Rtt29) The procedure specified by <procedure-name> shall have the
+Ctt59 (Rtt29) The procedure specified by a <procedure-name> shall have the
               same characteristics as its corresponding deferred
               procedure, except that a pure procedure may correspond to a
               deferred procedure that is not pure, a simple procedure may
@@ -326,7 +329,7 @@ Ctt59 (Rtt29) The procedure specified by <procedure-name> shall have the
               an elemental procedure may correspond to a deferred
               procedure that is not elemental.
 
-Ctt60 (Rtt29) The generic identifier specified by <generic-spec> shall
+Ctt60 (Rtt29) The generic identifier specified by a <generic-spec> shall
               have exactly one specific procedure that has the same
               characteristics as the corresponding deferred procedure,
               except that a pure specific procedure may correspond to a
@@ -351,10 +354,10 @@ except whether it is PURE, SIMPLE, or ELEMENTAL.
 If a deferred procedure corresponds to an intrinsic generic
 identifier, it becomes associated with that intrinsic identifier.
 
-Ctt62 (Rtt29) If a deferred procedure corresponds to an intrinsic
-              procedure or procedure from an intrinsic module, it
-              shall be valid for that procedure to appear where the
-              deferred procedure is referenced.
+Ctt62 If a deferred procedure corresponds to an instantiation argument
+      that is an intrinsic procedure or procedure from an intrinsic
+      module, it shall be valid for that procedure to appear where the
+      deferred procedure is referenced.
 
 
 NOTE

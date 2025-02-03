@@ -21,15 +21,23 @@ tt.2.2 Consistency of deferred argument specifications
 tt.2.2.1 General
 
 Within a construct with deferred arguments, an explicit specification of
-a deferred argument is provided by a <deferred-type-declaration-stmt>,
-a <deferred-const-declaration-stmt>, a <deferred-proc-declaration-stmt>
-or an <interface-body> in a deferred interface block.
+a deferred argument is provided by
+    - a <deferred-type-declaration-stmt>,
+    - a <deferred-const-declaration-stmt>,
+    - a <deferred-proc-declaration-stmt>,
+    - or an <interface-body> in a deferred interface block
+in the scoping unit where the deferred arg appeared in a
+<deferred-arg-name-list>.
+
+{The final porition of the above paragraph might be redundant with Ctt04,
+Ctt11, and Ctt15.}
 
 A deferred argument shall have one or more ultimate specifications.  The
 ultimate specifications of a deferred argument are:
     - an explicit specification, if present, and
     - its ultimate specifications as instantiation arguments in
-      REQUIRE statements, if any.
+      REQUIRE statements in the scoping unit where the deferred
+      arg appeared in a <deferred-arg-name-list>, if any.
 The ultimate specifications of an instantiation argument in a REQUIRE
 statement are the ultimate specifications of the corresponding
 deferred argument in the referenced requirement construct.
@@ -39,10 +47,9 @@ Ctt02 A deferred argument shall have at most one explicit specification in
 
 NOTE 1
 
-    A deferred argument is always explicitly declared within the
-    template itself or directly or indirectly via a referenced
-    requirement.  A deferred argument has at least one ultimate
-    specification.
+    A deferred argument is always explicitly declared within the template
+    itself or via a referenced requirement.  A deferred argument has at least
+    one ultimate specification.
 
 tt.2.2.2 Specification of deferred types
 
@@ -87,8 +94,8 @@ NOTE 2
 
 Note 3
 
-    Given the requirements from NOTE 2 and a deferred argument T, the following lines are valid
-    or invalid as marked.
+    Given the requirements from NOTE 2 and a deferred argument T, the following
+    lines are valid or invalid as marked.
 
         REQUIRE R_REGULAR(T) ! valid, non-extensible
 
@@ -96,7 +103,7 @@ Note 3
 
         REQUIRE R_ABSTRACT(T) ! valid, abstract
 
-        DEFERRED TYPE, EXTENSIBLE :: T_ext
+        DEFERRED TYPE, EXTENSIBLE :: T_ext   {UTI: what are these doing here?}
         DEFERRED TYPE, ABSTRACT :: T_abs
 
         DEFERRED TYPE :: T
@@ -142,7 +149,7 @@ Ctt18 If any ultimate specification of a deferred argument is a
       that deferred argument shall be deferred constant.
 
 Ctt19 All ultimate specifications of a deferred constant shall
-      specify the same type and kind-type parameters.
+      specify the same type and kind type parameters.
 
 Ctt20 If any ultimate specification of a deferred constant is of
       a non-implied rank R, then an explicit specification of
@@ -177,7 +184,12 @@ NOTE 1
     dependent for deferred procedures without an explicit specification.
     The constraint above ensures such names cannot be used.
 
-Ctt24 Except for PURE, SIMPLE, and ELEMENTAL attributes, the
+{UTI: I don't know if we can say something as string as "they are
+processor-dependent" in a note. Perhaps just say "they are unspecified"?
+Or state the processor dependency in normative text, adding on to the last
+paragraph. }
+
+Ctt24 Except for the PURE, SIMPLE, and ELEMENTAL attributes, the
       characteristics of all ultimate specifications of a
       deferred procedure shall be consistent.
 
