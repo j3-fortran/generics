@@ -10,9 +10,6 @@ Introduction
 This is the 5th of 6 papers that provide edits for the approved syntax
 for templates.
 
-{ UTI: Did we get to this straw vote at the last meeting? Can we remove it
-  now? }
-
 Straw vote: The REQUIRE statement does not need "[::]" at this time, but
             we note that various other bits of the BNF also have
             unnecesary optional "[::]". E.g., various attribute
