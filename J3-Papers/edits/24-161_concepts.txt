@@ -11,6 +11,11 @@ This is the 1st of 6 papers that provide edits for the approved syntax
 for templates. Papers 1-5 introduce a new clause titled "Templates" to
 the standard. Paper 6 includes all other edits outside the new clause.
 
+Note that the clause numbering is merely suggestive.  The overall
+ordering of template subclauses will change in future papers. For
+example, the final order is likely to start with the TEMPLATE
+construct introduced in the 3rd paper.
+
 Section 1:
 ==========
 

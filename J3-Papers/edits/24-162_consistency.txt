@@ -172,27 +172,24 @@ Ctt22 If any ultimate specification of a deferred argument is a
       deferred procedure, then all ultimate specifications of
       that deferred argument shall be deferred procedure.
 
-Ctt23 A deferred procedure shall not be referenced with keyword
-      arguments unless it has an explicit specification.
-
-Ctt24 Except for the PURE, SIMPLE, and ELEMENTAL attributes, the
+Ctt23 Except for the PURE, SIMPLE, and ELEMENTAL attributes, the
       characteristics of all ultimate specifications of a
       deferred procedure shall be consistent.
 
-NOTE 2
+NOTE
 
     The characteristics of a procedure do not include the names
     of the dummy arguments, so they need not be the same.
 
-Ctt25 If any ultimate specification of a deferred procedure is
+Ctt24 If any ultimate specification of a deferred procedure is
       SIMPLE, then an explicit specification of that deferred
       procedure shall be SIMPLE.
 
-Ctt26 If any ultimate specification of a deferred procedure is
+Ctt25 If any ultimate specification of a deferred procedure is
       PURE, then an explicit specification of that deferred
       procedure shall be PURE or SIMPLE.
 
-Ctt27 If any ultimate specification of a deferred procedure is
+Ctt26 If any ultimate specification of a deferred procedure is
       ELEMENTAL, then an explicit specification of that deferred
       procedure shall be ELEMENTAL.
 
@@ -206,5 +203,8 @@ that deferred procedure is ELEMENTAL.
 Only an explicit specification of a deferred procedure defines the names
 of its dummy arguments. The names of the dummy arguments of a deferred
 procedure without an explicit specification are unspecified.
+
+Ctt27 A deferred procedure shall not be referenced with keyword
+      arguments unless it has an explicit specification.
 
 ===END===
