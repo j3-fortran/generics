@@ -2,7 +2,7 @@ To: J3                                                     J3/24-162rX
 From: generics
 Subject: Edits for TEMPLATES: Consistency of deferred args
 Date: 2024-October-22
-References: 24-161, 24-125r5, 24-126r4, 24-127r4
+References: 25-107, 24-125r5, 24-126r4, 24-127r4
 
 Introduction:
 =============
@@ -13,7 +13,7 @@ for templates.
 Section 1:
 ==========
 
-* Append the following to the new clause introduced in paper 24-161.
+* Append the following to the new clause introduced in paper 25-107.
 
 
 tt.2.2 Consistency of deferred argument specifications
@@ -47,9 +47,9 @@ Ctt02 A deferred argument shall have at most one explicit specification in
 
 NOTE 1
 
-    A deferred argument is always explicitly declared within the template
-    itself or via a referenced requirement.  A deferred argument has at least
-    one ultimate specification.
+    A deferred argument is always explicitly declared within the
+    template itself or via a referenced requirement.  A deferred
+    argument has at least one ultimate specification.
 
 tt.2.2.2 Specification of deferred types
 
@@ -94,8 +94,8 @@ NOTE 2
 
 Note 3
 
-    Given the requirements from NOTE 2 and a deferred argument T, the following
-    lines are valid or invalid as marked.
+    Given the requirements from NOTE 2 and a deferred argument T, the
+    following lines are valid or invalid as marked.
 
         REQUIRE R_REGULAR(T) ! valid, non-extensible
 

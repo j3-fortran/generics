@@ -2,8 +2,8 @@ To: J3                                                     J3/24-166rX
 From: generics
 Subject: Miscellaneous edits to incorporate templates
 Date: 2024-October-22
-References: 24-161, 24-162, 24-163, 24-164, 24-165,
-            24-125r5, 24-126r4, 24-127r4, 24-007
+References: 25-107, 25-108, 25-109, 25-110, 25-111, 24-125r5,
+            24-126r4, 24-127r4, 24-007
 
 UTI: Section 4 does not seem to state where it goes in the standard
 

@@ -2,7 +2,7 @@ To: J3                                                     J3/24-164rX
 From: generics
 Subject: Edits for TEMPLATES: Instantiation
 Date: 2024-October-29
-References: 24-161, 24-162, 24-163, 24-125r5, 24-126r4, 24-127r4
+References: 25-107, 25-108, 25-109, 24-125r5, 24-126r4, 24-127r4
 
 Introduction:
 =============
@@ -13,7 +13,7 @@ for templates.
 Section 1:
 ==========
 
-* Append the following at the end of the clause from paper 24-163.
+* Append the following at the end of the clause from paper 25-109.
 
 
 tt.6 Instantiation

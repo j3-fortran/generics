@@ -2,7 +2,7 @@ To: J3                                                     J3/24-165rX
 From: generics
 Subject: Edits for TEMPLATES: REQUIREMENT and REQUIRE
 Date: 2024-October-29
-References: 24-161, 24-162, 24-163, 24-164, 24-125r5, 24-126r4, 24-127r4
+References: 25-107, 25-108, 25-109, 25-110, 24-125r5, 24-126r4, 24-127r4
 
 Introduction
 ============
@@ -31,7 +31,7 @@ Note: Subgroup has made the following small change compared to the
 Section 1
 =========
 
-* Append the following at the end of the clause from paper 24-164.
+* Append the following at the end of the clause from paper 25-110.
 
 
 tt.7 REQUIREMENT construct
@@ -110,8 +110,9 @@ NOTE 1
 
 NOTE 2
 
-    An instantiation argument that appears in a REQUIRE statement is only given
-    an ultimate specification if it is a deferred argument of the scoping unit in
-    which the declaration appears. See tt.2.2.1.
+    An instantiation argument that appears in a REQUIRE statement is
+    only given an ultimate specification if it is a deferred argument
+    of the scoping unit in which the declaration appears. See
+    tt.2.2.1.
 
 ===END===
