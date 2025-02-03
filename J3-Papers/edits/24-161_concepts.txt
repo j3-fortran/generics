@@ -92,7 +92,7 @@ EXTENSIBLE attribute.
 NOTE 1
 
     A deferred type cannot be extended. The use of the term "extensible"
-    is to imply a restriction on the instantiation argument.
+    is to imply a restriction on the associated instantiation argument.
 
 NOTE 2
 
