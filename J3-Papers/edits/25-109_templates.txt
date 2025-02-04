@@ -1,7 +1,7 @@
-To: J3                                                     J3/24-163rX
+To: J3                                                     J3/25-109
 From: generics
 Subject: Edits for TEMPLATE construct
-Date: 2024-October-29
+Date: 2025-February-03
 References: 25-107, 25-108, 24-125r5, 24-126r4, 24-127r4
 
 Introduction:
@@ -179,10 +179,10 @@ NOTE
     this allows a template implementation to be verified to be internally
     consistent.
 
-{ 
+{
 Subgroup should add examples of templates here.  Esp. templated
 procedures.
 }
 
-    
+
 ===END===
