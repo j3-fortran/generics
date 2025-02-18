@@ -229,7 +229,7 @@ Ctt49 (Rtt29) A <type-spec> shall not specify an abstract type if its
 { Judging by C7109 & C7110, just saying "its corresponding deferred type"
   should be sufficient and unambiguous in context. }
 
-Ctt50 (Rtt29) A <type-spec> shall specify an extensible derived type if
+Ctt50 (Rtt29) A <type-spec> shall specify an extensible type if
               its corresponding deferred type has the EXTENSIBLE
               attribute.
 
@@ -260,7 +260,7 @@ A deferred type becomes associated with the type and type parameters
 identified by its corresponding instantiation argument.
 
 NOTE 3
-      Non-abstract, extensible derived types can be associated with
+      Non-abstract, extensible types can be associated with
       both abstract and non-extensible deferred type arguments.
 
 NOTE 4
@@ -357,8 +357,22 @@ Ctt62 If a deferred procedure corresponds to an instantiation argument
       deferred procedure is referenced.
 
 
-NOTE
+NOTE 1
       If a generic identifier and a specific procedure have the same
       name, the generic identifier takes precedence.
+
+NOTE 2
+
+     Example of instantation of the template construct from NOTE 2 of
+     section tt.4
+
+     INSTANTIATE iterate_tmpl(real, 2, mysub), mysub_twice => iterate
+     CALL mysub_twice(y)
+
+     Example of inline instantiation of the templated subroutine from
+     NOTE 2 of section tt.4
+     
+     CALL iterate^(real, 3, mysub)(y)
+
 
 ===END===

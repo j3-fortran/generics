@@ -86,13 +86,10 @@ Ctt07 The name of a deferred type shall not appear as a
 
 Ctt08 A variable of deferred type shall not be a coarray.
 
-A deferred type with the EXTENSIBLE attribute is an extensible derived
-type. A deferred type with the ABSTRACT attribute is an abstract derived
-type. A deferred type with the ABSTRACT attribute implicitly has the
-EXTENSIBLE attribute.
-
-{UTI: Perhaps we should avoid ever calling deferred arguments
-"derived types".}
+A deferred type with the EXTENSIBLE attribute is an extensible type. A
+deferred type with the ABSTRACT attribute is an abstract type. A deferred
+type with the ABSTRACT attribute implicitly has the EXTENSIBLE
+attribute.
 
 NOTE 1
 
@@ -121,7 +118,7 @@ NOTE 4
     example, a deferred type cannot be used in a CLASS declaration if
     it might be instantiated as INTEGER.  Likewise, a deferred type
     cannot be used in a TYPE declaration if it might be instantiated
-    with an abstract derived type.
+    with an abstract type.
 
     Using the deferred type declarations from NOTE 3, the following
     examples of type declaration statements are valid or invalid as

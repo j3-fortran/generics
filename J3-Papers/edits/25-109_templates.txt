@@ -66,18 +66,15 @@ Rtt15 <template-specification-construct>
           <<or>> <instantiate-stmt>
           <<or>> <interface-block>
           <<or>> <intrinsic-stmt>
+          <<or>> <procedure-declaration-stmt>
           <<or>> <type-declaration-stmt>
 
 Ctt30 (Rtt15) If <type-declaration-stmt> is specified, PARAMETER shall
               appear as an <attr-spec>.
 
-{
-  UTI: We allow <interface-block> and
-  <deferred-proc-decl-stmt> (via <deferred-arg-decl-stmt>).
-  Why not allow <procedure-declaration-stmt> ?
-  If we do, we'll need to prohibit POINTER from appearing on
-  <procedure-declaration-stmt>.
-}
+Ctt30+ (Rtt15) If <procedure-declaration-stmt> is specified, POINTER
+               shall not appear.
+
 
 { The implicit mapping within a template scoping unit is the null mapping
   for all the letters - specified in the "misc edits" paper via a change
@@ -173,16 +170,57 @@ Ctt37 A COMMON statement or EQUIVALENCE statement shall not appear
 Ctt38 A procedure referenced anywhere within a template or templated
       subprogram shall have an explicit interface.
 
-NOTE
+NOTE 1
 
     Constraint Ctt38 expresses the notion of type-safety.  In particular,
     this allows a template implementation to be verified to be internally
     consistent.
 
-{
-Subgroup should add examples of templates here.  Esp. templated
-procedures.
-}
+NOTE 2
+
+    Example of a TEMPLATE construct in a specification section.
+
+    TEMPLATE iterate_tmpl(T, C, S)
+       PRIVATE
+       PUBLIC :: iterate
+       DEFERRED TYPE :: T
+       DEFERRED INTEGER, PARAMETER :: C
+       DEFERRED INTERFACE
+          SUBROUTINE S(x, i)
+             TYPE(T), INTENT(INOUT) :: x
+             INTEGER, INTENT(IN) :: i
+          END SUBROUTINE
+       END INTERFACE
+    CONTAINS
+       SUBROUTINE iterate(x)
+          TYPE(T), INTENT(INOUT) :: x
+          INTEGER :: i
+          DO i = 1, C
+             CALL S(x, i)
+          END DO
+       END SUBROUTINE iterate
+    END TEMPLATE iterate_tmpl
+
+    Alternative implementation for the above example using a templated
+    procedure in a subprogram part.
+
+    TEMPLATE SUBROUTINE iterate(T, C, S)(x)
+       DEFERRED TYPE :: T
+       DEFERRED INTEGER, PARAMETER :: C
+       DEFERRED INTERFACE
+          SUBROUTINE S(x, i)
+             TYPE(T), INTENT(INOUT) :: x
+             INTEGER, INTENT(IN) :: i
+          END SUBROUTINE
+       END INTERFACE
+
+       TYPE(T), INTENT(INOUT) :: x
+       INTEGER :: i
+       DO i = 1, C
+          CALL S(x, i)
+       END DO
+
+    END SUBROUTINE iterate
 
 
 ===END===

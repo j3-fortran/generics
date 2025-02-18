@@ -68,12 +68,11 @@ attribute.
 
 NOTE 1
 
-    A deferred type with the ABSTRACT attribute is considered an
-    abstract derived type, so it can only be an instantiation argument
-    when the corresponding deferred argument has the ABSTRACT
-    attribute. Therefore, if a deferred type has an explicit
-    specification with the ABSTRACT attribute, all of its ultimate
-    specifications need the ABSTRACT attribute too.
+    A deferred type with the ABSTRACT attribute can only be an
+    instantiation argument when the corresponding deferred argument
+    has the ABSTRACT attribute. Therefore, if a deferred type has an
+    explicit specification with the ABSTRACT attribute, all of its
+    ultimate specifications need the ABSTRACT attribute too.
 
 NOTE 2
 
@@ -81,63 +80,78 @@ NOTE 2
     EXTENSIBLE attributes on deferred types are:
 
         REQUIREMENT R_REGULAR(U)
-           DEFERRED TYPE :: U
+	   ! Instantiation arg associated with U can be any non-abstract type.
+           DEFERRED TYPE :: U 
         END REQUIREMENT
 
         REQUIREMENT R_EXTENSIBLE(U)
+	   ! Instantiation arg associated with U has to be extensible
+	   ! (e.g., cannot be intrinsic), and cannot be abstract.
            DEFERRED TYPE, EXTENSIBLE :: U
         END REQUIREMENT
 
         REQUIREMENT R_ABSTRACT(U)
+	   ! Instantiation arg associated with U has to be extensible,
+           ! and can be abstract.
            DEFERRED TYPE, ABSTRACT :: U
         END REQUIREMENT
 
-Note 3
+    Given the requirements above and deferred arguments T1, T2, ...,
+    T15, the following lines are valid or invalid as marked.
 
-    Given the requirements from NOTE 2 and a deferred argument T, the
-    following lines are valid or invalid as marked.
+        REQUIRE R_REGULAR(T1) ! Valid, non-extensible
 
-        REQUIRE R_REGULAR(T) ! valid, non-extensible
+        REQUIRE R_EXTENSIBLE(T2) ! Valid, extensible, non-abstract
 
-        REQUIRE R_EXTENSIBLE(T) ! valid, extensible
+        REQUIRE R_ABSTRACT(T3) ! Valid, abstract
 
-        REQUIRE R_ABSTRACT(T) ! valid, abstract
+	! Valid: T4 is specified to be non-extensible.
+        DEFERRED TYPE :: T4   ! Declares T4 to be non-extensible
+        REQUIRE R_REGULAR(T4) ! Req. T4 to be non-abstract
 
-        DEFERRED TYPE :: T
-        REQUIRE R_REGULAR(T) ! valid, non-extensible
+	! Invalid
+        DEFERRED TYPE :: T5      ! Declares T5 to be non-extensible
+        REQUIRE R_EXTENSIBLE(T5) ! Req. T5 to be extensible, non-abstract
 
-        DEFERRED TYPE :: T
-        REQUIRE R_EXTENSIBLE(T) ! invalid, explicit decl not extensible
+	! Invalid
+        DEFERRED TYPE :: T6    ! Declares T6 to be non-extensible
+        REQUIRE R_ABSTRACT(T6) ! Req. T6 to be extensible
 
-        DEFERRED TYPE :: T
-        REQUIRE R_ABSTRACT(T) ! invalid, explicit decl not extensible
+        ! Valid: T7 is specified to be extensible, non-abstract
+        DEFERRED TYPE, EXTENSIBLE :: T7 ! Declares T7 to be extensible
+        REQUIRE R_REGULAR(T7)           ! Req. T7 to be non-abstract
 
-        DEFERRED TYPE, EXTENSIBLE :: T
-        REQUIRE R_REGULAR(T) ! valid, T is not abstract
+	! Valid: T8 is specified to be extensible, non-abstract
+        DEFERRED TYPE, EXTENSIBLE :: T8 ! Declares T8 to be extensible
+        REQUIRE R_EXTENSIBLE(T8) ! Req. T8 to be extensible, non-abstract
 
-        DEFERRED TYPE, EXTENSIBLE :: T
-        REQUIRE R_EXTENSIBLE(T) ! valid, decls match
+        ! Valid: T9 is specified to be extensible, non-abstract
+        DEFERRED TYPE, EXTENSIBLE :: T9 ! Declares T9 to be extensible
+        REQUIRE R_ABSTRACT(T9)          ! Req. T9 to be extensible
 
-        DEFERRED TYPE, EXTENSIBLE :: T
-        REQUIRE R_ABSTRACT(T) ! valid, T is just extensible
+	! Invalid
+        DEFERRED TYPE, ABSTRACT :: T10 ! Declares T10 to be abstract
+        REQUIRE R_REGULAR(T10)         ! Req. T10 to be non-abstract
 
-        DEFERRED TYPE, ABSTRACT :: T
-        REQUIRE R_REGULAR(T) ! invalid, T is abstract
+	! Invalid
+        DEFERRED TYPE, ABSTRACT :: T11 ! Declares T11 to be abstract
+        REQUIRE R_EXTENSIBLE(T11)      ! Req. T11 to non-abstract
 
-        DEFERRED TYPE, ABSTRACT :: T
-        REQUIRE R_EXTENSIBLE(T) ! invalid, T is abstract
+        ! Valid: specification of T12 to be abstract
+        DEFERRED TYPE, ABSTRACT :: T12 ! Declares T12 to be abstract
+        REQUIRE R_ABSTRACT(T12)        ! Req. T12 to be extensible
 
-        DEFERRED TYPE, ABSTRACT :: T
-        REQUIRE R_ABSTRACT(T) ! valid, decls match
+        ! Valid: specification of T13 to be extensible, non-abstract
+        REQUIRE R_REGULAR(T13)    ! Req. T13 to be non-abstract
+        REQUIRE R_EXTENSIBLE(T13) ! Req. T13 to be extensible, non-abstract
 
-        REQUIRE R_REGULAR(T)
-        REQUIRE R_EXTENSIBLE(T) ! valid, T is extensible
+        ! Valid: specification of T14 to be extensible, non-abstract
+        REQUIRE R_REGULAR(T14)  ! Req. T14 to be non-abstract
+        REQUIRE R_ABSTRACT(T14) ! Req. T14 to be extensible
 
-        REQUIRE R_REGULAR(T)
-        REQUIRE R_ABSTRACT(T) ! valid, T is just extensible
-
-        REQUIRE R_EXTENSIBLE(T)
-        REQUIRE R_ABSTRACT(T) ! valid, T is just extensible
+	! Valid: specification of T15 is extensible, non-abstract
+        REQUIRE R_EXTENSIBLE(T15) ! Req. T15 to be extensible, non-abstract
+        REQUIRE R_ABSTRACT(T15)   ! Req. T15 to be extensible
 
 tt.2.2.3 Specification of deferred constants
 

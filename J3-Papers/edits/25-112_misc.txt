@@ -60,6 +60,10 @@ The contents of this paper are:
   Add <templated-function-subprogram> and
   <templated-subroutine-subprogram>.
 
+* 5.4.1 Type
+
+UTI:   Need a clause for deferred type that is neither intrinsic nor derived.
+
 * 7.3.2.1 Type specifier syntax
 
   Extend R702 <type-spec>:
