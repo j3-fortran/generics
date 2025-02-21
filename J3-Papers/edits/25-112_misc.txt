@@ -60,9 +60,21 @@ The contents of this paper are:
   Add <templated-function-subprogram> and
   <templated-subroutine-subprogram>.
 
-* 5.4.1 Type
+* 5.4.1.1 General
 
-UTI:   Need a clause for deferred type that is neither intrinsic nor derived.
+[50:13]  Modify first sentence of to read:
+
+  "A type is either an intrinsic type, a derived type, or a deferred type."
+
+* 5.4.1.3 Derived type
+
+[50:27+] Add new subclause
+
+  "5.4.1.4 Deferred type
+
+  Deferred types are deferred arguments that are types in templates,
+  templated procedures, or requirements.  Deferred types are described
+  further in tt.xx.  "
 
 * 7.3.2.1 Type specifier syntax
 

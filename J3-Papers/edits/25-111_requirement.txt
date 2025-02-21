@@ -59,15 +59,45 @@ Rtt31 <requirement-specification-construct>
           <<is>> <deferred-arg-decl-stmt>
           <<or>> <interface-block>
 
-Ctt66 (Rtt31) An <interface-stmt> shall include ABSTRACT or DEFERRED.
+Ctt66 (Rtt31) The <interface-stmt> within an <interface-block> shall
+              include ABSTRACT or DEFERRED.
 
-NOTE 1
+NOTE
 
     Each <deferred-arg-name> is local to the REQUIREMENT construct.
 
+tt.8 REQUIRE statement
+
+A REQUIRE statement provides specifications of deferred arguments by
+associating them with the deferred arguments of a REQUIREMENT. A
+REQUIRE statement is a specification statement.
+
+Rtt32 <require-stmt> <<is>>
+          REQUIRE [::] <requirement-name>
+          ( [<instantiation-arg-spec-list>] )
+
+Ctt67 (Rtt32) A <requirement-name> shall be the name of a previously
+              defined REQUIREMENT.
+
+{ UTI: same concerns about "previously defined" and host association. }
+
+NOTE 1
+
+    Instantiation arguments in a REQUIRE statement are not required
+    to be deferred arguments.
+
 NOTE 2
 
-    Examples of REQUIREMENT blocks:
+    An instantiation argument that appears in a REQUIRE statement is
+    only given an ultimate specification if it is a deferred argument
+    of the scoping unit in which the REQUIRE statement appears. See
+    tt.2.2.1.
+
+{tt.2.2.1 is "General" in consistency.txt}
+
+NOTE 3
+
+    Examples of REQUIREMENT and REQUIRE:
 
         REQUIREMENT R1(U, V, G)
            DEFERRED TYPE :: U, V
@@ -87,32 +117,7 @@ NOTE 2
     which could appear together in the same template, although they are
     redundant in this case.
 
-       REQUIRE R1(T, T, F)
-       REQUIRE R2(T, F)
-
-tt.8 REQUIRE statement
-
-A REQUIRE statement provides specifications of deferred arguments by
-associating them with the deferred arguments of a REQUIREMENT. A
-REQUIRE statement is a specification statement.
-
-Rtt32 <require-stmt> <<is>>
-          REQUIRE [::] <requirement-name>
-          ( [<instantiation-arg-spec-list>] )
-
-Ctt67 (Rtt32) <requirement-name> shall be the name of a previously
-              defined REQUIREMENT.
-
-NOTE 1
-
-    Instantiation arguments in a REQUIRE statement are not required
-    to be deferred arguments.
-
-NOTE 2
-
-    An instantiation argument that appears in a REQUIRE statement is
-    only given an ultimate specification if it is a deferred argument
-    of the scoping unit in which the declaration appears. See
-    tt.2.2.1.
+        REQUIRE R1(T, T, F)
+        REQUIRE R2(T, F)
 
 ===END===

@@ -1,14 +1,15 @@
-To: J3                                                     J3/25-110
+To: J3                                                     J3/25-110r3
 From: generics
 Subject: Edits for TEMPLATES: Instantiation
-Date: 2025-February-03
-References: 25-107, 25-108, 25-109, 24-125r5, 24-126r4, 24-127r4
+Date: 2025-February-20
+References: 25-107, 25-108, 25-109r2, 24-125r5, 24-126r4, 24-127r4
 
 Introduction:
 =============
 
 This is the 4th of 6 papers that provide edits for the approved syntax
-for templates.
+for templates.  Note that this is not intended to be interpreted as
+the ultimate ordering if/when these papers are sewn together.
 
 Section 1:
 ==========
@@ -21,39 +22,37 @@ tt.6 Instantiation
 tt.6.1 The INSTANTIATE statement
 
 An INSTANTIATE statement is a specification statement that identifies
-an instance of a template by specifying instantiation arguments that
-become associated with the deferred arguments of the named template.
+an instance of a template.  The instance is identified by the
+specified instantiation arguments. The deferred arguments of the
+template become associated with the corresponding instantiation
+arguments.
 
-Rtt24 <template-instantiate-stmt>
+Rtt24 <instantiate-stmt> <<is>> <template-instantiate-stmt>
+                         <<or>> <templated-procedure-instantiate-stmt>
+
+Ctt40 (Rtt24) A <template-name> shall not be the name of any construct in
+              which it appears.
+
+Rtt25 <template-instantiate-stmt>
          <<is>> INSTANTIATE [::] <template-name> (
                 [ <instantiation-arg-spec-list> ] ) [, <rename-list> ]
          <<or>> INSTANTIATE [::] <template-name> (
                 [ <instantiation-arg-spec-list> ] ), ONLY : [ <only-list> ]
 
-Ctt39 (Rtt24) The <template-name> shall be the name of a template that is
-              not a templated procedure.
+Ctt41 (Rtt25) The <template-name> shall be the name of a previously
+              defined template that is not a templated procedure.
 
-Rtt25 <templated-procedure-instantiate-stmt> <<is>>
+Rtt26 <templated-procedure-instantiate-stmt> <<is>>
           INSTANTIATE :: <local-name> => <template-name> (
           [ <instantiation-arg-spec-list> ] )
 
-Ctt40 (Rtt25) The <template-name> shall be the name of a templated
-              procedure.
+Ctt42 (Rtt26) The <template-name> shall be the name of a previously
+              defined templated procedure.
 
-Rtt26 <instantiate-stmt> <<is>> <template-instantiate-stmt>
-                         <<or>> <template-procedure-instantiate-stmt>
-
-Ctt41 (Rtt26) Within an <instantiate-stmt>, an <instantiation-arg> shall
-              not depend on any entity defined within the referenced
-              template.
-
-Ctt42 (Rtt26) A <template-name> shall not be the name of any construct in
-              which it appears.
-
-The INSTANTIATE statement without the ONLY option provides access to
-all public entities of the referenced template.  The INSTANTIATE
-statement with the ONLY option provides access only to those entities
-that appear as <generic-spec>s, <use-name>s, or
+A <template-instantiate-stmt> without the ONLY option provides access
+to all public entities of the referenced template.  A
+<template-instantiate-stmt> with the ONLY option provides access only
+to those entities that appear as <generic-spec>s, <use-name>s, or
 <use-defined-operator>s in the only list.
 
 An accessible entity of the referenced instantiation is associated
@@ -66,7 +65,6 @@ These identifiers are
      instantiation,
    - each of the <local-name>s or <local-defined-operator>s that the
      entity is given in any <rename> for that instantiation, and
-
    - the identifier of the entity in that referenced template if
      that identifier does not appear as a <use-name> or
      <use-defined-operator> in any <rename> for that instantiation.
@@ -83,9 +81,6 @@ Rtt27 <inline-instantiate> <<is>>
 Ctt43 (Rtt27) The <template-name> shall be the name of a templated
               procedure.
 
-Ctt44 (Rtt27) The <template-name> shall not be the name of any construct
-              in which it appears.
-
 The procedure designated by <inline-instantiate> is the procedure
 produced from instantiating the templated procedure.
 
@@ -93,8 +88,42 @@ NOTE
 
     Templated procedures cannot reference themselves.
 
+tt.6.3 Template dependence
 
-tt.6.3 Interpretation of template instantiation
+An entity depends on template T if the entity's declaration or definition 
+    - instantiates T
+    - contains a name that identifies an entity from any instantiation of T
+    - contains a name that identifies an entity that depends on T
+
+Ctt43b A template construct shall appear lexicographically before any
+       entity that depends on it in the same program unit.
+
+{
+ALTERNATE
+ctt43b A template construct shall be defined before any entity that
+       depends on it.
+}     
+
+Ctt43c A name that appears in a template shall not identify any entity
+       that depends on that template.
+
+An entity depends on an instantiation I if the entity's declaration or
+definition
+    - contains the instantiation I
+    - contains a name that identifies an entity from the instantiation I
+    - contains a name that identifies an entity that depends on the
+      instantiation I
+
+Ctt43d A name that appears as an instantiation argument shall not
+       identify an entity that depends on that instantiation.
+
+NOTE
+
+     A corollary to constraint Ctt43c is that a template cannot
+     instantiate itself.
+
+
+tt.6.4 Interpretation of template instantiation
 
 Multiple instantiations of a given template with the same actual
 instantiation arguments identify the same instance of the referenced
@@ -219,6 +248,9 @@ tt.6.4.2 Deferred type association
 
 Ctt47 (Rtt29) An <instantiation-arg> that corresponds to a deferred type
               shall be a <type-spec>.
+
+Ctt47+ (Rtt29) A <type-spec> shall specify an intrinsic type or a
+               nonintrinsic type that has been previously defined.
 
 Ctt48 (Rtt29) A <type-spec> shall specify constant type parameters.
 
@@ -371,7 +403,7 @@ NOTE 2
 
      Example of inline instantiation of the templated subroutine from
      NOTE 2 of section tt.4
-     
+
      CALL iterate^(real, 3, mysub)(y)
 
 

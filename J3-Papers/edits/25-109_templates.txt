@@ -1,7 +1,7 @@
-To: J3                                                     J3/25-109
+To: J3                                                     J3/25-109r2
 From: generics
 Subject: Edits for TEMPLATE construct
-Date: 2025-February-03
+Date: 2025-February-19
 References: 25-107, 25-108, 24-125r5, 24-126r4, 24-127r4
 
 Introduction:
@@ -20,11 +20,12 @@ tt.3 The TEMPLATE construct
 
 tt.3.1 Syntax for the TEMPLATE construct
 
-A template contains declarations, specifications, and definitions that are
-parameterized by deferred arguments. Public identifiers of a template are
-made accessible to other scoping units by instantiation of the template
-and refer to specifc instances of the entities created by the
-instantiation.
+A template contains declarations, specifications, and definitions that
+are parameterized by deferred arguments. Public identifiers of a
+template are made accessible to other scoping units by instantiation
+of the template.  The accessible identifiers refer to specific
+instances of the entities created by the instantiation.
+
 
 Rtt10 <template> <<is>> <template-stmt>
                         [ <template-specification-part> ]
