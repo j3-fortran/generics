@@ -76,10 +76,8 @@ Rtt32 <require-stmt> <<is>>
           REQUIRE [::] <requirement-name>
           ( [<instantiation-arg-spec-list>] )
 
-Ctt67 (Rtt32) A <requirement-name> shall be the name of a previously
-              defined REQUIREMENT.
-
-{ UTI: same concerns about "previously defined" and host association. }
+Ctt67 (Rtt32) A <requirement-name> shall be the name of a REQUIREMENT
+              that is ultimately defined prior to the <require-stmt>.
 
 NOTE 1
 

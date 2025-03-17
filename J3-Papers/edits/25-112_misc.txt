@@ -50,6 +50,17 @@ The contents of this paper are:
   [instantiation argument]
   argument to an INSTANTIATE statement or inline instantiation
 
+* Insert new glossary term
+
+  [ultimately defined prior]
+
+  {could shorten to "defined prior" but that might be too confusing
+  compared to "previously defined"}
+
+  an entity that is accessed by host association and whose definition
+  appears before the scoping unit in which it is reference or is
+  ultimately defined prior in the host scoping unit
+
 * 3.120 Scoping unit
 
   Add TEMPLATE construct and REQUIREMENT construct to the list in the

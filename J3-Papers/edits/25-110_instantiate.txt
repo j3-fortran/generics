@@ -95,14 +95,8 @@ An entity depends on template T if the entity's declaration or definition
     - contains a name that identifies an entity from any instantiation of T
     - contains a name that identifies an entity that depends on T
 
-Ctt43b A template construct shall appear lexicographically before any
-       entity that depends on it in the same program unit.
-
-{
-ALTERNATE
-ctt43b A template construct shall be defined before any entity that
-       depends on it.
-}     
+Ctt43b A template construct shall be ultimately defined
+       prior to any entity that depends on it.
 
 Ctt43c A name that appears in a template shall not identify any entity
        that depends on that template.
@@ -204,7 +198,7 @@ NOTE 2
         INSTANTIATE TMPL(MY_U, B) ! Resolves to F3 ==> different
 
 
-tt.6.4 Deferred argument association
+tt.6.4 Instantiation association
 
 tt.6.4.1 Instantiation arguments
 

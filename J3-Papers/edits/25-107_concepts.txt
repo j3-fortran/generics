@@ -271,12 +271,3 @@ NOTE 2
 
 ===END===
 
-
-{
-Further work: We should come up with and use an "association" term.
-Malcolm's preferred term was "instantiation association" or "template
-association".
-I like "instantiation association".
-"deferred argument association" is also an option. Malcolm said it was
-okay but a mouthful.
-}
