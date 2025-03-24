@@ -5,10 +5,6 @@ Date: 2025-February-03
 References: 25-107, 25-108, 25-109, 25-110, 25-111, 24-125r5,
             24-126r4, 24-127r4, 24-007
 
-UTI: Section 4 does not seem to state where it goes in the standard
-
-UTI: Co-reduce cannot be deferred type.
-
 1. Introduction
 ===============
 
@@ -16,16 +12,6 @@ This is the 6th of 6 papers that provide edits for the approved syntax
 for templates. This paper describes various edits occurring outside the
 new new clause introduced in papers 1-5 that are necessary to incorporate
 the syntax and semantics for templates.
-
-The contents of this paper are:
-
-{ More aspirational than true.}
-
-   Section 2: Edits required for deferred arguments
-   Section 3: Edits required for templates and instantiation
-   Section 4: Edits to TKR compatibility
-   Section 5: Edits for processor dependencies
-
 
 2. Edits required for deferred arguments
 ========================================
@@ -388,51 +374,28 @@ UTI: spelling of <inline-instantiate> vs <inline-instantiation>
     interface block. An interface body in a deferred interface block
     specifies a deferred procedure.
 
-* 15.6.2.1 General
+* 15.4.3.4.5 Restrictions on generic declarations
 
-{<prefix-spec> for templated procedures.}
+[317:10+] Insert new paragraphs:
 
-R1530 extended to include TEMPLATE.
+  An entity whose kind depends on a deferred argument does not have
+  the same kind as any other entity, unless that entity has its kind
+  defined with a syntactically equivalent expression.
 
-C???? (R1530) TEMPLATE shall not appear except in a
-              <templated-function-stmt> or a
-              <templated-subroutine-stmt>.
+  An entity whose rank depends on a deferred argument does not have
+  the same rank as any other entity, unless that entity has its rank
+  defined with a syntactically equivalent expression. If the rank of
+  an implied-rank entity is not declared with a rank clause, it is
+  considered to have no expression for its rank, and therefore does
+  not have the same rank as any other entity.
 
-* 15.6.2.2 Function subprogram
+{ Is "depends on" acceptable terminology here? }
 
-  Change constraint C1573 to refer to rule R1532 instead of R1536.
-
-  {<end-function-stmt> is reused for templated procedures. Therefore
-  the constraint must be attached to a different rule to be applicable
-  in both situations.}
-
-* 15.6.2.3 Subroutine subprogram
-
-  Change constraint C1576 to refer to rule R1537 instead of R1540.
-
-  {<end-subroutine-stmt> is reused for templated procedures. Therefore
-  the constraint must be attached to a different rule to be applicable
-  in both situations.}
-
-4. Edits to TKR compatibility
-=============================
-
-  An entity whose rank is, or depends on, a deferred argument does not
-  have the same rank as any other entity, unless that entity has its
-  rank defined with a syntactically equivalent expression. If the rank
-  of an implied-rank entity is not declared with a rank clause, it is
-  considered to have no expression for its rank, and therefore does not
-  have the same rank as any other entity.
-
-  An entity whose kind is, or depends on, a deferred argument does not
-  have the same kind as any other entity, unless that entity has its
-  kind defined with a syntactically equivalent expression.
-
-  Note: Some examples of implied-rank entities are shown
-        in the following example template. C is explicitly declared
-        as implied-rank. B is implied-rank because its rank depends on
-        the size of the deferred argument S. X, Y and Z are implied-rank
-        because their ranks depend on the value of the deferred argument N.
+  NOTE Some examples of implied-rank entities are shown in the
+       following example template. C is explicitly declared
+       as implied-rank. B is implied-rank because its rank depends on
+       the size of the deferred argument S. X, Y and Z are implied-rank
+       because their ranks depend on the value of the deferred argument N.
 
     TEMPLATE EXAMPLE(C, S, N)
       DEFERRED INTEGER, PARAMETER :: C(..) ! implied-shape & implied-rank
@@ -466,11 +429,49 @@ C???? (R1530) TEMPLATE shall not appear except in a
       END SUBROUTINE
     END TEMPLATE
 
-5. Edits for A.2 Processor Dependencies
-=======================================
+* 15.6.2.1 General
+
+{<prefix-spec> for templated procedures.}
+
+R1530 extended to include TEMPLATE.
+
+C???? (R1530) TEMPLATE shall not appear except in a
+              <templated-function-stmt> or a
+              <templated-subroutine-stmt>.
+
+* 15.6.2.2 Function subprogram
+
+  Change constraint C1573 to refer to rule R1532 instead of R1536.
+
+  {<end-function-stmt> is reused for templated procedures. Therefore
+  the constraint must be attached to a different rule to be applicable
+  in both situations.}
+
+* 15.6.2.3 Subroutine subprogram
+
+  Change constraint C1576 to refer to rule R1537 instead of R1540.
+
+  {<end-subroutine-stmt> is reused for templated procedures. Therefore
+  the constraint must be attached to a different rule to be applicable
+  in both situations.}
+
+
+
+
+* 16.9.57 CO_REDUCE(A,OPERATION,...)
+
+[382:36] After second sentence in paragraph insert:
+
+"It shall not be of a deferred type."
+
+
+
+* A.2 Processor Dependencies
 
   [555:15+] Insert new bullet:
     * the names of the dummy arguments of a deferred procedure without
-      an explicit specification (tt.2.2.4);
+      an explicit specification;
+
+{ need refernence for above bullet }
 
 ===END===
