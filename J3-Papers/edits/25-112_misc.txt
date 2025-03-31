@@ -26,15 +26,17 @@ the syntax and semantics for templates.
 * Insert new glossary term
 
   [deferred argument]
-  named entity that appears in a <deferred-arg-list> (Sec. ?)
+  named entity that appears in a <deferred-arg-list> (R???) (Sec. ?)
 
 * Insert new glossary term 3.34.x
 
   [deferred constant]
   a deferred argument with the PARAMETER attribute
 
+* Insert new glossary term
+
   [instantiation argument]
-  argument to an INSTANTIATE statement or inline instantiation
+  entity that determines deferred argument association
 
 * Insert new glossary term
 
@@ -43,94 +45,124 @@ the syntax and semantics for templates.
   {could shorten to "defined prior" but that might be too confusing
   compared to "previously defined"}
 
-  an entity that is accessed by host association and whose definition
+  "an entity that is accessed by host association and whose definition
   appears before the scoping unit in which it is reference or is
-  ultimately defined prior in the host scoping unit
+  ultimately defined prior in the host scoping unit"
 
-* 3.120 Scoping unit
+* 3.120 Add TEMPLATE construct and REQUIREMENT construct to the list in the
+  definition so that it now reads:
 
-  Add TEMPLATE construct and REQUIREMENT construct to the list in the
-  definition.
+  "BLOCK construct, derived-type definition, interface body, program
+  unit (3.113), subprogram, template construct, or requirement
+  construct, excluding all nested scoping units in it"
 
-* 3.139 Subprogram
+ * 3.139 Modify subprogram to include templated functions and subroutines to read:
 
-  Add <templated-function-subprogram> and
-  <templated-subroutine-subprogram>.
+  "<function-subprogram> (R1532), <subroutine-subprogram> (R1537),
+  <templated-function-subprogram> (R???), or
+  <templated-subroutine-subprogram> (R???)"
 
 * 5.4.1.1 General
 
-[50:13]  Modify first sentence of to read:
+  Modify first sentence of paragraph 2 to read:
 
   "A type is either an intrinsic type, a derived type, or a deferred type."
 
 * 5.4.1.3 Derived type
 
-[50:27+] Add new subclause
+  Add new subclause
 
-  "5.4.1.4 Deferred type
+  "5.4.1.3+ Deferred type
 
   Deferred types are deferred arguments that are types in templates,
   templated procedures, or requirements.  Deferred types are described
-  further in tt.xx.  "
+  further in tt.xx. "
 
 * 7.3.2.1 Type specifier syntax
 
-  Extend R702 <type-spec>:
-    <<or>> <deferred-type>
+  Extend R702 <type-spec> to include <deferred-type>  such that it reads:
 
-  Extend C703 from:
-    (R702) The <derived-type-spec> shall not specify an abstract
-    type (7.5.7)
-  To:
-    (R702) The <derived-type-spec> or <deferred-type> shall not specify
-    an abstract type (7.5.7) except when used as an <instantiation-arg>.
+   " R702 <type-spec> <<is>> <intrinsic-type-spec>
+       <<or>> <derived-type-spec>
+       <<or>> <deferred-type>
+       <<or>> <enum-type-spec>
+       <<or>> <enumeration-type-spec> "
 
-  Extend R703 <declaration-type-spec> to include:
-    <<or>> TYPE(<deferred-type>)
-    <<or>> CLASS(<deferred-type>)
+  Modify C703 to include <deferred-type> such that it reads:
 
-  Change C706 from:
-    (R703) TYPE(<derived-type-spec>) shall not specify an abstract
-    type (7.5.7).
-  To:
-    (R703) In a <declaration-type-spec> that uses the TYPE keyword,
-    <derived-type-spec> or <deferred-type> shall not specify an
-    abstract type (7.5.7).
+  "(R702) The <derived-type-spec> or <deferred-type> shall not specify
+   an abstract type (7.5.7) except when it appears as an
+   <instantiation-arg>."
 
-  Extend C705 from:
-    (R703) In a <declaration-type-spec> that uses the CLASS keyword,
-    <derived-type-spec> shall specify an extensible type (7.5.7).
-  To:
-    (R703) In a <declaration-type-spec> that uses the CLASS keyword,
-    <derived-type-spec> or <deferred-type> shall specify an extensible
-    type (7.5.7).
+  Extend R703 <declaration-type-spec> to include <deferred-type> such
+  that it reads:
+
+    "R703 <declaration-type-spec> <<is>> <intrinsic-type-spec>
+       <<or>> TYPE ( <intrinsic-type-spec> )
+       <<or>> TYPE ( <derived-type-spec> )
+       <<or>> TYPE ( <deferred-type> )
+       <<or>> TYPE ( <enum-type-spec> )
+       <<or>> TYPE ( <enumeration-type-spec> )
+       <<or>> CLASS ( <derived-type-spec> )
+       <<or>> CLASS ( <deferred-type> )
+       <<or>> CLASS ( * )
+       <<or>> TYPE ( * )
+       <<or>> TYPEOF ( <data-ref> )
+       <<or>> CLASSOF ( <data-ref> )"
+
+
+  Change C705 wording to be consintent with constraints just after it:
+
+  "C705 (R703) CLASS(<derived-type-spec>) shall specify an extensible
+  type (7.5.7)."
+
+{This is just a wording change, but the original is so glaringly
+different than the nigh identical constraint that follows, that
+generics subgroup thought it should be updated.}
+
+  After C705 introduce a new constraint:
+
+   "C705+ (R703) CLASS(<deferred-type>) shall specify an extensible
+  type (7.5.7)."
+
+  After C706 introduce a new constraint
+
+   "C706+ (R703) TYPE(<deferred-type>) shall not specify an abstract type
+   (7.5.7)."
 
 * 7.5.2.1 Syntax of a derived-type definition
 
   Insert new constraint on R728:
-    C737b (R728) <parent-type-name> shall not be a <deferred-type>.
+
+   "C737b (R728) <parent-type-name> shall not be a <deferred-type>."
 
 * 8.5.2 Accessibility attribute
 
-[106:6] In C817, insert "or template" after "module", so that it now reads:
+  In C817, insert "or template" after "module", so that it now reads:
 
-  C817 An access-spec shall appear only in the specification-part of a
-       module or template construct.
+  "C817 An access-spec shall appear only in the specification-part of a
+       module or template construct."
 
 * 8.6.1 Accessibility Statement
 
-  [120:28] Change C873 to read:
-    C873 (R831) An <access-stmt> shall appear only in the
-                <specification-part> of a module or template. Only one
-                accessibility statement with an omitted <access-id-list>
-                is permitted in the <specification-part> of a module or
-                template.
+  Change C873 to allow for templates:
 
-  [120:30] Change C874 to read:
-    C874 (R831) Each <access-name> shall be the name of a module,
-                variable, procedure, nonintrinsic type, named constant
-                other than a deferred constant, namelist group,
-                requirement, or template.
+  "C873 (R831) An <access-stmt> shall appear only in the
+        <specification-part> of a module or template. Only one
+        accessibility statement with an omitted <access-id-list> is
+        permitted in the <specification-part> of a module or
+        template."
+
+  Change C874 to allow for templates:
+
+   "C874 (R831) Each <access-name> shall be the name of a module,
+         variable, procedure, nonintrinsic type, named constant other
+         than a deferred constant, namelist group, requirement, or
+         template."
+
+<<<< whis is where we got to on Monday March 31, 2025 >>>>
+
+
 
   [120:37+] In 2nd sentence of paragraph 1, insert "or template" after
             "in the module" in both locations such that the sentence now
