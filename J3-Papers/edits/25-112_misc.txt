@@ -160,86 +160,134 @@ generics subgroup thought it should be updated.}
          than a deferred constant, namelist group, requirement, or
          template."
 
-<<<< whis is where we got to on Monday March 31, 2025 >>>>
+    In 2nd sentence of paragraph 1, insert "or template" after
+         "in the module" in both locations such that the sentence now
+         reads:
 
-
-
-  [120:37+] In 2nd sentence of paragraph 1, insert "or template" after
-            "in the module" in both locations such that the sentence now
-            reads:
-    An access-stmt without an access-id list specifies the default
+    "An access-stmt without an access-id list specifies the default
     accessibility of the identifiers of entities declared in the
-    module or template, and of entities accessed from a module
-    whose name does not appear in any access-stmt in the module or
-    template.
+    module or template, and of entities accessed from a module whose
+    name does not appear in any access-stmt in the module or
+    template."
 
-  [120:43] In last sentence of paragraph 1, insert "or template" after
-           "in a module" such that the sentence now reads:
-    If no such statement appears in a module or template, the
-    default is public accessibility.
+  In last sentence of paragraph 1, insert "or template" after
+         "in a module" such that the sentence now reads:
 
-  [121:1] In 1st sentence of paragraph 2, insert "or template" after "in
-          the module" such that the sentence now reads:
-    If an identifier is accessed by use association and not declared
-    in the module or template, and the name of every module from
-    which it is accessed appears in an access-stmt in the scoping
-    unit, its default accessibility is PRIVATE if the access-spec in
-    every such access-stmt is PRIVATE, or PUBLIC if the access-spec
-    in any such access-stmt is PUBLIC.
+    "If no such statement appears in a module or template, the default
+    is public accessibility."
+
+  In 1st sentence of paragraph 2, insert "or template" after "in
+       the module" such that the sentence now reads:
+
+    "If an identifier is accessed by use association and not declared
+    in the module or template, and the name of every module from which
+    it is accessed appears in an access-stmt in the scoping unit, its
+    default accessibility is PRIVATE if the access-spec in every such
+    access-stmt is PRIVATE, or PUBLIC if the access-spec in any such
+    access-stmt is PUBLIC."
 
 * 8.5.8.1 General
 
   Change last entry for <array-spec> from:
-    <<or>>   <assumed-rank-spec>
+    "<<or>>   <assumed-rank-spec>"
   To:
-    <<or>>   <assumed-or-implied-rank-spec>
+    "<<or>>   <assumed-or-implied-rank-spec>"
 
 * 8.5.8.2 Explicit-shape array
 
-{UTI: It may be better to modify <explicit-shape-bounds-spec> to
-      disambiguate <explicit-bounds-expr> for lower and upper bounds.
-      This would make constraint for deferred constants clearer.}
+Modify R818 to disambiguate lower and upper explicit bounds such that it reads:
+
+"R818 <explicit-shape-bounds-spec>
+     <<is>> [ <lower-explicit-bounds-expr> : ] <upper-explicit-bounds-expr>
+     <<or>> <lower-bound> : <explicit-bounds-expr>
+     <<or>> <explicit-bounds-expr> : <upper-bound>
+ R818b <lower-explicit-bounds-expr> <<is>> <explicit-bounds-expr>
+ R818c <upper-explicit-bounds-expr> <<is>> <explicit-bounds-expr>
+"
 
 * 8.5.8.6 Implied-shape array
 
   Modify the first sentence from:
-    An implied-shape array is a named constant that takes its shape
-    from the constant-expr in its declaration.
+    "An implied-shape array is a named constant that takes its shape
+    from the constant-expr in its declaration."
   To:
-    An implied-shape array is a named constant that takes its shape
+    "An implied-shape array is a named constant that takes its shape
     from a constant expression. If it is a deferred constant, it takes
     its shape from the associated instantiation argument, otherwise it
-    takes its shape from the constant expression in its declaration.
+    takes its shape from the constant expression in its declaration."
 
   Delete the first sentence in the last paragraph which reads:
 
     The extent of each dimension of an implied-shape array is the same
     as the extent of the corresponding dimension of the constant-expr.
 
-  Insert new section after 8.5.8.7:
+* 8.5.8.7 Assumed-rank entity
 
-    8.5.8.7b Implied-rank entity
+  Change name of section to "Assumed-rank or implied-rank entities"
 
-    An implied-rank entity is an entity whose rank becomes defined only
-    when the template in which it appears is instantiated.
+  Modify text in former 8.5.8.7 (Assumed-rank entity) to use new
+       syntax term <assumed-or-implied-rank-spec> such that it now reads:
+
+   "An assumed-rank entity is a dummy data object whose rank is
+    assumed from its effective argument, or the associate name of a
+    RANK DEFAULT block in a SELECT RANK construct; this rank can be
+    zero. The bounds and shape of an assumed-rank entity with the
+    ALLOCATABLE or POINTER attribute are determined as specified in
+    8.5.8.4. An assumed-rank entity is declared with an <array-spec>
+    that is an <assumed-or-implied-rank-spec>.
+
+    R827 assumed-or-implied-rank-spec is ..
+
+    C839 An assumed-rank entity shall be an associate name or a dummy
+         data object that does not have the CODIMENSION or VALUE
+         attribute.
+
+    C840 An assumed-rank variable name shall not appear in a
+         designator or expression except as an actual argument that
+         corresponds to a dummy argument that is assumed-rank, the
+         argument of the function C_LOC or C_SIZEOF from the intrinsic
+         module ISO_C_BINDING (18.2), the first dummy argument of an
+         intrinsic inquiry function, or the selector of a SELECT RANK
+         statement.
+
+    C841 If an assumed-size or nonallocatable nonpointer assumed-rank
+         array is an actual argument that corresponds to a dummy
+         argument that is an INTENT (OUT) assumed-rank array, it shall
+         not be polymorphic, finalizable, of a type with an
+         allocatable ultimate component, or of a type for which
+         default initialization is specified.
+
+* Insert new section after 8.5.8.7.1:
+
+    "8.5.8.7.2 Implied-rank entity
+
+     An implied-rank entity is an entity whose rank becomes defined
+     only within the instantiation of a template.  The following are
+     implied-rank entities:
+
+       - deferred constant declared with <assumed-or-implied-rank-spec>
+
+       - variable, dummy argument, or deferred constant whose rank is
+         declared to be a deferred integer, scalar constant expression
+
+       - variable, dummy argument, or deferred constant whose shape is
+         declared to be a deferred integer, rank-1 array expression.
 
 {UTI: Also make sure it works with SELECT GENERIC RANK and spell out
       what can be done with implied-rank entities.}
-
-    R287b <implied-rank-spec> <<is>> ..
-
-    C841b (R287b) An implied-rank entity shall be a <deferred-const>.
 
     NOTE
 
         The following are examples of implied-rank entities
 
         TEMPLATE EXAMPLE(C, S, N)
-           DEFERRED INTEGER, PARAMETER :: C(..)
-               ! implied-shape & implied-rank
-           DEFERRED INTEGER, PARAMETER :: S(*), N
-           INTEGER, PARAMETER :: B(S) = 1 ! explicit-shape & implied-rank
+           DEFERRED INTEGER, PARAMETER :: S(*)
+           DEFERRED INTEGER, PARAMETER :: C(..) ! implied-rank
+           INTEGER, PARAMETER :: B(S) = 1       ! implied-rank
+	   REAL, PARAMETER, RANK(RANK(C)) :: D  ! implied rank
         END TEMPLATE
+
+<< this is where we got on 2025-04-07 >>
 
 * 8.5.17  RANK clause
 

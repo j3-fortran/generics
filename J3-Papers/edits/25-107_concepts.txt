@@ -188,7 +188,7 @@ Ctt13 (Rtt06) If <implied-shape-spec>, <explicit-shape-spec> or
 
 Ctt14 (Rtt06) If <explicit-shape-bounds-spec> appears in
               <deferred-const-declaration-stmt>, then
-              <explicit-bounds-expr> shall not appear as a lower bound.
+              <lower-explicit-bounds-expr> shall not appear.
 
 NOTE 1
 
