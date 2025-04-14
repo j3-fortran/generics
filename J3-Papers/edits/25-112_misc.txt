@@ -216,6 +216,10 @@ Modify R818 to disambiguate lower and upper explicit bounds such that it reads:
     its shape from the associated instantiation argument, otherwise it
     takes its shape from the constant expression in its declaration."
 
+{Note that this change is a bit larger than strictly necessary.  It is
+needed for deferred constants, but it seems natural to include
+ordinary constant here.}
+
   Delete the first sentence in the last paragraph which reads:
 
     The extent of each dimension of an implied-shape array is the same
@@ -287,9 +291,13 @@ Modify R818 to disambiguate lower and upper explicit bounds such that it reads:
 	   REAL, PARAMETER, RANK(RANK(C)) :: D  ! implied rank
         END TEMPLATE
 
-<< this is where we got on 2025-04-07 >>
-
 * 8.5.17  RANK clause
+
+UTI: Do we want to allow RANK(*)?  Not strictly necessary given that we have
+DIMENSION(..).
+
+UTI: Why do we even need the RANK clause?  Probably for generic
+procedures at the very least.
 
   Replace constraint C864 which states:
     C864  An entity declared with a rank-clause shall be a dummy data
@@ -298,68 +306,105 @@ Modify R818 to disambiguate lower and upper explicit bounds such that it reads:
     C864  An entity declared with a rank-clause shall be a named constant,
           dummy data object or have the ALLOCATABLE or POINTER attribute.
 
-  Replace the last paragraph:
-    If the rank is zero the entity is scalar; otherwise, if it has
-    the ALLOCATABLE or POINTER attribute, it specifies that it is a
-    deferred-shape array; otherwise, it specifies that it is an
-    assumed-shape array with all the lower bounds equal to one.
-  With:
-    If the rank is zero the entity is scalar; otherwise, if it has
+{This change is a bit larger than strictly necessary for generic
+programming.  We only need to allow it for deferred constants, but it
+seems natural to allow for ordinary named constants as well.}
+
+  Amend the last sentence of the section to allow for the deferred
+  constant case, such that the paragraph now reads:
+
+    "If the rank is zero the entity is scalar; otherwise, if it has
     the ALLOCATABLE or POINTER attribute, it specifies that it is a
     deferred-shape array; otherwise, if it is a named constant, it
     specifies that it is an implied-shape array with all lower
     bounds equal to one; otherwise, it specifies that it is an
-    assumed-shape array with all the lower bounds equal to one.
+    assumed-shape array with all the lower bounds equal to one".
 
 * 8.6.1 Accessibility statement
 
-Modify C873 to read as
+Modify C873 to include templates such that it reads:
 
-  C873 An <access-stmt> shall appear only in the <specification-part> of a
+  "C873 An <access-stmt> shall appear only in the <specification-part> of a
   module or template construct. Only one accessibility statement with
   an omitted <access-id-list> is permitted in the <specification-part>
-  of a module or template construct.
+  of a module or template construct."
 
 * 10.1.12 Constant expression
 
-  Extend list in normative text for "constant expression":
+  Extend list in normative text for "constant expression" to include
   "deferred constant"
 
-* 10.1 Expressions and Assignment
 
-  New section 10.1.13 Deferred constant expressions
+UTI: The following section was well intended but cast too large of a
+     shadow. We should elsewhere specify similar sentiments but
+     restricted to RANK and KIND with regards to TKR resolution.
 
-  <deferred-const-expr> <<is>> <constant-expr>
+* Insert new section 10.1.12+: Deferred constant expressions
+
+  "<deferred-const-expr> <<is>> <constant-expr>
 
   An expression is a <deferred-const-expr> if one or more of its
   primaries is a deferred constant.
 
-  A <deferred-const-expr> is not equal to any other <expr> unless
-  <expr> is syntactically equivalent.
+  A <deferred-const-expr> is not equal to any other <constant-expr> unless
+  <constant-expr> is syntactically equivalent."
+
+  deferred integer, parameter :: C
+  ...
+  integer :: i
+  i = 5
+  do i = 1, 10
+    if (C == i) ...
+    if (C == C) ...
+  end do
+
+  deferred integer, parameter :: C1
+  deferred integer, parameter :: C2 = C1 + 1 - 1
+
+  if (C1 == C2) then ...
+
 
 * 11.1.11.1 Purpose and form of the SELECT TYPE construct
 
-  Extend R1156 to
-  R1156 <type-guard-stmt>
+  Extend R1156 to include <deferred-type>, such that it now reads:
+
+
+  "R1156 <type-guard-stmt>
       <<is>> TYPE IS ( <type-spec> ) [ <select-construct-name> ]
       <<or>> CLASS IS ( <derived-type-spec> ) [ <select-construct-name> ]
       <<or>> CLASS IS ( <deferred-type> ) [ <select-construct-name> ]
-      <<or>> CLASS DEFAULT [ <select-construct-name> ]
+      <<or>> CLASS DEFAULT [ <select-construct-name> ]"
 
-  Add constraint:
-    C116b (R1156) <deferred-type> shall specify an extensible type.
+  Add constraint to R1156:
+    C1169b (R1156) <deferred-type> shall specify an extensible type.
 
 * 15.5.1 Syntax of a procedure reference
 
 UTI: spelling of <inline-instantiate> vs <inline-instantiation>
 
-  Extend R1522 <procedure-designator> with:
-    <<or>> <deferred-proc>
-    <<or>> <inline-instantiate>
+  Extend R1522 <procedure-designator> with <deferred-proc> and
+  <inline-instantiate> such that it reads:
 
-  Extend R1524 <actual-arg> with:
-    <<or>> <deferred-proc>
-    <<or>> <inline-instantiate>
+   "R1522 <procedure-designator> <<is>> <procedure-name>
+                                 <<or>> <proc-component-ref>
+                                 <<or>> <data-ref> % binding-name
+                                 <<or>> <deferred-proc>
+                                 <<or>> <inline-instantiate>
+
+  Extend R1524 <actual-arg> with <deferred-proc> and
+  <inline-instantiate> such that it reads:
+
+   "R1524 actual-arg <<is>> <expr>
+                     <<or>> <variable>
+                     <<or>> <procedure-name>
+                     <<or>> <proc-component-ref>
+                     <<or>> <conditional-arg>
+		     <<or>> <alt-return-spec>
+		     <<or>> <deferred-proc>
+		     <<or>> <inline-instantiate>
+
+
+<<< we got to here on 2025-04-14 >>>>>
 
 3. Edits required for templates and instantiation
 =================================================
