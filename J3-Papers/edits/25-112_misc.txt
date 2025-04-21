@@ -350,19 +350,30 @@ UTI: The following section was well intended but cast too large of a
   <constant-expr> is syntactically equivalent."
 
   deferred integer, parameter :: C
+  deferred integer, parameter :: R
+  integer, parameter :: R2 = C
+
+  real, rank(R), allocatable :: x
+
+  select rank (x)
+  rank is (0)
+  rank is (1)
+  rank is (2)
+  rank is (3)
   ...
-  integer :: i
-  i = 5
-  do i = 1, 10
-    if (C == i) ...
-    if (C == C) ...
-  end do
+  end select rank
 
-  deferred integer, parameter :: C1
-  deferred integer, parameter :: C2 = C1 + 1 - 1
+  real, rank(C), allocatable :: y
+  real, rank(R2), allocatable :: z
 
-  if (C1 == C2) then ...
+  if (rank(x) == rank(y)) then
+     ...
+  end if
+  if (rank(z) == rank(y)) then
+     ...
+  end if
 
+  template tmpl(C)
 
 * 11.1.11.1 Purpose and form of the SELECT TYPE construct
 
@@ -403,37 +414,56 @@ UTI: spelling of <inline-instantiate> vs <inline-instantiation>
 		     <<or>> <deferred-proc>
 		     <<or>> <inline-instantiate>
 
-
-<<< we got to here on 2025-04-14 >>>>>
+UTI - the section disction between 2 & 3 here are probably fiction at
+this point.
 
 3. Edits required for templates and instantiation
 =================================================
 
 * 5.1 High level syntax
 
-  Extend R508 <specification-construct> to include:
-    <<or>> <template>
-    <<or>> <requirement>
-    <<or>> <instantiate-stmt>
+  Extend R508 <specification-construct> to include new syntax terms:
+     <template>, <require-stmt>, <requirement> and
+     <instantiation-stmt>, such that it now reads:
 
-  Extend R512 to be:
-    R512 <internal-subprogram>
+   "R508 <specification-construct> <<is>> <derived-type-def>
+                                   <<or>> <enum-def>
+                                   <<or>> <enumeration-type-def>
+                                   <<or>> <generic-stmt>
+                                   <<or>> <interface-block>
+                                   <<or>> <parameter-stmt>
+                                   <<or>> <procedure-declaration-stmt>
+                                   <<or>> <other-specification-stmt>
+                                   <<or>> <type-declaration-stmt>
+                                   <<or>> <template>
+                                   <<or>> <require-stmt>
+                                   <<or>> <requirement>
+                                   <<or>> <instantiate-stmt>
+   "				   
+
+{ Allowing REQUIRE outside of templates is not something that has been
+  discussed in plenary, but seems to be a natural thing to allow to
+  generics subgroup.  It would provide a means for library developer
+  to ensure that their product meets certain requirements without
+  regard to any specific (external) template.}
+
+  Extend R512 to include templated procedures such that it now reads:
+
+    
+   "R512 <internal-subprogram>
          <<is>> <function-subprogram>
          <<or>> <subroutine-subprogram>
          <<or>> <templated-subroutine-subprogram>
-         <<or>> <templated-function-subprogram>
+         <<or>> <templated-function-subprogram>"
 
 
 * 8.7 IMPLICIT Statement
 
-  Modify last sentence in para 3 on page 127 from:
-    If a mapping is not specified for a letter, the default
-    for a program unit or an interface body is default integer if the
-    letter is I, J, ..., or N and default real otherwise, and the default
-    for a BLOCK construct, internal subprogram, or module subprogram is
-    the mapping in the host scoping unit.
-  To:
-    If a mapping is not specified for a letter, the default mapping of
+  Change last sentence of paragraph 3 on page 127 and add 2 new
+  paragraphs to specify that there is no default mapping inside
+  templates and templated procedures. It should now read:
+
+   "If a mapping is not specified for a letter, the default mapping of
      - a program unit, or
      - an interface body outside a template scoping unit or templated
        subprogram
@@ -447,72 +477,77 @@ UTI: spelling of <inline-instantiate> vs <inline-instantiation>
     The mapping for a template construct, a templated subprogram, or
     an interface body that appears within a template or templated
     subprogram is the null mapping.
+   "
 
 * 8.8p2 IMPORT Statement
 
-  Modify sentence 2 in p2 from:
-    This is the default for an interface body that is not a module
-    procedure interface body.
-  To:
-    This is the default for an interface body that is not a module
-    procedure interface body or an interface body that appears in a
-    deferred interface block.
+  Modify sentence 2 in p2 to include deferred interface blocks, such
+  that it now reads:
 
-  Modify sentence 2 in p4 from:
-    This is the default for a derived-type definition, internal
-    subprogram, module procedure interface body, module subprogram,
-    or submodule.
-  To:
-    This is the default for a derived-type definition, internal
-    subprogram, module procedure interface body, module subprogram,
-    submodule, or an interface body that appears in a deferred
-    interface block.
+    "This is the default for an interface body that is not a module
+     procedure interface body or an interface body that appears in a
+     deferred interface block."
+
+  Modify sentence 2 in p4 to include deferred interface blocks, such
+  that it now reads:
+
+    "This is the default for a derived-type definition, internal
+     subprogram, module procedure interface body, module subprogram,
+     submodule, or an interface body that appears in a deferred
+     interface block."
 
 
 * 14.2.1 Module syntax and semantics
 
-  Modify R1408 to become:
-    R1408 <module-subprogram>
+  Extend list in R1408 to include templated procedures, such that it
+  now reads:
+
+    "R1408 <module-subprogram>
               <<is>> <function-subprogram>
               <<or>> <subroutine-subprogram>
               <<or>> <separate-module-subprogram>
               <<or>> <templated-function-subprogram>
-              <<or>> <templated-subroutine-subprogram>
+              <<or>> <templated-subroutine-subprogram>"
 
 * 15.4.3.2 Interface block
 
-  Change R1503 from:
-    R1503 <interface-stmt> <<is>> INTERFACE [ <generic-spec> ]
-                           <<or>> ABSTRACT INTERFACE
-  To:
-    R1503 <interface-stmt> <<is>> INTERFACE [ <generic-spec> ]
-                           <<or>> ABSTRACT INTERFACE
-                           <<or>> DEFERRED INTERFACE
+  Extend list in R1503 to include deferred interface, such that it
+  now reads:
 
-  Change final sentence in para 2 such that the sentence reads:
-    An interface block without ABSTRACT, DEFERRED, or a generic
-    specification is a specific interface block.
+    "R1503 <interface-stmt> <<is>> INTERFACE [ <generic-spec> ]
+                            <<or>> ABSTRACT INTERFACE
+                            <<or>> DEFERRED INTERFACE"
+
+  Change last sentence of para 2 to include DEFERRED interfaces such
+  that it now reads:
+
+    "An interface block without ABSTRACT, DEFERRED, or a generic
+     specification is a specific interface block."
 
 
-  Add after para 2:
-    An interface block introduced by DEFERRED INTERFACE is a deferred
-    interface block. An interface body in a deferred interface block
-    specifies a deferred procedure.
+  After para 2, insert new paragraph:
+
+    "An interface block introduced by DEFERRED INTERFACE is a deferred
+     interface block. An interface body in a deferred interface block
+     specifies a deferred procedure."
+
+<<< Got here on 2024-04-21.  Need to decide right section for below. >>>
 
 * 15.4.3.4.5 Restrictions on generic declarations
 
-[317:10+] Insert new paragraphs:
+[317:10+] Insert new paragraphs to address deferred arguments:
 
-  An entity whose kind depends on a deferred argument does not have
-  the same kind as any other entity, unless that entity has its kind
-  defined with a syntactically equivalent expression.
+   "An entity with a kind-type parameter whose value depends on a
+    deferred argument is only TKR compatible with another entity,
+    if that entity has the same kind-type parameter declared with
+    a syntactically equivalent expression.
 
-  An entity whose rank depends on a deferred argument does not have
-  the same rank as any other entity, unless that entity has its rank
-  defined with a syntactically equivalent expression. If the rank of
-  an implied-rank entity is not declared with a rank clause, it is
-  considered to have no expression for its rank, and therefore does
-  not have the same rank as any other entity.
+    An entity whose rank depends on a deferred argument is only TKR
+    compatible with another entity, if that entity has its rank
+    declared with a syntactically equivalent expression.  If the rank
+    of an implied-rank entity is not declared with a rank clause, it
+    does not have the same rank as any other entity."
+
 
 { Is "depends on" acceptable terminology here? }
 
