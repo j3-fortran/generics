@@ -531,7 +531,7 @@ this point.
      interface block. An interface body in a deferred interface block
      specifies a deferred procedure."
 
-<<< Got here on 2024-04-21.  Need to decide right section for below. >>>
+<<< Got here on 2025-04-21.  Need to decide right section for below. >>>
 
 * 15.4.3.4.5 Restrictions on generic declarations
 
