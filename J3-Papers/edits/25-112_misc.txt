@@ -535,7 +535,7 @@ this point.
 
 * 15.4.3.4.5 Restrictions on generic declarations
 
-[317:10+] Insert new paragraphs to address deferred arguments:
+ [317:10+] Insert new paragraphs to address deferred arguments:
 
    "An entity with a kind-type parameter whose value depends on a
     deferred argument is only TKR compatible with another entity,
@@ -547,7 +547,6 @@ this point.
     declared with a syntactically equivalent expression.  If the rank
     of an implied-rank entity is not declared with a rank clause, it
     does not have the same rank as any other entity."
-
 
 { Is "depends on" acceptable terminology here? }
 
@@ -588,6 +587,29 @@ this point.
         INTEGER, RANK(N) :: X
       END SUBROUTINE
     END TEMPLATE
+
+* 15.5.2.5 Ordinary dummy variables
+
+[326:6] After first sentence of p3, insert a new sentence about for
+        compatibility of dummy arguments with deferred kind:
+
+    "If a kind-type parameter of the actual argument or its
+     corresponding dummy argument depends on a deferred constant, then
+     both shall have syntactically equivalent declarations for that
+     kind-type parameter."
+
+{deferred kind}
+
+[327:12] After p15 introduce new paragraph to address deferred rank
+         entities:
+
+    "If the rank of the actual argument or its corresponding dummy
+     argument depend on a deferred constant, then their ranks agree if
+     and only if they are declared with syntactically equivalent
+     expressions."
+
+
+{deferred rank}
 
 * 15.6.2.1 General
 
