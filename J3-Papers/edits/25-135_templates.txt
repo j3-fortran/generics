@@ -1,24 +1,39 @@
-To: J3                                                     J3/25-109r2
+To: J3                                                     J3/25-135
 From: generics
-Subject: Edits for TEMPLATE construct
-Date: 2025-February-19
-References: 25-107, 25-108, 24-125r5, 24-126r4, 24-127r4
+Subject: Edits for templates: TEMPLATE
+Date: 2025-May-19
+References: 25-109r2, 24-125r5, 24-126r4, 24-127r4
 
 Introduction:
 =============
 
-This is the 3rd of 6 papers that provide edits for the approved syntax
-for templates.
+This is the 1st of 6 papers that provide edits for the approved syntax
+for templates:
+
+   1. Templates
+   2. Deferred arguments
+   3. Instantiate
+   4. Requirements
+   5. Consistency constraints
+   6. Miscellanous edits
+
+Note that the clause numbering is merely suggestive.  The overall
+ordering of template subclauses will change in future papers. For
+example, the final order is likely to start with the TEMPLATE
+construct introduced in the 3rd paper.
+
 
 Section 1:
 ==========
 
-* Append the following at the end of the clause from paper 25-108.
+* Insert the following text as a new clause.
 
 
-tt.3 The TEMPLATE construct
+tt Type-safe generic programming with templates
 
-tt.3.1 Syntax for the TEMPLATE construct
+tt.1 The TEMPLATE construct
+
+tt.1.1 Syntax for the TEMPLATE construct
 
 A template contains declarations, specifications, and definitions that
 are parameterized by deferred arguments. Public identifiers of a
@@ -45,7 +60,7 @@ Ctt29 (Rtt12) If a <template-name> appears in the <end-template-stmt>,
               it shall be identical to the <template-name>
               specified in the <template-stmt>.
 
-tt.3.2 Template specification part
+tt.1.2 Template specification part
 
 Rtt13 <template-specification-part> <<is>>
           [ <use-stmt> ] ...
@@ -86,7 +101,7 @@ NOTE
     A template specification section cannot declare variables or procedure
     pointers.
 
-tt.3.3 Template subprogram part
+tt.1.3 Template subprogram part
 
 Rtt16 <template-subprogram-part> <<is>> <contains-stmt>
                                         [ <template-subprogram> ] ...
@@ -97,7 +112,7 @@ Rtt17 <template-subprogram>
           <<or>> <templated-function-subprogram>
           <<or>> <templated-subroutine-subprogram>
 
-tt.4 Templated procedures
+tt.2 Templated procedures
 
 A templated procedure is a template that defines a single
 procedure which is accessible via instantiation.
@@ -159,7 +174,7 @@ Rtt23 <templated-subprogram-declaration-construct>
 Ctt35 In either <templated-function-stmt> or
       <templated-subroutine-stmt>, <prefix> shall include TEMPLATE.
 
-tt.5 Restrictions on template definitions
+tt.3 Restrictions on template definitions
 
 Ctt36 A local variable or local procedure pointer declared anywhere
       within a template or templated subprogram shall not have the

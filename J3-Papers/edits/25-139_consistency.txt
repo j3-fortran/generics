@@ -1,24 +1,25 @@
-To: J3                                                     J3/25-108
+To: J3                                                     J3/25-139
 From: generics
 Subject: Edits for TEMPLATES: Consistency of deferred args
-Date: 2025-February-03
-References: 25-107, 24-125r5, 24-126r4, 24-127r4
+Date: 2025-May-19
+References: 25-108, 25-135, 25-136, 25-137, 25-138,
+            24-125r5, 24-126r4, 24-127r4
 
 Introduction:
 =============
 
-This is the 2nd of 6 papers that provide edits for the approved syntax
+This is the 5th of 6 papers that provide edits for the approved syntax
 for templates.
 
 Section 1:
 ==========
 
-* Append the following to the new clause introduced in paper 25-107.
+* Append the following to the new clause introduced in paper 25-138.
 
 
-tt.2.2 Consistency of deferred argument specifications
+tt.8.2 Consistency of deferred argument specifications
 
-tt.2.2.1 General
+tt.8.2.1 General
 
 Within a construct with deferred arguments, an explicit specification of
 a deferred argument is provided by
@@ -51,7 +52,7 @@ NOTE 1
     template itself or via a referenced requirement.  A deferred
     argument has at least one ultimate specification.
 
-tt.2.2.2 Specification of deferred types
+tt.8.2.2 Specification of deferred types
 
 Ctt17 If any ultimate specification of a deferred argument is a
       deferred type, then all ultimate specifications of that
@@ -81,7 +82,7 @@ NOTE 2
 
         REQUIREMENT R_REGULAR(U)
 	   ! Instantiation arg associated with U can be any non-abstract type.
-           DEFERRED TYPE :: U 
+           DEFERRED TYPE :: U
         END REQUIREMENT
 
         REQUIREMENT R_EXTENSIBLE(U)
@@ -153,7 +154,7 @@ NOTE 2
         REQUIRE R_EXTENSIBLE(T15) ! Req. T15 to be extensible, non-abstract
         REQUIRE R_ABSTRACT(T15)   ! Req. T15 to be extensible
 
-tt.2.2.3 Specification of deferred constants
+tt.8.2.3 Specification of deferred constants
 
 Ctt18 If any ultimate specification of a deferred argument is a
       deferred constant, then all ultimate specifications of
@@ -180,7 +181,7 @@ ultimate specification of that deferred constant has implied shape,
 then it has implied shape with the same rank.  Otherwise it has
 implied rank.
 
-tt.2.2.4 Specification of deferred procedures
+tt.8.2.4 Specification of deferred procedures
 
 Ctt22 If any ultimate specification of a deferred argument is a
       deferred procedure, then all ultimate specifications of

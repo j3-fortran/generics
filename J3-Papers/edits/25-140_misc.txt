@@ -1,9 +1,9 @@
-To: J3                                                     J3/25-112
+To: J3                                                     J3/25-140
 From: generics
 Subject: Miscellaneous edits to incorporate templates
-Date: 2025-February-03
-References: 25-107, 25-108, 25-109, 25-110, 25-111, 24-125r5,
-            24-126r4, 24-127r4, 24-007
+Date: 2025-May-19
+References: 25-112, 25-135, 25-136, 25-137, 25-138, 25-139,
+            24-125r5, 24-126r4, 24-127r4
 
 1. Introduction
 ===============
@@ -56,7 +56,8 @@ the syntax and semantics for templates.
   unit (3.113), subprogram, template construct, or requirement
   construct, excluding all nested scoping units in it"
 
- * 3.139 Modify subprogram to include templated functions and subroutines to read:
+ * 3.139 Modify subprogram to include templated functions and
+         subroutines to read:
 
   "<function-subprogram> (R1532), <subroutine-subprogram> (R1537),
   <templated-function-subprogram> (R???), or
@@ -195,7 +196,8 @@ generics subgroup thought it should be updated.}
 
 * 8.5.8.2 Explicit-shape array
 
-Modify R818 to disambiguate lower and upper explicit bounds such that it reads:
+Modify R818 to disambiguate lower and upper explicit bounds such that
+       it reads:
 
 "R818 <explicit-shape-bounds-spec>
      <<is>> [ <lower-explicit-bounds-expr> : ] <upper-explicit-bounds-expr>
@@ -278,7 +280,8 @@ ordinary constant here.}
          declared to be a deferred integer, rank-1 array expression.
 
 {UTI: Also make sure it works with SELECT GENERIC RANK and spell out
-      what can be done with implied-rank entities.}
+      what can be done with implied-rank entities.  Contingent on
+      edits for auto-generic procedures.}
 
     NOTE
 
@@ -293,11 +296,8 @@ ordinary constant here.}
 
 * 8.5.17  RANK clause
 
-UTI: Do we want to allow RANK(*)?  Not strictly necessary given that we have
-DIMENSION(..).
-
-UTI: Why do we even need the RANK clause?  Probably for generic
-procedures at the very least.
+{UTI: Do we want to allow RANK(*)?  Not strictly necessary given that
+      we have DIMENSION(..).  Low priority.}
 
   Replace constraint C864 which states:
     C864  An entity declared with a rank-clause shall be a dummy data
@@ -335,9 +335,9 @@ Modify C873 to include templates such that it reads:
   "deferred constant"
 
 
-UTI: The following section was well intended but cast too large of a
-     shadow. We should elsewhere specify similar sentiments but
-     restricted to RANK and KIND with regards to TKR resolution.
+{UTI: The following section was well intended but cast too large of a
+      shadow. We should elsewhere specify similar sentiments but
+      restricted to RANK and KIND with regards to TKR resolution.}
 
 * Insert new section 10.1.12+: Deferred constant expressions
 
@@ -391,7 +391,7 @@ UTI: The following section was well intended but cast too large of a
 
 * 15.5.1 Syntax of a procedure reference
 
-UTI: spelling of <inline-instantiate> vs <inline-instantiation>
+{UTI: spelling of <inline-instantiate> vs <inline-instantiation>}
 
   Extend R1522 <procedure-designator> with <deferred-proc> and
   <inline-instantiate> such that it reads:
@@ -414,8 +414,8 @@ UTI: spelling of <inline-instantiate> vs <inline-instantiation>
 		     <<or>> <deferred-proc>
 		     <<or>> <inline-instantiate>
 
-UTI - the section disction between 2 & 3 here are probably fiction at
-this point.
+{UTI - the section distinction between 2 & 3 here are probably fiction at
+this point.}
 
 3. Edits required for templates and instantiation
 =================================================
@@ -439,7 +439,7 @@ this point.
                                    <<or>> <require-stmt>
                                    <<or>> <requirement>
                                    <<or>> <instantiate-stmt>
-   "				   
+   "
 
 { Allowing REQUIRE outside of templates is not something that has been
   discussed in plenary, but seems to be a natural thing to allow to
@@ -449,7 +449,7 @@ this point.
 
   Extend R512 to include templated procedures such that it now reads:
 
-    
+
    "R512 <internal-subprogram>
          <<is>> <function-subprogram>
          <<or>> <subroutine-subprogram>
@@ -548,25 +548,26 @@ this point.
     does not have the same rank as any other entity."
 
 
-{ Is "depends on" acceptable terminology here? }
+{ UTI: Is "depends on" acceptable terminology here? }
 { UTI: We should define "syntactically equivalent" }
 { UTI: Prevent specifying rank and bounds for deferred constants I.e.
 
-DEFERRED INTEGER, PARAMTER :: C(*)
-DEFERRED INTEGER, PARAMETER, RANK(SIZE(C)) :: D(C)
+       DEFERRED INTEGER, PARAMTER :: C(*)
+       DEFERRED INTEGER, PARAMETER, RANK(SIZE(C)) :: D(C)
 
-REQUIREMENT R(C, F)
-    DEFERRED INTEGER, PARAMETER :: C
-    DEFERRED INTERFACE
-      INTEGER FUNCTION F(X)
-        INTEGER, RANK(C+1) :: X
-      END FUNCTION
-END REQUIREMENT
-DEFERRED INTEGER, PARAMETER :: A
-DEFERRED INTEGER, PARAMETER, RANK(A) :: B
-REQUIRES R(A, F)
-...
-PRINT *, F(B) ! Should be compile time error
+       REQUIREMENT R(C, F)
+          DEFERRED INTEGER, PARAMETER :: C
+          DEFERRED INTERFACE
+             INTEGER FUNCTION F(X)
+                INTEGER, RANK(C+1) :: X
+             END FUNCTION
+	  END INTERFACE
+       END REQUIREMENT
+       DEFERRED INTEGER, PARAMETER :: A
+       DEFERRED INTEGER, PARAMETER, RANK(A) :: B
+       REQUIRES R(A, F)
+       ...
+       PRINT *, F(B) ! Should be compile time error
 }
 
 

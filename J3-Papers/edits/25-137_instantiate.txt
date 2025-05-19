@@ -1,25 +1,25 @@
-To: J3                                                     J3/25-110r3
+To: J3                                                     J3/25-137
 From: generics
 Subject: Edits for TEMPLATES: Instantiation
-Date: 2025-February-20
-References: 25-107, 25-108, 25-109r2, 24-125r5, 24-126r4, 24-127r4
+Date: 2025-May-19
+References: 25-110r3, 25-135, 25-136, 24-125r5, 24-126r4, 24-127r4
 
 Introduction:
 =============
 
-This is the 4th of 6 papers that provide edits for the approved syntax
-for templates.  Note that this is not intended to be interpreted as
-the ultimate ordering if/when these papers are sewn together.
+This is the 3rd of 6 papers that provide edits for the approved syntax
+for templates.
 
 Section 1:
 ==========
 
-* Append the following at the end of the clause from paper 25-109.
+* Append the following at the end of the clause from paper 25-136
+  (deferred args).
 
 
-tt.6 Instantiation
+tt.5 Instantiation
 
-tt.6.1 The INSTANTIATE statement
+tt.5.1 The INSTANTIATE statement
 
 An INSTANTIATE statement is a specification statement that identifies
 an instance of a template.  The instance is identified by the
@@ -70,7 +70,7 @@ These identifiers are
      <use-defined-operator> in any <rename> for that instantiation.
 
 
-tt.6.2 Inline instantiation of templated procedures
+tt.5.2 Inline instantiation of templated procedures
 
 A templated procedure can be instantiated and referenced in
 an expression or the <procedure-designator> in a <call-stmt>.
@@ -88,9 +88,9 @@ NOTE
 
     Templated procedures cannot reference themselves.
 
-tt.6.3 Template dependence
+tt.5.3 Template dependence
 
-An entity depends on template T if the entity's declaration or definition 
+An entity depends on template T if the entity's declaration or definition
     - instantiates T
     - contains a name that identifies an entity from any instantiation of T
     - contains a name that identifies an entity that depends on T
@@ -117,7 +117,7 @@ NOTE
      instantiate itself.
 
 
-tt.6.4 Interpretation of template instantiation
+tt.5.4 Interpretation of template instantiation
 
 Multiple instantiations of a given template with the same actual
 instantiation arguments identify the same instance of the referenced
@@ -198,9 +198,9 @@ NOTE 2
         INSTANTIATE TMPL(MY_U, B) ! Resolves to F3 ==> different
 
 
-tt.6.4 Instantiation association
+tt.5.4 Instantiation association
 
-tt.6.4.1 Instantiation arguments
+tt.5.4.1 Instantiation arguments
 
 Instantiation arguments are specified by an INSTANTIATE statement, a
 REQUIRE statement, or by inline instantiation.
@@ -238,7 +238,7 @@ instantiation argument shall correspond to each deferred argument.
 The entity that is associated with a deferred argument is called its
 effective instantiation argument.
 
-tt.6.4.2 Deferred type association
+tt.5.4.2 Deferred type association
 
 Ctt47 (Rtt29) An <instantiation-arg> that corresponds to a deferred type
               shall be a <type-spec>.
@@ -318,7 +318,7 @@ NOTE 4
       INSTANTIATE TMPL2(MY_T1)   ! ok
       INSTANTIATE TMPL2(MY_T2)   ! ok
 
-tt.6.4.3 Deferred constant association
+tt.5.4.3 Deferred constant association
 
 Ctt53 (Rtt29) An <instantiation-arg> that corresponds to a deferred
               constant shall be a <constant-expr>.
@@ -336,7 +336,7 @@ Ctt56 (Rtt29) If the rank of the corresponding deferred constant is not
 The value of a deferred constant becomes associated with the value of
 the constant expression in the corresponding instantiation argument.
 
-tt.6.4.4 Deferred procedure association
+tt.5.4.4 Deferred procedure association
 
 Ctt57 (Rtt29) An <instantiation-arg> that corresponds to a deferred
               procedure shall be a <generic-spec> or <procedure-name>.

@@ -1,42 +1,26 @@
-To: J3                                                     J3/25-107
+To: J3                                                     J3/25-136
 From: generics
-Subject: Edits for TEMPLATES: Introduction and deferred arguments
-Date: 2025-February-03
-References: 24-125r5, 24-126r4, 24-127r4
+Subject: Edits for templates: deferred arguments
+Date: 2025-May-19
+References: 25-107, 25-135, 24-125r5, 24-126r4, 24-127r4
 
 Introduction:
 =============
 
-This is the 1st of 6 papers that provide edits for the approved syntax
-for templates. Papers 1-5 introduce a new clause titled "Templates" to
-the standard. Paper 6 includes all other edits outside the new clause.
-
-Note that the clause numbering is merely suggestive.  The overall
-ordering of template subclauses will change in future papers. For
-example, the final order is likely to start with the TEMPLATE
-construct introduced in the 3rd paper.
+This is the 2nd of 6 papers that provide edits for the approved syntax
+for templates.
 
 Section 1:
 ==========
 
-* Insert the following text as a new clause.
+* Append the following at the end of the clause from paper 25-135
+  (template).
 
+tt.4 Deferred arguments
 
-tt Templates
+tt.4.1 Declarations of deferred arguments
 
-tt.1 Template semantics
-
-A template is a scoping unit that is parameterized by deferred
-arguments and can contain declarations, specifications, and
-definitions.  Instantiation of a template occurs via association of
-instantiation arguments with deferred arguments and defines
-non-parameterized instances of entities defined within the template.
-
-tt.2 Deferred arguments
-
-tt.2.1 Declarations of deferred arguments
-
-tt.2.1.1 General
+tt.4.1.1 General
 
 A deferred argument is an entity whose identifier appears in a
 <deferred-arg-name-list> in a template, requirement, or templated
@@ -59,7 +43,7 @@ NOTE
     Deferred arguments are local identifiers and are not externally
     accessible.
 
-tt.2.1.2 Deferred types
+tt.4.1.2 Deferred types
 
 A deferred type is a deferred argument that can appear in a type
 specifier within a REQUIREMENT construct, TEMPLATE construct, or
@@ -147,7 +131,7 @@ that specifies that the type does not have allocatable components. And
 this would be checked at instantiate.
 }
 
-tt.2.1.3 Deferred constants
+tt.4.1.3 Deferred constants
 
 A deferred constant is a deferred argument that can appear in constant
 expressions within a REQUIREMENT construct, TEMPLATE construct, or
@@ -224,7 +208,7 @@ NOTE 2
     ! assumed-or-implied-rank-spec
     DEFERRED INTEGER, PARAMETER :: x7(..)
 
-tt.2.1.4 Deferred procedures
+tt.4.1.4 Deferred procedures
 
 A deferred procedure is a deferred argument that can appear as the
 procedure designator of a procedure reference within a REQUIREMENT
@@ -270,4 +254,3 @@ NOTE 2
         DEFERRED PROCEDURE(F_I) :: G
 
 ===END===
-
