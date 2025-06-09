@@ -75,13 +75,13 @@ tt.5.2 Inline instantiation of templated procedures
 A templated procedure can be instantiated and referenced in
 an expression or the <procedure-designator> in a <call-stmt>.
 
-Rtt27 <inline-instantiate> <<is>>
+Rtt27 <inline-instantiation> <<is>>
     <template-name> ^ ( <instantiation-arg-spec-list> )
 
 Ctt43 (Rtt27) The <template-name> shall be the name of a templated
               procedure.
 
-The procedure designated by <inline-instantiate> is the procedure
+The procedure designated by <inline-instantiation> is the procedure
 produced from instantiating the templated procedure.
 
 NOTE

@@ -296,9 +296,6 @@ ordinary constant here.}
 
 * 8.5.17  RANK clause
 
-{UTI: Do we want to allow RANK(*)?  Not strictly necessary given that
-      we have DIMENSION(..).  Low priority.}
-
   Replace constraint C864 which states:
     C864  An entity declared with a rank-clause shall be a dummy data
           object or have the ALLOCATABLE or POINTER attribute.
@@ -335,45 +332,6 @@ Modify C873 to include templates such that it reads:
   "deferred constant"
 
 
-{UTI: The following section was well intended but cast too large of a
-      shadow. We should elsewhere specify similar sentiments but
-      restricted to RANK and KIND with regards to TKR resolution.}
-
-* Insert new section 10.1.12+: Deferred constant expressions
-
-  "<deferred-const-expr> <<is>> <constant-expr>
-
-  An expression is a <deferred-const-expr> if one or more of its
-  primaries is a deferred constant.
-
-  A <deferred-const-expr> is not equal to any other <constant-expr> unless
-  <constant-expr> is syntactically equivalent."
-
-  deferred integer, parameter :: C
-  deferred integer, parameter :: R
-  integer, parameter :: R2 = C
-
-  real, rank(R), allocatable :: x
-
-  select rank (x)
-  rank is (0)
-  rank is (1)
-  rank is (2)
-  rank is (3)
-  ...
-  end select rank
-
-  real, rank(C), allocatable :: y
-  real, rank(R2), allocatable :: z
-
-  if (rank(x) == rank(y)) then
-     ...
-  end if
-  if (rank(z) == rank(y)) then
-     ...
-  end if
-
-  template tmpl(C)
 
 * 11.1.11.1 Purpose and form of the SELECT TYPE construct
 
@@ -391,19 +349,17 @@ Modify C873 to include templates such that it reads:
 
 * 15.5.1 Syntax of a procedure reference
 
-{UTI: spelling of <inline-instantiate> vs <inline-instantiation>}
-
   Extend R1522 <procedure-designator> with <deferred-proc> and
-  <inline-instantiate> such that it reads:
+  <inline-instantiation> such that it reads:
 
    "R1522 <procedure-designator> <<is>> <procedure-name>
                                  <<or>> <proc-component-ref>
                                  <<or>> <data-ref> % binding-name
                                  <<or>> <deferred-proc>
-                                 <<or>> <inline-instantiate>
+                                 <<or>> <inline-instantiation>
 
   Extend R1524 <actual-arg> with <deferred-proc> and
-  <inline-instantiate> such that it reads:
+  <inline-instantiation> such that it reads:
 
    "R1524 actual-arg <<is>> <expr>
                      <<or>> <variable>
@@ -412,10 +368,7 @@ Modify C873 to include templates such that it reads:
                      <<or>> <conditional-arg>
 		     <<or>> <alt-return-spec>
 		     <<or>> <deferred-proc>
-		     <<or>> <inline-instantiate>
-
-{UTI - the section distinction between 2 & 3 here are probably fiction at
-this point.}
+		     <<or>> <inline-instantiation>
 
 3. Edits required for templates and instantiation
 =================================================
@@ -497,6 +450,13 @@ this point.}
      interface block."
 
 
+* 10.2.1.2 Intrinsic assignment statement
+
+{Subgroup believes that the existing constraints on intrinsic
+assignment are sufficient for the case of intrinsic assignment with
+deferred rank entities.  But would appreciate further feedback on this
+issue.}
+
 * 14.2.1 Module syntax and semantics
 
   Extend list in R1408 to include templated procedures, such that it
@@ -531,8 +491,6 @@ this point.}
      interface block. An interface body in a deferred interface block
      specifies a deferred procedure."
 
-<<< Got here on 2025-04-21.  Need to decide right section for below. >>>
-
 * 15.4.3.4.5 Restrictions on generic declarations
 
  [317:10+] Insert new paragraphs to address deferred arguments:
@@ -550,26 +508,6 @@ this point.}
 
 { UTI: Is "depends on" acceptable terminology here? }
 { UTI: We should define "syntactically equivalent" }
-{ UTI: Prevent specifying rank and bounds for deferred constants I.e.
-
-       DEFERRED INTEGER, PARAMTER :: C(*)
-       DEFERRED INTEGER, PARAMETER, RANK(SIZE(C)) :: D(C)
-
-       REQUIREMENT R(C, F)
-          DEFERRED INTEGER, PARAMETER :: C
-          DEFERRED INTERFACE
-             INTEGER FUNCTION F(X)
-                INTEGER, RANK(C+1) :: X
-             END FUNCTION
-	  END INTERFACE
-       END REQUIREMENT
-       DEFERRED INTEGER, PARAMETER :: A
-       DEFERRED INTEGER, PARAMETER, RANK(A) :: B
-       REQUIRES R(A, F)
-       ...
-       PRINT *, F(B) ! Should be compile time error
-}
-
 
   NOTE Some examples of implied-rank entities are shown in the
        following example template. C is explicitly declared
