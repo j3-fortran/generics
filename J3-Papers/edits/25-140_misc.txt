@@ -63,6 +63,52 @@ the syntax and semantics for templates.
   <templated-function-subprogram> (R???), or
   <templated-subroutine-subprogram> (R???)"
 
+* 5.3.2 Statement order
+
+Update first line in table 5.1, to include TEMPLATE such that it now
+reads:
+
+   "PROGRAM, FUNCTION, SUBROUTINE, MODULE, SUBMODULE, TEMPLATE, or
+    BLOCK DATA statement."
+
+
+Add a new column to Table 5.2 Statements allowed in scoping units,
+with heading "Template".  The row entries are:
+
+   "
+     - USE                   Yes
+     - IMPORT                Yes
+     - ENTRY                 No
+     - FORMAT                No
+     - Misc. decl.s(1)       Yes (2)
+     - DATA                  No
+     - Derived-type          Yes
+     - Interface             Yes
+     - Executable            No
+     - CONTAINS              Yes
+     - Statement function    No
+    "
+
+Add a new footnote to the table:
+
+    "(2) Only named constants may be declared in templates."
+
+* 5.3.3 The END statement
+
+[44:7] After "module subprogram", insert ", templated subprogram" such
+       that the entire sentence reads:
+
+       "Each program unit, module subprogram, templated subprogram,
+       and internal subprogram shall have exactly one END statement."
+
+[44:12] After "end-module-statement", insert ",
+        end-template-statement, end-requirement-stmt" such that the
+        sentence now reads:
+
+        "The end-module-stmt, end-template-statement,
+        end-requirement-stmt, end-submodule-stmt, and
+        end-block-data-stmt statements are nonexecutable."
+
 * 5.4.1.1 General
 
   Modify first sentence of paragraph 2 to read:
@@ -495,19 +541,28 @@ issue.}
 
  [317:10+] Insert new paragraphs to address deferred arguments:
 
-   "A kind-type parameter whose value depends on a deferred argument
-    is only the same as another kind-type parameter declared with
-    a syntactically equivalent expression.
+    The kind of an entity is deferred if the kind depends on the value
+    of a deferred argument or depends on a deferred attribute of an
+    entity.
 
-    An entity whose rank depends on a deferred argument only has
-    the same rank as another entity if that entity has its rank
-    declared with a syntactically equivalent expression.  If the rank
-    of an implied-rank entity is not declared with a rank clause, it
-    does not have the same rank as any other entity."
+    An entity whose kind is deferred only has the same kind as another
+    entity if the kind of both entities is declared with syntactically
+    equivalent expressions where the declaration is either in the type
+    declaration of the entity, or in default kind declaration.
 
+    The rank of an entity is deferred if the rank depends on the value
+    of a deferred argument or depends on a deferred attribute of an
+    entity.
 
-{ UTI: Is "depends on" acceptable terminology here? }
-{ UTI: We should define "syntactically equivalent" }
+    An entity whose rank is deferred only has the same rank as another
+    entity if: 
+      - both entities are declared with the RANK clause with
+        syntactically equivalent expressions for the rank,
+      - both are declared with syntactically equivalent <array-spec>s, or
+      - one entity is declared with a RANKOF clause that references
+        the other.
+      - the two entities have the same rank as some other entity.
+
 
   NOTE Some examples of implied-rank entities are shown in the
        following example template. C is explicitly declared
