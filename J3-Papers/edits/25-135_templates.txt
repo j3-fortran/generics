@@ -41,14 +41,13 @@ template are made accessible to other scoping units by instantiation
 of the template.  The accessible identifiers refer to specific
 instances of the entities created by the instantiation.
 
-
 Rtt10 <template> <<is>> <template-stmt>
                         [ <template-specification-part> ]
                         [ <template-subprogram-part> ]
                         <end-template-stmt>
 
 Ctt28 (Rtt10) A <template> shall only appear in the <specification-part>
-              of a main program or module.
+              of a main program, module, or template.
 
 Rtt11 <template-stmt> <<is>>
           TEMPLATE <template-name> ([<deferred-arg-name-list>])
