@@ -1,7 +1,7 @@
-To: J3                                                     J3/25-135
+To: J3                                                     J3/25-135r1
 From: generics
 Subject: Edits for templates: TEMPLATE
-Date: 2025-May-19
+Date: 2025-June-25
 References: 25-109r2, 24-125r5, 24-126r4, 24-127r4
 
 Introduction:
@@ -115,8 +115,8 @@ Rtt17 <template-subprogram>
 
 tt.2 Templated procedures
 
-A templated procedure is a template that defines a single
-procedure which can be instantiated via inline instantiation.
+A templated procedure has the effect of a template that defines a
+single procedure.
 
 { Templated procedures are added to <internal-subprogram> and
   <module-subprogram> by the "misc edits" paper, and so can appear
@@ -177,15 +177,15 @@ Ctt35 In either <templated-function-stmt> or
 
 tt.3 Restrictions on template definitions
 
-Ctt36 At any level of nesting within a template or templated
-      subprogram, entities that are not accessed by host or use
+Ctt36 Within a template or templated procedure, or a scoping unit
+      nesteded therein, entities that are not accessed by host or use
       association shall not have the SAVE attribute.
- 
-Ctt37 A COMMON statement or EQUIVALENCE statement shall not appear at
-      any level of nesting within a template or templated subprogram,
 
-Ctt38 A procedure referenced at any level of nesting within a template
-      or templated subprogram shall have an explicit interface.
+Ctt37 A COMMON or EQUIVALENCE statement shall not appear within a
+      template or a scoping unit nested therein.
+
+Ctt38 A procedure referenced within a template or any nested scope
+      therein, shall have an explicit interface.
 
 NOTE 1
 .............................................................
