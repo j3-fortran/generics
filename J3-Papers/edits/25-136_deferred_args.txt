@@ -25,23 +25,14 @@ tt.4.1.1 General
 A deferred argument is an entity whose identifier appears in a
 <deferred-arg-name-list> in a template, requirement, or templated
 procedure.  A deferred argument can be a constant, procedure, or type.
-A deferred argument becomes associated with an instantiation argument
-through instantiation of a template, requirement, or templated procedure
-as described in tt.6.
-
-A deferred argument declaration statement is used to declare
-deferred arguments.
+A deferred argument declaration statement is used to declare deferred
+arguments.
 
 Rtt02 <deferred-arg-decl-stmt>
           <<is>> <deferred-type-declaration-stmt>
           <<or>> <deferred-const-declaration-stmt>
           <<or>> <deferred-proc-declaration-stmt>
           <<or>> <require-stmt>
-
-NOTE
-
-    Deferred arguments are local identifiers and are not externally
-    accessible.
 
 tt.4.1.2 Deferred types
 
@@ -134,8 +125,8 @@ this would be checked at instantiate.
 tt.4.1.3 Deferred constants
 
 A deferred constant is a deferred argument that can appear in constant
-expressions within a REQUIREMENT construct, TEMPLATE construct, or
-templated procedure.
+expressions.  A deferred constant is a deferred argument that has the
+PARAMETER attribute.
 
 Rtt06 <deferred-const-declaration-stmt> <<is>>
            DEFERRED <declaration-type-spec>,
@@ -175,23 +166,19 @@ Ctt14 (Rtt06) If <explicit-shape-bounds-spec> appears in
               <lower-explicit-bounds-expr> shall not appear.
 
 NOTE 1
-
-    Deferred constant arrays always have default lower bounds.  This
-    restriction ensures consistency of lower-bounds when reusing
-    requirements.
-
+................................................................
+    Deferred constant arrays always have default lower bounds.
+................................................................
 {
-
  Subgroup prefers to disallow explicit confirmation of default lower
  bounds because we envision that there may be a useful distinction to
  be made in the future between specified lower bounds and default
  lower bounds.
-
 }
 
 
 NOTE 2
-
+................................................................
     Examples of deferred constant declarations are:
 
     ! explicit shape
@@ -207,36 +194,31 @@ NOTE 2
 
     ! assumed-or-implied-rank-spec
     DEFERRED INTEGER, PARAMETER :: x7(..)
+................................................................
 
 tt.4.1.4 Deferred procedures
 
-A deferred procedure is a deferred argument that can appear as the
-procedure designator of a procedure reference within a REQUIREMENT
-construct, TEMPLATE construct, or templated procedure.  A deferred
-procedure's interface is established in that construct by its appearance
-in a <deferred-proc-declaration-stmt> or as the <subroutine-name> or
-<function-name> of an <interface-body> that appears in a deferred
-interface block.
+A deferred procedure is a deferred argument that is declared to be a
+procedure.  A deferred procedure's interface is established in that
+construct by its appearance in a <deferred-proc-declaration-stmt> or
+as the <subroutine-name> or <function-name> of an <interface-body>
+that appears in a deferred interface block.
 
-Rtt09 <deferred-proc-declaration-stmt> <<is>>
-     DEFERRED PROCEDURE(<interface>) [ :: ] <deferred-proc-name-list>
+Rtt09 <deferred-proc-declaration-stmt> <<is>> DEFERRED PROCEDURE #
+                # (<interface>) [ :: ] <deferred-proc-name-list>
 
 Ctt15 (Rtt09) Each <deferred-proc-name> shall be the name of a deferred
               argument of the scoping unit in which the declaration
               appears.
 
-Ctt16 Each <subroutine-name> or <function-name> of an <interface-body>
-      that appears in a deferred interface block shall be the name of
-      a deferred argument of the scoping unit in which the
-      <interface-body> appears.
-
 NOTE 1
-
+................................................................
     The interface of a deferred procedure may be defined in terms of
     other deferred arguments.
+................................................................
 
 NOTE 2
-
+................................................................
     The following example declares deferred procedures F, S, and G.
     The declaration of G is in terms of an interface F_I.
 
@@ -252,5 +234,6 @@ NOTE 2
            END SUBROUTINE
         END INTERFACE
         DEFERRED PROCEDURE(F_I) :: G
+................................................................
 
 ===END===
