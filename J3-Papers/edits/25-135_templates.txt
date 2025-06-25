@@ -36,10 +36,10 @@ tt.1 The TEMPLATE construct
 tt.1.1 Syntax for the TEMPLATE construct
 
 A template contains declarations, specifications, and definitions that
-are parameterized by deferred arguments. Public identifiers of a
-template are made accessible to other scoping units by instantiation
-of the template.  The accessible identifiers refer to specific
-instances of the entities created by the instantiation.
+are parameterized by deferred arguments.  Instantiation of a template
+creates entities based on the definitions in the template, and those
+with public identifiers are made accessible to the scoping unit in
+which the instantiation appears.
 
 Rtt10 <template> <<is>> <template-stmt>
                         [ <template-specification-part> ]
@@ -96,9 +96,11 @@ Ctt30+ (Rtt15) If <procedure-declaration-stmt> is specified, POINTER
   to "8.7 Implicit statement". }
 
 NOTE
-
+.............................................................
     A template specification section cannot declare variables or procedure
     pointers.
+.............................................................
+
 
 tt.1.3 Template subprogram part
 
@@ -114,7 +116,7 @@ Rtt17 <template-subprogram>
 tt.2 Templated procedures
 
 A templated procedure is a template that defines a single
-procedure which is accessible via instantiation.
+procedure which can be instantiated via inline instantiation.
 
 { Templated procedures are added to <internal-subprogram> and
   <module-subprogram> by the "misc edits" paper, and so can appear
@@ -175,25 +177,26 @@ Ctt35 In either <templated-function-stmt> or
 
 tt.3 Restrictions on template definitions
 
-Ctt36 A local variable or local procedure pointer declared anywhere
-      within a template or templated subprogram shall not have the
-      SAVE attribute.
+Ctt36 At any level of nesting within a template or templated
+      subprogram, entities that are not accessed by host or use
+      association shall not have the SAVE attribute.
+ 
+Ctt37 A COMMON statement or EQUIVALENCE statement shall not appear at
+      any level of nesting within a template or templated subprogram,
 
-Ctt37 A COMMON statement or EQUIVALENCE statement shall not appear
-      anywhere within a template or templated subprogram.
-
-Ctt38 A procedure referenced anywhere within a template or templated
-      subprogram shall have an explicit interface.
+Ctt38 A procedure referenced at any level of nesting within a template
+      or templated subprogram shall have an explicit interface.
 
 NOTE 1
-
+.............................................................
     Constraint Ctt38 expresses the notion of type-safety.  In particular,
     this allows a template implementation to be verified to be internally
     consistent.
+.............................................................
 
 NOTE 2
-
-    Example of a TEMPLATE construct in a specification section.
+.............................................................
+    Example of a TEMPLATE construct.
 
     TEMPLATE iterate_tmpl(T, C, S)
        PRIVATE
@@ -216,8 +219,7 @@ NOTE 2
        END SUBROUTINE iterate
     END TEMPLATE iterate_tmpl
 
-    Alternative implementation for the above example using a templated
-    procedure in a subprogram part.
+    An analogous example to the above using a templated procedure.
 
     TEMPLATE SUBROUTINE iterate(T, C, S)(x)
        DEFERRED TYPE :: T
@@ -236,6 +238,7 @@ NOTE 2
        END DO
 
     END SUBROUTINE iterate
+.............................................................
 
 
 ===END===
