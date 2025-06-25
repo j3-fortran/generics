@@ -1,7 +1,7 @@
-To: J3                                                     J3/25-136
+To: J3                                                     J3/25-136r1
 From: generics
 Subject: Edits for templates: deferred arguments
-Date: 2025-May-19
+Date: 2025-June-25
 References: 25-107, 25-135, 24-125r5, 24-126r4, 24-127r4
 
 Introduction:
@@ -199,10 +199,9 @@ NOTE 2
 tt.4.1.4 Deferred procedures
 
 A deferred procedure is a deferred argument that is declared to be a
-procedure.  A deferred procedure's interface is established in that
-construct by its appearance in a <deferred-proc-declaration-stmt> or
-as the <subroutine-name> or <function-name> of an <interface-body>
-that appears in a deferred interface block.
+procedure.  A deferred procedure's interface can be established by a
+<deferred-proc-declaration-stmt>, <deferred-interface-body>, or a
+<require-stmt>.
 
 Rtt09 <deferred-proc-declaration-stmt> <<is>> DEFERRED PROCEDURE #
                 # (<interface>) [ :: ] <deferred-proc-name-list>
