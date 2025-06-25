@@ -182,7 +182,7 @@ Ctt36 Within a template or templated procedure, or a scoping unit
       association shall not have the SAVE attribute.
 
 Ctt37 A COMMON or EQUIVALENCE statement shall not appear within a
-      template or a scoping unit nested therein.
+      template or templated procedure, or a scoping unit nested therein.
 
 Ctt38 A procedure referenced within a template or any nested scope
       therein, shall have an explicit interface.
