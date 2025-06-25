@@ -233,6 +233,8 @@ generics subgroup thought it should be updated.}
     access-stmt is PRIVATE, or PUBLIC if the access-spec in any such
     access-stmt is PUBLIC."
 
+{UTI  deferred args cannot be declared public or private}
+
 * 8.5.8.1 General
 
   Change last entry for <array-spec> from:
@@ -524,6 +526,15 @@ issue.}
                             <<or>> ABSTRACT INTERFACE
                             <<or>> DEFERRED INTERFACE"
 
+{UTI: Need a constraint that only deferred procedures can appear in a
+deferred interface block.
+
+Ctt?? Each <subroutine-name> or <function-name> of an <interface-body>
+      that appears in a deferred interface block shall be the name of
+      a deferred argument of the scoping unit in which the
+      <interface-body> appears.
+}
+
   Change last sentence of para 2 to include DEFERRED interfaces such
   that it now reads:
 
@@ -660,6 +671,7 @@ C???? (R1530) TEMPLATE shall not appear except in a
 
 "It shall not be of a deferred type."
 
+{UTI:  Need something in 19.5.1 association}
 
 
 * A.2 Processor Dependencies
