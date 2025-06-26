@@ -15,12 +15,12 @@ Straw vote: The REQUIRE statement does not need "[::]" at this time, but
             unnecesary optional "[::]". E.g., various attribute
             specification statements: DIMENSION, INTENT, SAVE, ...
 
-            Should "::" be removed from the BNF for the REQUIRE
-            statement?
+            Should the optional "::" be removed from the BNF for the
+            REQUIRE statement?
 
-            YES - omit the optional "[::]" in the BNF
-            NO  - keep the optional "[::]" in the BNF
-            ABSTAIN
+            YES		0
+            NO		12
+            UNDECIDED	4
 
 Section 1
 =========
