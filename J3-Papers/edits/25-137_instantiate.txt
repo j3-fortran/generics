@@ -22,25 +22,23 @@ tt.5 Instantiation
 tt.5.1 The INSTANTIATE statement
 
 An INSTANTIATE statement specifies instantiation association.  An
-INSTANTIATE statement is a reference to the template it specifies.  At
-the time the INSTANTIATE statement is processed, the public portions
-of the specified instance of the template shall be available.
+INSTANTIATE statement is a reference to the template or templated
+procedure it specifies.
 
 The INSTANTIATE statement provides the means by which a scoping unit
 accesses named data objects, nonintrinsic types, procedures, abstract
-interfaces, generic identifiers, and namelist groups in a
-template. The entities in the instantiation argument list are instantiation
-associated with the entities in the template. The accessed entities
-have the attributes specified in the template, except that an
-accessed entity may have a different accessibility attribute, it may
-have the ASYNCHRONOUS attribute even if the associated template entity
-does not, and if it is not a coarray it may have the VOLATILE
-attribute even if the associated template entity does not. The
+interfaces, generic identifiers, and namelist groups in a template or
+templated procedure. The entities in the instantiation argument list
+are instantiation associated with the entities in the template or
+templated procedure. The accessed entities have the attributes
+specified in the template or templated procedure, except that an
+accessed entity may have a different accessibility attribute. The
 entities made accessible are identified by the names or generic
-identifiers used to identify them in the module.  By default, the
-accessed entities are identified by the same identifiers in the
-scoping unit containing the USE statement, but it is possible to
-specify that different identifiers are used.
+identifiers used to identify them in the template or templated
+procedure.  By default, the accessed entities are identified by the
+same identifiers in the scoping unit containing the INSTANTIATE
+statement, but it is possible to specify that different identifiers
+are used.
 
 
 Rtt24 <instantiate-stmt> <<is>> <template-instantiate-stmt>
@@ -254,7 +252,7 @@ instantiation argument shall correspond to each deferred argument.
 The entity that is associated with a deferred argument is called its
 effective instantiation argument.
 
-tt.5.4.2 Deferred type association
+tt.5.4.2 Instantiation association of a deferred type
 
 Ctt47 (Rtt29) An <instantiation-arg> that corresponds to a deferred type
               shall be a <type-spec>.
@@ -334,7 +332,7 @@ NOTE 4
       INSTANTIATE TMPL2(MY_T1)   ! ok
       INSTANTIATE TMPL2(MY_T2)   ! ok
 
-tt.5.4.3 Deferred constant association
+tt.5.4.3 Instantiation association of a deferred constant
 
 Ctt53 (Rtt29) An <instantiation-arg> that corresponds to a deferred
               constant shall be a <constant-expr>.
@@ -352,7 +350,7 @@ Ctt56 (Rtt29) If the rank of the corresponding deferred constant is not
 The value of a deferred constant becomes associated with the value of
 the constant expression in the corresponding instantiation argument.
 
-tt.5.4.4 Deferred procedure association
+tt.5.4.4 Instantiation association of a deferred procedure
 
 Ctt57 (Rtt29) An <instantiation-arg> that corresponds to a deferred
               procedure shall be a <generic-spec> or <procedure-name>.
