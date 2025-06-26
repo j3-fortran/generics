@@ -30,7 +30,7 @@ a deferred argument is provided by
 in the scoping unit where the deferred argument appeared in a
 <deferred-arg-name-list>.
 
-{The final porition of the above paragraph might be redundant with Ctt04,
+{The final portion of the above paragraph might be redundant with Ctt04,
 Ctt11, and Ctt15.}
 
 A deferred argument shall have one or more ultimate specifications.  The
