@@ -30,18 +30,10 @@ Section 1
 
 tt.6 REQUIREMENT construct
 
-A REQUIREMENT is a named collection of deferred argument declarations
-intended to facilitate reuse of common patterns within templates and
-other requirements. A REQUIREMENT construct is a specification
-construct and a scoping unit.
-
-{Suggested variant:
-
 A REQUIREMENT statement specifies characteristics of a set of deferred
 arguments, and is intended to facilitate reuse of patterns within
 templates and other requirements. A REQUIREMENT construct is a specification
 construct and a scoping unit.
-}
 
 
 Rtt30 <requirement> <<is>>
