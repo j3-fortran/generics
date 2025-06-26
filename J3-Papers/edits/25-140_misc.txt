@@ -66,7 +66,8 @@ the syntax and semantics for templates.
 
 {UTI: instantiation association}
 
-{UTI: characteristics of deferred arguments - if we use that terminology for REQUIREMENT.}
+{UTI: characteristics of deferred arguments - if we use that
+terminology for REQUIREMENT.}
 
 * 5.3.2 Statement order
 
@@ -240,7 +241,8 @@ generics subgroup thought it should be updated.}
 
 {UTI  deferred args cannot be declared public or private}
 
-{UTI host associated and use associated entities should not be public in a template}
+{UTI host associated and use associated entities should not be public
+in a template}
 
 * 8.5.8.1 General
 
