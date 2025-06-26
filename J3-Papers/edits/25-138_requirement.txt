@@ -30,24 +30,30 @@ Section 1
 
 tt.6 REQUIREMENT construct
 
-A REQUIREMENT is a named collection of deferred argument declarations
-intended to facilitate reuse of common patterns within templates and
-other requirements. A REQUIREMENT construct is a specification
+A REQUIREMENT construct specifies characteristics of a set of deferred
+arguments, and is intended to facilitate reuse of patterns within
+templates and other requirements. A REQUIREMENT construct is a specification
 construct and a scoping unit.
 
 
 Rtt30 <requirement> <<is>>
-          REQUIREMENT <requirement-name> ( [<deferred-arg-name-list>] )
+          <requirement-stmt>
               [ <use-stmt> ] ...
               <requirement-specification-construct> ...
+          <end-requirement-stmt>
+
+Rtt30a <requirement-stmt> <<is>>
+          REQUIREMENT <requirement-name> ( [<deferred-arg-name-list>] )
+
+Rtt30b <end-requirement-stmt> <<is>>
           END [REQUIREMENT [<requirement-name>]]
 
 Ctt63 (Rtt30) A <requirement> shall only appear in the
               <specification-part> of a main program or module.
 
-Ctt65 (Rtt30) If a <requirement-name> appears in the
-              <end-requirement-stmt>, it shall be identical to the
-              <requirement-name> specified in the <requirement-stmt>.
+Ctt65 (Rtt30b) If a <requirement-name> appears in the
+               <end-requirement-stmt>, it shall be identical to the
+               <requirement-name> specified in the <requirement-stmt>.
 
 Rtt31 <requirement-specification-construct>
           <<is>> <deferred-arg-decl-stmt>
