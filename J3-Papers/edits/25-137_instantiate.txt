@@ -1,8 +1,8 @@
-To: J3                                                     J3/25-137
+To: J3                                                     J3/25-137r1
 From: generics
 Subject: Edits for TEMPLATES: Instantiation
-Date: 2025-May-19
-References: 25-110r3, 25-135, 25-136, 24-125r5, 24-126r4, 24-127r4
+Date: 2025-June-09
+References: 25-110r3, 25-135r2, 25-136r2, 24-125r5, 24-126r4, 24-127r4
 
 Introduction:
 =============
@@ -21,11 +21,27 @@ tt.5 Instantiation
 
 tt.5.1 The INSTANTIATE statement
 
-An INSTANTIATE statement is a specification statement that identifies
-an instance of a template.  The instance is identified by the
-specified instantiation arguments. The deferred arguments of the
-template become associated with the corresponding instantiation
-arguments.
+An INSTANTIATE statement specifies instantiation association.  An
+INSTANTIATE statement is a reference to the template it specifies.  At
+the time the INSTANTIATE statement is processed, the public portions
+of the specified instance of the template shall be available.
+
+The INSTANTIATE statement provides the means by which a scoping unit
+accesses named data objects, nonintrinsic types, procedures, abstract
+interfaces, generic identifiers, and namelist groups in a
+template. The entities in the instantiation argument list are instantiation
+associated with the entities in the template. The accessed entities
+have the attributes specified in the template, except that an
+accessed entity may have a different accessibility attribute, it may
+have the ASYNCHRONOUS attribute even if the associated template entity
+does not, and if it is not a coarray it may have the VOLATILE
+attribute even if the associated template entity does not. The
+entities made accessible are identified by the names or generic
+identifiers used to identify them in the module.  By default, the
+accessed entities are identified by the same identifiers in the
+scoping unit containing the USE statement, but it is possible to
+specify that different identifiers are used.
+
 
 Rtt24 <instantiate-stmt> <<is>> <template-instantiate-stmt>
                          <<or>> <templated-procedure-instantiate-stmt>
