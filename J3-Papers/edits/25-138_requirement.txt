@@ -30,7 +30,7 @@ Section 1
 
 tt.6 REQUIREMENT construct
 
-A REQUIREMENT statement specifies characteristics of a set of deferred
+A REQUIREMENT construct specifies characteristics of a set of deferred
 arguments, and is intended to facilitate reuse of patterns within
 templates and other requirements. A REQUIREMENT construct is a specification
 construct and a scoping unit.
