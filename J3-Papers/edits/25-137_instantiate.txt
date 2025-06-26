@@ -31,7 +31,7 @@ accesses named data objects, nonintrinsic types, procedures, abstract
 interfaces, generic identifiers, and namelist groups in a
 template. The entities in the instantiation argument list are instantiation
 associated with the entities in the template. The accessed entities
-have the at tributes specified in the template, except that an
+have the attributes specified in the template, except that an
 accessed entity may have a different accessibility attribute, it may
 have the ASYNCHRONOUS attribute even if the associated template entity
 does not, and if it is not a coarray it may have the VOLATILE
