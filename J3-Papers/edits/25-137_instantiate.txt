@@ -28,7 +28,7 @@ of the specified instance of the template shall be available.
 
 The INSTANTIATE statement provides the means by which a scoping unit
 accesses named data objects, nonintrinsic types, procedures, abstract
-interfaces, generic identi􀏐iers, and namelist groups in a
+interfaces, generic identifiers, and namelist groups in a
 template. The entities in the scoping unit are instantiation
 associated with the entities in the template. The accessed entities
 have the at tributes specified in the template, except that an
