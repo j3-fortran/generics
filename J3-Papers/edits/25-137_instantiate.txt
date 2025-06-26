@@ -40,10 +40,7 @@ entities made accessible are identified by the names or generic
 identifiers used to identify them in the module.  By default, the
 accessed entities are identified by the same identifiers in the
 scoping unit containing the USE statement, but it is possible to
-specify that different identifiers are used. An
-instantiation-associated variable is considered to have been
-previously declared; any other instantiation‑associated entity is
-considered to have been previously defined.
+specify that different identifiers are used.
 
 
 Rtt24 <instantiate-stmt> <<is>> <template-instantiate-stmt>
