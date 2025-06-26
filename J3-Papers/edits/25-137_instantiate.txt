@@ -21,20 +21,10 @@ tt.5 Instantiation
 
 tt.5.1 The INSTANTIATE statement
 
-An INSTANTIATE statement is a specification statement that identifies
-an instance of a template.  The instance is identified by the
-specified instantiation arguments. The deferred arguments of the
-template become associated with the corresponding instantiation
-arguments.
-
-{Suggested change:
-
 An INSTANTIATE statement specifies instantiation association.  An
 INSTANTIATE statement is a reference to the template it specifies.  At
 the time the INSTANTIATE statement is processed, the public portions
 of the specified instance of the template shall be available.
-
-**Optional continuation**  A template shall not reference itself, either directly or indirectly.
 
 The INSTANTIATE statement provides the means by which a scoping unit
 accesses named data objects, nonintrinsic types, procedures, abstract
@@ -54,9 +44,6 @@ specify that different identifiers are used. An
 instantiation-associated variable is considered to have been
 previously declared; any other instantiation‑associated entity is
 considered to have been previously defined.
-
-
-}
 
 
 Rtt24 <instantiate-stmt> <<is>> <template-instantiate-stmt>
