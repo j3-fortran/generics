@@ -526,6 +526,17 @@ issue.}
               <<or>> <templated-function-subprogram>
               <<or>> <templated-subroutine-subprogram>"
 
+* 14.2.6 The USE statement and use association
+
+[326.2] Replace ", and namelist groups" with " namelist groups,
+        templates, and templated procedures" such that the entire
+        sentence reads:
+
+    "The USE statement provides the means by which a scoping unit
+    accesses named data objects, nonintrinsic types, procedures,
+    abstract interfaces, generic identifiers, namelist groups,
+    templates, and templated procedures in a module."
+
 * 15.4.3.2 Interface block
 
   Extend list in R1503 to include deferred interface, such that it
