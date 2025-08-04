@@ -131,6 +131,12 @@ Add a new footnote to the table:
   templated procedures, or requirements.  Deferred types are described
   further in tt.xx. "
 
+* 6.2.6 Delimiters
+
+[56:28] Change line to include curly braces such that it reads:
+
+  "A lexical token that is a delimiter is a (, ), /, [, ], {, }, (/, or /)."
+
 * 7.3.2.1 Type specifier syntax
 
   Extend R702 <type-spec> to include <deferred-type>  such that it reads:
