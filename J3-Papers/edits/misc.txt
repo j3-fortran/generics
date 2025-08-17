@@ -2,7 +2,7 @@ To: J3                                                     J3/25-140
 From: generics
 Subject: Miscellaneous edits to incorporate templates
 Date: 2025-May-19
-References: 25-112, 25-135, 25-136, 25-137, 25-138, 25-139,
+References: 25-007r1, 25-112, 25-135, 25-136, 25-137, 25-138, 25-139,
             24-125r5, 24-126r4, 24-127r4
 
 1. Introduction
@@ -19,51 +19,60 @@ the syntax and semantics for templates.
 Clause 3:  Terms and definitions
 --------------------------------
 
-* Insert new glossary term in 3.7
+[5:4+] Insert new glossary term:
 
-  [deferred argument association]
-  association between an instantiation argument and a deferred
-  argument (Sec. ?)
+  "3.7.2b
+   [deferred argument association]
+   association between an instantiation argument and a deferred
+   argument (Sec. ???)"
 
-* Insert new glossary term
+[10:9+] Insert new glossary term
 
-  [deferred argument]
-  named entity that appears in a <deferred-arg-list> (R???) (Sec. ?)
-
-* Insert new glossary term 3.34.x
-
+  "3.34.1
   [deferred constant]
-  a deferred argument with the PARAMETER attribute
+  a deferred argument with the PARAMETER attribute"
 
-* Insert new glossary term
 
+[11:32+] Insert new glossary terms
+
+  "3.46b
+   [deferred argument]
+   named entity that appears in a <deferred-arg-list> (R???) (Sec. ???)"
+
+[17:18+] Insert new glossary term
+
+  "3.85b
   [instantiation argument]
-  entity that determines deferred argument association
+  entity that determines deferred argument association"
 
-* Insert new glossary term
 
+[32:16+] Insert new glossary term
+
+  "3.151b
   [ultimately defined prior]
-
-  {could shorten to "defined prior" but that might be too confusing
-  compared to "previously defined"}
-
-  "an entity that is accessed by host association and whose definition
+  an entity that is accessed by host association and whose definition
   appears before the scoping unit in which it is reference or is
   ultimately defined prior in the host scoping unit"
 
-* 3.120 Add TEMPLATE construct and REQUIREMENT construct to the list in the
-  definition so that it now reads:
+{UTI - is this still used? TLC}
 
-  "BLOCK construct, derived-type definition, interface body, program
-  unit (3.113), subprogram, template construct, or requirement
-  construct, excluding all nested scoping units in it"
+[24:3] 3.120 scoping unit: Change "or subprogram" to "subprogram,
+       template construct, or requirement construct", such that the
+       entire definition reads
 
- * 3.139 Modify subprogram to include templated functions and
-         subroutines to read:
+   "BLOCK construct, derived-type definition, interface body, program
+   unit (3.113), subprogram, template construct, or requirement
+   construct, excluding all nested scoping units in it"
 
-  "<function-subprogram> (R1532), <subroutine-subprogram> (R1537),
-  <templated-function-subprogram> (R???), or
-  <templated-subroutine-subprogram> (R???)"
+
+[27:12] 3.139 subprogram: Change "or subroutine-subprogram (R1537)" to
+        ", subroutine-subprogram (R1537), templated-function-subprogram, or
+        templated-subroutine-subprogram", such that the entire
+        definition now reads:
+
+        "<function-subprogram> (R1532), <subroutine-subprogram> (R1537),
+        <templated-function-subprogram> (R???), or
+        <templated-subroutine-subprogram> (R???)"
 
 
 {UTI: instantiation association}
@@ -74,11 +83,10 @@ terminology for REQUIREMENT.}
 Clause 5: Fortran concepts
 --------------------------
 
-* 5.1 High level syntax
 
-  Extend R508 <specification-construct> to include new syntax terms:
-     <template>, <require-stmt>, <requirement> and
-     <instantiation-stmt>, such that it now reads:
+[44:20-28] Extend R508 specification-construct to include new syntax
+           terms: <template>, <require-stmt>, <requirement> and
+           <instantiation-stmt>, such that it now reads:
 
    "R508 <specification-construct> <<is>> <derived-type-def>
                                    <<or>> <enum-def>
@@ -101,7 +109,7 @@ Clause 5: Fortran concepts
   to ensure that their product meets certain requirements without
   regard to any specific (external) template.}
 
-  Extend R512 to include templated procedures such that it now reads:
+[44:37-38] Extend R512 to include templated procedures such that it now reads:
 
 
    "R512 <internal-subprogram>
@@ -113,14 +121,13 @@ Clause 5: Fortran concepts
 
 * 5.3.2 Statement order
 
-Update first line in table 5.1, to include TEMPLATE such that it now
+[48:1+] Update first line in table 5.1, to include TEMPLATE such that it now
 reads:
 
    "PROGRAM, FUNCTION, SUBROUTINE, MODULE, SUBMODULE, TEMPLATE, or
     BLOCK DATA statement."
 
-
-Add a new column to Table 5.2 Statements allowed in scoping units,
+[48:9+] Add a new column to Table 5.2 Statements allowed in scoping units,
 with heading "Template".  The row entries are:
 
    "
@@ -137,21 +144,21 @@ with heading "Template".  The row entries are:
      - Statement function    No
     "
 
-Add a new footnote to the table:
+[48:9+]  Add a new footnote to table 2:
 
     "(2) Only named constants may be declared in templates."
 
-* 5.3.3 The END statement
+{Note:  It is unfortunate that adding a new column may not readily fit and that a substantial redesign of Table 2 may become necessary.}
 
-[44:7] After "module subprogram", insert ", templated subprogram" such
-       that the entire sentence reads:
+
+[49:2] 5.3.3 The END statement: After "module subprogram", insert ",
+       templated subprogram" such that the entire sentence reads:
 
        "Each program unit, module subprogram, templated subprogram,
        and internal subprogram shall have exactly one END statement."
 
-[44:12] After "end-module-statement", insert ",
-        end-template-statement, end-requirement-stmt" such that the
-        sentence now reads:
+[49:7] After "end-module-statement", insert ", end-template-statement,
+       end-requirement-stmt" such that the sentence now reads:
 
         "The end-module-stmt, end-template-statement,
         end-requirement-stmt, end-submodule-stmt, and
@@ -159,13 +166,15 @@ Add a new footnote to the table:
 
 * 5.4.1.1 General
 
+[51:13] 5.4.1.1 Geeneral
+
   Modify first sentence of paragraph 2 to read:
 
   "A type is either an intrinsic type, a derived type, or a deferred type."
 
-* 5.4.1.3 Derived type
+{UTI - this sentence is very different than what is in the standard.}
 
-  Add new subclause
+[51:27+]  Add a new subclause
 
   "5.4.1.3+ Deferred type
 
@@ -177,12 +186,13 @@ Add a new footnote to the table:
 Clause 6: Lexical tokens and source form
 ----------------------------------------
 
-* 6.2.6 Delimiters
-
-[56:28] Change line to include curly braces such that it reads:
+[62:4] 6.2.6 Delimiters
+   Change  "or /)"  to  "/), {, or }." such that the entire sentence reads:
 
   "A lexical token that is a delimiter is a (, ), /, [, ], {, }, (/, or /)."
 
+
+<<<<got to here>>>>>
 
 Clause 7: Types
 ---------------
