@@ -13,9 +13,11 @@ for templates. This paper describes various edits occurring outside the
 new new clause introduced in papers 1-5 that are necessary to incorporate
 the syntax and semantics for templates.
 
-2. Edits required for deferred arguments
-========================================
+2. Misc edits for templates
+===========================
 
+Clause 3:  Terms and definitions
+--------------------------------
 
 * Insert new glossary term in 3.7
 
@@ -68,6 +70,46 @@ the syntax and semantics for templates.
 
 {UTI: characteristics of deferred arguments - if we use that
 terminology for REQUIREMENT.}
+
+Clause 5: Fortran concepts
+--------------------------
+
+* 5.1 High level syntax
+
+  Extend R508 <specification-construct> to include new syntax terms:
+     <template>, <require-stmt>, <requirement> and
+     <instantiation-stmt>, such that it now reads:
+
+   "R508 <specification-construct> <<is>> <derived-type-def>
+                                   <<or>> <enum-def>
+                                   <<or>> <enumeration-type-def>
+                                   <<or>> <generic-stmt>
+                                   <<or>> <interface-block>
+                                   <<or>> <parameter-stmt>
+                                   <<or>> <procedure-declaration-stmt>
+                                   <<or>> <other-specification-stmt>
+                                   <<or>> <type-declaration-stmt>
+                                   <<or>> <template>
+                                   <<or>> <require-stmt>
+                                   <<or>> <requirement>
+                                   <<or>> <instantiate-stmt>
+   "
+
+{ Allowing REQUIRE outside of templates is not something that has been
+  discussed in plenary, but seems to be a natural thing to allow to
+  generics subgroup.  It would provide a means for library developer
+  to ensure that their product meets certain requirements without
+  regard to any specific (external) template.}
+
+  Extend R512 to include templated procedures such that it now reads:
+
+
+   "R512 <internal-subprogram>
+         <<is>> <function-subprogram>
+         <<or>> <subroutine-subprogram>
+         <<or>> <templated-subroutine-subprogram>
+         <<or>> <templated-function-subprogram>"
+
 
 * 5.3.2 Statement order
 
@@ -131,11 +173,19 @@ Add a new footnote to the table:
   templated procedures, or requirements.  Deferred types are described
   further in tt.xx. "
 
+
+Clause 6: Lexical tokens and source form
+----------------------------------------
+
 * 6.2.6 Delimiters
 
 [56:28] Change line to include curly braces such that it reads:
 
   "A lexical token that is a delimiter is a (, ), /, [, ], {, }, (/, or /)."
+
+
+Clause 7: Types
+---------------
 
 * 7.3.2.1 Type specifier syntax
 
@@ -195,60 +245,17 @@ generics subgroup thought it should be updated.}
 
    "C737b (R728) <parent-type-name> shall not be a <deferred-type>."
 
+
+
+Clause 8: Attribute declarations and specifications
+---------------------------------------------------
+
 * 8.5.2 Accessibility attribute
 
   In C817, insert "or template" after "module", so that it now reads:
 
   "C817 An access-spec shall appear only in the specification-part of a
        module or template construct."
-
-* 8.6.1 Accessibility Statement
-
-  Change C873 to allow for templates:
-
-  "C873 (R831) An <access-stmt> shall appear only in the
-        <specification-part> of a module or template. Only one
-        accessibility statement with an omitted <access-id-list> is
-        permitted in the <specification-part> of a module or
-        template."
-
-  Change C874 to allow for templates:
-
-   "C874 (R831) Each <access-name> shall be the name of a module,
-         variable, procedure, nonintrinsic type, named constant other
-         than a deferred constant, namelist group, requirement, or
-         template."
-
-    In 2nd sentence of paragraph 1, insert "or template" after
-         "in the module" in both locations such that the sentence now
-         reads:
-
-    "An access-stmt without an access-id list specifies the default
-    accessibility of the identifiers of entities declared in the
-    module or template, and of entities accessed from a module whose
-    name does not appear in any access-stmt in the module or
-    template."
-
-  In last sentence of paragraph 1, insert "or template" after
-         "in a module" such that the sentence now reads:
-
-    "If no such statement appears in a module or template, the default
-    is public accessibility."
-
-  In 1st sentence of paragraph 2, insert "or template" after "in
-       the module" such that the sentence now reads:
-
-    "If an identifier is accessed by use association and not declared
-    in the module or template, and the name of every module from which
-    it is accessed appears in an access-stmt in the scoping unit, its
-    default accessibility is PRIVATE if the access-spec in every such
-    access-stmt is PRIVATE, or PUBLIC if the access-spec in any such
-    access-stmt is PUBLIC."
-
-{UTI  deferred args cannot be declared public or private}
-
-{UTI host associated and use associated entities should not be public
-in a template}
 
 * 8.5.8.1 General
 
@@ -380,7 +387,53 @@ seems natural to allow for ordinary named constants as well.}
     bounds equal to one; otherwise, it specifies that it is an
     assumed-shape array with all the lower bounds equal to one".
 
-* 8.6.1 Accessibility statement
+* 8.6.1 Accessibility Statement
+
+  Change C873 to allow for templates:
+
+  "C873 (R831) An <access-stmt> shall appear only in the
+        <specification-part> of a module or template. Only one
+        accessibility statement with an omitted <access-id-list> is
+        permitted in the <specification-part> of a module or
+        template."
+
+  Change C874 to allow for templates:
+
+   "C874 (R831) Each <access-name> shall be the name of a module,
+         variable, procedure, nonintrinsic type, named constant other
+         than a deferred constant, namelist group, requirement, or
+         template."
+
+    In 2nd sentence of paragraph 1, insert "or template" after
+         "in the module" in both locations such that the sentence now
+         reads:
+
+    "An access-stmt without an access-id list specifies the default
+    accessibility of the identifiers of entities declared in the
+    module or template, and of entities accessed from a module whose
+    name does not appear in any access-stmt in the module or
+    template."
+
+  In last sentence of paragraph 1, insert "or template" after
+         "in a module" such that the sentence now reads:
+
+    "If no such statement appears in a module or template, the default
+    is public accessibility."
+
+  In 1st sentence of paragraph 2, insert "or template" after "in
+       the module" such that the sentence now reads:
+
+    "If an identifier is accessed by use association and not declared
+    in the module or template, and the name of every module from which
+    it is accessed appears in an access-stmt in the scoping unit, its
+    default accessibility is PRIVATE if the access-spec in every such
+    access-stmt is PRIVATE, or PUBLIC if the access-spec in any such
+    access-stmt is PUBLIC."
+
+{UTI  deferred args cannot be declared public or private}
+
+{UTI host associated and use associated entities should not be public
+in a template}
 
 Modify C873 to include templates such that it reads:
 
@@ -388,93 +441,6 @@ Modify C873 to include templates such that it reads:
   module or template construct. Only one accessibility statement with
   an omitted <access-id-list> is permitted in the <specification-part>
   of a module or template construct."
-
-* 10.1.12 Constant expression
-
-  Extend list in normative text for "constant expression" to include
-  "deferred constant"
-
-{Side discussion with Tom and Brad suggests that this is possibly not needed.}
-
-
-
-
-* 11.1.11.1 Purpose and form of the SELECT TYPE construct
-
-  Extend R1156 to include <deferred-type>, such that it now reads:
-
-
-  "R1156 <type-guard-stmt>
-      <<is>> TYPE IS ( <type-spec> ) [ <select-construct-name> ]
-      <<or>> CLASS IS ( <derived-type-spec> ) [ <select-construct-name> ]
-      <<or>> CLASS IS ( <deferred-type> ) [ <select-construct-name> ]
-      <<or>> CLASS DEFAULT [ <select-construct-name> ]"
-
-  Add constraint to R1156:
-    C1169b (R1156) <deferred-type> shall specify an extensible type.
-
-* 15.5.1 Syntax of a procedure reference
-
-  Extend R1522 <procedure-designator> with <deferred-proc> and
-  <inline-instantiation> such that it reads:
-
-   "R1522 <procedure-designator> <<is>> <procedure-name>
-                                 <<or>> <proc-component-ref>
-                                 <<or>> <data-ref> % binding-name
-                                 <<or>> <deferred-proc>
-                                 <<or>> <inline-instantiation>
-
-  Extend R1524 <actual-arg> with <deferred-proc> and
-  <inline-instantiation> such that it reads:
-
-   "R1524 actual-arg <<is>> <expr>
-                     <<or>> <variable>
-                     <<or>> <procedure-name>
-                     <<or>> <proc-component-ref>
-                     <<or>> <conditional-arg>
-		     <<or>> <alt-return-spec>
-		     <<or>> <deferred-proc>
-		     <<or>> <inline-instantiation>
-
-3. Edits required for templates and instantiation
-=================================================
-
-* 5.1 High level syntax
-
-  Extend R508 <specification-construct> to include new syntax terms:
-     <template>, <require-stmt>, <requirement> and
-     <instantiation-stmt>, such that it now reads:
-
-   "R508 <specification-construct> <<is>> <derived-type-def>
-                                   <<or>> <enum-def>
-                                   <<or>> <enumeration-type-def>
-                                   <<or>> <generic-stmt>
-                                   <<or>> <interface-block>
-                                   <<or>> <parameter-stmt>
-                                   <<or>> <procedure-declaration-stmt>
-                                   <<or>> <other-specification-stmt>
-                                   <<or>> <type-declaration-stmt>
-                                   <<or>> <template>
-                                   <<or>> <require-stmt>
-                                   <<or>> <requirement>
-                                   <<or>> <instantiate-stmt>
-   "
-
-{ Allowing REQUIRE outside of templates is not something that has been
-  discussed in plenary, but seems to be a natural thing to allow to
-  generics subgroup.  It would provide a means for library developer
-  to ensure that their product meets certain requirements without
-  regard to any specific (external) template.}
-
-  Extend R512 to include templated procedures such that it now reads:
-
-
-   "R512 <internal-subprogram>
-         <<is>> <function-subprogram>
-         <<or>> <subroutine-subprogram>
-         <<or>> <templated-subroutine-subprogram>
-         <<or>> <templated-function-subprogram>"
-
 
 * 8.7 IMPLICIT Statement
 
@@ -516,12 +482,44 @@ Modify C873 to include templates such that it reads:
      interface block."
 
 
+Clause 10: Expressions and  assignment
+--------------------------------------
+
+* 10.1.12 Constant expression
+
+  Extend list in normative text for "constant expression" to include
+  "deferred constant"
+
+{Side discussion with Tom and Brad suggests that this is possibly not needed.}
+
 * 10.2.1.2 Intrinsic assignment statement
 
 {Subgroup believes that the existing constraints on intrinsic
 assignment are sufficient for the case of intrinsic assignment with
 deferred rank entities.  But would appreciate further feedback on this
 issue.}
+
+
+Clause 11: Execution control
+----------------------------
+
+* 11.1.11.1 Purpose and form of the SELECT TYPE construct
+
+  Extend R1156 to include <deferred-type>, such that it now reads:
+
+
+  "R1156 <type-guard-stmt>
+      <<is>> TYPE IS ( <type-spec> ) [ <select-construct-name> ]
+      <<or>> CLASS IS ( <derived-type-spec> ) [ <select-construct-name> ]
+      <<or>> CLASS IS ( <deferred-type> ) [ <select-construct-name> ]
+      <<or>> CLASS DEFAULT [ <select-construct-name> ]"
+
+  Add constraint to R1156:
+    C1169b (R1156) <deferred-type> shall specify an extensible type.
+
+
+Clause 14: Program units
+------------------------
 
 * 14.2.1 Module syntax and semantics
 
@@ -545,6 +543,11 @@ issue.}
     accesses named data objects, nonintrinsic types, procedures,
     abstract interfaces, generic identifiers, namelist groups,
     templates, and templated procedures in a module."
+
+
+Clause 15: Procedures
+---------------------
+
 
 * 15.4.3.2 Interface block
 
@@ -642,6 +645,29 @@ Ctt?? Each <subroutine-name> or <function-name> of an <interface-body>
       END SUBROUTINE
     END TEMPLATE
 
+* 15.5.1 Syntax of a procedure reference
+
+  Extend R1522 <procedure-designator> with <deferred-proc> and
+  <inline-instantiation> such that it reads:
+
+   "R1522 <procedure-designator> <<is>> <procedure-name>
+                                 <<or>> <proc-component-ref>
+                                 <<or>> <data-ref> % binding-name
+                                 <<or>> <deferred-proc>
+                                 <<or>> <inline-instantiation>
+
+  Extend R1524 <actual-arg> with <deferred-proc> and
+  <inline-instantiation> such that it reads:
+
+   "R1524 actual-arg <<is>> <expr>
+                     <<or>> <variable>
+                     <<or>> <procedure-name>
+                     <<or>> <proc-component-ref>
+                     <<or>> <conditional-arg>
+		     <<or>> <alt-return-spec>
+		     <<or>> <deferred-proc>
+		     <<or>> <inline-instantiation>
+
 * 15.5.2.5 Ordinary dummy variables
 
 [326:6] After first sentence of p3, insert a new sentence about for
@@ -692,6 +718,8 @@ C???? (R1530) TEMPLATE shall not appear except in a
   in both situations.}
 
 
+Clause 16: Intrinsic procedures and modules
+-------------------------------------------
 
 
 * 16.9.57 CO_REDUCE(A,OPERATION,...)
@@ -702,6 +730,10 @@ C???? (R1530) TEMPLATE shall not appear except in a
 
 {UTI:  Need something in 19.5.1 association}
 
+
+
+Annex A:
+--------
 
 * A.2 Processor Dependencies
 
