@@ -394,6 +394,9 @@ Modify C873 to include templates such that it reads:
   Extend list in normative text for "constant expression" to include
   "deferred constant"
 
+{Side discussion with Tom and Brad suggests that this is possibly not needed.}
+
+
 
 
 * 11.1.11.1 Purpose and form of the SELECT TYPE construct
