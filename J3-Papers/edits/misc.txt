@@ -19,7 +19,7 @@ the syntax and semantics for templates.
 Clause 3:  Terms and definitions
 --------------------------------
 
-[5:4+] Insert new glossary term:
+[5:5+] Insert new glossary term:
 
   "3.7.2b
    [deferred argument association]
@@ -84,8 +84,9 @@ Clause 5: Fortran concepts
 --------------------------
 
 
-[44:20-28] Extend R508 specification-construct to include new syntax
-           terms: <template>, <require-stmt>, <requirement> and
+[44:20-28] In 5.1 High level syntax, extend R508
+           specification-construct to include new syntax terms:
+           <template>, <require-stmt>, <requirement> and
            <instantiation-stmt>, such that it now reads:
 
    "R508 <specification-construct> <<is>> <derived-type-def>
@@ -192,14 +193,11 @@ Clause 6: Lexical tokens and source form
   "A lexical token that is a delimiter is a (, ), /, [, ], {, }, (/, or /)."
 
 
-<<<<got to here>>>>>
-
 Clause 7: Types
 ---------------
 
-* 7.3.2.1 Type specifier syntax
-
-  Extend R702 <type-spec> to include <deferred-type>  such that it reads:
+[68:16-19] In section 7.3.2.1 Type specifier syntax, insert <deferred-type> in R702
+           <type-spec> such that it reads:
 
    " R702 <type-spec> <<is>> <intrinsic-type-spec>
        <<or>> <derived-type-spec>
@@ -207,14 +205,13 @@ Clause 7: Types
        <<or>> <enum-type-spec>
        <<or>> <enumeration-type-spec> "
 
-  Modify C703 to include <deferred-type> such that it reads:
+[68:20] In C703, after derived-type-spec, insert 'or deferred-type' such that it reads:
 
   "(R702) The <derived-type-spec> or <deferred-type> shall not specify
    an abstract type (7.5.7) except when it appears as an
    <instantiation-arg>."
 
-  Extend R703 <declaration-type-spec> to include <deferred-type> such
-  that it reads:
+[68:21-30] In R703 <declaration-type-spec> insert '<<or>> TYPE ( <deferred-type> )' after 'derived-type-spec' such that R703 now reads:
 
     "R703 <declaration-type-spec> <<is>> <intrinsic-type-spec>
        <<or>> TYPE ( <intrinsic-type-spec> )
@@ -229,8 +226,7 @@ Clause 7: Types
        <<or>> TYPEOF ( <data-ref> )
        <<or>> CLASSOF ( <data-ref> )"
 
-
-  Change C705 wording to be consintent with constraints just after it:
+[68-31] Change C705 wording to be consintent with constraints just after it:
 
   "C705 (R703) CLASS(<derived-type-spec>) shall specify an extensible
   type (7.5.7)."
@@ -239,88 +235,83 @@ Clause 7: Types
 different than the nigh identical constraint that follows, that
 generics subgroup thought it should be updated.}
 
-  After C705 introduce a new constraint:
+[68:34+] After C705, insert a new constraint:
 
    "C705+ (R703) CLASS(<deferred-type>) shall specify an extensible
-  type (7.5.7)."
+    type (7.5.7)."
 
-  After C706 introduce a new constraint
+[69:1+] After C706 introduce a new constraint
 
    "C706+ (R703) TYPE(<deferred-type>) shall not specify an abstract type
    (7.5.7)."
 
-* 7.5.2.1 Syntax of a derived-type definition
-
-  Insert new constraint on R728:
-
+[80:27+] In 7.5.2.1 Syntax of a derived-type definition, insert a new
+         consntraint on R728 afte C737:
+ 
    "C737b (R728) <parent-type-name> shall not be a <deferred-type>."
-
 
 
 Clause 8: Attribute declarations and specifications
 ---------------------------------------------------
 
-* 8.5.2 Accessibility attribute
-
-  In C817, insert "or template" after "module", so that it now reads:
+[113:15] In 8.5.2 Accessibility attribute, in C817, insert "or
+         template" after "module", so that it now reads:
 
   "C817 An access-spec shall appear only in the specification-part of a
        module or template construct."
 
-* 8.5.8.1 General
 
-  Change last entry for <array-spec> from:
-    "<<or>>   <assumed-rank-spec>"
-  To:
-    "<<or>>   <assumed-or-implied-rank-spec>"
+[118:14] In 8.5.8.1 General, change the last entry for <array-spec> from:
+            "<<or>> <assumed-rank-spec>"
+  to
+            "<<or>>   <assumed-or-implied-rank-spec>".
 
-* 8.5.8.2 Explicit-shape array
-
-Modify R818 to disambiguate lower and upper explicit bounds such that
+[118:19] Modify R818 to disambiguate lower and upper explicit bounds such that
        it reads:
 
-"R818 <explicit-shape-bounds-spec>
-     <<is>> [ <lower-explicit-bounds-expr> : ] <upper-explicit-bounds-expr>
-     <<or>> <lower-bound> : <explicit-bounds-expr>
-     <<or>> <explicit-bounds-expr> : <upper-bound>
- R818b <lower-explicit-bounds-expr> <<is>> <explicit-bounds-expr>
- R818c <upper-explicit-bounds-expr> <<is>> <explicit-bounds-expr>
-"
+    "R818 <explicit-shape-bounds-spec>
+         <<is>> [ <lower-explicit-bounds-expr> : ] <upper-explicit-bounds-expr>
+         <<or>> <lower-bound> : <explicit-bounds-expr>
+         <<or>> <explicit-bounds-expr> : <upper-bound>
 
-* 8.5.8.6 Implied-shape array
+[118:21+] After R818, insert new rules:
 
-  Modify the first sentence from:
+    "R818b <lower-explicit-bounds-expr> <<is>> <explicit-bounds-expr>
+     R818c <upper-explicit-bounds-expr> <<is>> <explicit-bounds-expr>"
+
+{UTI:  do we need to explain why we did this?}
+
+[121:21] In 8.5.8.6 Implied-shape array, change "the constant-expr in
+         its declaration" to "a constant expression".  Such that it now reads:
+
     "An implied-shape array is a named constant that takes its shape
-    from the constant-expr in its declaration."
-  To:
-    "An implied-shape array is a named constant that takes its shape
-    from a constant expression. If it is a deferred constant, it takes
-    its shape from the associated instantiation argument, otherwise it
-    takes its shape from the constant expression in its declaration."
+    from a constant expression."
+
+[121:21] After first sentence, insert new sentence:
+
+     "If it is a deferred constant, it takes its shape from the
+      associated instantiation argument, otherwise it takes its shape
+      from the constant expression in its declaration."
 
 {Note that this change is a bit larger than strictly necessary.  It is
 needed for deferred constants, but it seems natural to include
 ordinary constant here.}
 
-  Delete the first sentence in the last paragraph which reads:
+[121:27-29] Delete the first sentence of p3 starting with "The extent
+            of ...".
 
-    The extent of each dimension of an implied-shape array is the same
-    as the extent of the corresponding dimension of the constant-expr.
+[121:30] Change name of section 8.5.8.7 from "Assumed-rank entity" to
+         "Assumed-rank or implied-rank entities".
 
-* 8.5.8.7 Assumed-rank entity
+[121:30+] Insert new section heading: 8.5.8.7.1 "Assumed-rank entity"
 
-  Change name of section to "Assumed-rank or implied-rank entities"
+[121:34] Modify text of the last sentence of p1 change
+       "assumed-rank-spec" to "assumed-or-implied-rank-spec", such
+       that it now reads:
 
-  Modify text in former 8.5.8.7 (Assumed-rank entity) to use new
-       syntax term <assumed-or-implied-rank-spec> such that it now reads:
-
-   "An assumed-rank entity is a dummy data object whose rank is
-    assumed from its effective argument, or the associate name of a
-    RANK DEFAULT block in a SELECT RANK construct; this rank can be
-    zero. The bounds and shape of an assumed-rank entity with the
-    ALLOCATABLE or POINTER attribute are determined as specified in
-    8.5.8.4. An assumed-rank entity is declared with an <array-spec>
+   "An assumed-rank entity is declared with an <array-spec>
     that is an <assumed-or-implied-rank-spec>.
+
 
     R827 assumed-or-implied-rank-spec is ..
 
@@ -343,7 +334,7 @@ ordinary constant here.}
          allocatable ultimate component, or of a type for which
          default initialization is specified.
 
-* Insert new section after 8.5.8.7.1:
+[122:8+] Insert new section
 
     "8.5.8.7.2 Implied-rank entity
 
@@ -371,24 +362,24 @@ ordinary constant here.}
            DEFERRED INTEGER, PARAMETER :: S(*)
            DEFERRED INTEGER, PARAMETER :: C(..) ! implied-rank
            INTEGER, PARAMETER :: B(S) = 1       ! implied-rank
-	   REAL, PARAMETER, RANK(RANK(C)) :: D  ! implied rank
+    REAL, PARAMETER, RANK(RANK(C)) :: D  ! implied rank
         END TEMPLATE
 
-* 8.5.17  RANK clause
+[127:3] In 8.5.17 RANK clause, in C864, replace "a dummy data object or" with
+        "a named constant, a dummy data object, or" such that it now reads:
 
-  Replace constraint C864 which states:
-    C864  An entity declared with a rank-clause shall be a dummy data
-          object or have the ALLOCATABLE or POINTER attribute.
-  With:
-    C864  An entity declared with a rank-clause shall be a named constant,
-          dummy data object or have the ALLOCATABLE or POINTER attribute.
+    "C864  An entity declared with a rank-clause shall be a named constant,
+           dummy data object or have the ALLOCATABLE or POINTER attribute."
 
 {This change is a bit larger than strictly necessary for generic
 programming.  We only need to allow it for deferred constants, but it
 seems natural to allow for ordinary named constants as well.}
 
-  Amend the last sentence of the section to allow for the deferred
-  constant case, such that the paragraph now reads:
+[127:6] In p2, after "it is a deferred-shape array;" insert "
+        otherwise, if it is a named constant, it specifies that it is
+        an implied-shape array with all lower bounds equal to one;"
+        such that the entire sentence reads:
+
 
     "If the rank is zero the entity is scalar; otherwise, if it has
     the ALLOCATABLE or POINTER attribute, it specifies that it is a
@@ -397,9 +388,9 @@ seems natural to allow for ordinary named constants as well.}
     bounds equal to one; otherwise, it specifies that it is an
     assumed-shape array with all the lower bounds equal to one".
 
-* 8.6.1 Accessibility Statement
-
-  Change C873 to allow for templates:
+[128:36-37] In 8.6.1 Accessibility Statement, in constraint C873, after
+            "a module", insert " or template" twice, such that the
+            constraint reads:
 
   "C873 (R831) An <access-stmt> shall appear only in the
         <specification-part> of a module or template. Only one
@@ -407,16 +398,18 @@ seems natural to allow for ordinary named constants as well.}
         permitted in the <specification-part> of a module or
         template."
 
-  Change C874 to allow for templates:
+[129:1-2] In constraint, C874, replace "or namelist group"
+          namelist-group, requirement, or template" such that the
+          entire constraint now reads:
+           
 
    "C874 (R831) Each <access-name> shall be the name of a module,
          variable, procedure, nonintrinsic type, named constant other
          than a deferred constant, namelist group, requirement, or
          template."
 
-    In 2nd sentence of paragraph 1, insert "or template" after
-         "in the module" in both locations such that the sentence now
-         reads:
+[129:7] In second sentence of p1, insert "or template" after "in the
+         module" in both locations such that the sentence now reads:
 
     "An access-stmt without an access-id list specifies the default
     accessibility of the identifiers of entities declared in the
@@ -424,13 +417,13 @@ seems natural to allow for ordinary named constants as well.}
     name does not appear in any access-stmt in the module or
     template."
 
-  In last sentence of paragraph 1, insert "or template" after
+[129:9] In last sentence of paragraph 1, insert "or template" after
          "in a module" such that the sentence now reads:
 
     "If no such statement appears in a module or template, the default
     is public accessibility."
 
-  In 1st sentence of paragraph 2, insert "or template" after "in
+[129:16] In first sentence of paragraph 2, insert "or template" after "in
        the module" such that the sentence now reads:
 
     "If an identifier is accessed by use association and not declared
@@ -445,18 +438,8 @@ seems natural to allow for ordinary named constants as well.}
 {UTI host associated and use associated entities should not be public
 in a template}
 
-Modify C873 to include templates such that it reads:
-
-  "C873 An <access-stmt> shall appear only in the <specification-part> of a
-  module or template construct. Only one accessibility statement with
-  an omitted <access-id-list> is permitted in the <specification-part>
-  of a module or template construct."
-
-* 8.7 IMPLICIT Statement
-
-  Change last sentence of paragraph 3 on page 127 and add 2 new
-  paragraphs to specify that there is no default mapping inside
-  templates and templated procedures. It should now read:
+[136:30-32] In 8.7 IMPLICIT Statement, replace the last sentence of
+            paragraph 3 with
 
    "If a mapping is not specified for a letter, the default mapping of
      - a program unit, or
@@ -474,49 +457,55 @@ Modify C873 to include templates such that it reads:
     subprogram is the null mapping.
    "
 
-* 8.8p2 IMPORT Statement
-
-  Modify sentence 2 in p2 to include deferred interface blocks, such
-  that it now reads:
+[139:7] In section 8.8 IMPORT Statement, in second sentence of p2,
+        after "module procedure interface body", insert " or an interface body
+        that appears in a deferred interface block."  The sentence will then read:
 
     "This is the default for an interface body that is not a module
      procedure interface body or an interface body that appears in a
      deferred interface block."
 
-  Modify sentence 2 in p4 to include deferred interface blocks, such
-  that it now reads:
+[139:14] In sentence 2 of p4, replace "or submodule" with "submodule,
+         or an interface body that appears in a deferred interface
+         block", such that it now reads:
 
     "This is the default for a derived-type definition, internal
      subprogram, module procedure interface body, module subprogram,
      submodule, or an interface body that appears in a deferred
      interface block."
 
-
 Clause 10: Expressions and  assignment
 --------------------------------------
 
-* 10.1.12 Constant expression
+[187:4] In, 10.1.12 Constant expression remove " or" from end of item
+        (14), and " or" to end of item (15) and then introduce a new
+        item for deferred constant.  The lines should now read:
 
-  Extend list in normative text for "constant expression" to include
-  "deferred constant"
+  (14) an ac-do-variable within an array constructor where each
+       scalar-int-expr of the correspo nding ac-implied-do-control is
+       a constant expression,
+  (15) a constant expression enclosed in parentheses, or
+  (16) a deferred constant,
 
-{Side discussion with Tom and Brad suggests that this is possibly not needed.}
+{This change is possibly not necessary.  Subgroup is not certain.}
 
 * 10.2.1.2 Intrinsic assignment statement
 
-{Subgroup believes that the existing constraints on intrinsic
-assignment are sufficient for the case of intrinsic assignment with
-deferred rank entities.  But would appreciate further feedback on this
-issue.}
+{UTI Subgroup believes that the existing constraints on intrinsic
+assignment in 10.2.1.2 "Intrinsic assigment statement" are sufficient
+for the case of intrinsic assignment with deferred rank entities.  But
+would appreciate further feedback on this issue.}
 
 
 Clause 11: Execution control
 ----------------------------
 
-* 11.1.11.1 Purpose and form of the SELECT TYPE construct
+[225:17+] In section 11.1.11.1 Purpose and form of the SELECT TYPE
+          construct, insert entry in R1156 type-guard-stmt:
 
-  Extend R1156 to include <deferred-type>, such that it now reads:
+  "<<or>> CLASS IS ( <derived-type-spec> ) [ <select-construct-name> ]"
 
+Such that the entire rule becomes:
 
   "R1156 <type-guard-stmt>
       <<is>> TYPE IS ( <type-spec> ) [ <select-construct-name> ]
@@ -524,17 +513,21 @@ Clause 11: Execution control
       <<or>> CLASS IS ( <deferred-type> ) [ <select-construct-name> ]
       <<or>> CLASS DEFAULT [ <select-construct-name> ]"
 
-  Add constraint to R1156:
-    C1169b (R1156) <deferred-type> shall specify an extensible type.
+[226:9+] Add new constraint on R1156 type-guard-statement:
+
+    "C1169b (R1156) <deferred-type> shall specify an extensible type."
 
 
 Clause 14: Program units
 ------------------------
 
-* 14.2.1 Module syntax and semantics
+[326:12+] In 14.2.1 Module syntax and semantics, add the following
+          lines to rule 1408 module-subprogram:
 
-  Extend list in R1408 to include templated procedures, such that it
-  now reads:
+      "<<or>> <templated-function-subprogram>
+       <<or>> <templated-subroutine-subprogram>"
+
+  such that the rule now reads:
 
     "R1408 <module-subprogram>
               <<is>> <function-subprogram>
@@ -543,11 +536,10 @@ Clause 14: Program units
               <<or>> <templated-function-subprogram>
               <<or>> <templated-subroutine-subprogram>"
 
-* 14.2.6 The USE statement and use association
-
-[326.2] Replace ", and namelist groups" with " namelist groups,
+[326:2] In section 14.2.2 The USE statement and use assocation,
+        replace ", and namelist groups" with " namelist groups,
         templates, and templated procedures" such that the entire
-        sentence reads:
+        sentence now reads:
 
     "The USE statement provides the means by which a scoping unit
     accesses named data objects, nonintrinsic types, procedures,
@@ -558,11 +550,19 @@ Clause 14: Program units
 Clause 15: Procedures
 ---------------------
 
+{UTI: Do we want to include template procedure in section 15.2.2.2
+External, internal, and module procedures? }
 
-* 15.4.3.2 Interface block
+* 15.4.2.1 Interfaces and scopes
 
-  Extend list in R1503 to include deferred interface, such that it
-  now reads:
+{UTI: first bullet should include template procedure?}
+
+[334:30+] In section 15.4.3.2 Interface block, in rule 1503
+          interface-stmt, add a new line:
+   
+       " <<or>> DEFERRED INTERFACE"
+
+such that the rule now reads:
 
     "R1503 <interface-stmt> <<is>> INTERFACE [ <generic-spec> ]
                             <<or>> ABSTRACT INTERFACE
@@ -571,30 +571,30 @@ Clause 15: Procedures
 {UTI: Need a constraint that only deferred procedures can appear in a
 deferred interface block.
 
-Ctt?? Each <subroutine-name> or <function-name> of an <interface-body>
-      that appears in a deferred interface block shall be the name of
-      a deferred argument of the scoping unit in which the
-      <interface-body> appears.
+[335:23+] Introduce new constraint on rule 1503 interface-stmt:
+
+      "C1503b Each <subroutine-name> or <function-name> of an
+       <interface-body> that appears in a deferred interface block
+       shall be the name of a deferred argument of the scoping unit in
+       which the <interface-body> appears."
 }
 
-  Change last sentence of para 2 to include DEFERRED interfaces such
-  that it now reads:
+[336:2] In last sentence of p2, replace "with neither Abstract nor" with "without ABSTRACT, DEF        ERRED, or" such that the sentence now reads:
 
     "An interface block without ABSTRACT, DEFERRED, or a generic
      specification is a specific interface block."
 
-
-  After para 2, insert new paragraph:
+[336:2+] Insert a new paragraph:
 
     "An interface block introduced by DEFERRED INTERFACE is a deferred
      interface block. An interface body in a deferred interface block
      specifies a deferred procedure."
 
-* 15.4.3.4.5 Restrictions on generic declarations
+[340:8+] In 15.4.3.4.5 Restrictions on generic declarations, insert 4
+          new paragraphs and a note:
 
- [317:10+] Insert new paragraphs to address deferred arguments:
-
-    The kind of an entity is deferred if the kind depends on the value
+   
+   "The kind of an entity is deferred if the kind depends on the value
     of a deferred argument or depends on a deferred attribute of an
     entity.
 
@@ -615,7 +615,6 @@ Ctt?? Each <subroutine-name> or <function-name> of an <interface-body>
       - one entity is declared with a RANKOF clause that references
         the other.
       - the two entities have the same rank as some other entity.
-
 
   NOTE Some examples of implied-rank entities are shown in the
        following example template. C is explicitly declared
@@ -653,18 +652,26 @@ Ctt?? Each <subroutine-name> or <function-name> of an <interface-body>
       SUBROUTINE SUB_SAME_RANK(X)
         INTEGER, RANK(N) :: X
       END SUBROUTINE
-    END TEMPLATE
+    END TEMPLATE"
 
-* 15.5.1 Syntax of a procedure reference
+[344:19+] In section 15.5.1 Syntax of a procedure reference, append
+          two new lines to R1522 procedure-designator:
 
-  Extend R1522 <procedure-designator> with <deferred-proc> and
-  <inline-instantiation> such that it reads:
+      "  <<or>> <deferred-proc>
+         <<or>> <inline-instantiation>"
+
+  such that the rule now reads:
 
    "R1522 <procedure-designator> <<is>> <procedure-name>
                                  <<or>> <proc-component-ref>
                                  <<or>> <data-ref> % binding-name
                                  <<or>> <deferred-proc>
-                                 <<or>> <inline-instantiation>
+                                 <<or>> <inline-instantiation>"
+
+[355:5+] Append 2 lines to R1525 actual-arg:
+
+      "<<or>> <deferred-proc>
+       <<or>> <inline-instantiation>
 
   Extend R1524 <actual-arg> with <deferred-proc> and
   <inline-instantiation> such that it reads:
@@ -674,14 +681,12 @@ Ctt?? Each <subroutine-name> or <function-name> of an <interface-body>
                      <<or>> <procedure-name>
                      <<or>> <proc-component-ref>
                      <<or>> <conditional-arg>
-		     <<or>> <alt-return-spec>
-		     <<or>> <deferred-proc>
-		     <<or>> <inline-instantiation>
+                     <<or>> <alt-return-spec>
+                     <<or>> <deferred-proc>
+                     <<or>> <inline-instantiation>"
 
-* 15.5.2.5 Ordinary dummy variables
-
-[326:6] After first sentence of p3, insert a new sentence about for
-        compatibility of dummy arguments with deferred kind:
+[349:10] In section 15.5.2.5 Ordinary dummy variables, after the first
+         sentence of p3, insert a new sentence:
 
     "If a kind-type parameter of the actual argument or its
      corresponding dummy argument depends on a deferred constant, then
@@ -690,56 +695,90 @@ Ctt?? Each <subroutine-name> or <function-name> of an <interface-body>
 
 {deferred kind}
 
-[327:12] After p15 introduce new paragraph to address deferred rank
-         entities:
+[350:34+] After p15 introduce a new paragraph to address deferred rank
+          entities:
 
     "If the rank of the actual argument or its corresponding dummy
      argument depend on a deferred constant, then their ranks agree if
      and only if they are declared with syntactically equivalent
      expressions."
 
-
 {deferred rank}
 
-* 15.6.2.1 General
+{UTI:  These changes to 15.5.2.5 may not be necessary.   Other words in new
+       15.4.3.4.5 may suffice.}
 
-{<prefix-spec> for templated procedures.}
+[363:15+] In section 15.6.2.1 General, append new line to R1530 prefix-spec:
 
-R1530 extended to include TEMPLATE.
+    " <<or>> TEMPLATE "
 
-C???? (R1530) TEMPLATE shall not appear except in a
+such that the entire rule now reads:
+
+      "R1530 prefix-spec <<is>> declaration-type-spec
+                         <<or>> ELEMENTAL
+                         <<or>> IMPURE
+                         <<or>> MODULE
+                         <<or>> NON_RECURSIVE
+                         <<or>> PURE
+                         <<or>> RECURSIVE
+                         <<or>> SIMPLE
+                         <<or>> TEMPLATE
+
+
+[363:33+] Insert new constraint on R1530:
+
+     "C1560b (R1530) TEMPLATE shall not appear except in a
               <templated-function-stmt> or a
-              <templated-subroutine-stmt>.
+              <templated-subroutine-stmt>."
 
-* 15.6.2.2 Function subprogram
 
-  Change constraint C1573 to refer to rule R1532 instead of R1536.
+[365:11] In section 15.6.2.2 Function subprogram, in C1573, after "in
+         the end-function-stmt" insert " in function-subprogram" such
+         that the constraint now reads:
 
-  {<end-function-stmt> is reused for templated procedures. Therefore
-  the constraint must be attached to a different rule to be applicable
-  in both situations.}
+     "C1573 (R1536) If a function-name appears in the
+      end-function-stmt in a function-subprogram , it shall be
+      identical to the function name specified in the function-stmt."
 
-* 15.6.2.3 Subroutine subprogram
+[366:15] In section 15.6.2.3 Subroutine subprogram, in C1576, after
+         "in the end-subroutine-stmt" insert " in
+         subroutine-subprogram" such that the constraint now reads:
 
-  Change constraint C1576 to refer to rule R1537 instead of R1540.
+     "C1576 (R1540) If a subroutine-name appears in an end-subroutine-stmt in a
+      subroutine-subprogram, it shall be identical to the
+      subroutine-name specified in the subprogram’s subroutine-stmt."
 
-  {<end-subroutine-stmt> is reused for templated procedures. Therefore
-  the constraint must be attached to a different rule to be applicable
-  in both situations.}
-
+{Note: A rule is referenced in C1573 but not C1576.  This edit makes
+this consistent.}
 
 Clause 16: Intrinsic procedures and modules
 -------------------------------------------
 
-
 * 16.9.57 CO_REDUCE(A,OPERATION,...)
 
-[382:36] After second sentence in paragraph insert:
+[410:24] After second sentence in Arguments paragraph, insert a new sentence:
 
-"It shall not be of a deferred type."
+      "It shall not be of a deferred type."
+
+ such that the entire paragraph now reads:
+
+     "A   shall not be polymorphic. It shall not be of a type with an
+          ultimate component that is alloc atable or a pointer. It
+          shall not be of a deferred type.  It shall have the same
+          shape, type, and type parameter values, in corres ponding
+          references. It shall not be a coindexed object. It is an
+          INTENT (INOUT) argument.  If A is scalar, the computed value
+          is the result of the reduction operation of applying OPERA
+          TION to the values of A in all corresponding references. If
+          A is an array, each element of the computed value is equal
+          to the result of the reduction operation of applying
+          OPERATION to corresponding elements of A in all
+          corresponding references.  The computed value is assigned to
+          A if no error condition occurs, and either RESULT_IMAGE is
+          absent, or the executing image is the one identified by
+          RESULT_IMAGE. Otherwise, A becomes undefined."
 
 {UTI:  Need something in 19.5.1 association}
-
 
 
 Annex A:
@@ -747,10 +786,11 @@ Annex A:
 
 * A.2 Processor Dependencies
 
-  [555:15+] Insert new bullet:
-    * the names of the dummy arguments of a deferred procedure without
-      an explicit specification;
+[597:43] Replace final period "." with semicolon ";".
 
-{ need refernence for above bullet }
+[597:43+] Append a new bullet in the list of processor dependencies
+
+    * the names of the dummy arguments of a deferred procedure without
+      an explicit specification (tt.8.2.4).
 
 ===END===
