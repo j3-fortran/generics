@@ -398,8 +398,8 @@ seems natural to allow for ordinary named constants as well.}
         permitted in the <specification-part> of a module or
         template."
 
-[129:1-2] In constraint, C874, replace "or namelist group"
-          namelist-group, requirement, or template" such that the
+[129:1-2] In constraint, C874, replace "or namelist group" with
+          "namelist-group, requirement, or template" such that the
           entire constraint now reads:
            
 
