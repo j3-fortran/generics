@@ -246,7 +246,7 @@ generics subgroup thought it should be updated.}
    (7.5.7)."
 
 [80:27+] In 7.5.2.1 Syntax of a derived-type definition, insert a new
-         consntraint on R728 afte C737:
+         constraint on R728 after C737:
  
    "C737b (R728) <parent-type-name> shall not be a <deferred-type>."
 
