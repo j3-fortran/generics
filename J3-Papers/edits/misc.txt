@@ -362,7 +362,7 @@ ordinary constant here.}
            DEFERRED INTEGER, PARAMETER :: S(*)
            DEFERRED INTEGER, PARAMETER :: C(..) ! implied-rank
            INTEGER, PARAMETER :: B(S) = 1       ! implied-rank
-    REAL, PARAMETER, RANK(RANK(C)) :: D  ! implied rank
+           REAL, PARAMETER, RANK(RANK(C)) :: D  ! implied rank
         END TEMPLATE
 
 [127:3] In 8.5.17 RANK clause, in C864, replace "a dummy data object or" with
