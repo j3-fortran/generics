@@ -129,9 +129,10 @@ Rtt18 <templated-function-subprogram> <<is>>
           [<internal-subprogram-part>]
           <end-function-stmt>
 
-Ctt31 (Rtt18) If a <function-name> appears in the <end-function-stmt>,
-              it shall be identical to the <template-name>
-              specified in the <templated-function-stmt>.
+Ctt31 (R1536) If a <function-name> appears in the <end-function-stmt>
+              in a <templated-function-subprogram>, it shall be
+              identical to the <template-name> specified in the
+              <templated-function-stmt>.
 
 Rtt19 <templated-subroutine-subprogram> <<is>>
           <templated-subroutine-stmt>
@@ -140,9 +141,11 @@ Rtt19 <templated-subroutine-subprogram> <<is>>
           [<internal-subprogram-part>]
           <end-subroutine-stmt>
 
-Ctt32 (Rtt19) If a <subroutine-name> appears in the <end-subroutine-stmt>,
-              it shall be identical to the <template-name>
-              specified in the <templated-subroutine-stmt>.
+Ctt32 (R1540) If a <subroutine-name> appears in the
+              <end-subroutine-stmt> in a
+              <templated-subprogram-specification>, it shall be
+              identical to the <template-name> specified in the
+              <templated-subroutine-stmt>.
 
 Ctt33 An internal templated procedure shall not contain an
       <internal-subprogram-part>.
