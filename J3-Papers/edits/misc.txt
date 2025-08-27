@@ -503,7 +503,7 @@ Clause 11: Execution control
 [225:17+] In section 11.1.11.1 Purpose and form of the SELECT TYPE
           construct, insert entry in R1156 type-guard-stmt:
 
-  "<<or>> CLASS IS ( <derived-type-spec> ) [ <select-construct-name> ]"
+  "<<or>> CLASS IS ( <deferred-type> ) [ <select-construct-name> ]"
 
 Such that the entire rule becomes:
 
