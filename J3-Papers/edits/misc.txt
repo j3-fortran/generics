@@ -482,7 +482,7 @@ Clause 10: Expressions and  assignment
         item for deferred constant.  The lines should now read:
 
   (14) an ac-do-variable within an array constructor where each
-       scalar-int-expr of the correspo nding ac-implied-do-control is
+       scalar-int-expr of the corresponding ac-implied-do-control is
        a constant expression,
   (15) a constant expression enclosed in parentheses, or
   (16) a deferred constant,
