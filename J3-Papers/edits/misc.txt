@@ -226,7 +226,7 @@ Clause 7: Types
        <<or>> TYPEOF ( <data-ref> )
        <<or>> CLASSOF ( <data-ref> )"
 
-[68-31] Change C705 wording to be consintent with constraints just after it:
+[68:31] Change C705 wording to be consintent with constraints just after it:
 
   "C705 (R703) CLASS(<derived-type-spec>) shall specify an extensible
   type (7.5.7)."
