@@ -584,7 +584,7 @@ deferred interface block.
     "An interface block without ABSTRACT, DEFERRED, or a generic
      specification is a specific interface block."
 
-[336:2+] Insert a new paragraph:
+[336:3+] Insert a new paragraph:
 
     "An interface block introduced by DEFERRED INTERFACE is a deferred
      interface block. An interface body in a deferred interface block
