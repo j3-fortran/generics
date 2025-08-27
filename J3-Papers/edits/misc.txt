@@ -46,16 +46,6 @@ Clause 3:  Terms and definitions
   entity that determines deferred argument association"
 
 
-[32:16+] Insert new glossary term
-
-  "3.151b
-  [ultimately defined prior]
-  an entity that is accessed by host association and whose definition
-  appears before the scoping unit in which it is reference or is
-  ultimately defined prior in the host scoping unit"
-
-{UTI - is this still used? TLC}
-
 [24:3] 3.120 scoping unit: Change "or subprogram" to "subprogram,
        template construct, or requirement construct", such that the
        entire definition reads
@@ -74,6 +64,16 @@ Clause 3:  Terms and definitions
         <templated-function-subprogram> (R???), or
         <templated-subroutine-subprogram> (R???)"
 
+
+[32:16+] Insert new glossary term
+
+  "3.151b
+  [ultimately defined prior]
+  an entity that is accessed by host association and whose definition
+  appears before the scoping unit in which it is reference or is
+  ultimately defined prior in the host scoping unit"
+
+{UTI - is this still used? TLC}
 
 {UTI: instantiation association}
 
@@ -668,13 +668,8 @@ deferred interface block.
                                  <<or>> <deferred-proc>
                                  <<or>> <inline-instantiation>"
 
-[355:5+] Append 2 lines to R1525 actual-arg:
-
-      "<<or>> <deferred-proc>
-       <<or>> <inline-instantiation>
-
-  Extend R1524 <actual-arg> with <deferred-proc> and
-  <inline-instantiation> such that it reads:
+[355:5+] Extend R1524 <actual-arg> with <deferred-proc> and
+         <inline-instantiation> such that it now reads:
 
    "R1524 actual-arg <<is>> <expr>
                      <<or>> <variable>
