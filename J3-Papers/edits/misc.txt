@@ -536,7 +536,7 @@ Clause 14: Program units
               <<or>> <templated-function-subprogram>
               <<or>> <templated-subroutine-subprogram>"
 
-[326:2] In section 14.2.2 The USE statement and use assocation,
+[327:2] In section 14.2.2 The USE statement and use assocation,
         replace ", and namelist groups" with " namelist groups,
         templates, and templated procedures" such that the entire
         sentence now reads:
