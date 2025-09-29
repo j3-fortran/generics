@@ -481,13 +481,6 @@ Clause 10: Expressions and  assignment
 
 {This change is possibly not necessary.  Subgroup is not certain.}
 
-* 10.2.1.2 Intrinsic assignment statement
-
-{UTI Subgroup believes that the existing constraints on intrinsic
-assignment in 10.2.1.2 "Intrinsic assigment statement" are sufficient
-for the case of intrinsic assignment with deferred rank entities.  But
-would appreciate further feedback on this issue.}
-
 
 Clause 11: Execution control
 ----------------------------
@@ -542,12 +535,14 @@ Clause 14: Program units
 Clause 15: Procedures
 ---------------------
 
-{UTI: Do we want to include template procedure in section 15.2.2.2
-External, internal, and module procedures? }
+In 15.4.2.1 Interfaces and scopes insert a new bullet:
 
-* 15.4.2.1 Interfaces and scopes
+[333:24] Replace ", or" with "," at end of 2nd bullet.
+[333:26] Replace "." with ", or" at end of 3rd bullet
+[333:26+] Insert new bullet
 
-{UTI: first bullet should include template procedure?}
+       "an instantiation of a templated procedure, or a procedure
+        accessed from the instantiation of a template."
 
 [334:30+] In section 15.4.3.2 Interface block, in rule 1503
           interface-stmt, add a new line:
@@ -560,16 +555,12 @@ such that the rule now reads:
                             <<or>> ABSTRACT INTERFACE
                             <<or>> DEFERRED INTERFACE"
 
-{UTI: Need a constraint that only deferred procedures can appear in a
-deferred interface block.
-
 [335:23+] Introduce new constraint on rule 1503 interface-stmt:
 
       "C1503b Each <subroutine-name> or <function-name> of an
        <interface-body> that appears in a deferred interface block
        shall be the name of a deferred argument of the scoping unit in
        which the <interface-body> appears."
-}
 
 [336:2] In last sentence of p2, replace "with neither Abstract nor" with "without ABSTRACT, DEF        ERRED, or" such that the sentence now reads:
 
@@ -672,29 +663,6 @@ deferred interface block.
                      <<or>> <deferred-proc>
                      <<or>> <inline-instantiation>"
 
-[349:10] In section 15.5.2.5 Ordinary dummy variables, after the first
-         sentence of p3, insert a new sentence:
-
-    "If a kind-type parameter of the actual argument or its
-     corresponding dummy argument depends on a deferred constant, then
-     both shall have syntactically equivalent declarations for that
-     kind-type parameter."
-
-{deferred kind}
-
-[350:34+] After p15 introduce a new paragraph to address deferred rank
-          entities:
-
-    "If the rank of the actual argument or its corresponding dummy
-     argument depend on a deferred constant, then their ranks agree if
-     and only if they are declared with syntactically equivalent
-     expressions."
-
-{deferred rank}
-
-{UTI:  These changes to 15.5.2.5 may not be necessary.   Other words in new
-       15.4.3.4.5 may suffice.}
-
 [363:15+] In section 15.6.2.1 General, append new line to R1530 prefix-spec:
 
     " <<or>> TEMPLATE "
@@ -765,7 +733,12 @@ Clause 16: Intrinsic procedures and modules
           absent, or the executing image is the one identified by
           RESULT_IMAGE. Otherwise, A becomes undefined."
 
-{UTI:  Need something in 19.5.1 association}
+[576:17+] Insert new subclause:
+
+     "19.5.1.2b Deferred argument association
+
+         Deferred argument association is described in tt.xx.
+     "
 
 
 Annex A:
