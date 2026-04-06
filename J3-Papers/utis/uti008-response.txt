@@ -1,0 +1,32 @@
+To: J3                                                     J3/##-###
+From: Brad Richardson & Generics
+Subject: Response to UTI008
+Date: 
+
+Reference: 26-007r1
+
+UTI 008 states:
+
+    "Apparently, a procedure referenced within a templated procedure
+    may have an implicit interface. Is this an oversight, or have I
+    overlooked a constraint elsewhere? Or is it a deliberate design
+    decision?"
+
+In apparent reference to constraint:
+
+    C1612 A procedure referenced within a template or any nested
+          scope therein shall have an explicit interface.
+
+While a templated procedure is a template, subgroup agrees it would
+be easier to understand if this constraint was explicit about that.
+The following edit is thus proposed.
+
+[400:7] insert " or templated procedure" after "template",
+        such that the constraint now reads
+        "A procedure referenced within a template or templated
+        procedure or any nested scope therein shall have an
+        explicit interface."
+
+Also please delete UTI 008.
+
+--END--
