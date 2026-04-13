@@ -1,0 +1,22 @@
+To: J3                                                     J3/##-###
+From: Tom Clune
+Subject: Resolution of UTI009
+Date:
+
+References: 26-007r1
+
+Introduction:
+-------------
+The UTI correctly asserts that C1612 NOTE 1 mischaracterizes
+type-safety with regard to C1612.
+
+Subgroup agrees with the editor's suggestion to simply omit the note.
+
+Edits:
+------
+
+[400:8+] (16.3 Restriction on template definitions)
+
+   Delete Unresolved Technical Issue 009 including note.
+
+=== END ===
