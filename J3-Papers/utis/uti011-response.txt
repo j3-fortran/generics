@@ -1,0 +1,44 @@
+To: J3                                                     J3/##-###
+From: Brad Richardson & Generics
+Subject: Response to UTI 011
+Date: 
+
+Reference: 26-007r1
+
+UTI 011 states:
+
+    "Misplaced constraints?
+
+    The constraint on what may or may not appear in a type-attr-spec
+    surely belongs there, not here. Unless you want to explain on why
+    it may not appear? On checking, I see that it also appears in
+    type-attr-spec. It is unacceptable for it to be specified in both
+    places!
+
+    The constraint on what may or may not be a coarray surely belongs
+    in type-spec or CODIMENSION attribute, not here. Unless you want
+    to explain why? (I might guess that the reason is that there are
+    restrictions on what type a coarray may have, so having a coarray
+    of deferred type would mean applying those restrictions to the
+    instantiation argument, and that is not explicitly spelled out.)
+
+Indeed, C747 has already been edited to prohibit extending deferred
+types, so C1616 is redundant and should be removed.
+
+[402:9] Delete constraint C1616.
+
+Also, agree that the constraint on coarrays would be more appropriate
+with CODIMENSION.
+
+[123:4] Delete "or " from the sentence, and add the following
+        immediately preceding the ".", ", or of a deferred type
+        (16.4.1.2)", such that the whole constraint now reads:
+
+        "A coarray shall not be of type C_PTR or type C_FUNPTR from the
+        intrinsic module ISO_C_BINDING (19.3.2), of type TEAM_TYPE from
+        the intrinsic module ISO_FORTRAN_ENV (17.10.2.44), or of a
+        deferred type (16.4.1.2)."
+
+[402:10] Delete constraint C1617.
+
+--END--
