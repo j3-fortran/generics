@@ -1,0 +1,19 @@
+To: J3                                                     J3/##-###
+From: Tom Clune & generics						    
+Subject: Resolution of UTI019
+Date:
+
+References: 26-007r1
+
+Introduction:
+
+UTI019 correctly highlights the fact that a Note 5 in 16.4.1.2 is
+quite misleading when it suggests "Straightforward workarounds are
+possible."
+
+Edits:
+
+[403:1-] Delete last sentence of Note 5.
+
+=== END ===
+
