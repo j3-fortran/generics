@@ -13,8 +13,8 @@ and accepts the editor's proposed change.
 
 2. UTIs and subgroup responses
 
-UTI017 - 16.5.3 Template dependence
+Subgroup agrees with the editor's comments.
 
-Subgroup agrees. Note 2 can be deleted from page 407-408.
+[408:1-] 16.5.3 Template dependence  delete Note 2 in its entirety.
 
 --END--
