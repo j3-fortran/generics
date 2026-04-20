@@ -1,0 +1,24 @@
+To: J3                                                     J3/##-###
+From: Tom Clune						   
+Subject: Edits for UTI020
+Date:
+
+References: 26-007r1
+
+Introduction:
+
+UTI020 suggests that the subclause 16.5.4 Interpretation of template
+instantiation should be placed after dependent topics such as
+instantiation arguments.  Subgroup agrees.
+
+Edits:
+
+[408:1+] Delete subclause 16.5.4 Interpretation of template
+         instantiation.
+
+[413:10+] Introduce new subclause 16.5.6 Interpretation of template
+          instantions.  Copy the contents of the former subclause 16.5.4 in its
+          entirety.
+
+=== END ===
+
