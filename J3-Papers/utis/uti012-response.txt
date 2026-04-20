@@ -20,9 +20,12 @@ UTI 012 states:
     CODIMENSIONABLE/COINDEXABLE.
 
 To the extent that templates are not interoperating with coarrays
-they are also not interoperating with MPI. For example the following
+they are also not interoperating with MPI. The reasons are subtly
+different however. Upon further inspection, we have missed an
+important edit. For example, consider the following templates
+differing only in their use of coarray vs MPI.
 
-    TEMPLATE TMPL{T}
+    TEMPLATE TMPL_MPI{T}
       DEFERRED TYPE :: T
     CONTAINS
       SUBROUTINE DO_THING()
@@ -33,9 +36,7 @@ they are also not interoperating with MPI. For example the following
       END SUBROUTINE
     END TEMPLATE
 
-is just as invalid as the following
-
-    TEMPLATE TMPL{T}
+    TEMPLATE TMPL_COARR{T}
       DEFERRED TYPE :: T
     CONTAINS
       SUBROUTINE DO_THING()
@@ -45,9 +46,15 @@ is just as invalid as the following
       END SUBROUTINE
     END TEMPLATE
 
-Also, in cases that it would be valid to use MPI, like:
+In the former example it is invalid to pass a deferred type as an
+actual argument to an assumed-type dummy argument. In the later
+example it is invalid to perform coindexed access to a data
+element of deferred type.
 
-    TEMPLATE TMPL{T}
+It is worth noting that in cases that it would be valid to use MPI
+it is also valid to use a corray. Consider the following examples.
+
+    TEMPLATE TMPL_MPI{T}
       DEFERRED TYPE :: T
     CONTAINS
       SUBROUTINE DO_THING()
@@ -58,9 +65,7 @@ Also, in cases that it would be valid to use MPI, like:
       END SUBROUTINE
     END TEMPLATE
 
-It is also perfectly valid to use coarrays, like:
-
-    TEMPLATE TMPL{T}
+    TEMPLATE TMPL_COARR{T}
       DEFERRED TYPE :: T
     CONTAINS
       SUBROUTINE DO_THING()
@@ -80,7 +85,17 @@ prohibition on derived types with coarray potential subojbect
 components as instantiation arguments have precluded any future
 designs.
 
-The point about the deferred-type-attr is well taken. Edits as follows:
+The point about the deferred-type-attr is well taken.
+
+Edits as follows:
+
+[367:19-21] after "argument is" add " of a deferred type, or"
+
+            such that the sentence now reads:
+
+    "If the actual argument is of a deferred type, or of a derived
+    type that has type parameters, type-bound procedures, or final
+    subroutines, the dummy argument shall not be assumed-type."
 
 [402:1] delete "-list" from the syntax "deferred-type-attr-list"
         such that the rule becomes:
