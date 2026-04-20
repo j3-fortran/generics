@@ -13,7 +13,7 @@ possible."
 
 Edits:
 
-[403:1-] Delete last sentence of Note 5.
+[403:1-] Delete Note 5 in its entirety.
 
 === END ===
 
