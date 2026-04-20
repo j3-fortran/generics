@@ -16,8 +16,8 @@ Edits:
 [408:1+] Delete subclause 16.5.4 Interpretation of template
          instantiation.
 
-[413:10+] Introduce new subclause 16.5.6 Interpretation of template
-          instantions.  Copy the contents of the former subclause 16.5.4 in its
+[413:10+] Introduce new subclause 16.5.5+ Interpretation of template
+          instantiation.  Copy the contents of the former subclause 16.5.4 in its
           entirety.
 
 === END ===
