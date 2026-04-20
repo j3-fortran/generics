@@ -1,0 +1,110 @@
+To: J3                                                     J3/##-###
+From: Brad Richardson & Generics
+Subject: Response to UTI 012
+Date: 
+
+Reference: 26-007r1
+
+UTI 012 states:
+
+    "Not interoperating with coarrays is a big restriction.
+    Interoperating with OpenMP and MPI, but not with the Fortran
+    standard way of expressing parallelism, is not a good look.
+
+    Perhaps you want a CODIMENSIONABLE or COINDEXABLE
+    deferred-type-attr?
+
+    I further note that as written, there can be at most one 
+    deferred-type-attr and thus no need for a list or the constraints...
+    that would, of course, change if we did add
+    CODIMENSIONABLE/COINDEXABLE.
+
+To the extent that templates are not interoperating with coarrays
+they are also not interoperating with MPI. The reasons are subtly
+different however. Upon further inspection, we have missed an
+important edit. For example, consider the following templates
+differing only in their use of coarray vs MPI.
+
+    TEMPLATE TMPL_MPI{T}
+      DEFERRED TYPE :: T
+    CONTAINS
+      SUBROUTINE DO_THING()
+        USE MPI_F08
+        TYPE(T), ALLOCATABLE :: BUFF(:)
+        ...
+        CALL MPI_ISEND(BUFF, ...)
+      END SUBROUTINE
+    END TEMPLATE
+
+    TEMPLATE TMPL_COARR{T}
+      DEFERRED TYPE :: T
+    CONTAINS
+      SUBROUTINE DO_THING()
+        TYPE(T), ALLOCATABLE :: BUFF(:)[:]
+        ...
+        BUFF[...] = ...
+      END SUBROUTINE
+    END TEMPLATE
+
+In the former example it is invalid to pass a deferred type as an
+actual argument to an assumed-type dummy argument. In the later
+example it is invalid to perform coindexed access to a data
+element of deferred type.
+
+It is worth noting that in cases that it would be valid to use MPI
+it is also valid to use a corray. Consider the following examples.
+
+    TEMPLATE TMPL_MPI{T}
+      DEFERRED TYPE :: T
+    CONTAINS
+      SUBROUTINE DO_THING()
+        USE MPI_F08
+        REAL, ALLOCATABLE :: BUFF(:)
+        ...
+        CALL MPI_ISEND(BUFF, ...)
+      END SUBROUTINE
+    END TEMPLATE
+
+    TEMPLATE TMPL_COARR{T}
+      DEFERRED TYPE :: T
+    CONTAINS
+      SUBROUTINE DO_THING()
+        REAL, ALLOCATABLE :: BUFF(:)[:]
+        ...
+        BUFF[...] = ...
+      END SUBROUTINE
+    END TEMPLATE
+
+While subgroup agrees that integration of templates and coarrays
+is desirable, resource constraints make it unlikely we will be able
+to sufficiently design such an integration in time for F202Y. The
+COINDEXABLE attribute may very well be an appropriate method, but
+we feel it needs further exploration before incorporating. We do not
+believe the prohibition on coarrays of deferred type, nor the
+prohibition on derived types with coarray potential subojbect
+components as instantiation arguments have precluded any future
+designs.
+
+The point about the deferred-type-attr is well taken.
+
+Edits as follows:
+
+[367:19-21] after "argument is" add " of a deferred type, or"
+
+            such that the sentence now reads:
+
+    "If the actual argument is of a deferred type, or of a derived
+    type that has type parameters, type-bound procedures, or final
+    subroutines, the dummy argument shall not be assumed-type."
+
+[402:1] delete "-list" from the syntax "deferred-type-attr-list"
+        such that the rule becomes:
+
+    "deferred-type-declaration-stmt is DEFERRED TYPE
+        [, deferred-type-attr ] :: deferred-arg-name-list"
+
+[402:7-8] delete constraints C1614 and C1615
+
+[402:8+] delete UTI 012
+
+--END--
