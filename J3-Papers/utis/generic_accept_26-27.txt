@@ -15,7 +15,7 @@ or accepts the editor's proposed change.
 
 UTI026 [16.6 REQUIREMENT construct]
 
-Subgroup accepts the editor's change as listed in the UTI, page 413-414.
+Subgroup accepts the editor's change.
 
 UTI027 [16.8.4 Specification of deferred procedures]
 
