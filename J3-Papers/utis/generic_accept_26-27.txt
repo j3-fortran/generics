@@ -19,6 +19,6 @@ Subgroup accepts the editor's change.
 
 UTI027 [16.8.4 Specification of deferred procedures]
 
-Subgroup accepts the editor's change as listted in the UTI, page 418.
+Subgroup accepts the editor's change.
 
 --END--
