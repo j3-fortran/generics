@@ -1,0 +1,24 @@
+To: J3                                                     J3/##-###
+From: generics
+Subject: Resolution of UTI026, UTI027
+Date: 2026-April-09
+
+References: 26-007r1.pdf
+
+1. Introduction
+
+This paper records the generics subgroup disposition for those UTIs in
+the latest working draft where subgroup agrees with the issue raised
+or accepts the editor's proposed change.
+
+2. UTIs and subgroup responses
+
+UTI026 [16.6 REQUIREMENT construct]
+
+Subgroup accepts the editor's change as listed in the UTI, page 413-414.
+
+UTI027 [16.8.4 Specification of deferred procedures]
+
+Subgroup accepts the editor's change as listted in the UTI, page 418.
+
+--END--
