@@ -1,0 +1,40 @@
+To: J3                                                     J3/##-###
+From: Tom Clune & generics
+Subject: Syntax correction for template deferred args
+Date:
+
+References: 25-158r1, 25-204r3, 26-007r1
+
+Introduction:
+-------------
+
+Paper 25-158r1 changed the bracketing of deferred and instantiation
+arguments from "(...)" to "{...}".  However, some cases were missed
+when producing paper 25-15r1, and subsequently survived into 26-007r1.
+This paper corrects that oversight.
+
+Note that there are a few other occurrences that are fixed in papers
+tied to specific UTIs.
+
+Edits:
+------
+
+[398:13] (16.1.1 Syntax for the TEMPLATE construct) use curly braces
+such that the line now reads:
+
+  "R1602 template-stmt is TEMPLATE template-name
+         { [ deferred-arg-name-list ] }"
+
+[399:26] (16.2 Templated subprograms) Replace parens with curly braces
+such that the line now reads:
+
+  "R1611 templated-function-stmt is prefix FUNCTION template-name
+         { deferred-arg-name-list }"
+
+[399:28] (16.2 Templated subprograms) Delete extraneous "<" and
+replace parens with curly braces such that the line now reads:
+
+  "R1612 templated-subroutine-stmt is prefix SUBROUTINE template-name
+         { deferred-arg-name-list }"
+
+=== END ===
