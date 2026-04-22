@@ -1,0 +1,97 @@
+To: J3                                                     J3/##-###
+From: Brad Richardson & Generics
+Subject: Response to UTI007
+Date: 
+
+Reference: 26-007r1
+
+UTI 007 states:
+
+    "Wording improvement requested, but term is unacceptable anyway.
+
+    It is a REALLY bad idea to go around redefining common
+    English phrases.
+
+    Also, it is not clear what this is intended to achieve. If it is
+    intended to apply everywhere e.g. for image control statements
+    being “the same statement”, at a minimum all those need to be
+    hunted down and changed into hyperlinks so that at least the
+    electronic reader has a clue.
+
+    Actually, it would probably be better if the execution requirement
+    were written down in a subclause of templates as a specific
+    requirement, and those usages changed to link to that subclause
+    (the editor calls those things ”fake terms”). Maybe with a
+    cross-reference too."
+
+In reference to new definition:
+
+    3.121 same statement
+
+    the statement that is the one in which the subject appears, and if
+    the statement is within a template, is from the same instance of
+    the template
+
+Yes, this was an attempt to handle image control statements appearing
+in templates. The suggestion that we do this a better way is a valid
+point. Edits are provided.
+
+[24:20-22] delete definition of "same statement". Also delete UTI 007.
+
+[172:16] hyperlink "same statement" to new subclause 16.5.4.1 and add
+         reference to the subclause.
+
+[175:38] hyperlink "same statement" to new subclause 16.5.4.1 and add
+         reference to the subclause.
+
+[221:33] hyperlink "same statement" to new subclause 16.5.4.1 and add
+         reference to the subclause.
+
+[221:38] hyperlink "same statement" to new subclause 16.5.4.1 and add
+         reference to the subclause.
+
+[254:11] hyperlink "same statement" to new subclause 16.5.4.1 and add
+         reference to the subclause.
+
+[407:9+] add new subclause
+
+    16.5.4.1 Same statement requirements
+
+ALTERNATIVE A
+
+    If a statement that appears in a template has a requirement that
+    each participating image shall execute the same statement, that
+    statement shall be executed from the same instantiation of the
+    template.
+
+    NOTE
+    The effect is that each instantiation of a template is treated as
+    if it were making a copy (with substitutions) of the code in the
+    template, so that a statement in a template is not ``the same’’
+    when it is executed from different instantiations of the template.
+
+ALTERNATIVE B
+
+    If an image control statement or a collective subroutine
+    invocation appears in a template, when executed, each
+    participating image shall execute the same statement from the
+    same instantiation of the template.
+
+ALTERNATIVE C
+
+    When executed, a statement within a template considered to be the
+    same statement if and only if that statement is executed from
+    the same instantiation of that template.
+
+    NOTE
+    The effect is that for image control statements and collective
+    subroutines, participating images must execute the same statement
+    from the same instantiation of a template.
+
+[424:28] hyperlink "same statement" to new subclause 16.5.4.1 and add
+         reference to the subclause.
+
+[511:19] hyperlink "same statement" to new subclause 16.5.4.1 and add
+         reference to the subclause.
+
+--END--
