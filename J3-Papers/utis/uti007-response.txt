@@ -57,7 +57,6 @@ point. Edits are provided.
 
     16.5.4.1 Same statement requirements
 
-ALTERNATIVE A
 
     If a statement that appears in a template has a requirement that
     each participating image shall execute the same statement, the
