@@ -69,23 +69,6 @@ point. Edits are provided.
     template, so that a statement in a template is not ``the same’’
     when it is executed from different instantiations of the template.
 
-ALTERNATIVE B
-
-    If an image control statement or a collective subroutine
-    invocation appears in a template, when executed, each
-    participating image shall execute the same statement from the
-    same instantiation of the template.
-
-ALTERNATIVE C
-
-    When executed, a statement within a template considered to be the
-    same statement if and only if that statement is executed from
-    the same instantiation of that template.
-
-    NOTE
-    The effect is that for image control statements and collective
-    subroutines, participating images must execute the same statement
-    from the same instantiation of a template.
 
 [424:28] hyperlink "same statement" to new subclause 16.5.4.1 and add
          reference to the subclause.
