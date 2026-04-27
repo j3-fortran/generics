@@ -11,7 +11,7 @@ Introduction:
 The UTI highlights that the provided example lacks sufficient witter
 and uses features that are introduced in later section.  The UTI
 suggests instead to only have a simple example here and move the more
-complicated example down belowe.
+complicated example down below.
 
 Subgroup agrees with these suggestions.
 
