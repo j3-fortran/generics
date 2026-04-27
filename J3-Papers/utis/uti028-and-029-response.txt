@@ -57,7 +57,7 @@ following edits accomplish this.
     argument x are deferred rank. In any specific instantiation of
     the template, these entities will have a specific rank.
 
-    TEMPLATE example (acorn, s)
+    TEMPLATE example {acorn, s}
         DEFERRED INTEGER, PARAMETER :: acorn (..)
         DEFERRED INTEGER, PARAMETER :: s (*)
         REAL, PUBLIC, PARAMETER :: cone (s) = 1.0
