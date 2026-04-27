@@ -1,0 +1,35 @@
+To: J3                                                     J3/##-###
+From: Brad Richardson & Generics
+Subject: Response to UTI006
+Date: 
+
+Reference: 26-007r1
+
+UTI 006 states:
+
+    "Instantiating a template with 1+1 not equal to instantiating
+    it with 2?
+
+    This should be the same value for deferred constants at least.
+    Also, this term would apply to procedure instances too... that
+    seems a bit wonky.
+
+    It seems like this should just be properly described in a
+    subclause of templates."
+
+In reference to new definition:
+
+    3.120 same instance
+
+    instantiation of the same template with the same instantiation
+    arguments (3.87)
+
+This is already described correctly (or at least more correctly) in
+16.5.4 Interpretation of template instantiation. This definition is
+unnecessary.
+
+[24:16-18] delete definition of "same instance".
+
+Also please delete UTI 006.
+
+--END--
