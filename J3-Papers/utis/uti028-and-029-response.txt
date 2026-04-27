@@ -1,0 +1,122 @@
+To: J3                                                     J3/##-###
+From: Brad Richardson & Generics
+Subject: Response to UTIs 028 and 029
+Date: 
+
+Reference: 26-007r1
+
+UTI 028 states:
+
+    "deferred kind/rank incomplete
+
+    You specify that these depend “on the value of a deferred
+    argument” (making it a deferred constant), but the example (which
+    nonsensically calls everything implied-rank when deferred-rank is
+    sometimes intended) has things depending on stuff other than the
+    value, e.g. the size of a deferred constant.
+
+    Did not fix."
+
+UTI 029 states:
+
+    "Example says B is implied-rank but it is not.
+
+    Nor does B satisfy the definition of deferred rank.
+
+    I would guess that B is intended to be deferred rank.
+
+    X, Y, and Z are called implied-rank but they are not, but they do
+    satisfy the definition of deferred rank.
+
+    Not fixing until this is clarified."
+
+The distinction between implied-rank and deferred-rank is not really
+necessary, and we should just unify the two and make it coherent. The
+following edits accomplish this.
+
+[130:1-7+] Replace the entirety of subclause 8.5.8.8 with the following.
+
+    "8.5.8.8 Deferred and implied rank entities
+
+    A deferred rank entity is a variable or named constant whose rank
+    becomes defined only within the instantiation of a template. An
+    implied rank entity is one declared with an implied-rank-spec. A
+    deferred-rank entity is:
+
+    * an implied rank entity
+    * an entity whose rank depends on the value or size of a deferred
+      constant, or
+    * an entity whose rank depends on the rank of a deferred rank entity.
+
+    R829 implied-rank-spec is ..
+
+    NOTE
+
+    In the following example, the deferred constant acorn is
+    implied rank. The public named constant cone, and the dummy
+    argument x are deferred rank. In any specific instantiation of
+    the template, these entities will have a specific rank.
+
+    TEMPLATE example (acorn, s)
+        DEFERRED INTEGER, PARAMETER :: acorn (..)
+        DEFERRED INTEGER, PARAMETER :: s (*)
+        REAL, PUBLIC, PARAMETER :: cone (s) = 1.0
+    CONTAINS
+        SUBROUTINE sub (x)
+            REAL, RANK(RANK(acorn)) :: x
+            x = acorn
+        END SUBROUTINE
+    END TEMPLATE"
+
+[357:12-15] Replace the last three sentences of this paragraph with
+    "A kind type parameter that depends on a deferred attribute of
+    another entity is also a deferred kind type parameter."
+
+[358:6-] Replace the NOTE with the following one:
+
+    "NOTE Some examples of deferred rank entities are shown in the
+    following example template. C is declared as implied rank. B is
+    deferred rank because its rank depends on the size of the
+    deferred argument S. X, Y and Z are deferred-rank because their
+    ranks depend on the value of the deferred argument N.
+
+TEMPLATE EXAMPLE(C, S, N)
+    DEFERRED INTEGER, PARAMETER :: C(..) ! implied-shape & implied-rank
+    DEFERRED INTEGER, PARAMETER :: S(*), N
+    INTEGER, PARAMETER :: B(S) = 1 ! explicit-shape & deferred-rank
+CONTAINS
+    SUBROUTINE SUB(X)
+        INTEGER, RANK(N) :: X ! assumed-shape & deferred-rank
+        INTEGER :: Y([(i, i = 1, N)]) ! explicit-shape & deferred-rank
+        INTEGER, RANK(N), ALLOCATABLE :: Z ! deferred-shape & deferred-rank
+
+        call sub_explicit(C) ! valid, element order association
+        ! call sub_assumed(C) ! invalid, rank expressions don't match
+        ! call sub_same_rank(C) ! invalid, rank expressions don't match
+
+        call sub_explicit(X) ! valid, element order association
+        ! call sub_assumed(X) ! invalid, rank expressions don't match
+        call sub_same_rank(X) ! valid, rank expressions match
+
+        call sub_explicit(Y) ! valid, element order association
+        ! call sub_assumed(Y) ! invalid, rank expressions don't match
+        ! call sub_same_rank(Y) ! invalid, rank expressions don't match
+    END SUBROUTINE
+
+    SUBROUTINE SUB_EXPLICIT(X)
+        INTEGER :: X(10)
+    END SUBROUTINE
+
+    SUBROUTINE SUB_ASSUMED(X)
+        INTEGER :: X(:)
+    END SUBROUTINE
+
+    SUBROUTINE SUB_SAME_RANK(X)
+        INTEGER, RANK(N) :: X
+    END SUBROUTINE
+END TEMPLATE"
+
+[404:7+] In NOTE 2, change "assumed-or-implied-rank-spec" to just
+          "implied-rank-spec"
+
+--END--
