@@ -60,7 +60,7 @@ point. Edits are provided.
 ALTERNATIVE A
 
     If a statement that appears in a template has a requirement that
-    each participating image shall execute the same statement, that
+    each participating image shall execute the same statement, the
     statement shall be executed from the same instantiation of the
     template.
 
