@@ -80,7 +80,7 @@ following edits accomplish this.
     deferred argument S. X, Y and Z are deferred-rank because their
     ranks depend on the value of the deferred argument N.
 
-TEMPLATE EXAMPLE(C, S, N)
+TEMPLATE EXAMPLE{C, S, N}
     DEFERRED INTEGER, PARAMETER :: C(..) ! implied-shape & implied-rank
     DEFERRED INTEGER, PARAMETER :: S(*), N
     INTEGER, PARAMETER :: B(S) = 1 ! explicit-shape & deferred-rank
