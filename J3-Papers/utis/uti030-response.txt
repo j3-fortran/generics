@@ -1,0 +1,89 @@
+To: J3                                                     J3/##-###
+From: Brad Richardson & Generics
+Subject: Response to UTI 030
+Date: 
+
+Reference: 26-007r1
+
+UTI 030 states:
+
+    "This makes interface bodies even more inconsistent than before.
+
+    A module procedure interface body has host association but
+    inconsistently has the “default” implicit mapping table.
+    Unfortunately this was not noticed when we did submodules, so we
+    cannot fix it now without an incompatibility. But that is water
+    under the bridge.
+
+    Now we have, in a template or templated subprogram, interface
+    bodies for deferred procedures having host association and the host
+    (null) implicit mapping, but interface bodies for non-deferred
+    procedures do not have host association even though they have the
+    host (null) implicit mapping. This is the reverse of the
+    unfortunate mpib inconsistency, but in any case, it is a new
+    inconsistency.
+
+    Surely, in a template or templated subprogram, an interface body
+    for a non-deferred procedure is just as likely to need host
+    entities like the deferred types and constants?
+
+    This needs careful consideration. It would be better either for a
+    non-deferred interface body to have default mapping and not host
+    association, or to have host mapping and host association. Or at
+    least follow the mpib precedent and give it host assoc but the
+    default mapping! The current situation seems to be the worst
+    possible."
+
+To clarify the inconsistency here, we have effectively the following
+different situations.
+
+  INTERFACE
+    SUBROUTINE EXT_SUB()
+      ! No host association
+      ! implicit typing
+    END SUBROUTINE
+
+    MODULE SUBROUTINE MOD_SUB()
+      ! Host association
+      ! implicit typing
+    END MODULE
+  END INTERFACE
+
+  TEMPLATE TMPL(DEF_SUB)
+    DEFERRED INTERFACE
+      SUBROUTINE DEF_SUB()
+        ! Host association
+        ! No implicit typing
+      END SUBROUTINE
+    END INTERFACE
+
+    INTERFACE
+      SUBROUTINE EXT_SUB()
+        ! No host association
+        ! No implicit typing
+      END SUBROUTINE
+    END INTERFACE
+  END TEMPLATE
+
+I.e. we have different implicit typing behavior for the interface for
+EXT_SUB depending on where it appears. This was unintentional, and is
+undesirable. It would indeed be better if the behavior of the interface
+for EXT_SUB did not depend on its surrounding context. The following
+edits achieve this.
+
+[147:23-24] Change "contained in a TEMPLATE construct or templated
+            subprogram (16.2)" to "in a deferred interface block",
+            such that the bullet now reads:
+
+            "the default for a program unit, or an interface body that
+            is not in a deferred interface block, is default integer
+            if the letter is I, J, ..., or N and default real otherwise,"
+
+[147:27] Change "contained therein" to "in a deferred interface block",
+         such that the bullet now reads:
+
+         "the default for a TEMPLATE construct, templated subprogram,
+         or an interface body in a deferred interface block, is the
+         null mapping."
+
+--END--
