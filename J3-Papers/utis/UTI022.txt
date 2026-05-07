@@ -19,7 +19,7 @@ the restriction to avoid the complexity of whether the resulting
 instantiation then changes behavior when said procedure pointer is
 reassigned during execution or does the behavior remain rooted on the
 original association.  There may well be interesting use cases that
-could benefit frum such run-time variation, but we prefer a
+could benefit from such run-time variation, but we prefer a
 conservative approach for this first iteration.
 
 Edits:
