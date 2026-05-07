@@ -1,0 +1,35 @@
+To: J3                                                     J3/##-###
+From: Tom Clune & Generics
+Subject: Response to UTI022
+Date: 
+
+Reference: 26-007r1, 25-204r3.txt
+
+Introduction:
+=============
+
+UTI022 is concerned with an inconsistency regarding procedure
+pointers.  The original text in paper 25-204r3 has a constraint
+disallowing a specific procedure that is a procedure pointer as an
+instantiation argument.  But there was no analogous constraint on
+procedure pointers accessed via a generic name.
+
+Subgroup agrees that this inconsistency should be fixed.  We intended
+the restriction to avoid the complexity of whether the resulting
+instantiation then changes behavior when said procedure pointer is
+reassigned during execution or does the behavior remain rooted on the
+original association.  There may well be interesting use cases that
+could benefit from such run-time variation, but we prefer a
+conservative approach for this first iteration.
+
+Edits:
+======
+
+Subgroup agrees with the edits already provided by the editor.
+
+[411-11+] 16.5.5.4 Instantiation association of a deferred procedure
+
+Remove the entirety of Unresolved Technical Issue 022
+
+  
+===END===
