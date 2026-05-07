@@ -1,0 +1,34 @@
+To: J3                                                     J3/##-###
+From: Tom Clune & generics						    
+Subject: Edits for UTI021
+Date:
+
+References: 26-007r1
+
+Introduction:
+=============
+
+UTI021 contains 2 concerns: (1) that a paragraph is a "wall of text",
+and (2) deleting a paragraph that defined a term that is not actually
+used.  Concern (2) was handled directly by the editor and subgroup
+agrees.  This paper contains edits that attempt to fix concern (1)
+
+
+Edits:
+======
+
+[409:14-22] 16.5.5.1 Instantiation arguments
+
+  Replace the entirety of paragraph 2 with:
+
+   "The instantiation argument list identifies a one-to-one
+   correspondence between the instantiation arguments and the deferred
+   arguments of the referenced template or requirement.  If an
+   argument keyword appears, the instantiation argument corresponds to
+   the deferred argument with the same name, and all subsequent
+   instantiation arguments shall also use keyword association.  In the
+   absence of an argument keyword, the instantiation argument
+   corresponds to the deferred argument occupying the corresponding
+   position in the deferred argument list."
+
+===END===
