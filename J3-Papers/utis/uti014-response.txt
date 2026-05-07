@@ -16,4 +16,7 @@ UTI014 [16.5.1 The INSTANTIATE statement]
 Subgroup agrees with the editor's comment. The noted constraints
 were deleted in 26-007r1.pdf.
 
+[405:20+] Delete the entirety of UTI014.
+{Note to editor: tail end of UTI is not showing in red text.}
+
 --END--
