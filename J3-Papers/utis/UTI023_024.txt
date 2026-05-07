@@ -1,0 +1,23 @@
+To: J3                                                     J3/##-###
+From: Tom Clune & Generics
+Subject: Response to UTI023 and UTI024
+Date: 
+
+Reference: 26-007r1
+
+
+UTI023 and UTI024 observe that there are a several problems with
+statements about the instantiation association of deferred procedures.
+The editor provided alternate wording.
+
+Subgroup agrees with the editor's change.
+
+
+Edits:
+=====
+
+[411:1-] 16.5.5.4 Instantiation association of a deferred procedure
+
+Remove the entirety of UTI 023 and UTI 024.
+
+===END===
