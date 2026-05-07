@@ -9,7 +9,7 @@ Introduction:
 =============
 
 UTI022 is concerned with an inconsistency regarding procedure
-pointers.  The original text in papre 25-204r3 has a constraint
+pointers.  The original text in paper 25-204r3 has a constraint
 disallowing a specific procedure that is a procedure pointer as an
 instantiation argument.  But there was no analogous constraint on
 procedure pointers accessed via a generic name.
