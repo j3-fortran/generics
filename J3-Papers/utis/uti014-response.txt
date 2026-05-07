@@ -1,0 +1,19 @@
+To: J3                                                     J3/##-###
+From: generics
+Subject: Resolution of UTI014
+Date: 2026-May-07
+
+References: 26-007r1.pdf
+
+1. Introduction
+
+This paper records the generics subgroup disposition for UTI014.
+
+2. UTI and subgroup response
+
+UTI014 [16.5.1 The INSTANTIATE statement]
+
+Subgroup agrees with the editor's comment. The noted constraints
+were deleted in 26-007r1.pdf.
+
+--END--
