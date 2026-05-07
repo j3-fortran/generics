@@ -26,7 +26,7 @@ Edits:
    arguments of the referenced template or requirement.  If an
    argument keyword appears, the instantiation argument corresponds to
    the deferred argument with the same name, and all subsequent
-   instantiation arguments shall also use keyword association.  In the
+   instantiation arguments in the list shall also use keyword association.  In the
    absence of an argument keyword, the instantiation argument
    corresponds to the deferred argument occupying the corresponding
    position in the deferred argument list."
