@@ -1,0 +1,177 @@
+To: J3                                                     J3/##-###
+From: Brad Richardson & Generics
+Subject: Response to UTIs 018, 015 and 016
+Date: 
+
+Reference: 26-007r1
+
+UTI 018 states:
+
+    "Useless text left behind.
+
+    I rewrote the above text because the paper was wrong, but in any
+    case, I do not see anywhere it is useful."
+
+UTI 015 states:
+
+    "Omitted weird and ineffectual constraints.
+
+    Ctt43b is moot because you cannot instantiate a TEMPLATE construct
+    until after it has been defined. That is what “previously defined”
+    means.
+
+    Ctt43c is ineffectual because local names identify local entities.
+    Those may be use-associated with entities in templates, but anyway,
+    they cannot even exist until the template has been instantiated.
+
+    Ctt43b A template construct shall be ultimately defined prior to
+    any entity that depends on it.
+
+    Ctt43c A name that appears in a template shall not identify any
+    entity that depends on that template."
+
+UTI 016 states:
+
+    "Rules prohibit things already prohibited.
+
+    TYPE(t) :: x
+
+    is invalid unless TYPE t is previously defined. Which it is not.
+
+    There may or may not be a hole somewhere here, but if so, this
+    does not look like the way to fill it.
+
+    An entity depends on an instantiation I if the entity's declaration
+    or definition
+    - contains the instantiation I
+    - contains a name that identifies an entity from the instantiation I
+    - contains a name that identifies an entity that depends on the
+      instantiation I
+
+    Ctt43d A name that appears as an instantiation argument shall not
+    identify an entity that depends on that instantiation.
+
+    NOTE 1
+
+    The following is an example that is invalid due to Ctt43b.
+
+    template tmpl()
+        type :: U
+            type(T) :: x
+        end type
+    end template
+
+    instantiate tmpl()
+
+    type :: T
+        type(U) :: x
+    end type"
+
+Subgroup concedes that the above constraints and examples could
+certainly be improved. However, we do believe that they address
+legitimate issues. Specifically, we don't think relying on
+"previously defined" sufficiently prevents all bad cases.
+
+In 20.5.1.4 Host association, "A derived-type definition, interface
+body, internal subprogram, module subprogram, or submodule has access
+to entities from its host as specified in 8.9. A host-associated
+variable is considered to have been previously declared; any other
+host-associated entity is considered to have been previously defined."
+Subgroup is concerned that the following examples, that are
+problematic, would otherwise be considered valid if not for the
+definition and restrictions on "dependence".
+
+MODULE A
+    TEMPLATE TMPL{}
+        TYPE :: U
+            TYPE(T) :: X
+        END TYPE
+    END TEMPLATE
+
+    INSTANTIATE TMPL{}
+
+    TYPE :: T
+        TYPE(U) :: X
+    END TYPE
+END MODULE
+
+According to the above excerpt, within template TMPL, type T is
+accessed via host association, and because of that is considered
+previously defined, so it is valid to use it within the definition of
+type U. Within module a, type U becomes defined by instantiation of
+template TMPL. This occurs before the definition of type T, and so it
+is previously defined, and valid to be used within the definition of
+type T. This is clearly a circular dependence, and we want to make
+sure it is invalid.
+
+MODULE A
+    TEMPLATE T{}
+    CONTAINS
+        SUBROUTINE S1()
+            CALL S2()
+        END SUBROUTINE
+    END TEMPLATE
+CONTAINS
+    SUBROUTINE S2()
+        INSTANTIATE T{}
+        CALL S1()
+    END SUBROUTINE
+END MODULE
+
+In the above example, it would at first seem that the reference to S2
+in template T is valid since it is accessed via host association, and
+its interface is therefore considered previously defined. However,
+because S2 instantiates T, it depends on T, and therefore cannot have
+a reference to it appear in T.
+
+MODULE B
+    TEMPLATE T{S}
+        DEFERRED INTERFACE
+            SUBROUTINE S()
+            END SUBROUTINE
+        END INTERFACE
+    CONTAINS
+        SUBROUTINE S1()
+            CALL S()
+        END SUBROUTINE
+    END TEMPLATE
+
+    INSTANTIATE T{S2}
+CONTAINS
+    SUBROUTINE S2()
+        CALL S1()
+    END SUBROUTINE
+END MODULE
+
+In the above example, it would at first seem that S2 is a valid
+instantiation argument to T, as it satisfies the interface. However,
+because S2 references S1, an entity from the instantiation in which
+it appears as an instantiation argument, the example is invalid.
+
+In order to ensure the above and other problematic examples are
+explicitly invalid, the following edits should be applied.
+
+[407:] Delete the entirety of UTIs 018, 015, and 016.
+
+[407:] Insert new constraint C1624a, "A name that appears in a
+       template shall not identify any entity that is host associated
+       with an entity that depends on that template."
+
+[407:] Insert new paragraph 
+
+       An entity depends on an instantiation I if the entity's
+       declaration or definition
+       - contains the instantiation I
+       - uses, in any way, an entity from the instantiation I
+       - uses, in any way, an entity that depends on the instantiation I
+
+[407:] Insert new constraint C1624b, "An instantiation argument shall
+       not depend on the instantiation in which it appears."
+
+[643:24] before "submodule" delete "or " and after "submodule" insert
+         ", or template" such that the sentence now reads "A
+         derived-type definition, interface body, internal subprogram,
+         module subprogram, or submodule has access to entities from
+         its host as specified in 8.9."
+
+--END--
