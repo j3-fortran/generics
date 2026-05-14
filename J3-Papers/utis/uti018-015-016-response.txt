@@ -171,7 +171,7 @@ explicitly invalid, the following edits should be applied.
 [643:24] before "submodule" delete "or " and after "submodule" insert
          ", or template" such that the sentence now reads "A
          derived-type definition, interface body, internal subprogram,
-         module subprogram, or submodule has access to entities from
+         module subprogram, submodule, or template has access to entities from
          its host as specified in 8.9."
 
 --END--
