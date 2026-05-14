@@ -159,7 +159,7 @@ explicitly invalid, the following edits should be applied.
        template shall not identify any entity that is host associated
        with an entity that depends on that template."
 
-[407:] Insert new paragraph 
+[407:] Insert new paragraph after constraint C1624a
 
        An entity depends on an instantiation I if the entity's
        declaration or definition
@@ -167,8 +167,9 @@ explicitly invalid, the following edits should be applied.
        - uses, in any way, an entity from the instantiation I
        - uses, in any way, an entity that depends on the instantiation I
 
-[407:] Insert new constraint C1624b, "An instantiation argument shall
-       not depend on the instantiation in which it appears."
+[407:] Insert new constraint C1624b after the previous paragraph,
+       "An instantiation argument shall not depend on the instantiation
+       in which it appears."
 
 [643:24] before "submodule" delete "or " and after "submodule" insert
          ", or template" such that the sentence now reads "A
