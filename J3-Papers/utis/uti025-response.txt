@@ -1,0 +1,62 @@
+To: J3                                                     J3/##-###
+From: Brad Richardson & Generics
+Subject: Response to UTI025
+Date: 
+
+Reference: 26-007r1
+
+UTI 025 states:
+
+    "Why is the that constraint needed?
+
+    One immediately wonders if a nonintrinsic procedure can appear
+    where it is not valid...
+
+    Perhaps a NOTE is in order explaining this, because otherwise
+    vendors might omit the checks it must be requiring.
+
+    This seems like a very ad-hoc extra requirement on the
+    instantiation argument, requiring analysis of the entire template
+    not just the declarations.
+
+    It contrasts strongly with the deferred types, where we have put
+    onerous limitations on the instantiation argument just so that the
+    compiler does not need to say something like "oh, you can't have
+    this type here, because an object of this type was assigned to
+    somewhere in the template"."
+
+Subgroup agrees that constraint C1635 is not correctly stated. The
+intent is to enable the use of intrinsic procedures as instantiation
+arguments, but it is not well defined what specifics exist, or what
+the interfaces of those specifics exactly are.
+
+[413:8-10] Delete constraint C1635.
+
+[413:10+] Insert the following paragraph.
+          "If an intrinsic procedure could be used as if it had the
+          interface specified for a deferred procedure, it is valid
+          to use as an instantiation argument corresponding to that
+          deferred argument."
+
+[413:10+] Insert the following as a NOTE.
+          "Despite it not being entirely clear whether there exists
+           a specific intrisic procedure with the exact
+           characteristics of a particular interface, the following
+           example is still considered valid.
+
+           TEMPLATE DEMO{T, REDUCTION}
+               DEFERRED TYPE :: T
+               DEFERRED INTERFACE
+                   PURE FUNCTION REDUCTION(A)
+                       TYPE(T), INTERFACE(IN) :: A(:)
+                       TYPE(T) :: REDUCTION
+                   END FUNCTION
+               END INTERFACE
+           END TEMPLATE
+
+           INSTANTIATE DEMO{REAL, SUM}
+           INSTANTIATE DEMO{INTEGER, PRODUCT}"
+
+[413:10+] Delete UTI 025
+
+--END--
