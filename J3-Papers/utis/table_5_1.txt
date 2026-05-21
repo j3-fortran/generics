@@ -1,0 +1,30 @@
+To: J3                                                     J3/##-###
+From: Tom Clune & generics
+Subject: Corrections to Table 5.1 Statement Order
+Date:
+
+References: 26-007r1, 26-125r1, 25-204r3
+
+Intorduction:
+-------------
+
+When incorporating paper 25-204r3 into the current 26-007r1, the
+editor reject some changes to Table 5.1 (editors report 26-125r1):
+
+       "a TEMPLATE is not a program unit or subprogram.  note that we
+        have ordering requirements for BLOCK constructs, derived-type
+        definitions, etc., and these do not appear in this table for
+        the same reason."
+
+Subgroup believes that the stronger reason for why the other constructs listed by the editor do not appear inside the table is that they generally have much simpler ordering requirements than those that do appear.  In that regard, the TEMPLATE construct is more akin to program units than derived types, for example.
+
+Edits:
+------
+
+[50:9+] Update first line in table 5.1, to include TEMPLATE such that
+        it now reads:
+
+   "PROGRAM, FUNCTION, SUBROUTINE, MODULE, SUBMODULE, TEMPLATE, or
+    BLOCK DATA statement."
+
+===END===
