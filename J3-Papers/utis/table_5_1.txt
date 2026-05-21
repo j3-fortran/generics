@@ -16,13 +16,7 @@ editor reject some changes to Table 5.1 (editors report 26-125r1):
         definitions, etc., and these do not appear in this table for
         the same reason."
 
-While agreeing that templates are not program units, subgroup
-disagrees with the editor's decision, and asserts that TEMPLATES are
-of sufficient priority and complexity to worthy of inclusion in the
-table.  The closest analog of TEMPLATE is *not* derived-type
-definitions, but rather *modules*, and nothing in the first line of
-the table states that the listed constructs are all program units,
-though that is certainly the current state of affairs.
+Subgroup believes that the stronger reason for why the other constructs listed by the editor do not appear inside the table is that they generally have much simpler ordering requirements than those that do appear.  In that regard, the TEMPLATE construct is more akin to program units than derived types, for example.
 
 Edits:
 ------
