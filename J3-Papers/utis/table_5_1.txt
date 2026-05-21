@@ -27,7 +27,7 @@ though that is certainly the current state of affairs.
 Edits:
 ------
 
-[48:1+] Update first line in table 5.1, to include TEMPLATE such that
+[50:9+] Update first line in table 5.1, to include TEMPLATE such that
         it now reads:
 
    "PROGRAM, FUNCTION, SUBROUTINE, MODULE, SUBMODULE, TEMPLATE, or
