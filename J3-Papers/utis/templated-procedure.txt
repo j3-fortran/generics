@@ -16,7 +16,7 @@ Edits:
 
 Replace "templated procedure" with "templated subprogram" throughout:
 
-[399:3] C1610
+[400:3] C1610
 
 [406:16]  16.5.2  Inline instantiation of templated procedures
 
