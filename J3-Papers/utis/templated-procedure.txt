@@ -1,0 +1,24 @@
+To: J3                                                     J3/##-###
+From: Tom Clune & generics
+Subject: Fixes for "templated procedure"
+Date:
+
+References: 26-007r1, 26-125r1, 25-204r3
+
+Introduction:
+-------------
+
+When incorporating 25-204r3, the editor (rightly) replaced "templated
+procedure" with "templated subprogram".  Some such items were missed.
+
+Edits:
+------
+
+Replace "templated procedure" with "templated subprogram" throughout:
+
+[399:3] C1610
+
+[406:16]  16.5.2  Inline instantiation of templated procedures
+
+===END===
+
