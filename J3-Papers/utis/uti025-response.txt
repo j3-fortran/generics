@@ -30,8 +30,6 @@ intent is to enable the use of intrinsic procedures as instantiation
 arguments, but it is not well defined what specifics exist, or what
 the interfaces of those specifics exactly are.
 
-[413:8-10] Delete constraint C1635.
-
 [413:4] At the beginning of the sentence insert "If it is not an
         intrinsic procedure, " such that the constraint now reads
         "The instantiation procedure corresponding to a deferred
@@ -42,6 +40,8 @@ the interfaces of those specifics exactly are.
         procedure may correspond to a deferred procedure that is not
         simple, and an elemental procedure may correspond to a deferred
         procedure that is not elemental."
+
+[413:8-10] Delete constraint C1635.
 
 [413:10+] Insert the following paragraph.
           "If an intrinsic procedure could be used as if it had the
