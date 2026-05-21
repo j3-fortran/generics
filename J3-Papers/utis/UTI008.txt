@@ -7,7 +7,7 @@ Reference: 26-007r1
 
 UTI 008 states:
 
-    "Apparently, a procedure referenced within a templated procedure
+    "Apparently, a procedure referenced within a templated subprogram
     may have an implicit interface. Is this an oversight, or have I
     overlooked a constraint elsewhere? Or is it a deliberate design
     decision?"
@@ -24,7 +24,7 @@ The following edit is thus proposed.
 [400:7] insert " or templated subprogram" after "template",
         such that the constraint now reads
         "A procedure referenced within a template or templated
-        procedure or any nested scope therein shall have an
+        subprogram or any nested scope therein shall have an
         explicit interface."
 
 Also please delete UTI 008.
