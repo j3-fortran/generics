@@ -21,10 +21,10 @@ While a templated procedure is a template, subgroup agrees it would
 be easier to understand if this constraint was explicit about that.
 The following edit is thus proposed.
 
-[400:7] insert " or templated procedure" after "template",
+[400:7] insert " or templated subprogram" after "template",
         such that the constraint now reads
         "A procedure referenced within a template or templated
-        procedure or any nested scope therein shall have an
+        subprogram or any nested scope therein shall have an
         explicit interface."
 
 Also please delete UTI 008.
