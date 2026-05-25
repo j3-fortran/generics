@@ -3,7 +3,7 @@ From: generics
 Subject: Resolution of UTI026, UTI027
 Date: 2026-April-09
 
-References: 26-007r1.pdf
+References: 26-007r1
 
 1. Introduction
 
