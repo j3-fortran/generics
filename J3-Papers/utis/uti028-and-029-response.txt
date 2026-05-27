@@ -9,8 +9,8 @@ UTI 028 states:
 
     "deferred kind/rank incomplete
 
-    You specify that these depend “on the value of a deferred
-    argument” (making it a deferred constant), but the example (which
+    You specify that these depend "on the value of a deferred
+    argument" (making it a deferred constant), but the example (which
     nonsensically calls everything implied-rank when deferred-rank is
     sometimes intended) has things depending on stuff other than the
     value, e.g. the size of a deferred constant.

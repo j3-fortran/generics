@@ -113,6 +113,7 @@ m = iterate{INTEGER,7,increment}(10) ! yields 17
 y = iterate{REAL,4,times2}(7.)       ! yields 102
 "
 
-[406:21+] (16.5.2 The Inline instantiation of templated procedures)   Change the existing note to be Note 2.
+[406:21+] (16.5.2 The Inline instantiation of templated procedures)
+    Change the existing note to be Note 2.
 
 === END ===
