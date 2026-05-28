@@ -1,0 +1,28 @@
+To: J3                                                     J3/##-###
+From: Brad Richardson & Generics
+Subject: Extend syntax for procedure reference
+Date: 
+
+Reference: 26-007r1
+
+The edits for templates included a syntax term for inline
+instantiation of a templated procedure, but inadvertantly
+forgot to include it in the syntax for a procedure reference.
+The following edits correct this oversight.
+
+[363:1-3] Add inline-instantiation to R1522, so that it now reads
+          R1522 procedure-designator is procedure-name
+                                     or proc-component-ref
+                                     or data-ref % binding-name
+                                     or inline-instantiation
+
+[363:14-19] Add inline-instantiation to R1524, so that it now reads
+            R1524 actual-arg is expr
+                             or variable
+                             or procedure-name
+                             or proc-component-ref
+                             or inline-instantiation
+                             or conditional-arg
+                             or alt-return-spec
+
+--END--
