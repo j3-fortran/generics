@@ -17,7 +17,7 @@ UTI 015 states:
     "Omitted weird and ineffectual constraints.
 
     Ctt43b is moot because you cannot instantiate a TEMPLATE construct
-    until after it has been defined. That is what “previously defined”
+    until after it has been defined. That is what "previously defined"
     means.
 
     Ctt43c is ineffectual because local names identify local entities.

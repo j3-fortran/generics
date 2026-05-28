@@ -17,8 +17,8 @@ Edits:
          instantiation.
 
 [413:10+] Introduce new subclause 16.5.5+ Interpretation of template
-          instantiation.  Copy the contents of the former subclause 16.5.4 in its
-          entirety.
+          instantiation.  Copy the contents of the former subclause
+          16.5.4 in its entirety.
 
 === END ===
 

@@ -10,7 +10,7 @@ UTI 030 states:
     "This makes interface bodies even more inconsistent than before.
 
     A module procedure interface body has host association but
-    inconsistently has the “default” implicit mapping table.
+    inconsistently has the "default" implicit mapping table.
     Unfortunately this was not noticed when we did submodules, so we
     cannot fix it now without an incompatibility. But that is water
     under the bridge.

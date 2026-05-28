@@ -16,7 +16,11 @@ editor reject some changes to Table 5.1 (editors report 26-125r1):
         definitions, etc., and these do not appear in this table for
         the same reason."
 
-Subgroup believes that the stronger reason for why the other constructs listed by the editor do not appear inside the table is that they generally have much simpler ordering requirements than those that do appear.  In that regard, the TEMPLATE construct is more akin to program units than derived types, for example.
+Subgroup believes that the stronger reason for why the other
+constructs listed by the editor do not appear inside the table is that
+they generally have much simpler ordering requirements than those that
+do appear.  In that regard, the TEMPLATE construct is more akin to
+program units than derived types, for example.
 
 Edits:
 ------
