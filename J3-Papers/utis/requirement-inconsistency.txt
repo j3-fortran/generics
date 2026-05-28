@@ -1,0 +1,15 @@
+To: J3                                                     J3/##-###
+From: Brad Richardson & Generics
+Subject: Response to UTI025
+Date: 
+
+Reference: 26-007r1
+
+In subclause 16.1.1 there is rule R1605, which contradicts the
+constraint C1636 in subclause 16.6. The intention was for
+requirements to only be defined in modules or a main program,
+so the following edit removes it from rule R1605.
+
+[398:22] remove production "requirement-construct" from rule R1605.
+
+--END--
