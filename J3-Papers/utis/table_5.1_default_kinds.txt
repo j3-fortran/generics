@@ -1,0 +1,17 @@
+To: J3                                                     J3/##-###
+From: Tom Clune
+Subject: Edits for Table 5.1 and DEFAULT KIND
+Date:
+
+References: 26-007r1
+
+Table 5.1 provides requirements on statement ordering.  With the
+introduction of DEFAULT KIND, the table should be extended.
+
+Edits:
+
+[50:9+] Table 5.1 -- Requirements on Statement Ordering
+
+    Introduce a new box line under IMPORT statements with content "DEFAULT KIND".
+
+===END===
