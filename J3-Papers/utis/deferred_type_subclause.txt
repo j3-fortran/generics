@@ -22,7 +22,7 @@ constraints.
 Edits:
 ======
 
-[51:27+]  After 5.4.1.3 Derived type, add a new subclause:
+[54:10+]  After 5.4.1.3 Derived type, add a new subclause:
 
   "5.4.1.3+ Deferred type
 
