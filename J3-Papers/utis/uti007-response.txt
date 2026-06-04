@@ -41,7 +41,7 @@ point. Edits are provided.
 
 
 
-[24:20-22] delete definition of "same statement". Also delete UTI 007.
+[24:22] Delete UTI 007.
 
 [172:16] hyperlink "same statement" to new subclause 16.5.4.1 and add
          reference to the subclause.
