@@ -32,7 +32,7 @@ In reference to new definition:
     the statement is within a template, is from the same instance of
     the template
 
-Yes, this was an attempt to handle image control statements appearing
+Yes, this was an attempt to handle image control statements and collective subroutines appearing
 in templates. The suggestion that we do this a better way is a valid
 point. Edits are provided.
 
