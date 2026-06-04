@@ -25,4 +25,17 @@ The following edits correct this oversight.
                              or conditional-arg
                              or alt-return-spec
 
+[409:8+] Add inline-instantiation to R1631, so that it now reads
+         R1631 instantiation-arg is constant-expr
+                                 or type-spec
+                                 or generic-spec
+                                 or inline-instantiation
+                                 or procedure-name
+
+[411:8-9] change " or procedure-name" to ", inline-instantiation,
+          or procedure-name" so that the constraint now reads
+          "An instantiation-arg that corresponds to a deferred
+          procedure shall be a generic-spec, inline-instantiation,
+          or procedure name."
+
 --END--
