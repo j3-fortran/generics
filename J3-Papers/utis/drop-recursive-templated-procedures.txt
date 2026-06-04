@@ -7,7 +7,7 @@ Reference: 26-007r1, 26-125r1
 
 In 26-125r1 the editor comments that the Note in 16.5.2 is "obvious".
 The idea that a templated subprogram cannot instantiate itself is in
-fact pretty clear, however the idea of a template subprogramming
+fact pretty clear, however the idea of a template subprogram
 calling itself recursively is less obvious, and in fact doesn't seem
 doable. Specifically, the name refers to a template, and so it is
 not valid to reference it as though it were a procedure. The following
