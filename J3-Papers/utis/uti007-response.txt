@@ -32,53 +32,44 @@ In reference to new definition:
     the statement is within a template, is from the same instance of
     the template
 
-Yes, this was an attempt to handle image control statements and collective subroutines appearing
-in templates. In addition, it was realized that a similar problem also 
-applies to invocation of statements with "same statement" requirements
-appearing in generic subprograms.
-The suggestion that we do this a better way is a valid
+Yes, this was an attempt to handle image control statements and
+collective subroutines appearing in templates. In addition, it was
+realized that a similar problem also  applies to invocation of
+statements with "same statement" requirements appearing in generic
+subprograms. The suggestion that we do this a better way is a valid
 point. Edits are provided.
 
+[10:35+] Add "corresponding statement" with the following definition,
+         "same statement that, if within a template is from the same 
+         instance of the template, or if within a generic subprogram
+         is from the same specific procedure."
 
+[24:20-22] delete definition of "same statement".
 
 [24:22] Delete UTI 007.
 
-[172:16] hyperlink "same statement" to new subclause 16.5.4.1 and add
-         reference to the subclause.
+[172:16] change "same statement" to "corresponding statement" and link
+         to definition.
 
-[175:38] hyperlink "same statement" to new subclause 16.5.4.1 and add
-         reference to the subclause.
+[175:38] change "same statement" to "corresponding statement" and link
+         to definition.
 
-[221:33] hyperlink "same statement" to new subclause 16.5.4.1 and add
-         reference to the subclause.
+[221:33] change "same statement" to "corresponding statement" and link
+         to definition.
 
-[221:38] hyperlink "same statement" to new subclause 16.5.4.1 and add
-         reference to the subclause.
+[221:38] change "same statement" to "corresponding statement" and link
+         to definition.
 
-[254:11] hyperlink "same statement" to new subclause 16.5.4.1 and add
-         reference to the subclause.
+[254:11] change "same statement" to "corresponding statement" and link
+         to definition.
 
-[407:9+] add new subclause
+[254:14] change "same statement" to "corresponding statement" and link
+         to definition.
 
-    16.5.4.1 Same statement requirements
+[424:28] change "same statement" to "corresponding statement" and link
+         to definition.
 
-
-    If a statement that appears in a template has a requirement that
-    each participating image shall execute the same statement, the
-    statement shall be executed from the same instantiation of the
-    template.
-
-    NOTE
-    The effect is that each instantiation of a template is treated as
-    if it were making a copy (with substitutions) of the code in the
-    template, so that a statement in a template is not ``the same’’
-    when it is executed from different instantiations of the template.
-
-
-[424:28] hyperlink "same statement" to new subclause 16.5.4.1 and add
-         reference to the subclause.
-
-[511:19] hyperlink "same statement" to new subclause 16.5.4.1 and add
-         reference to the subclause.
+[511:19] change "same statement" to "corresponding statement" and link
+         to definition.
 
 --END--
