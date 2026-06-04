@@ -1,7 +1,7 @@
-To: J3                                                     J3/##-###
+To: J3                                                     J3/26-150
 From: Brad Richardson & Generics
 Subject: Response to UTI025
-Date: 
+Date: 2026-May-26
 
 Reference: 26-007r1
 
@@ -44,10 +44,10 @@ the interfaces of those specifics exactly are.
 [413:8-10] Delete constraint C1635.
 
 [413:10+] Insert the following paragraph.
-          "If an intrinsic procedure could be used as if it had the
-          interface specified for a deferred procedure, it is valid
-          to use as an instantiation argument corresponding to that
-          deferred argument."
+          "If an intrinsic procedure or operation could be used as if
+          it had the interface specified for a deferred procedure, it
+          is valid to use as an instantiation argument corresponding
+          to that deferred argument."
 
 [413:10+] Insert the following as a NOTE.
           "Despite it not being entirely clear whether there exists
