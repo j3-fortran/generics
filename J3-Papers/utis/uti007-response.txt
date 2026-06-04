@@ -39,19 +39,6 @@ appearing in generic subprograms.
 The suggestion that we do this a better way is a valid
 point. Edits are provided.
 
-[24:21+] 3.121 same statement
-
-    Replace ", is from the same instance of the template" with "."
-
-    Append 2 notes:
-
-    Note 1: If the statement is within a template it is from the same
-            instance.
-    <cross-reference to new 16.5.4.1 Same statement requirements>
-  
-    Note 2: If the statement is within a generic subprogram, it is
-            from the same specific procedure.
-    <cross-reference to ??(new) in generic subprogram>
 
 
 [24:20-22] delete definition of "same statement". Also delete UTI 007.
