@@ -1,0 +1,35 @@
+To: J3                                                     J3/##-###
+From: Tom Clune & Generics
+Subject: deferred type subclause
+Date:
+
+References: 26-007r1, 26-125r1, 25-204r3
+
+Introduction:
+=============
+
+When incorporating paper 25-204r3, the editor rejected introduciton of
+a subclause for "deferred type":
+
+"REJECT This is not a new kind of type."
+
+Generics subgroup disagrees with this assessment.  Deferred types have
+new declaration syntax, new/different attributes, and different
+constraints.
+
+
+
+Edits:
+======
+
+[54:10+]  After 5.4.1.3 Derived type, add a new subclause:
+
+  "5.4.1.3+ Deferred type
+
+  Deferred types are deferred arguments that are types in templates,
+  templated procedures, or requirements.  Deferred types are described
+  further in 16.4.1.2."
+
+
+===END===
+
