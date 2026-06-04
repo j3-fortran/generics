@@ -1,5 +1,5 @@
 To: J3                                                     J3/##-###
-From: Brad Richardson & Generics
+From: HPC & Generics
 Subject: Response to UTI007
 Date: 
 
@@ -32,11 +32,16 @@ In reference to new definition:
     the statement is within a template, is from the same instance of
     the template
 
-Yes, this was an attempt to handle image control statements appearing
-in templates. The suggestion that we do this a better way is a valid
+Yes, this was an attempt to handle image control statements and collective subroutines appearing
+in templates. In addition, it was realized that a similar problem also 
+applies to invocation of statements with "same statement" requirements
+appearing in generic subprograms.
+The suggestion that we do this a better way is a valid
 point. Edits are provided.
 
-[24:20-22] delete definition of "same statement". Also delete UTI 007.
+
+
+[24:22] Delete UTI 007.
 
 [172:16] hyperlink "same statement" to new subclause 16.5.4.1 and add
          reference to the subclause.
