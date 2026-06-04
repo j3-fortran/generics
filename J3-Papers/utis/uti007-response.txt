@@ -33,7 +33,10 @@ In reference to new definition:
     the template
 
 Yes, this was an attempt to handle image control statements and collective subroutines appearing
-in templates. The suggestion that we do this a better way is a valid
+in templates. In addition, it was realized that a similar problem also 
+applies to invocation of statements with "same statement" requirements
+appearing in generic subprograms.
+The suggestion that we do this a better way is a valid
 point. Edits are provided.
 
 [24:21+] 3.121 same statement
