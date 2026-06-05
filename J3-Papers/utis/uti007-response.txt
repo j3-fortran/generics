@@ -54,6 +54,7 @@ point. Edits are provided.
 [175:38] change "same statement" to "corresponding statement" and link
          to definition.
 
+[221:31-32] change "the same CHANGE TEAM statement" a "a corresponding CHANGE TEAM statement" and link "corresponding" to definition.
 [221:33] change "same statement" to "corresponding statement" and link
          to definition.
 
