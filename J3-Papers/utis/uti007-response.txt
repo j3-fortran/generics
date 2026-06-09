@@ -39,20 +39,20 @@ statements with "same statement" requirements appearing in generic
 subprograms. The suggestion that we do this a better way is a valid
 point. Edits are provided.
 
-[10:35+] Add "matching statement" with the following definition,
-         "same statement that, if within a template is from the same 
-         instance of the template, or if within a generic subprogram
-         is from the same specific procedure.
+[24:20-22] delete definition of "same statement".
+
+[24:22] Delete UTI 007.
+
+[26:39+] Add "3.134.1+ matching statement" with the following
+         definition, "same statement that, if within a template is
+         from the same instance of the template, or if within a
+         generic subprogram is from the same specific procedure.
 
          Note 1 to entry: The interpretation of same instance of a
          template is described in 16.5.4.
 
          Note 2 to entry: Generic subprograms are described in
          15.6.2.4."
-
-[24:20-22] delete definition of "same statement".
-
-[24:22] Delete UTI 007.
 
 [172:16] change "same statement" to "matching statement" and link
          to definition.
