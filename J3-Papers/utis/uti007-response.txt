@@ -43,7 +43,7 @@ point. Edits are provided.
 
 [24:22] Delete UTI 007.
 
-[26:39+] Add "3.134.1+ matching statement" with the following
+[26:37+] Add "3.134.1+ matching statement" with the following
          definition, "same statement that, if within a template is
          from the same instance of the template, or if within a
          generic subprogram is from the same specific procedure.
