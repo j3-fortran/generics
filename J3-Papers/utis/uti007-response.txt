@@ -55,7 +55,7 @@ point. Edits are provided.
          to definition.
 
 [221:31-32] change "the same CHANGE TEAM statement" to "a CHANGE
-            TEAM statement in a corresponding statement" and link
+            TEAM statement in a matching statement" and link
             "matching statement" to definition.
 
 [221:33] change "same statement" to "matching statement" and link
