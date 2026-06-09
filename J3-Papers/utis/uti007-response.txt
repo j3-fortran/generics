@@ -39,7 +39,7 @@ statements with "same statement" requirements appearing in generic
 subprograms. The suggestion that we do this a better way is a valid
 point. Edits are provided.
 
-[10:35+] Add "corresponding statement" with the following definition,
+[10:35+] Add "matching statement" with the following definition,
          "same statement that, if within a template is from the same 
          instance of the template, or if within a generic subprogram
          is from the same specific procedure."
@@ -48,29 +48,32 @@ point. Edits are provided.
 
 [24:22] Delete UTI 007.
 
-[172:16] change "same statement" to "corresponding statement" and link
+[172:16] change "same statement" to "matching statement" and link
          to definition.
 
-[175:38] change "same statement" to "corresponding statement" and link
+[175:38] change "same statement" to "matching statement" and link
          to definition.
 
-[221:31-32] change "the same CHANGE TEAM statement" a "a corresponding CHANGE TEAM statement" and link "corresponding" to definition.
-[221:33] change "same statement" to "corresponding statement" and link
+[221:31-32] change "the same CHANGE TEAM statement" to "a CHANGE
+            TEAM statement in a corresponding statement" and link
+            "matching statement" to definition.
+
+[221:33] change "same statement" to "matching statement" and link
          to definition.
 
-[221:38] change "same statement" to "corresponding statement" and link
+[221:38] change "same statement" to "matching statement" and link
          to definition.
 
-[254:11] change "same statement" to "corresponding statement" and link
+[254:11] change "same statement" to "matching statement" and link
          to definition.
 
-[254:14] change "same statement" to "corresponding statement" and link
+[254:14] change "same statement" to "matching statement" and link
          to definition.
 
-[424:28] change "same statement" to "corresponding statement" and link
+[424:28] change "same statement" to "matching statement" and link
          to definition.
 
-[511:19] change "same statement" to "corresponding statement" and link
+[511:19] change "same statement" to "matching statement" and link
          to definition.
 
 --END--
